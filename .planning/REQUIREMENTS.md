@@ -30,8 +30,8 @@ CUR-/PLAT- IDs.
   - *Accept:* animation is driven by the same reference stroke paths used for scoring; replayable; plays per letter and per contextual form
 - [ ] **S1-05**: The child traces letters with a stylus and receives instant on-device feedback on shape and stroke order
   - *Accept:* feedback evaluates stroke count, order, direction, and shape match; the failing stroke is highlighted; the message names the specific fix using the letter's curriculum "common mistakes"; feedback appears < ~300 ms after stylus-up, fully offline; built on a custom geometric scorer (ML Kit used only as a secondary letter-identity check)
-- [ ] **S1-10**: The child earns a quiet star when they complete a lesson
-  - *Accept:* a single, calm per-lesson acknowledgment; NO streaks, NO badges, no escalating reward pressure
+- [ ] **S1-10**: The child earns a mastery star when they complete a lesson
+  - *Accept:* a star marks **real mastery** (earned via the curriculum's clean-reps), shown on the journey map as progress; a single dignified celebration at mastery; NO running totals, NO weekly tallies, NO streaks/badges, no "+N keep going" hype
 
 ### Audio
 
@@ -58,8 +58,8 @@ CUR-/PLAT- IDs.
   - *Accept:* every v1 flow works airplane-mode; the ML Kit Arabic model is fetched once at onboarding then cached; verified on a fresh install with no network
 - [ ] **PLAT-02**: Arabic renders correctly RTL with connected-script shaping
   - *Accept:* correct isolated/initial/medial/final forms; the dotted guide letter is drawn from reference paths (not a Text widget); chosen font glyph-audited across all curriculum letters and forms; numeral system chosen explicitly
-- [ ] **PLAT-03**: The experience stays anti-gamification end-to-end
-  - *Accept:* no streaks, badges, mascots, confetti spam, timed tests, or over-praise of sloppy work; feedback is specific, not generic "Oops, try again"
+- [ ] **PLAT-03**: The experience stays not-points-chasing and on-brand (per `docs/design/kit/`)
+  - *Accept:* no running star totals, no weekly tallies, no streaks, no badges, no confetti spam, no timed tests, no over-praise of sloppy work; feedback is specific, not generic "Oops, try again". The **Qalam mascot is the tutor's persona** (in), and **mastery stars** + a dignified per-mastery celebration + the journey map are in. Visuals follow the design system tokens (gold = rewards-only, coral not red, no emoji/unicode pseudo-icons)
 
 ## v2 Requirements
 

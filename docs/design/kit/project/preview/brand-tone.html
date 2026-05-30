@@ -1,0 +1,26 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+  body { padding: 22px; }
+  .grid { display:grid; grid-template-columns: 1fr 1fr; gap: 14px 28px; }
+  .row-v { display:flex; gap: 10px; align-items:baseline;}
+  .yes { color: var(--leaf); font-weight: 900; font-family: var(--font-body); font-size: 16px; width: 18px; flex-shrink:0;}
+  .no  { color: var(--coral); font-weight: 900; font-family: var(--font-body); font-size: 16px; width: 18px; flex-shrink:0; text-decoration: line-through;}
+  .txt { font-family: var(--font-display); font-weight: 500; font-size: 18px; color: var(--fg); line-height: 1.25; }
+  .txt.bad { color: var(--slate); text-decoration: line-through; text-decoration-color: var(--coral); text-decoration-thickness: 2px; }
+</style>
+</head>
+<body>
+  <div class="grid">
+    <div class="row-v"><span class="yes">✓</span><span class="txt">Start Lesson</span></div>
+    <div class="row-v"><span class="no">✕</span><span class="txt bad">Launch session now</span></div>
+
+    <div class="row-v"><span class="yes">✓</span><span class="txt">Let's try that again.</span></div>
+    <div class="row-v"><span class="no">✕</span><span class="txt bad">Incorrect. Error.</span></div>
+
+    <div class="row-v"><span class="yes">✓</span><span class="txt">+5 stars — keep going!</span></div>
+    <div class="row-v"><span class="no">✕</span><span class="txt bad">Achievement unlocked</span></div>
+
+    <div class="row-v"><span class="yes">✓</span><span class="txt">Watch me write it.</span></div>
+    <div class="row-v"><span class="no">✕</span><span class="txt bad">Observe the demonstration.</span></div>
+  </div>
+</body></html>

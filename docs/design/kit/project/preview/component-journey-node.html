@@ -1,0 +1,43 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="_card.css">
+<style>
+  body { padding: 28px; }
+  .node {
+    width: 96px; height: 96px; border-radius: 50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family: var(--font-arabic-display); font-weight: 600; font-size: 44px; line-height: 1; color: #fff; direction: rtl;
+  }
+  .node.complete { background: var(--leaf); box-shadow: 0 6px 0 0 #2A8A60; }
+  .node.current  { background: var(--ink-teal); box-shadow: 0 6px 0 0 var(--deep-ink); }
+  .node.locked   { background: #DAD3C2; color: var(--slate); box-shadow: 0 4px 0 0 #B8AE99; }
+  .node.future   { background: #fff; color: var(--slate); border: 2px dashed var(--aqua-edge); box-shadow: none; }
+  .label { font-family: var(--font-body); font-weight: 700; font-size: 12px; color: var(--fg); text-align: center; margin-top: 10px; }
+  .sub   { font-family: var(--font-body); font-size: 11px; color: var(--fg-muted); text-align: center; }
+  .pin   { position:absolute; top:-6px; right:-6px; }
+</style>
+</head>
+<body>
+  <div class="row gap-5 center">
+    <div>
+      <div class="node complete" style="position:relative">
+        أ
+        <svg class="pin" width="28" height="28" viewBox="0 0 32 32"><circle cx="16" cy="16" r="13" fill="#3FB984" stroke="#FAF6EE" stroke-width="3"/><path d="M9.5 16.5l4.5 4.5 8.5-9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="label">Alif</div><div class="sub">Complete</div>
+    </div>
+    <div>
+      <div class="node current">ب</div>
+      <div class="label">Baa</div><div class="sub">Today</div>
+    </div>
+    <div>
+      <div class="node locked" style="position:relative">
+        ت
+        <svg class="pin" width="26" height="26" viewBox="0 0 32 32"><path d="M10 14V10a6 6 0 0 1 12 0v4" fill="none" stroke="#5C6B70" stroke-width="2.5" stroke-linecap="round"/><rect x="6.5" y="14" width="19" height="13" rx="3" fill="#5C6B70"/><circle cx="16" cy="20" r="1.8" fill="#FAF6EE"/></svg>
+      </div>
+      <div class="label">Taa</div><div class="sub">Locked</div>
+    </div>
+    <div>
+      <div class="node future">ث</div>
+      <div class="label">Thaa</div><div class="sub">Coming up</div>
+    </div>
+  </div>
+</body></html>

@@ -59,7 +59,7 @@ good on its own.
 - [ ] **S1-07** Child completes sentence-building exercises (how words connect to form meaning)
 - [ ] **S1-08** Child completes grammar exercises at their level
 - [ ] **S1-09** Next lesson unlocks only after the child passes the current one
-- [ ] **S1-10** Child earns a quiet star on lesson completion (gentle acknowledgment — no streaks, no badges)
+- [ ] **S1-10** Child earns a **mastery star** on lesson completion — a marker of real progress shown on the journey map (no running totals, no weekly tallies, no streaks/badges)
 - [ ] **S1-11** Parent can see the child's completed lessons and scores (local progress view)
 - [ ] Full curriculum (28 letters + words/sentences/grammar) loaded from the owner's mother's spec into a faithful schema
 - [ ] Runs local-only on one tablet, no account/login, works offline (satisfies NTH-05 by design)
@@ -78,7 +78,7 @@ good on its own.
 - Firebase Auth, Firestore cloud sync, and Python Cloud Functions — land with the tutor in v2
 
 **Excluded by decision:**
-- Streaks (NTH-01) and badges (NTH-02) — contradict the anti-gamification stance; only the gentle per-lesson star (S1-10) is allowed
+- Streaks (NTH-01) and badges (NTH-02) — and running star totals / weekly-star tallies / "+N keep going" hype — contradict the not-points-chasing stance. Only **mastery stars** (S1-10, a marker of real progress) and the journey map are in.
 - Teacher views / lesson assignment (NTH-06, NTH-07) — backlog, not a near-term goal
 - Multi-child under one account (NTH-04) — needs auth; revisit after v2 introduces accounts
 - Reminder notifications (NTH-03) — backlog; avoid pressure mechanics
@@ -100,6 +100,18 @@ good on its own.
   teacher's patience, never a chatbot's cheerfulness; short sentences for a 5–10 year
   old; feedback names the exact fix). It is **built in v2**. v1's feedback is the
   deterministic on-device shape/stroke-order scoring (ML Kit Digital Ink).
+- **The tutor has a face: the Qalam mascot.** A reed-pen character (the design
+  system's "Qalam") is the consistent *persona of the tutor* — not a game mascot. In
+  v1 he demonstrates stroke order and gives the friendly framing; in v2 the voice/AI
+  feedback *is Qalam speaking*. This is the embodiment of "the patient teacher sitting
+  beside the child."
+- **A design system already exists** (`docs/design/kit/`, built in Claude Design) and is
+  the **source of truth for product visuals & feel**: "modern manuscript / playful
+  calligraphy studio" — warm parchment, ink-teal primary, gold-ink for rewards-only,
+  rounded tactile shapes. English/LTR chrome with Arabic as RTL content islands; Western
+  numerals; fully-vocalized Arabic in Noto Naskh; kids-UX 64px touch floor. Resolved
+  product feel: **warm and friendly, but a real school — not points-chasing.** Stars are
+  mastery markers (real progress on a journey map), not an accumulating score.
 - **Curriculum is the owner's mother's domain** (graduate degree, years teaching Arabic).
   Stroke order, clean-reps-to-advance, the 3–4 common mistakes per letter, letter intro
   order, and the words/sentences/grammar content come from *her*. We build a schema that
@@ -141,6 +153,9 @@ good on its own.
 | Gentle per-lesson stars allowed (S1-10); no streaks/badges | Owner's call to soften anti-gamification slightly without pressure mechanics | — Pending |
 | v1 builds all of Sprint 1 (tracing + audio + sentences + grammar) | Owner chose the full Sprint 1 scope, not handwriting-only | — Pending |
 | Local-only, no auth, on-device for v1 | Single-tablet course demo; works offline; defers Firebase to v2 | — Pending |
+| Qalam mascot = the tutor's persona (reed-pen character) | Consistent face/voice of the patient teacher; pedagogical, not a game mascot. Reconciles the old "no mascots" rule | — Pending |
+| Stars = mastery markers, not a points economy | Keeps the warm design; a star means real mastery (information), not a score to chase. "Real Arabic. Not a game." holds | — Pending |
+| Design system (`docs/design/kit/`) is the visual source of truth | Owner built a full kit in Claude Design (tokens, fonts, UI kit, screens); English/LTR chrome, Arabic RTL islands, Western numerals | ✓ Good |
 | Handwriting recognition = ML Kit Digital Ink, on-device | Validated by owner's own testing; no network round-trip | ✓ Good |
 | Riverpod for state management | Project standard; BLoC/GetX rejected | — Pending |
 

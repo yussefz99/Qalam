@@ -65,9 +65,20 @@ signature, not a detail.
 - The tutor **never** runs client-side.
 - Two-timescale adaptation: within-session (tutor sees full session history) +
   across-session (nightly job recompiles each child's `strengths[]` / `struggles[]`).
-- Handwriting-first, anti-gamification: **no streaks, no badges, no mascots.** One
-  exception (owner's call, 2026-05-30): a *gentle* per-lesson star (story S1-10) is
-  allowed as quiet acknowledgment — never a pressure mechanic.
+- Handwriting-first, **not points-chasing.** Reconciled with the design system
+  (owner's call, 2026-05-30):
+  - **Qalam mascot = the tutor's persona**, not a game mascot. The reed-pen character
+    is the consistent face of the patient teacher; when voice/AI lands (v2), feedback
+    *is Qalam speaking*. He demonstrates stroke order. This is pedagogical, not
+    gamification.
+  - **Stars = mastery markers**, earned only by real clean-reps and shown on the
+    journey map as genuine progress. **No** running point totals, **no** weekly-star
+    tallies, **no** streaks, **no** badges, **no** "+N keep going" hype, **no**
+    leaderboards. A star means "you truly mastered this letter" — information, not score.
+  - **Warm, kid-friendly visuals are encouraged** (parchment/ink palette, rounded
+    shapes, a dignified per-mastery celebration). "Real Arabic. Not a game." still
+    holds — friendly presentation, serious curriculum.
+  - Source of truth for product feel: `docs/design/kit/` (Qalam Design System).
 - Child safety: collect the minimum child data needed, private by default, under parent
   control. Treat children's data as sensitive in every design decision.
 
@@ -134,6 +145,9 @@ in place.** Keep the orchestrator thin; let specialists do the deep work.
 - `.planning/research/` — project research (STACK, FEATURES, ARCHITECTURE, PITFALLS, SUMMARY).
 - `.planning/codebase/` — codebase map (ARCHITECTURE, STRUCTURE, STACK, …).
 - `docs/USER_STORIES.md` — the owner's backlog (S1-/S2-/NTH- IDs) — source for requirements.
+- `docs/design/kit/` — the Qalam Design System (tokens, fonts, UI kit, screenshots) —
+  **canonical source of truth for product visuals & feel.** `colors_and_type.css` =
+  tokens; `project/SKILL.md` = brand rules; `project/ui_kits/qalam_app/` = tablet UI kit.
 - `docs/RESEARCH_BRIEF.md` — open research questions (R2/R3/R4); R1 resolved (ML Kit).
 - `docs/architecture/` — compiled decisions / ADRs (as they accrue).
 

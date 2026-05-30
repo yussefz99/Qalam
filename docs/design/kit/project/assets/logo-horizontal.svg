@@ -1,0 +1,9 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 96" width="360" height="96" role="img" aria-label="Qalam (قلم)">
+  <defs>
+    
+  </defs>
+  <text x="20" y="76" class="ar" direction="rtl">قلم</text>
+  <line x1="170" y1="22" x2="170" y2="74" class="rule"></line>
+  <text x="190" y="62" class="en">Qalam</text>
+</svg>

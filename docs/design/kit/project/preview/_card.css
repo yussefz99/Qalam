@@ -1,0 +1,50 @@
+/* Shared layout for preview cards in the Design System tab.
+   Each card is a small standalone HTML doc rendered into a ~700×<h>px frame. */
+@import url('../colors_and_type.css');
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--parchment);
+  color: var(--fg);
+}
+body {
+  padding: 24px;
+  box-sizing: border-box;
+  min-height: 100vh;
+}
+.row { display: flex; }
+.col { display: flex; flex-direction: column; }
+.gap-1 { gap: 4px; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+.gap-5 { gap: 20px; }
+.gap-6 { gap: 24px; }
+.gap-8 { gap: 32px; }
+.center { align-items: center; }
+.between { justify-content: space-between; }
+.wrap { flex-wrap: wrap; }
+
+.swatch {
+  width: 96px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+}
+.swatch .chip { height: 72px; }
+.swatch .meta { padding: 8px 10px 10px; font-family: var(--font-body); }
+.swatch .name { font-weight: 700; font-size: 13px; color: var(--fg); line-height: 1.2; }
+.swatch .hex  { font-weight: 500; font-size: 11px; color: var(--fg-muted); font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+
+.tag {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-teal);
+}
+.muted { color: var(--fg-muted); }
+.mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
