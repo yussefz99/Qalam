@@ -1,52 +1,94 @@
 # CLAUDE.md — Qalam
 
-Arabic handwriting-first learning app for children (ages 5–10). Tablet-native,
-RTL Arabic, anti-gamification, Kumon-style daily structured practice.
-*"Real Arabic. Not a game."*
+**Qalam teaches children to *write* Arabic by hand — really write it, stroke by
+stroke — the way a patient teacher sitting beside them would.** Android tablet,
+right-to-left, no points-chasing, no cartoon mascots. Daily structured practice in
+the spirit of Kumon. *"Real Arabic. Not a game."*
 
-## How you work on this project (read every session)
+Currently a Technion course project. **Android-only for now;** iOS is a later port —
+don't add iOS-specific work unless asked.
 
-1. **Research before you build. Always.** Do not scaffold, `flutter create`, or
-   write feature code until the research and architecture phases are approved.
-2. **Phase gates.** Work in phases; STOP at the end of each and wait for review.
-   Never silently roll from research into building.
-   - Phase 1 — Research → write to `docs/research/raw/`, write nothing else.
-   - Phase 2 — Architecture → propose ADRs in `docs/architecture/adr/`.
-   - Phase 3 — Project setup → scaffold only after Phase 2 is approved.
-   - Phase 4 — First vertical slice (one letter, trace→score→feedback).
-3. **Propose, don't decide.** Surface options with tradeoffs. The human owns the
-   call, especially anything pedagogical.
-4. **Python over TypeScript** for all backend / tooling. The owner is fluent in
-   Python, not Dart/TS — explain Dart choices, keep magic low.
-5. When unsure, ask. A wrong autonomous build is more expensive than a question.
+## What we're building
 
-## What's DECIDED (don't relitigate; validate if research contradicts)
+Almost every Arabic app on the market teaches Arabic as a *foreign* language —
+tap-the-right-answer, multiple choice, a keyboard. None of them teach a child to
+form the letters by hand, which is the one thing that actually makes the language
+stick. Qalam is for **heritage learners**: kids who may hear Arabic at home but
+can't yet read or write it. The core loop is physical — a dotted letter appears, the
+child traces it with a stylus, the app watches the strokes, and a warm AI tutor
+responds with specific, human feedback. Then they do it again. That repetition,
+guided well, is the whole product.
 
-- Stack: Flutter + Dart (tablet-first, RTL), Firebase (Auth + Firestore +
-  Cloud Functions, Python runtime), Claude API for the tutor.
-- Golden rule: the tutor NEVER runs client-side. Flutter → Cloud Function →
-  Anthropic API. The API key lives only in the function secret.
-- Two-timescale adaptation: within-session (full history in context) +
-  across-session (nightly profile compiler updating strengths[]/struggles[]).
-- State management: Riverpod (manual providers first, codegen optional later).
-- Principle: handwriting-first, anti-gamification. No points-chasing language.
+The competition isn't Duolingo. It's a private tutor at $60/hour, an underfunded
+weekend school, or nothing at all. Qalam is the patient teacher who's available at
+9pm on a Tuesday.
 
-## What's OPEN (the research phase must resolve these)
+## The tutor's voice
 
-- Arabic handwriting recognition approach (ML Kit Digital Ink vs TrOCR vs custom
-  TFLite vs geometric stroke-order checking) — the #1 technical risk.
-- Offline-first strategy and parent-dashboard sync model.
-- RTL + connected-script rendering specifics in Flutter (letter forms, fonts).
-- Tutor cost model + per-stroke feedback latency budget.
+This is the heart of the app, so get it right. The tutor is **warm, calm, and
+specific** — a real teacher's patience, never a chatbot's cheerfulness. It speaks
+simply, to a 5-10 year old, in short sentences. Its feedback always names the exact
+fix:
+
+- Good: *"Your baa needs a deeper curve at the bottom - try again, slower this time."*
+- Never: *"Oops, try again!"*
+
+It celebrates real progress and doesn't over-praise sloppy work. A little Arabic is
+welcome (أحسنت - well done), but guidance stays in the child's working language. The
+tutor's personality and pedagogy come from the owner's mother (see below) - that
+voice is the product's signature, not a detail.
+
+## How we work (always on, every phase)
+
+- **Research before you build.** Resolve the open questions below before writing
+  code that depends on them. This project runs on GSD - follow its loop
+  (discuss -> plan -> execute -> verify) and don't skip its research/approval gates.
+- **Propose, don't decide.** Lay out options with their tradeoffs; the human makes
+  the call, especially on anything pedagogical.
+- **Python over TypeScript** for all backend and tooling. The owner is fluent in
+  Python and new to Dart - explain Dart choices in plain terms, keep the magic low.
+- **When you're unsure, ask.** A wrong autonomous build costs far more than a question.
+
+## Decided (don't relitigate; flag loudly if something contradicts these)
+
+- Flutter + Dart, **Android-only for now** (tablet-first, RTL).
+- Firebase: Auth + Firestore + Cloud Functions (**Python** runtime).
+- **Handwriting recognition: Google ML Kit Digital Ink - validated, not
+  exploratory.** We tested it on Arabic and it performs excellently. Build the
+  handwriting layer on ML Kit, on-device, with no network round-trip for scoring.
+- The tutor **never** runs client-side.
+- Two-timescale adaptation: within-session (the tutor sees the full session history)
+  and across-session (a nightly job recompiles each child's strengths[]/struggles[]).
+- Handwriting-first and anti-gamification. No points, no streaks-as-pressure, no
+  badge-chasing language.
+
+## Still open (resolve via research before the related code)
+
+- **Offline-first strategy** + how the parent dashboard syncs when the child
+  reconnects.
+- **RTL + connected-script rendering** in Flutter - letter forms
+  (isolated/initial/medial/final), a font with strong Arabic glyphs, known pitfalls.
+- **Tutor cost + latency** - calls per session, prompt caching, and the acceptable
+  delay between a finished stroke and on-screen feedback.
+
+*(Handwriting recognition used to live here - it's now Decided, thanks to the ML Kit
+testing.)*
 
 ## Curriculum is the owner's mother's domain
 
-Stroke order, progression logic, and the per-letter error taxonomy come from her,
-not from research. Structure a schema that can hold her spec; do not invent the
-pedagogy.
+She has a graduate degree and years of teaching Arabic. Stroke order, how many clean
+reps advance a child, the 3-4 most common mistakes per letter, the order letters are
+introduced - these come from **her**, not from research or guesswork. Build a schema
+that can faithfully hold her spec. Do not invent the pedagogy; structure it.
+
+## Domain agents
+
+Flutter work is delegated to the flutter-claude-code plugin agents (architect,
+state-management, firebase, ui-implementer, testing). If any agent's defaults
+contradict the **Decided** section - say it reaches for BLoC instead of Riverpod -
+**this file wins.**
 
 ## Where things live (wiki-as-memory)
 
-- `docs/research/raw/` — raw findings, one file per question.
-- `docs/architecture/adr/` — compiled decisions, one ADR per decision.
-- `docs/RESEARCH_BRIEF.md` — the current research scope and gates.
+- `docs/research/raw/` - raw findings, one file per question.
+- `docs/architecture/` - compiled decisions / ADRs.
