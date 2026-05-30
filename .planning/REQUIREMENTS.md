@@ -1,0 +1,128 @@
+# Requirements: Qalam — v1 Core Learning Loop
+
+**Defined:** 2026-05-30
+**Core Value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
+
+v1 = the owner's **Sprint 1** (`docs/USER_STORIES.md`), built as written. Local-only,
+on-device, no auth, **no Claude AI tutor** (the tutor is the v2 milestone). Story IDs
+(S1-xx) are preserved as canonical requirement IDs; derived technical requirements use
+CUR-/PLAT- IDs.
+
+## v1 Requirements
+
+### Onboarding & Profiles
+
+- [ ] **S1-02**: A parent can create a child profile with name and grade, and the grade selects the curriculum entry point
+  - *Accept:* profile persists locally; grade maps to a starting lesson; no real-name exposure beyond the device (minimum child data)
+- [ ] **S1-03**: A child can pick an avatar and nickname on first open
+  - *Accept:* selection persists; choices are from a fixed set (no free-text that leaks identity); shown on the home screen
+
+### Daily Lesson & Progression
+
+- [ ] **S1-01**: On opening the app, the child immediately sees today's lesson already prepared, with one clear way to start
+  - *Accept:* landing shows the next unlocked lesson for the current child; a single prominent Start; no navigation required
+- [ ] **S1-09**: The next lesson unlocks only after the child passes the current one
+  - *Accept:* "pass" = the curriculum's clean-reps-to-advance for that item; locked lessons are visibly unavailable; unlock is immediate on pass
+
+### Handwriting Practice (the core loop)
+
+- [ ] **S1-04**: Before writing a letter, the child can watch (and replay) an animation of the correct stroke order
+  - *Accept:* animation is driven by the same reference stroke paths used for scoring; replayable; plays per letter and per contextual form
+- [ ] **S1-05**: The child traces letters with a stylus and receives instant on-device feedback on shape and stroke order
+  - *Accept:* feedback evaluates stroke count, order, direction, and shape match; the failing stroke is highlighted; the message names the specific fix using the letter's curriculum "common mistakes"; feedback appears < ~300 ms after stylus-up, fully offline; built on a custom geometric scorer (ML Kit used only as a secondary letter-identity check)
+- [ ] **S1-10**: The child earns a quiet star when they complete a lesson
+  - *Accept:* a single, calm per-lesson acknowledgment; NO streaks, NO badges, no escalating reward pressure
+
+### Audio
+
+- [ ] **S1-06**: The child can hear the correct pronunciation of each letter and word
+  - *Accept:* tappable audio per letter and per word; bundled pre-recorded clips (works offline); no TTS
+
+### Exercises
+
+- [ ] **S1-07**: The child can complete sentence-building exercises that show how Arabic words connect to form meaning
+  - *Accept:* handwriting-first interaction (never reduces to tap-one-of-four); content comes from the curriculum schema
+- [ ] **S1-08**: The child can complete grammar exercises at their level
+  - *Accept:* level-appropriate per the child's progression; handwriting-first; content authored in the curriculum, not invented
+
+### Parent View
+
+- [ ] **S1-11**: A parent can see the child's completed lessons and scores
+  - *Accept:* PIN-gated parent area; read-only local progress (lessons completed, scores); no cloud, no account
+
+### Curriculum Content & Platform (derived from research)
+
+- [ ] **CUR-01**: The full curriculum (28 letters + words + sentences + grammar) authored by the owner's mother is held in a faithful data schema that the code only reads
+  - *Accept:* schema holds, per letter: contextual forms, ordered reference stroke paths (coordinates), stroke order, intro order, clean-reps-to-advance, per-letter pass tolerances, 3–4 common mistakes (each with a child-friendly fix message), and audio references; words/sentences/grammar content modeled; placeholder entries (if any) are explicitly marked; owner's-mother sign-off gate before lessons ship
+- [ ] **PLAT-01**: The app runs fully offline, local-only, with no account or login (satisfies NTH-05 by design)
+  - *Accept:* every v1 flow works airplane-mode; the ML Kit Arabic model is fetched once at onboarding then cached; verified on a fresh install with no network
+- [ ] **PLAT-02**: Arabic renders correctly RTL with connected-script shaping
+  - *Accept:* correct isolated/initial/medial/final forms; the dotted guide letter is drawn from reference paths (not a Text widget); chosen font glyph-audited across all curriculum letters and forms; numeral system chosen explicitly
+- [ ] **PLAT-03**: The experience stays anti-gamification end-to-end
+  - *Accept:* no streaks, badges, mascots, confetti spam, timed tests, or over-praise of sloppy work; feedback is specific, not generic "Oops, try again"
+
+## v2 Requirements
+
+Deferred to the next milestone (owner's **Sprint 2 — Qalam AI Tutor**). Tracked, not in this roadmap.
+
+### AI Tutor & Adaptation
+
+- **S2-01**: Placement exam on first join to set the correct level across subjects
+- **S2-02**: The Qalam character gives specific spoken feedback (in English) on exactly what was wrong
+- **S2-03**: The child can press a button and ask Qalam a question out loud
+- **S2-04**: Qalam gives extra practice on the topics/letters the child keeps getting wrong
+- **S2-05**: The app adjusts the daily lesson based on recent performance
+- **S2-06**: A parent can see which specific topics and letters the child struggles with
+- **S2-07**: A parent can set a daily practice-duration goal
+- **S2-08**: Vocabulary flashcards with pictures
+- **S2-09**: Short Arabic reading passages with comprehension questions
+- **S2-10**: A parent receives a weekly progress report
+
+*(These bring in Firebase Auth, Firestore cloud sync, and Python Cloud Functions, plus the across-session nightly profile compiler.)*
+
+## Out of Scope
+
+Explicitly excluded for v1. Documented to prevent scope creep.
+
+| Feature | Reason |
+|---------|--------|
+| Daily streaks (NTH-01) | Pressure mechanic — contradicts anti-gamification |
+| Badges (NTH-02) | Pressure mechanic — contradicts anti-gamification; only the gentle star (S1-10) is allowed |
+| Reminder notifications (NTH-03) | Pressure mechanic; backlog |
+| Multiple children under one account (NTH-04) | Needs auth; revisit after v2 introduces accounts |
+| Teacher dashboards / lesson assignment (NTH-06, NTH-07) | Backlog; not a near-term goal |
+| Tap-the-answer / multiple-choice foreign-language drills | The anti-product Qalam positions against |
+| Cartoon mascot, confetti, timed tests | Anti-gamification |
+| iOS (deployment, PencilKit) | Android-only for now |
+| Any backend (Firebase Auth/Firestore/Functions), Claude tutor | Deferred to v2 |
+
+## Traceability
+
+Which phase covers which requirement. Populated during roadmap creation.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| CUR-01 | TBD | Pending |
+| PLAT-01 | TBD | Pending |
+| PLAT-02 | TBD | Pending |
+| PLAT-03 | TBD | Pending |
+| S1-01 | TBD | Pending |
+| S1-02 | TBD | Pending |
+| S1-03 | TBD | Pending |
+| S1-04 | TBD | Pending |
+| S1-05 | TBD | Pending |
+| S1-06 | TBD | Pending |
+| S1-07 | TBD | Pending |
+| S1-08 | TBD | Pending |
+| S1-09 | TBD | Pending |
+| S1-10 | TBD | Pending |
+| S1-11 | TBD | Pending |
+
+**Coverage:**
+- v1 requirements: 15 total (11 stories + 4 derived)
+- Mapped to phases: 0 (roadmap pending)
+- Unmapped: 15 ⚠️ (resolved when roadmap is created)
+
+---
+*Requirements defined: 2026-05-30*
+*Last updated: 2026-05-30 after initial definition*
