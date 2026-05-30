@@ -98,31 +98,36 @@ Explicitly excluded for v1. Documented to prevent scope creep.
 
 ## Traceability
 
-Which phase covers which requirement. Populated during roadmap creation.
+Which phase covers which requirement. Each v1 requirement maps to exactly one phase.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CUR-01 | TBD | Pending |
-| PLAT-01 | TBD | Pending |
-| PLAT-02 | TBD | Pending |
-| PLAT-03 | TBD | Pending |
-| S1-01 | TBD | Pending |
-| S1-02 | TBD | Pending |
-| S1-03 | TBD | Pending |
-| S1-04 | TBD | Pending |
-| S1-05 | TBD | Pending |
-| S1-06 | TBD | Pending |
-| S1-07 | TBD | Pending |
-| S1-08 | TBD | Pending |
-| S1-09 | TBD | Pending |
-| S1-10 | TBD | Pending |
-| S1-11 | TBD | Pending |
+| PLAT-02 | Phase 1 — Foundations & RTL Shell | Pending |
+| CUR-01 | Phase 7 — Full Curriculum & Pronunciation Audio (seeded in Phase 2) | Pending |
+| S1-04 | Phase 3 — Trace One Letter End-to-End | Pending |
+| S1-05 | Phase 3 — Trace One Letter End-to-End (deepened in Phase 4) | Pending |
+| S1-10 | Phase 3 — Trace One Letter End-to-End | Pending |
+| PLAT-03 | Phase 3 — Trace One Letter End-to-End | Pending |
+| S1-02 | Phase 5 — Profiles & Onboarding | Pending |
+| S1-03 | Phase 5 — Profiles & Onboarding | Pending |
+| S1-01 | Phase 6 — Lesson Progression & Home | Pending |
+| S1-09 | Phase 6 — Lesson Progression & Home | Pending |
+| S1-06 | Phase 7 — Full Curriculum & Pronunciation Audio | Pending |
+| S1-07 | Phase 8 — Sentence-Building & Grammar Exercises | Pending |
+| S1-08 | Phase 8 — Sentence-Building & Grammar Exercises | Pending |
+| S1-11 | Phase 9 — Parent Dashboard | Pending |
+| PLAT-01 | Phase 10 — Offline Hardening & Release | Pending |
+
+**Notes:**
+- **CUR-01** is *seeded* in Phase 2 (small signed-off subset that unblocks the end-to-end slice) and *fully satisfied* in Phase 7 (all 28 letters + words). It maps to Phase 7 for coverage.
+- **S1-05 / PLAT-03** are first delivered in Phase 3 and *deepened* in Phase 4 (scorer calibration) — counted under Phase 3 for coverage.
+- **PLAT-03 (anti-gamification)** is cross-cutting; its acceptance is folded into Phase 3 (feedback tone, quiet star) and re-checked in every UI phase rather than owning a standalone phase.
 
 **Coverage:**
 - v1 requirements: 15 total (11 stories + 4 derived)
-- Mapped to phases: 0 (roadmap pending)
-- Unmapped: 15 ⚠️ (resolved when roadmap is created)
+- Mapped to phases: 15 ✓
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-05-30*
-*Last updated: 2026-05-30 after initial definition*
+*Last updated: 2026-05-30 after roadmap creation (traceability populated)*

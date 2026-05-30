@@ -130,6 +130,26 @@ in place.** Keep the orchestrator thin; let specialists do the deep work.
 
 ## Where things live
 
-- `.planning/` — GSD's project state (PROJECT, REQUIREMENTS, ROADMAP, STATE, CONTEXT).
-- `docs/research/raw/` — raw research findings, one file per question.
-- `docs/architecture/` — compiled decisions / ADRs.
+- `.planning/` — GSD's project state (PROJECT, REQUIREMENTS, ROADMAP, STATE, config).
+- `.planning/research/` — project research (STACK, FEATURES, ARCHITECTURE, PITFALLS, SUMMARY).
+- `.planning/codebase/` — codebase map (ARCHITECTURE, STRUCTURE, STACK, …).
+- `docs/USER_STORIES.md` — the owner's backlog (S1-/S2-/NTH- IDs) — source for requirements.
+- `docs/RESEARCH_BRIEF.md` — open research questions (R2/R3/R4); R1 resolved (ML Kit).
+- `docs/architecture/` — compiled decisions / ADRs (as they accrue).
+
+---
+
+<!-- GSD:workflow-start source:GSD defaults -->
+
+## GSD Workflow Enforcement
+
+Before using Edit, Write, or other file-changing tools, start work through a GSD command so planning artifacts and execution context stay in sync.
+
+Use these entry points:
+
+- `/gsd-quick` for small fixes, doc updates, and ad-hoc tasks
+- `/gsd-debug` for investigation and bug fixing
+- `/gsd-execute-phase` for planned phase work
+
+Do not make direct repo edits outside a GSD workflow unless the user explicitly asks to bypass it.
+<!-- GSD:workflow-end -->
