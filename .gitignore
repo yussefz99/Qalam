@@ -43,3 +43,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Vendored reference clone of community subagents (not part of Qalam; has its own .git)
+/awesome-claude-code-subagents/
