@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: planned
-stopped_at: Phase 1 planned (3 plans, plan-checker PASS); next: /gsd-execute-phase 1
-last_updated: "2026-05-31T11:47:11.660Z"
-last_activity: 2026-05-31 — Phase 1 researched (R3 resolved), planned (3 plans, Walking Skeleton), plan-checker PASS
+status: executing
+stopped_at: Completed 01-01-PLAN.md (foundation toolchain + Wave-0 red tests)
+last_updated: "2026-05-31T12:26:25.621Z"
+last_activity: 2026-05-31
 progress:
   total_phases: 10
   completed_phases: 0
   total_plans: 3
-  completed_plans: 0
+  completed_plans: 1
   percent: 0
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
-**Current focus:** Phase 1 — Foundations & RTL Shell
+**Current focus:** Phase 01 — foundations-rtl-shell
 
 ## Current Position
 
-Phase: 1 of 10 (Foundations & RTL Shell)
-Plan: 0 of 3 complete (planned, not executed)
-Status: Planned — ready to execute
-Last activity: 2026-05-31 — Phase 1 researched (R3 resolved) + planned (3 plans, Walking Skeleton); plan-checker PASS
+Phase: 01 (foundations-rtl-shell) — EXECUTING
+Plan: 2 of 3
+Status: Ready to execute
+Last activity: 2026-05-31
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -52,6 +52,7 @@ Progress: [░░░░░░░░░░] 0%
 - Trend: —
 
 *Updated after each plan completion*
+| Phase 01 P01 | 18 | 2 tasks | 14 files |
 
 ## Accumulated Context
 
@@ -63,6 +64,8 @@ Recent decisions affecting current work:
 - Roadmap: built as vertical MVP slices (thin trace-one-letter loop early, then thicken).
 - Roadmap: CUR-01 seeded in Phase 2, fully satisfied in Phase 7; PLAT-01 owned by Phase 10.
 - Decided (PROJECT.md): v1 local-only, on-device, no Firebase, no Claude tutor.
+- [Phase 01]: Relaxed drift/drift_dev to ^2.31.0 to resolve against Flutter 3.41.9 (analyzer ^9 / meta 1.17.0) without dropping riverpod_lint 3.1.3
+- [Phase 01]: Bundled OFL variable-font TTFs (the only form in google/fonts) and selected weights via pubspec weight descriptors; D-12 glyph audit (01-03) confirms shaping
 
 ### Pending Todos
 
@@ -87,6 +90,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-05-30T20:12:22.213Z
-Stopped at: Phase 1 UI-SPEC approved; next: discuss/plan phase
-Resume file: .planning/phases/01-foundations-rtl-shell/01-UI-SPEC.md
+Last session: 2026-05-31T12:26:25.617Z
+Stopped at: Completed 01-01-PLAN.md (foundation toolchain + Wave-0 red tests)
+Resume file: None

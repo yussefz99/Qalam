@@ -56,7 +56,7 @@ CUR-/PLAT- IDs.
   - *Accept:* schema holds, per letter: contextual forms, ordered reference stroke paths (coordinates), stroke order, intro order, clean-reps-to-advance, per-letter pass tolerances, 3–4 common mistakes (each with a child-friendly fix message), and audio references; words/sentences/grammar content modeled; placeholder entries (if any) are explicitly marked; owner's-mother sign-off gate before lessons ship
 - [ ] **PLAT-01**: The app runs fully offline, local-only, with no account or login (satisfies NTH-05 by design)
   - *Accept:* every v1 flow works airplane-mode; the ML Kit Arabic model is fetched once at onboarding then cached; verified on a fresh install with no network
-- [ ] **PLAT-02**: Arabic renders correctly RTL with connected-script shaping
+- [x] **PLAT-02**: Arabic renders correctly RTL with connected-script shaping
   - *Accept:* correct isolated/initial/medial/final forms; the dotted guide letter is drawn from reference paths (not a Text widget); chosen font glyph-audited across all curriculum letters and forms; numeral system chosen explicitly
 - [ ] **PLAT-03**: The experience stays not-points-chasing and on-brand (per `docs/design/kit/`)
   - *Accept:* no running star totals, no weekly tallies, no streaks, no badges, no confetti spam, no timed tests, no over-praise of sloppy work; feedback is specific, not generic "Oops, try again". The **Qalam mascot is the tutor's persona** (in), and **mastery stars** + a dignified per-mastery celebration + the journey map are in. Visuals follow the design system tokens (gold = rewards-only, coral not red, no emoji/unicode pseudo-icons)
@@ -102,7 +102,7 @@ Which phase covers which requirement. Each v1 requirement maps to exactly one ph
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PLAT-02 | Phase 1 — Foundations & RTL Shell | Pending |
+| PLAT-02 | Phase 1 — Foundations & RTL Shell | Complete |
 | CUR-01 | Phase 7 — Full Curriculum & Pronunciation Audio (seeded in Phase 2) | Pending |
 | S1-04 | Phase 3 — Trace One Letter End-to-End | Pending |
 | S1-05 | Phase 3 — Trace One Letter End-to-End (deepened in Phase 4) | Pending |
@@ -119,11 +119,13 @@ Which phase covers which requirement. Each v1 requirement maps to exactly one ph
 | PLAT-01 | Phase 10 — Offline Hardening & Release | Pending |
 
 **Notes:**
+
 - **CUR-01** is *seeded* in Phase 2 (small signed-off subset that unblocks the end-to-end slice) and *fully satisfied* in Phase 7 (all 28 letters + words). It maps to Phase 7 for coverage.
 - **S1-05 / PLAT-03** are first delivered in Phase 3 and *deepened* in Phase 4 (scorer calibration) — counted under Phase 3 for coverage.
 - **PLAT-03 (anti-gamification)** is cross-cutting; its acceptance is folded into Phase 3 (feedback tone, quiet star) and re-checked in every UI phase rather than owning a standalone phase.
 
 **Coverage:**
+
 - v1 requirements: 15 total (11 stories + 4 derived)
 - Mapped to phases: 15 ✓
 - Unmapped: 0 ✓
