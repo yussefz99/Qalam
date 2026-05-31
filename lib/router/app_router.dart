@@ -7,6 +7,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../dev/glyph_audit_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/practice_screen.dart';
 import '../screens/settings_screen.dart';
@@ -30,6 +31,14 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: '/settings',
         builder: (context, state) => const SettingsScreen(),
+      ),
+      // DEBUG SEAM — the D-12 glyph-audit harness. Reachable only by typing this
+      // route on an emulator/tablet; it is NOT surfaced in the user-facing nav.
+      // It renders only public Arabic letters + Western digits (no sensitive
+      // data — threat T-01-06 accepted).
+      GoRoute(
+        path: '/dev/glyph-audit',
+        builder: (context, state) => const GlyphAuditScreen(),
       ),
       // SEAM ONLY — /parent/* PIN-gated parent area lands in P9 (CONTEXT D-08).
       // Do NOT build the PIN gate now. When it lands, add the route here and a
