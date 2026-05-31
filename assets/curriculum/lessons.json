@@ -1,0 +1,13 @@
+{
+  "lessons": [
+    {
+      "id": "lesson_01",
+      "order": 1,
+      "title": { "display": "Lesson 1" },
+      "items": [
+        { "type": "letter", "ref": "alif" }
+      ],
+      "unlock": { "requires": [], "passRule": "allItemsPassed" }
+    }
+  ]
+}

@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: context-captured
-stopped_at: "Phase 2 context gathered; next: /gsd-plan-phase 2"
-last_updated: "2026-05-31T14:00:00.000Z"
-last_activity: 2026-05-31 — Phase 2 context captured (stroke path authoring, seed scope, lessons.json skeleton)
+status: executing
+stopped_at: "Phase 2 complete; next: /gsd-execute-phase 3"
+last_updated: "2026-05-31T16:00:00.000Z"
+last_activity: 2026-05-31 — Phase 2 executed (3 plans complete: extraction script + JSON authoring, Dart models, CurriculumRepository)
 progress:
   total_phases: 10
-  completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
-  percent: 10
+  completed_phases: 2
+  total_plans: 9
+  completed_plans: 6
+  percent: 20
 ---
 
 # Project State
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
-**Current focus:** Phase 2 — Curriculum Schema & First-Letter Seed (context ready; next: plan)
+**Current focus:** Phase 2 — Curriculum Schema & First-Letter Seed (planned; ready to execute)
 
 ## Current Position
 
-Phase: 01 (foundations-rtl-shell) — ✓ COMPLETE & VERIFIED (PASSED)
+Phase: 02 (curriculum-schema-first-letter-seed) — COMPLETE
 Plan: 3 of 3 complete
-Status: Phase 1 verified PASSED — ready to plan Phase 2
-Last activity: 2026-05-31 — Phase 1 verified; D-12 glyph audit human-approved (Noto Naskh)
+Status: Phase 2 done — ready for Phase 3 (/gsd-execute-phase 3)
+Last activity: 2026-05-31 — Phase 2 executed (extraction script, 28-letter JSON, Dart models, CurriculumRepository)
 
-Progress: [█░░░░░░░░░] 10% (1 of 10 phases complete)
+Progress: [██░░░░░░░░] 20% (2 of 10 phases complete)
 
 ## Performance Metrics
 
@@ -73,6 +73,10 @@ Recent decisions affecting current work:
 - [Phase ?]: analyzer-9 plugins section must be a map (riverpod_lint), not a list, for flutter analyze to exit 0
 - [Phase 01]: D-12 glyph-audit risk gate CLOSED — human-confirmed Noto Naskh Arabic shapes all four contextual forms correctly (no tofu, لا → single ﻻ ligature, joins intact, tashkeel placed, Western digits LTR); golden-gated via test/goldens/glyph_audit.png. Amiri remains the documented fallback if a future curriculum letter fails re-audit.
 - [Phase ?]: Arabic goldens must load bundled TTFs into the headless engine via test/flutter_test_config.dart (Pitfall 3) — otherwise the golden renders tofu and the gate proves nothing.
+- [Phase 02]: Reference stroke paths extracted from NotoNaskhArabic-Regular.ttf via Python fonttools script (D-01, D-02); owner maps contours to teaching strokes and records in letters.json (D-03); alif must be signedOff: true before Phase 2 is done (D-12).
+- [Phase 02]: All 28 letters authored in Phase 2 with structural data; only alif needs signedOff: true for Phase 3; remaining 27 carry referenceStrokes: [] + signedOff: false (D-05, D-07).
+- [Phase 02]: CurriculumRepository uses rootBundle (not network); keepAlive: true Riverpod provider; handles exercises.json absence gracefully (D-10).
+- [Phase 02]: lib/models/*.dart must not import from lib/data/ or lib/features/ — pure immutable domain types only.
 
 ### Pending Todos
 
@@ -82,10 +86,9 @@ None yet.
 
 ### Blockers/Concerns
 
-- **Curriculum reference-path format (open question, Phase 2):** owner's mother may supply stroke order/description but not coordinate paths — a tracing/authoring step may be required before the scorer can run. Owner's-mother sign-off gate applies.
 - **Geometric stroke scorer (deepest risk, Phase 3–4):** NOT provided by ML Kit (ML Kit gives only {text, score}); custom build + per-letter calibration against real child samples.
-- **RTL/connected-script rendering (open question, Phase 1):** font glyph-audit + numeral-system decision needed before the first tracing surface.
 - **Offline / one-time model download (open question, Phase 10):** verify on a fresh, no-network install.
+- ~~**Phase 2 sign-off gate:**~~ CLOSED — alif signedOff: true, 1 referenceStroke (64 pts), 3 commonMistakes authored. Phase 3 is unblocked.
 
 ## Deferred Items
 
@@ -97,6 +100,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-05-31T13:05:44.362Z
-Stopped at: Completed 01-02-PLAN.md (Walking Skeleton)
+Last session: 2026-05-31T14:30:00.000Z
+Stopped at: Phase 2 plans written (02-01-PLAN.md, 02-02-PLAN.md, 02-03-PLAN.md)
 Resume file: None

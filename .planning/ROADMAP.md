@@ -73,8 +73,12 @@ Plans:
   3. Each seeded letter's 3–4 common mistakes are present with their child-friendly fix messages and map to named scorer checks.
   4. Any not-yet-authored content is explicitly marked as placeholder, and the seeded letters carry the owner's-mother sign-off.
 
-**Plans**: TBD
-**Research hint**: yes — the reference-stroke-path FORMAT (coordinates vs prose from the owner's mother) is an upstream open question; if she supplies stroke order/description but not coordinate paths, a content-authoring step (tracing reference glyphs to capture paths) is required before the scorer can run. Resolve the sign-off gate here.
+**Plans**: 3 plans
+Plans:
+
+- [ ] 02-01-PLAN.md — Wave 1: Python extraction script + 28-letter letters.json + lessons.json skeleton + pubspec asset declaration + owner sign-off checkpoint for alif
+- [ ] 02-02-PLAN.md — Wave 2: Typed Dart models (Letter, Lesson, sub-types) + unit tests
+- [ ] 02-03-PLAN.md — Wave 3: CurriculumRepository (rootBundle loader, Riverpod provider) + integration tests + Phase 2 completeness gate
 
 ### Phase 3: Trace One Letter End-to-End
 
@@ -207,7 +211,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundations & RTL Shell | 3/3 | Complete   | 2026-05-31 |
-| 2. Curriculum Schema & First-Letter Seed | 0/TBD | Not started | - |
+| 2. Curriculum Schema & First-Letter Seed | 0/3 | Planned | - |
 | 3. Trace One Letter End-to-End | 0/TBD | Not started | - |
 | 4. Scoring Quality & Calibration | 0/TBD | Not started | - |
 | 5. Profiles & Onboarding | 0/TBD | Not started | - |

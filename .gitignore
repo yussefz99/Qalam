@@ -49,3 +49,6 @@ app.*.map.json
 
 # Generated localizations (gen-l10n output) — regenerated from lib/l10n/*.arb on build
 /lib/l10n/app_localizations*.dart
+
+# Golden test diff artifacts (generated on failure, not source)
+test/failures/

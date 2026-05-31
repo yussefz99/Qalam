@@ -81,6 +81,7 @@ flutter:
   generate: true
 
   assets:
+    - assets/curriculum/
     - assets/fonts/
     - assets/icons/
     - assets/logo.svg
