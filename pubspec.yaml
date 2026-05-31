@@ -35,6 +35,21 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
 
+  # Phase-1 dependency set — versions verified in 01-RESEARCH.md §Standard Stack.
+  flutter_riverpod: ^3.3.1        # state management (Riverpod only — D-11)
+  riverpod_annotation: ^4.0.2     # codegen annotations
+  drift: ^2.31.0                  # local SQLite persistence (D-09) — see note
+  # NOTE: RESEARCH pinned drift ^2.33.0, but on the installed Flutter 3.41.9
+  # (which pins meta 1.17.0) drift_dev 2.32+/2.33 require analyzer >=10, which
+  # conflicts with riverpod_lint 3.1.3 (analyzer ^9). Relaxed to the 2.31 line
+  # (drift_dev 2.31 allows analyzer >=8.1 <11). Same minor line, no major change.
+  sqlite3_flutter_libs: ^0.6.0    # bundles native SQLite
+  path_provider: ^2.1.0           # locate the on-device DB file
+  go_router: ^17.2.3              # declarative routing (D-08)
+  flutter_svg: ^2.3.0             # render brand glyph SVGs
+  flutter_localizations:          # i18n seam (D-07) — English-only in v1
+    sdk: flutter
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -45,6 +60,11 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+
+  build_runner: ^2.15.0           # drives Riverpod + Drift codegen
+  riverpod_generator: ^4.0.3      # Riverpod codegen
+  riverpod_lint: ^3.1.3           # lint (via analysis_server_plugin, NOT custom_lint)
+  drift_dev: ^2.31.0              # Drift codegen — kept aligned with drift (see note above)
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -57,33 +77,36 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  # gen-l10n: generate AppLocalizations from lib/l10n/app_en.arb (D-07).
+  generate: true
 
-  # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/to/resolution-aware-images
+  assets:
+    - assets/fonts/
+    - assets/icons/
 
-  # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/to/asset-from-package
-
-  # To add custom fonts to your application, add a fonts section here,
-  # in this "flutter" section. Each entry in this list should have a
-  # "family" key with the font family name, and a "fonts" key with a
-  # list giving the asset and other descriptors for the font. For
-  # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
-  #
-  # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/to/font-from-package
+  # Bundled local TTFs — NO google_fonts/CDN (offline rule, D-03). These
+  # families ship only as variable TTFs in the Google Fonts OFL repo; the
+  # weight descriptors below select named instances from the weight axis.
+  # The family STRING must match TextStyle.fontFamily exactly (Pitfall 3).
+  fonts:
+    - family: Noto Naskh Arabic   # Arabic content + tracing model letter (never bold)
+      fonts:
+        - asset: assets/fonts/NotoNaskhArabic-Regular.ttf
+    - family: Cairo               # Arabic display / قلم logo
+      fonts:
+        - asset: assets/fonts/Cairo-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Cairo-Regular.ttf
+          weight: 600
+    - family: Fredoka             # English display / headings / buttons
+      fonts:
+        - asset: assets/fonts/Fredoka-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Fredoka-Medium.ttf
+          weight: 600
+    - family: Nunito              # English body / labels
+      fonts:
+        - asset: assets/fonts/Nunito-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Nunito-Regular.ttf
+          weight: 600

@@ -1,0 +1,63 @@
+{
+  "@@locale": "en",
+
+  "openPractice": "Open Practice",
+  "@openPractice": {
+    "description": "Primary CTA on Home that opens the Practice screen."
+  },
+
+  "clear": "Clear",
+  "@clear": {
+    "description": "Practice action that clears the writing canvas."
+  },
+
+  "homePlaceholderHeading": "Your Journey Starts Soon",
+  "@homePlaceholderHeading": {
+    "description": "Heading on the Home placeholder card."
+  },
+
+  "homePlaceholderBody": "Your letters and lessons will live here. For now, head to Practice and write.",
+  "@homePlaceholderBody": {
+    "description": "Body copy on the Home placeholder card."
+  },
+
+  "writeHere": "Write Here",
+  "@writeHere": {
+    "description": "Heading for the Practice empty state."
+  },
+
+  "practiceEmptyBody": "Pick up your pen and draw on the page. Tap Clear to start over.",
+  "@practiceEmptyBody": {
+    "description": "Body copy for the Practice empty state."
+  },
+
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings screen heading and nav label."
+  },
+
+  "settingsPlaceholderBody": "Grown-up settings will live here soon.",
+  "@settingsPlaceholderBody": {
+    "description": "Body copy on the Settings placeholder."
+  },
+
+  "databaseError": "Something Didn't Save. Close the app and open it again — your work is kept on this tablet.",
+  "@databaseError": {
+    "description": "Generic shell-level error shown when a database read/write fails."
+  },
+
+  "clearConfirmHeading": "Clear your writing?",
+  "@clearConfirmHeading": {
+    "description": "Heading of the destructive Clear-canvas confirmation dialog."
+  },
+
+  "clearConfirmBody": "This erases what's on the page.",
+  "@clearConfirmBody": {
+    "description": "Body of the Clear-canvas confirmation dialog."
+  },
+
+  "keepWriting": "Keep Writing",
+  "@keepWriting": {
+    "description": "Non-destructive dismiss action on the Clear-canvas confirmation dialog."
+  }
+}

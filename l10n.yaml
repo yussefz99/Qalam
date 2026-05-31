@@ -1,0 +1,6 @@
+# Flutter gen-l10n configuration (D-07). English-only in v1 — there is a single
+# template ARB (app_en.arb) and NO app_ar.arb. RTL is a per-content decision
+# (the ArabicText widget), never coupled to the l10n locale (Pitfall 4).
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-localization-file: app_localizations.dart
