@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: verifying
-stopped_at: Completed 01-02-PLAN.md (Walking Skeleton)
-last_updated: "2026-05-31T13:06:05.560Z"
-last_activity: 2026-05-31
+status: phase-complete
+stopped_at: "Phase 1 verified PASSED (D-12 human-approved); next: /gsd-plan-phase 2"
+last_updated: "2026-05-31T13:30:00.000Z"
+last_activity: 2026-05-31 — Phase 1 executed (3 plans) + verified PASSED; D-12 glyph audit human-approved on Noto Naskh
 progress:
   total_phases: 10
   completed_phases: 1
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
-**Current focus:** Phase 01 — foundations-rtl-shell
+**Current focus:** Phase 2 — Curriculum Schema & First-Letter Seed (next)
 
 ## Current Position
 
-Phase: 01 (foundations-rtl-shell) — READY FOR VERIFICATION
+Phase: 01 (foundations-rtl-shell) — ✓ COMPLETE & VERIFIED (PASSED)
 Plan: 3 of 3 complete
-Status: Phase complete — ready for verification
-Last activity: 2026-05-31
+Status: Phase 1 verified PASSED — ready to plan Phase 2
+Last activity: 2026-05-31 — Phase 1 verified; D-12 glyph audit human-approved (Noto Naskh)
 
-Progress: [██████████] 100% (phase 01 plans)
+Progress: [█░░░░░░░░░] 10% (1 of 10 phases complete)
 
 ## Performance Metrics
 
