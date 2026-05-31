@@ -14,7 +14,7 @@ include: package:flutter_lints/flutter.yaml
 # plugin below surfaces riverpod_lint diagnostics in the analyzer / IDE and
 # `flutter analyze`. See 01-RESEARCH.md §State of the Art.
 plugins:
-  - riverpod_lint
+  riverpod_lint: ^3.1.3
 
 linter:
   # The lint rules applied to this project can be customized in the

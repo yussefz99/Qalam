@@ -83,3 +83,18 @@ AppDatabase appDatabase(Ref ref) {
   ref.onDispose(db.close);
   return db;
 }
+
+/// The visible persistence seam (D-09): on first read, write a trivial
+/// non-sensitive sentinel to the DB, then read it back. Home displays the
+/// round-tripped value to prove persistence end-to-end. Stores NOTHING
+/// sensitive (threat T-01-02) and the value is never logged (T-01-04).
+@riverpod
+Future<String> skeletonProof(Ref ref) async {
+  final db = ref.watch(appDatabaseProvider);
+  const key = 'skeletonProof';
+  final existing = await db.getSetting(key);
+  if (existing != null) return existing;
+  final sentinel = 'saved ${DateTime.now().toIso8601String()}';
+  await db.setSetting(key, sentinel);
+  return (await db.getSetting(key))!;
+}

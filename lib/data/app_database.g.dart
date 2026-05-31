@@ -420,3 +420,50 @@ final class AppDatabaseProvider
 }
 
 String _$appDatabaseHash() => r'59cce38d45eeaba199eddd097d8e149d66f9f3e1';
+
+/// The visible persistence seam (D-09): on first read, write a trivial
+/// non-sensitive sentinel to the DB, then read it back. Home displays the
+/// round-tripped value to prove persistence end-to-end. Stores NOTHING
+/// sensitive (threat T-01-02) and the value is never logged (T-01-04).
+
+@ProviderFor(skeletonProof)
+final skeletonProofProvider = SkeletonProofProvider._();
+
+/// The visible persistence seam (D-09): on first read, write a trivial
+/// non-sensitive sentinel to the DB, then read it back. Home displays the
+/// round-tripped value to prove persistence end-to-end. Stores NOTHING
+/// sensitive (threat T-01-02) and the value is never logged (T-01-04).
+
+final class SkeletonProofProvider
+    extends $FunctionalProvider<AsyncValue<String>, String, FutureOr<String>>
+    with $FutureModifier<String>, $FutureProvider<String> {
+  /// The visible persistence seam (D-09): on first read, write a trivial
+  /// non-sensitive sentinel to the DB, then read it back. Home displays the
+  /// round-tripped value to prove persistence end-to-end. Stores NOTHING
+  /// sensitive (threat T-01-02) and the value is never logged (T-01-04).
+  SkeletonProofProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'skeletonProofProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$skeletonProofHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<String> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<String> create(Ref ref) {
+    return skeletonProof(ref);
+  }
+}
+
+String _$skeletonProofHash() => r'85fdecf17e316d8855b62b2e6721d3d55aad7136';
