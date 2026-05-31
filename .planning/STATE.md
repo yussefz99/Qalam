@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
+status: verifying
 stopped_at: Completed 01-02-PLAN.md (Walking Skeleton)
-last_updated: "2026-05-31T12:49:04.427Z"
+last_updated: "2026-05-31T13:06:05.560Z"
 last_activity: 2026-05-31
 progress:
   total_phases: 10
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 2
-  percent: 0
+  completed_plans: 3
+  percent: 10
 ---
 
 # Project State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 
 ## Current Position
 
-Phase: 01 (foundations-rtl-shell) — EXECUTING
-Plan: 3 of 3
-Status: Ready to execute
+Phase: 01 (foundations-rtl-shell) — READY FOR VERIFICATION
+Plan: 3 of 3 complete
+Status: Phase complete — ready for verification
 Last activity: 2026-05-31
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [██████████] 100% (phase 01 plans)
 
 ## Performance Metrics
 
@@ -54,6 +54,7 @@ Progress: [░░░░░░░░░░] 0%
 *Updated after each plan completion*
 | Phase 01 P01 | 18 | 2 tasks | 14 files |
 | Phase 01 P02 | ~40min | 3 tasks | 20 files |
+| Phase 01 P03 | ~25min | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -70,6 +71,8 @@ Recent decisions affecting current work:
 - [Phase ?]: AppDatabase.close() spares an injected executor so a shared in-memory store survives a simulated restart (D-09 test shape)
 - [Phase ?]: Minimal GlyphAuditScreen created so the golden test compiles; D-12 baseline + full harness remain plan 01-03 (golden red by design)
 - [Phase ?]: analyzer-9 plugins section must be a map (riverpod_lint), not a list, for flutter analyze to exit 0
+- [Phase 01]: D-12 glyph-audit risk gate CLOSED — human-confirmed Noto Naskh Arabic shapes all four contextual forms correctly (no tofu, لا → single ﻻ ligature, joins intact, tashkeel placed, Western digits LTR); golden-gated via test/goldens/glyph_audit.png. Amiri remains the documented fallback if a future curriculum letter fails re-audit.
+- [Phase ?]: Arabic goldens must load bundled TTFs into the headless engine via test/flutter_test_config.dart (Pitfall 3) — otherwise the golden renders tofu and the gate proves nothing.
 
 ### Pending Todos
 
@@ -94,6 +97,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-05-31T12:48:52.380Z
+Last session: 2026-05-31T13:05:44.362Z
 Stopped at: Completed 01-02-PLAN.md (Walking Skeleton)
 Resume file: None

@@ -24,7 +24,7 @@ needs it.
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundations & RTL Shell** - Runnable RTL app skeleton with Arabic font, routing, theme, and local DB; resolves the connected-script rendering question.
+- [x] **Phase 1: Foundations & RTL Shell** - Runnable RTL app skeleton with Arabic font, routing, theme, and local DB; resolves the connected-script rendering question. (completed 2026-05-31)
 - [ ] **Phase 2: Curriculum Schema & First-Letter Seed** - A faithful curriculum data schema plus a small owner's-mother-signed-off seed (forms, reference stroke paths, common mistakes) for the first letters.
 - [ ] **Phase 3: Trace One Letter End-to-End** - A child can watch the stroke-order animation, trace a real seeded letter, get on-device geometric feedback, and earn a quiet star — the whole loop, thin.
 - [ ] **Phase 4: Scoring Quality & Calibration** - The scorer rejects wrong-order/sloppy work and accepts good-faith child attempts, with per-letter tolerances calibrated against real child samples with the owner's mother.
@@ -55,7 +55,7 @@ Plans:
 
 - [x] 01-01-PLAN.md — Wave 0: dependency/font/gen-l10n/lint scaffold + six failing validation tests
 - [x] 01-02-PLAN.md — Walking Skeleton: theme tokens, ArabicText RTL island, Drift persist/read, go_router, landscape lock, Home screen
-- [ ] 01-03-PLAN.md — Glyph-audit risk gate (D-12 golden + human PASS), Practice ink-spike, Settings shell
+- [x] 01-03-PLAN.md — Glyph-audit risk gate (D-12 golden + human PASS), Practice ink-spike, Settings shell
 
 **UI hint**: yes
 **Research hint**: yes — RTL + connected-script rendering (R3) is an open question; audit the font against curriculum letters and decide the numeral system before any tracing surface.
@@ -206,7 +206,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundations & RTL Shell | 2/3 | In Progress|  |
+| 1. Foundations & RTL Shell | 3/3 | Complete   | 2026-05-31 |
 | 2. Curriculum Schema & First-Letter Seed | 0/TBD | Not started | - |
 | 3. Trace One Letter End-to-End | 0/TBD | Not started | - |
 | 4. Scoring Quality & Calibration | 0/TBD | Not started | - |
