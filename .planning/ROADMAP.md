@@ -54,7 +54,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 
 - [x] 01-01-PLAN.md — Wave 0: dependency/font/gen-l10n/lint scaffold + six failing validation tests
-- [ ] 01-02-PLAN.md — Walking Skeleton: theme tokens, ArabicText RTL island, Drift persist/read, go_router, landscape lock, Home screen
+- [x] 01-02-PLAN.md — Walking Skeleton: theme tokens, ArabicText RTL island, Drift persist/read, go_router, landscape lock, Home screen
 - [ ] 01-03-PLAN.md — Glyph-audit risk gate (D-12 golden + human PASS), Practice ink-spike, Settings shell
 
 **UI hint**: yes
@@ -206,7 +206,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundations & RTL Shell | 1/3 | In Progress|  |
+| 1. Foundations & RTL Shell | 2/3 | In Progress|  |
 | 2. Curriculum Schema & First-Letter Seed | 0/TBD | Not started | - |
 | 3. Trace One Letter End-to-End | 0/TBD | Not started | - |
 | 4. Scoring Quality & Calibration | 0/TBD | Not started | - |

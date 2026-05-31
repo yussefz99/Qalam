@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01-01-PLAN.md (foundation toolchain + Wave-0 red tests)
-last_updated: "2026-05-31T12:26:25.621Z"
+stopped_at: Completed 01-02-PLAN.md (Walking Skeleton)
+last_updated: "2026-05-31T12:49:04.427Z"
 last_activity: 2026-05-31
 progress:
   total_phases: 10
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 01 (foundations-rtl-shell) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-05-31
 
@@ -53,6 +53,7 @@ Progress: [░░░░░░░░░░] 0%
 
 *Updated after each plan completion*
 | Phase 01 P01 | 18 | 2 tasks | 14 files |
+| Phase 01 P02 | ~40min | 3 tasks | 20 files |
 
 ## Accumulated Context
 
@@ -66,6 +67,9 @@ Recent decisions affecting current work:
 - Decided (PROJECT.md): v1 local-only, on-device, no Firebase, no Claude tutor.
 - [Phase 01]: Relaxed drift/drift_dev to ^2.31.0 to resolve against Flutter 3.41.9 (analyzer ^9 / meta 1.17.0) without dropping riverpod_lint 3.1.3
 - [Phase 01]: Bundled OFL variable-font TTFs (the only form in google/fonts) and selected weights via pubspec weight descriptors; D-12 glyph audit (01-03) confirms shaping
+- [Phase ?]: AppDatabase.close() spares an injected executor so a shared in-memory store survives a simulated restart (D-09 test shape)
+- [Phase ?]: Minimal GlyphAuditScreen created so the golden test compiles; D-12 baseline + full harness remain plan 01-03 (golden red by design)
+- [Phase ?]: analyzer-9 plugins section must be a map (riverpod_lint), not a list, for flutter analyze to exit 0
 
 ### Pending Todos
 
@@ -90,6 +94,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-05-31T12:26:25.617Z
-Stopped at: Completed 01-01-PLAN.md (foundation toolchain + Wave-0 red tests)
+Last session: 2026-05-31T12:48:52.380Z
+Stopped at: Completed 01-02-PLAN.md (Walking Skeleton)
 Resume file: None
