@@ -42,7 +42,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Depends on**: Nothing (first phase)
 **Requirements**: PLAT-02
 **Success Criteria** (what must be TRUE):
-  1. The app launches on an Android tablet and lays out right-to-left (navigation and reading direction mirrored correctly).
+  1. The app launches on an Android tablet with English/LTR chrome (nav and buttons NOT mirrored) while Arabic content renders as correctly-mirrored RTL islands — `Directionality(rtl)` applied only to Arabic blocks, per D-05; not a globally-mirrored app.
   2. Arabic glyphs render with correct isolated/initial/medial/final connected-script forms across a test set, with no tofu/boxes and no broken joining.
   3. The chosen numeral system is displayed deliberately and consistently (decided, not left to defaults).
   4. The app persists and reads a trivial value via the local database across a restart (the persistence seam works).
