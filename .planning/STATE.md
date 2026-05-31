@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: phase-complete
-stopped_at: "Phase 1 verified PASSED (D-12 human-approved); next: /gsd-plan-phase 2"
-last_updated: "2026-05-31T13:30:00.000Z"
-last_activity: 2026-05-31 — Phase 1 executed (3 plans) + verified PASSED; D-12 glyph audit human-approved on Noto Naskh
+status: context-captured
+stopped_at: "Phase 2 context gathered; next: /gsd-plan-phase 2"
+last_updated: "2026-05-31T14:00:00.000Z"
+last_activity: 2026-05-31 — Phase 2 context captured (stroke path authoring, seed scope, lessons.json skeleton)
 progress:
   total_phases: 10
   completed_phases: 1
@@ -21,7 +21,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
-**Current focus:** Phase 2 — Curriculum Schema & First-Letter Seed (next)
+**Current focus:** Phase 2 — Curriculum Schema & First-Letter Seed (context ready; next: plan)
 
 ## Current Position
 
