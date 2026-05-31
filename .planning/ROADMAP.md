@@ -46,7 +46,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Arabic glyphs render with correct isolated/initial/medial/final connected-script forms across a test set, with no tofu/boxes and no broken joining.
   3. The chosen numeral system is displayed deliberately and consistently (decided, not left to defaults).
   4. The app persists and reads a trivial value via the local database across a restart (the persistence seam works).
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 01-01-PLAN.md — Wave 0: dependency/font/gen-l10n/lint scaffold + six failing validation tests
+- [ ] 01-02-PLAN.md — Walking Skeleton: theme tokens, ArabicText RTL island, Drift persist/read, go_router, landscape lock, Home screen
+- [ ] 01-03-PLAN.md — Glyph-audit risk gate (D-12 golden + human PASS), Practice ink-spike, Settings shell
 **UI hint**: yes
 **Research hint**: yes — RTL + connected-script rendering (R3) is an open question; audit the font against curriculum letters and decide the numeral system before any tracing surface.
 
@@ -169,7 +173,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundations & RTL Shell | 0/TBD | Not started | - |
+| 1. Foundations & RTL Shell | 0/3 | Not started | - |
 | 2. Curriculum Schema & First-Letter Seed | 0/TBD | Not started | - |
 | 3. Trace One Letter End-to-End | 0/TBD | Not started | - |
 | 4. Scoring Quality & Calibration | 0/TBD | Not started | - |
