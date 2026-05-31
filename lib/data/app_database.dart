@@ -1,0 +1,85 @@
+// The local Drift database — Phase 1's persistence seam (D-09).
+//
+// Schema is deliberately trivial: a single key/value `app_settings` table that
+// proves a written value survives an app restart (the test opens a SECOND
+// AppDatabase over the same store and reads the value back). The constructor
+// accepts an optional QueryExecutor so tests inject NativeDatabase.memory().
+//
+// SECURITY (threat T-01-02 / T-01-04): the on-device DB lives in app-private
+// storage and stores NOTHING sensitive in Phase 1 — only a non-sensitive
+// sentinel. No network, no telemetry, and the value is never logged.
+
+import 'dart:io';
+
+import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'app_database.g.dart';
+
+/// Trivial key/value settings table — the persist-proof row (D-09).
+class AppSettings extends Table {
+  TextColumn get key => text()();
+  TextColumn get value => text()();
+
+  @override
+  Set<Column> get primaryKey => {key};
+}
+
+@DriftDatabase(tables: [AppSettings])
+class AppDatabase extends _$AppDatabase {
+  /// Pass a [QueryExecutor] (e.g. `NativeDatabase.memory()`) in tests; defaults
+  /// to a lazily-opened on-device file in app-private storage.
+  ///
+  /// When an executor is INJECTED, the caller owns its lifecycle: a shared
+  /// in-memory executor must survive one AppDatabase being closed so a second
+  /// instance can re-open it (the "simulated restart" of the D-09 test). So
+  /// [close] does not tear down an injected executor; the owner closes it.
+  AppDatabase([QueryExecutor? executor])
+      : _ownsExecutor = executor == null,
+        super(executor ?? _openConnection());
+
+  final bool _ownsExecutor;
+
+  @override
+  int get schemaVersion => 1;
+
+  @override
+  Future<void> close() {
+    // Only close the executor we created; leave injected (shared) executors to
+    // their owner so a "restart" can re-open the same underlying store.
+    if (_ownsExecutor) return super.close();
+    return Future<void>.value();
+  }
+
+  /// Write (or overwrite) a settings value.
+  Future<void> setSetting(String key, String value) async {
+    await into(appSettings).insertOnConflictUpdate(
+      AppSettingsCompanion.insert(key: key, value: value),
+    );
+  }
+
+  /// Read a settings value, or null if absent.
+  Future<String?> getSetting(String key) async {
+    final row = await (select(appSettings)..where((t) => t.key.equals(key)))
+        .getSingleOrNull();
+    return row?.value;
+  }
+}
+
+LazyDatabase _openConnection() {
+  return LazyDatabase(() async {
+    final dir = await getApplicationDocumentsDirectory(); // app-private storage
+    final file = File('${dir.path}${Platform.pathSeparator}qalam.db');
+    return NativeDatabase.createInBackground(file);
+  });
+}
+
+/// Riverpod-codegen provider exposing the app database (Riverpod-only — D-11).
+@Riverpod(keepAlive: true)
+AppDatabase appDatabase(Ref ref) {
+  final db = AppDatabase();
+  ref.onDispose(db.close);
+  return db;
+}

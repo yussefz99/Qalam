@@ -83,6 +83,7 @@ flutter:
   assets:
     - assets/fonts/
     - assets/icons/
+    - assets/logo.svg
 
   # Bundled local TTFs — NO google_fonts/CDN (offline rule, D-03). These
   # families ship only as variable TTFs in the Google Fonts OFL repo; the
