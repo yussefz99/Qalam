@@ -1,10 +1,11 @@
 ---
 phase: 3
 slug: trace-one-letter-end-to-end
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: 2026-06-01
+reviewed_at: 2026-06-01T15:15:06Z
 ---
 
 # Phase 3 — UI Design Contract
@@ -276,11 +277,11 @@ Package Legitimacy Audit). Registry vetting gate: not applicable.
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: PASS
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS (revision 1 — English scale collapsed to 4 roles; Arabic scale isolated)
+- [x] Dimension 5 Spacing: PASS
+- [x] Dimension 6 Registry Safety: PASS
 
-**Approval:** pending
+**Approval:** approved 2026-06-01 (revision 1) — 6/6 dimensions passed, 2 non-blocking recommendations noted
