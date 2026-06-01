@@ -81,14 +81,14 @@
     "description": "Watch step eyebrow (03-UI-SPEC Copywriting Contract, verbatim)."
   },
 
-  "demoWatchHeading": "Watch Me Write Alif.",
+  "demoWatchHeading": "Watch me write baa.",
   "@demoWatchHeading": {
-    "description": "Watch step heading — the mascot Qalam speaks in first person."
+    "description": "Watch step heading — the mascot Qalam speaks. Baa demo loop (matches Home + mockups)."
   },
 
-  "demoWatchTip": "Start at the gold dot. Follow the line down.",
+  "demoWatchTip": "Start at the gold dot. Follow the curve to the left.",
   "@demoWatchTip": {
-    "description": "Watch tip-card body (03-UI-SPEC). Calm, specific guidance — never hype."
+    "description": "Watch tip-card body. Calm, specific guidance for the baa curve — never hype."
   },
 
   "demoTraceEyebrow": "YOUR TURN · TRACE",
@@ -96,14 +96,14 @@
     "description": "Trace step eyebrow (03-UI-SPEC Copywriting Contract, verbatim)."
   },
 
-  "demoTraceHeading": "Now You Trace Alif.",
+  "demoTraceHeading": "Now you trace baa.",
   "@demoTraceHeading": {
-    "description": "Trace step heading — hands the pen to the child."
+    "description": "Trace step heading — hands the pen to the child. Baa demo loop."
   },
 
   "demoTraceProgress": "Stroke 1 of 1",
   "@demoTraceProgress": {
-    "description": "Trace per-stroke progress (alif is one stroke). Western numerals only; pedagogical, not a score."
+    "description": "Trace per-stroke progress (the demo baa is one main stroke). Western numerals only; pedagogical, not a score."
   },
 
   "demoStartTracing": "Start Tracing",
@@ -126,9 +126,9 @@
     "description": "Celebration eyebrow / mastery label (03-UI-SPEC), shown with one gold star glyph."
   },
 
-  "demoCelebrationHeading": "You Learned Alif.",
+  "demoCelebrationHeading": "You learned the letter baa.",
   "@demoCelebrationHeading": {
-    "description": "Celebration heading — calm, dignified mastery moment (Title Case)."
+    "description": "Celebration heading — the mastery moment (Baa demo loop, faithful to mockup)."
   },
 
   "demoCelebrationPraiseAr": "أحسنت",
@@ -141,14 +141,14 @@
     "description": "Celebration primary CTA returning to demo Home (Title Case). No 'See journey' — Journey is Phase 6."
   },
 
-  "demoMissFix": "Start your alif at the top and come down — not from the bottom up.",
+  "demoMissFix": "Your baa needs a deeper curve at the bottom — try again, slower this time.",
   "@demoMissFix": {
-    "description": "HERO miss state — a SPECIFIC named fix in the tutor's warm voice. Verbatim from letters.json alif commonMistakes[wrong_direction].feedback. Never a generic bounce; always names the exact fix."
+    "description": "HERO miss state — a SPECIFIC named fix in the tutor's warm voice (Baa demo loop). Never a generic bounce; always names the exact fix. Mock demo copy (baa is not yet a signed-off curriculum letter)."
   },
 
-  "demoPassPraise": "Beautiful — straight and tall. أحسنت.",
+  "demoPassPraise": "Beautiful — a smooth, deep curve. أحسنت.",
   "@demoPassPraise": {
-    "description": "Clean-pass praise — specific warm praise that names what was good (the straight, tall alif). Never over-praise sloppy work."
+    "description": "Clean-pass praise — specific warm praise that names what was good (the smooth, deep baa curve). Never over-praise sloppy work."
   },
 
   "demoPassContinue": "Continue",
@@ -201,5 +201,39 @@
   "demoHomeWeekProgress": "4 of 6 weekly lessons",
   "@demoHomeWeekProgress": { "description": "Demo Home This-Week progress caption (faithful-to-mockup demo)." },
   "demoHomeSeeJourney": "See journey",
-  "@demoHomeSeeJourney": { "description": "Demo Home This-Week CTA label." }
+  "@demoHomeSeeJourney": { "description": "Demo Home This-Week CTA label." },
+
+  "demoReplay": "Replay",
+  "@demoReplay": { "description": "Watch/Trace canvas replay affordance — replays the stroke-order animation." },
+  "demoWatchTipLabel": "TIP",
+  "@demoWatchTipLabel": { "description": "Watch side-card eyebrow above the one-line tip." },
+  "demoWatchHearSound": "Hear the sound",
+  "@demoWatchHearSound": { "description": "Watch side-card audio affordance (decorative in the mocked demo)." },
+  "demoWatchAgain": "Watch again",
+  "@demoWatchAgain": { "description": "Watch secondary ghost button — replays the demonstration (decorative)." },
+
+  "demoTraceListen": "LISTEN",
+  "@demoTraceListen": { "description": "Trace side-card eyebrow above the baa glyph + sound affordance." },
+  "demoTracePlaySound": "Play sound",
+  "@demoTracePlaySound": { "description": "Trace side-card audio affordance (decorative in the mocked demo)." },
+  "demoTraceMarkCorrect": "Mark correct",
+  "@demoTraceMarkCorrect": { "description": "Trace secondary button from the mockup (decorative in the mocked demo)." },
+  "demoTraceNext": "Next",
+  "@demoTraceNext": { "description": "Trace primary CTA advancing to the Feedback (miss) screen (faithful to mockup)." },
+
+  "demoMissChip": "Let's fix this",
+  "@demoMissChip": { "description": "Feedback miss — a warm coral chip over the canvas. Never red, never a red X." },
+  "demoPassChip": "Beautiful work",
+  "@demoPassChip": { "description": "Feedback pass — a quiet success chip over the canvas." },
+
+  "demoCelebrationStamp": "MASTERED",
+  "@demoCelebrationStamp": { "description": "Celebration rotated teal 'MASTERED' stamp over the giant glyph." },
+  "demoCelebrationTotalLabel": "TOTAL",
+  "@demoCelebrationTotalLabel": { "description": "Celebration eyebrow above the running star total (gamification chrome, owner override)." },
+  "demoCelebrationStarCount": "42",
+  "@demoCelebrationStarCount": { "description": "Celebration running star total after the +3 earned this lesson (Western numerals)." },
+  "demoCelebrationStarsWord": "stars",
+  "@demoCelebrationStarsWord": { "description": "Celebration star-total unit word." },
+  "demoCelebrationStarsDelta": "+3 today",
+  "@demoCelebrationStarsDelta": { "description": "Celebration stars earned this lesson (gamification chrome, owner override)." }
 }

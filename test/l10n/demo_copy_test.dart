@@ -36,13 +36,15 @@ void main() {
       expect(l.demoWatchEyebrow, 'WATCH · STROKE ORDER');
       expect(l.demoTraceEyebrow, 'YOUR TURN · TRACE');
 
-      // Watch / Trace headings (the mascot speaks: "Watch Me Write Alif.").
-      expect(l.demoWatchHeading, contains('Alif'));
+      // Watch / Trace headings (the mascot speaks: "Watch me write baa.").
+      // The demo loop is BAA end-to-end — coherent with the rebuilt Home and
+      // every walkthrough mockup (0X-*).
+      expect(l.demoWatchHeading.toLowerCase(), contains('baa'));
       expect(l.demoWatchHeading.toLowerCase(), contains('watch'));
-      expect(l.demoTraceHeading, contains('Alif'));
+      expect(l.demoTraceHeading.toLowerCase(), contains('baa'));
       expect(l.demoTraceHeading.toLowerCase(), contains('trace'));
 
-      // Stroke progress — Western numerals only (alif is one stroke).
+      // Stroke progress — Western numerals only (the demo baa is one stroke).
       expect(l.demoTraceProgress, contains('1'));
     });
   });
@@ -61,7 +63,7 @@ void main() {
       expect(l.demoBackHome, 'Back Home');
 
       // Celebration: English heading + the Arabic praise island.
-      expect(l.demoCelebrationHeading, 'You Learned Alif.');
+      expect(l.demoCelebrationHeading, 'You learned the letter baa.');
       expect(l.demoCelebrationPraiseAr, 'أحسنت');
     });
   });
@@ -71,13 +73,11 @@ void main() {
         () async {
       final AppLocalizations l = await _loadEn();
 
-      // HERO miss state: a SPECIFIC named fix straight from letters.json.
-      expect(
-        l.demoMissFix,
-        contains('Start your alif at the top'),
-      );
-      // The pass praise is specific warm praise (e.g. "straight and tall").
-      expect(l.demoPassPraise.toLowerCase(), contains('straight and tall'));
+      // HERO miss state: a SPECIFIC named fix in the tutor's warm voice (baa).
+      expect(l.demoMissFix.toLowerCase(), contains('baa'));
+      expect(l.demoMissFix.toLowerCase(), contains('curve'));
+      // The pass praise is specific warm praise (e.g. "smooth, deep curve").
+      expect(l.demoPassPraise.toLowerCase(), contains('deep curve'));
 
       // Neither is a generic chatbot bounce.
       expect(l.demoMissFix.toLowerCase(), isNot(contains('oops')));

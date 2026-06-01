@@ -23,12 +23,16 @@ import 'package:flutter/material.dart';
 
 import '../../theme/colors.dart';
 import '../../theme/dimens.dart';
+import '../../theme/text_styles.dart';
 
 class DottedGuidePainter extends CustomPainter {
   DottedGuidePainter({
     required this.referencePoints,
     required this.inkProgress,
     this.inkColor = QalamColors.inkStroke,
+    this.showStartDot = false,
+    this.startDotColor = QalamColors.reward,
+    this.diacriticDots = const <Offset>[],
   });
 
   /// Normalized (0..1) reference points the guide + ink are drawn from — the
@@ -43,6 +47,17 @@ class DottedGuidePainter extends CustomPainter {
   /// treatment); the Feedback miss screen passes QalamColors.warnSoft (coral) to
   /// highlight the failing stroke — never red.
   final Color inkColor;
+
+  /// When true, a numbered gold start-dot ("1") is painted at the first
+  /// reference point — the sanctioned reward-token gold (Watch/Trace/Feedback).
+  final bool showStartDot;
+
+  /// Color of the numbered start-dot (gold reward token — the only gold here).
+  final Color startDotColor;
+
+  /// Distinguishing diacritic dots (normalized 0..1), painted solid in the
+  /// stroke color — e.g. the single dot under baa. Empty for letters with none.
+  final List<Offset> diacriticDots;
 
   /// The muted dotted-guide color — a neutral token, never gold/coral.
   Color get guideColor => QalamColors.fgMuted;
@@ -129,6 +144,47 @@ class DottedGuidePainter extends CustomPainter {
         ..isAntiAlias = true;
       _paintStroke(canvas, ink, pen);
     }
+
+    // Layer 3: the distinguishing diacritic dot(s) — solid, in the stroke color.
+    if (diacriticDots.isNotEmpty) {
+      final Paint dotPaint = Paint()
+        ..color = inkColor
+        ..style = PaintingStyle.fill
+        ..isAntiAlias = true;
+      const double diacriticRadius = QalamInk.strokeWidth * 0.85;
+      for (final Offset d in diacriticDots) {
+        canvas.drawCircle(
+          Offset(d.dx * size.width, d.dy * size.height),
+          diacriticRadius,
+          dotPaint,
+        );
+      }
+    }
+
+    // Layer 4: the numbered gold start-dot at the first reference point.
+    if (showStartDot) {
+      final Offset start = guide.first;
+      const double startRadius = QalamSpace.space3; // 12px
+      canvas.drawCircle(
+        start,
+        startRadius,
+        Paint()
+          ..color = startDotColor
+          ..style = PaintingStyle.fill
+          ..isAntiAlias = true,
+      );
+      final TextPainter number = TextPainter(
+        text: TextSpan(
+          text: '1',
+          style: QalamTextStyles.label.copyWith(
+            color: QalamColors.fgOnPrimary,
+            height: 1.0,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      number.paint(canvas, start - Offset(number.width / 2, number.height / 2));
+    }
   }
 
   /// Quadratic-smoothed stroke through the sampled points (midpoint smoothing —
@@ -156,5 +212,8 @@ class DottedGuidePainter extends CustomPainter {
   bool shouldRepaint(DottedGuidePainter oldDelegate) =>
       oldDelegate.inkProgress != inkProgress ||
       oldDelegate.inkColor != inkColor ||
+      oldDelegate.showStartDot != showStartDot ||
+      oldDelegate.startDotColor != startDotColor ||
+      !listEquals(oldDelegate.diacriticDots, diacriticDots) ||
       !listEquals(oldDelegate.referencePoints, referencePoints);
 }
