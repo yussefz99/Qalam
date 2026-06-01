@@ -26,7 +26,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundations & RTL Shell** - Runnable RTL app skeleton with Arabic font, routing, theme, and local DB; resolves the connected-script rendering question. (completed 2026-05-31)
 - [ ] **Phase 2: Curriculum Schema & First-Letter Seed** - A faithful curriculum data schema plus a small owner's-mother-signed-off seed (forms, reference stroke paths, common mistakes) for the first letters.
-- [ ] **Phase 02.1: Stroke Reference Correction** (INSERTED) - Replace broken glyph-outline reference strokes with correct open-centerline teaching strokes; in-app authoring trace screen, schema `type` field + closed-loop validator, and a re-signed-off alif. Unblocks Phase 3.
+- [x] **Phase 02.1: Stroke Reference Correction** (INSERTED) - Replace broken glyph-outline reference strokes with correct open-centerline teaching strokes; in-app authoring trace screen, schema `type` field + closed-loop validator, and a re-signed-off alif. Unblocks Phase 3. (completed 2026-06-01)
 - [ ] **Phase 3: Trace One Letter End-to-End** - A child can watch the stroke-order animation, trace a real seeded letter, get on-device geometric feedback, and earn a quiet star — the whole loop, thin.
 - [ ] **Phase 4: Scoring Quality & Calibration** - The scorer rejects wrong-order/sloppy work and accepts good-faith child attempts, with per-letter tolerances calibrated against real child samples with the owner's mother.
 - [ ] **Phase 5: Profiles & Onboarding** - A parent creates a local child profile (name + grade), and the child picks an avatar and nickname on first open.
@@ -105,8 +105,8 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 02.1-02-PLAN.md — Wave 2: corrected alif open centerline (D-06) + load-time validator guard + alif property test + overlay golden (D-07) + human re-sign-off gate
-- [ ] 02.1-04-PLAN.md — Wave 2: in-app authoring trace screen (D-02) + pure-Dart normalize/export + widget test
+- [x] 02.1-02-PLAN.md — Wave 2: corrected alif open centerline (D-06) + load-time validator guard + alif property test + overlay golden (D-07) + human re-sign-off gate
+- [x] 02.1-04-PLAN.md — Wave 2: in-app authoring trace screen (D-02) + pure-Dart normalize/export + widget test
 
 ### Phase 3: Trace One Letter End-to-End
 
