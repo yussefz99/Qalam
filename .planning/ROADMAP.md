@@ -122,7 +122,7 @@ Plans:
   4. The Celebration shows exactly ONE quiet star + the mascot + a warm line; the screens are clean of debug chrome and ready to screenshot.
 
 **Mode:** mvp
-**Plans:** 5 plans
+**Plans:** 2/5 plans executed
 **UI hint:** yes — pure presentation UI; reuse Phase 3's 03-UI-SPEC + design kit. Mocked data only.
 **Research hint:** no — design is locked (Phase 3 UI-SPEC + docs/design/kit). Skip research; plan directly.
 
@@ -130,8 +130,8 @@ Plans:
 
 **Wave 1**
 
-- [ ] 02.1.1-01-PLAN.md — Bundle brand SVGs (mascot+icons) + QalamMascot widget (graceful fallback) + DemoAlif mock content source (S1-04/PLAT-03)
-- [ ] 02.1.1-02-PLAN.md — All six-screen demo copy in gen-l10n + /demo navigable route group (DemoStep, no dead ends) (S1-04/S1-05/PLAT-03)
+- [x] 02.1.1-01-PLAN.md — Bundle brand SVGs (mascot+icons) + QalamMascot widget (graceful fallback) + DemoAlif mock content source (S1-04/PLAT-03)
+- [x] 02.1.1-02-PLAN.md — All six-screen demo copy in gen-l10n + /demo navigable route group (DemoStep, no dead ends) (S1-04/S1-05/PLAT-03)
 
 **Wave 2** *(blocked on Wave 1)*
 

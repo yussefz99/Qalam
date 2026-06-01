@@ -4,8 +4,8 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Phase 3 UI-SPEC approved
-last_updated: "2026-06-01T19:03:25.761Z"
-last_activity: 2026-06-01 -- Phase 02.1.1 planning complete
+last_updated: "2026-06-01T19:07:50.374Z"
+last_activity: 2026-06-01 -- Phase 02.1.1 execution started
 progress:
   total_phases: 12
   completed_phases: 3
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
-**Current focus:** Phase 02.1 — stroke-reference-correction
+**Current focus:** Phase 02.1.1 — presentation-demo-screens-alif-core-loop
 
 ## Current Position
 
-Phase: 03
-Plan: Not started
-Status: Ready to execute
-Last activity: 2026-06-01 -- Phase 02.1.1 planning complete
+Phase: 02.1.1 (presentation-demo-screens-alif-core-loop) — EXECUTING
+Plan: 1 of 5
+Status: Executing Phase 02.1.1
+Last activity: 2026-06-01 -- Phase 02.1.1 execution started
 
 Progress: [██░░░░░░░░] 20% (2 of 10 phases complete)
 
