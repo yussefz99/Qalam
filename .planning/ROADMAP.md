@@ -122,7 +122,7 @@ Plans:
   4. The Celebration shows exactly ONE quiet star + the mascot + a warm line; the screens are clean of debug chrome and ready to screenshot.
 
 **Mode:** mvp
-**Plans:** 3/5 plans executed
+**Plans:** 4/5 plans executed
 **UI hint:** yes — pure presentation UI; reuse Phase 3's 03-UI-SPEC + design kit. Mocked data only.
 **Research hint:** no — design is locked (Phase 3 UI-SPEC + docs/design/kit). Skip research; plan directly.
 
@@ -139,7 +139,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2)*
 
-- [ ] 02.1.1-04-PLAN.md — Trace screen (half-traced alif: ink over dotted guide) + reusable DottedGuidePainter → Feedback (S1-04/S1-05/PLAT-03)
+- [x] 02.1.1-04-PLAN.md — Trace screen (half-traced alif: ink over dotted guide) + reusable DottedGuidePainter → Feedback (S1-04/S1-05/PLAT-03)
 
 **Wave 4** *(blocked on Wave 3)*
 
