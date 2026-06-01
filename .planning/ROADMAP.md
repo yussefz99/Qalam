@@ -100,8 +100,8 @@ Plans:
 Plans:
 **Wave 1**
 
-- [ ] 02.1-01-PLAN.md — Wave 1: StrokeSpec `type` field (D-03) + pure-Dart closed-loop validator (D-04) + `ReferencePath.resolve` identity (S1-04) + Wave-0 tests
-- [ ] 02.1-03-PLAN.md — Wave 1: repurpose the Python extractor to dot-centroid/bbox authoring hints only, deprecate outlines (D-05)
+- [x] 02.1-01-PLAN.md — Wave 1: StrokeSpec `type` field (D-03) + pure-Dart closed-loop validator (D-04) + `ReferencePath.resolve` identity (S1-04) + Wave-0 tests
+- [x] 02.1-03-PLAN.md — Wave 1: repurpose the Python extractor to dot-centroid/bbox authoring hints only, deprecate outlines (D-05)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 

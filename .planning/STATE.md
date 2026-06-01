@@ -4,8 +4,8 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Phase 3 context gathered
-last_updated: "2026-06-01T13:12:59.043Z"
-last_activity: 2026-06-01 -- Phase 02.1 planning complete
+last_updated: "2026-06-01T13:16:56.977Z"
+last_activity: 2026-06-01 -- Phase 02.1 execution started
 progress:
   total_phases: 11
   completed_phases: 2
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
-**Current focus:** Phase 2 — Curriculum Schema & First-Letter Seed (planned; ready to execute)
+**Current focus:** Phase 02.1 — stroke-reference-correction
 
 ## Current Position
 
-Phase: 02 (curriculum-schema-first-letter-seed) — COMPLETE
-Plan: 3 of 3 complete
-Status: Ready to execute
-Last activity: 2026-06-01 -- Phase 02.1 planning complete
+Phase: 02.1 (stroke-reference-correction) — EXECUTING
+Plan: 1 of 4
+Status: Executing Phase 02.1
+Last activity: 2026-06-01 -- Phase 02.1 execution started
 
 Progress: [██░░░░░░░░] 20% (2 of 10 phases complete)
 
