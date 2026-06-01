@@ -149,5 +149,10 @@
   "demoPassPraise": "Beautiful — straight and tall. أحسنت.",
   "@demoPassPraise": {
     "description": "Clean-pass praise — specific warm praise that names what was good (the straight, tall alif). Never over-praise sloppy work."
+  },
+
+  "demoPassContinue": "Continue",
+  "@demoPassContinue": {
+    "description": "Clean-pass primary CTA advancing to the Celebration screen (Title Case). Calm, never hype."
   }
 }

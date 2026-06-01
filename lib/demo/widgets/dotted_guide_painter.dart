@@ -28,6 +28,7 @@ class DottedGuidePainter extends CustomPainter {
   DottedGuidePainter({
     required this.referencePoints,
     required this.inkProgress,
+    this.inkColor = QalamColors.inkStroke,
   });
 
   /// Normalized (0..1) reference points the guide + ink are drawn from — the
@@ -38,8 +39,10 @@ class DottedGuidePainter extends CustomPainter {
   /// leading portion of the path. 0 = no ink (guide only); 1 = fully inked.
   final double inkProgress;
 
-  /// The ink color — deep-ink, the Practice canvas treatment.
-  Color get inkColor => QalamColors.inkStroke;
+  /// The ink-overlay color. Defaults to deep-ink (the Practice canvas
+  /// treatment); the Feedback miss screen passes QalamColors.warnSoft (coral) to
+  /// highlight the failing stroke — never red.
+  final Color inkColor;
 
   /// The muted dotted-guide color — a neutral token, never gold/coral.
   Color get guideColor => QalamColors.fgMuted;
@@ -152,5 +155,6 @@ class DottedGuidePainter extends CustomPainter {
   @override
   bool shouldRepaint(DottedGuidePainter oldDelegate) =>
       oldDelegate.inkProgress != inkProgress ||
+      oldDelegate.inkColor != inkColor ||
       !listEquals(oldDelegate.referencePoints, referencePoints);
 }

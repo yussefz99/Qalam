@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../demo/screens/demo_feedback_screen.dart';
 import '../demo/screens/demo_home_screen.dart';
 import '../demo/screens/demo_trace_screen.dart';
 import '../demo/screens/demo_watch_screen.dart';
@@ -126,7 +127,9 @@ Widget _screenFor(DemoStep step) {
     case DemoStep.trace:
       return const DemoTraceScreen();
     case DemoStep.feedbackMiss:
+      return const DemoFeedbackScreen(variant: DemoFeedbackVariant.miss);
     case DemoStep.feedbackPass:
+      return const DemoFeedbackScreen(variant: DemoFeedbackVariant.pass);
     case DemoStep.celebration:
       return _DemoPlaceholder(step: step);
   }
