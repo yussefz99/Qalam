@@ -86,7 +86,7 @@ Plans:
 **Goal**: Replace the broken glyph-**outline** reference strokes (a closed silhouette loop, perimeter ≈ 3.27) with correct **open centerline** teaching strokes that a pen tip actually travels. Build an in-app authoring trace screen the owner (with his mother) uses to capture each stroke in her prescribed order and direction over a faint Noto Naskh glyph; add a `type` field (line/curve/dot) to the schema and a load-time validator that rejects closed-loop/outline strokes; and re-author **alif** correctly with the owner's re-sign-off as the proven exemplar. The other 27 letters stay `signedOff: false` placeholders, authored at Phase 7's existing sign-off gate. This unblocks Phase 3 (the scorer and the "watch me write" animation both require a correct centerline).
 **Mode:** mvp
 **Depends on**: Phase 2
-**Requirements**: (corrects the CUR-01 seed — ordered reference stroke paths + owner's-mother sign-off; prerequisite for S1-04 and S1-05 in Phase 3)
+**Requirements**: CUR-01 (corrects the Phase-2 reference-stroke seed — ordered centerline paths + owner's-mother sign-off; prerequisite for the Phase 3 trace loop)
 **Success Criteria** (what must be TRUE):
 
   1. No non-dot reference stroke is a closed outline loop — a load-time/test validator rejects closed loops, out-of-range coordinates, and any `direction` string that disagrees with the actual point order; the test suite fails if an outline reaches `letters.json`.
