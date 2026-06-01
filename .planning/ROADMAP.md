@@ -94,13 +94,16 @@ Plans:
   3. Alif carries a correct open top→bottom centerline (length ≈ 1.0, monotonic, straight), its three `commonMistakes` checks are valid against it, and it is re-signed-off by the owner after a visual overlay confirmation.
   4. The same authored path drives the dotted guide, the stroke-order animation, and the geometric scorer (one source of truth, S1-04) — verified by a path-identity test and a per-letter overlay golden.
 
-**Plans**: TBD
+**Plans**: 4 plans
 **UI hint**: minor — an internal owner/authoring tool (trace screen + overlay golden), not child-facing brand UI; a full UI-SPEC is optional (`--skip-ui` acceptable).
 **Research hint**: DONE — see `.planning/research/STROKE-REFERENCE.md` (method survey, data-model change, staged fix, alif correction, owner decisions) and `03-RESEARCH.md` Q1. Plan with `--skip-research`.
 
 Plans:
 
-- [ ] TBD (run /gsd-plan-phase 02.1 to break down)
+- [ ] 02.1-01-PLAN.md — Wave 1: StrokeSpec `type` field (D-03) + pure-Dart closed-loop validator (D-04) + `ReferencePath.resolve` identity (S1-04) + Wave-0 tests
+- [ ] 02.1-02-PLAN.md — Wave 2: corrected alif open centerline (D-06) + load-time validator guard + alif property test + overlay golden (D-07) + human re-sign-off gate
+- [ ] 02.1-03-PLAN.md — Wave 1: repurpose the Python extractor to dot-centroid/bbox authoring hints only, deprecate outlines (D-05)
+- [ ] 02.1-04-PLAN.md — Wave 2: in-app authoring trace screen (D-02) + pure-Dart normalize/export + widget test
 
 ### Phase 3: Trace One Letter End-to-End
 
