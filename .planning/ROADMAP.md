@@ -108,6 +108,28 @@ Plans:
 - [x] 02.1-02-PLAN.md — Wave 2: corrected alif open centerline (D-06) + load-time validator guard + alif property test + overlay golden (D-07) + human re-sign-off gate
 - [x] 02.1-04-PLAN.md — Wave 2: in-app authoring trace screen (D-02) + pure-Dart normalize/export + widget test
 
+### Phase 02.1.1: Presentation Demo Screens (alif core loop) (INSERTED)
+
+**Goal**: A beautiful, screenshot-ready, navigable walkthrough of the full Qalam core loop for alif — Home → Watch → Trace → Tutor Feedback → Celebration — built with the real Flutter widgets and design system but fed **mocked/static content** (no scoring engine, no persistence, no network/model). For the 2026-06-02 course-staff presentation: the screens are *implemented*, the tutor's warm specific feedback is *depicted* in copy, and the presenter narrates the rest. The same widgets become Phase 3's real UI once the engine is wired behind them — so this is the UI layer built first, not throwaway.
+**Depends on**: Phase 1 (theme tokens, RTL shell, ArabicText, router), Phase 2 (alif curriculum data for glyph + mistake copy)
+**Requirements**: S1-04, S1-05, PLAT-03
+**Requirements note**: presentational coverage — these are *depicted* in polished screens (mocked data), not engine-backed; Phase 3 delivers them for real.
+**Success Criteria** (what must be TRUE):
+
+  1. A navigable walkthrough runs Home → Watch → Trace → Feedback → Celebration for alif, tappable in order, with no dead ends.
+  2. Every screen is pixel-faithful to the Qalam design system in RTL on a tablet — tokens only, real mascot (bundled), Noto Naskh/Cairo Arabic glyphs, anti-gamification chrome omitted (no counter/weekly tally/streak/badges).
+  3. The Feedback screen shows the hero state: the failing stroke highlighted in coral with a **specific named fix in the tutor's voice** (e.g. "Start your alif at the top and pull straight down — yours leans left"), plus a clean-pass praise variant — never a generic "try again".
+  4. The Celebration shows exactly ONE quiet star + the mascot + a warm line; the screens are clean of debug chrome and ready to screenshot.
+
+**Mode:** mvp
+**Plans:** 0 plans
+**UI hint:** yes — pure presentation UI; reuse Phase 3's 03-UI-SPEC + design kit. Mocked data only.
+**Research hint:** no — design is locked (Phase 3 UI-SPEC + docs/design/kit). Skip research; plan directly.
+
+Plans:
+
+- [ ] TBD (run /gsd-plan-phase 02.1.1 to break down)
+
 ### Phase 3: Trace One Letter End-to-End
 
 **Goal**: The full core loop working thin: for a seeded letter, the child can watch and replay the correct-stroke-order animation, trace the dotted guide with a stylus, and receive instant on-device feedback on shape and stroke order from a first-cut custom geometric scorer, earning a single quiet star on a clean pass.
