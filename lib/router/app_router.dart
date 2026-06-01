@@ -7,6 +7,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../dev/authoring_screen.dart';
 import '../dev/glyph_audit_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/practice_screen.dart';
@@ -39,6 +40,13 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: '/dev/glyph-audit',
         builder: (context, state) => const GlyphAuditScreen(),
+      ),
+      // DEBUG SEAM — the D-02 stroke authoring tool (trace-over-glyph → tagged
+      // referenceStrokes export). Reachable only by typing this route on a
+      // tablet/emulator; it is NOT surfaced in the user-facing nav (T-02.1-07).
+      GoRoute(
+        path: '/dev/authoring',
+        builder: (context, state) => const AuthoringScreen(),
       ),
       // SEAM ONLY — /parent/* PIN-gated parent area lands in P9 (CONTEXT D-08).
       // Do NOT build the PIN gate now. When it lands, add the route here and a
