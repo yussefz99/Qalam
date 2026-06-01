@@ -91,10 +91,12 @@ List<String> validateStroke(StrokeSpec stroke) {
   }
 
   // --- Check 4: RANGE -------------------------------------------------------
+  var malformed = false;
   for (var i = 0; i < pts.length; i++) {
     final p = pts[i];
     if (p.length != 2) {
       violations.add('Stroke "$label": point $i is not an [x, y] pair.');
+      malformed = true;
       continue;
     }
     final x = p[0], y = p[1];
@@ -108,6 +110,12 @@ List<String> validateStroke(StrokeSpec stroke) {
       );
     }
   }
+
+  // A malformed (non-[x,y]) point makes the geometric checks below — which
+  // index p[0]/p[1] via _distance/_bboxDiagonal — unsafe. Surface the RANGE
+  // violation and stop rather than throwing a RangeError (validateStroke is
+  // public; the JSON load path always emits length-2, but callers may not).
+  if (malformed) return violations;
 
   // --- Check 3: DOT sanity --------------------------------------------------
   if (stroke.type == 'dot') {

@@ -201,13 +201,25 @@ void main() {
       expect(letters.first.id, 'alif');
     });
 
-    test('a closed-loop reference stroke makes load throw', () async {
+    test('a closed-loop reference stroke makes load throw (NOT-CLOSED fires)',
+        () async {
       final repo = CurriculumRepository.fromStrings(
         _loopLettersJson(),
         _lesson01Json,
       );
 
-      await expectLater(repo.getLetters(), throwsA(isA<StateError>()));
+      // Assert on the message so the test proves the closed-loop guard fired —
+      // not merely that SOME validation error was raised.
+      await expectLater(
+        repo.getLetters(),
+        throwsA(
+          isA<StateError>().having(
+            (e) => e.message,
+            'message',
+            contains('closed outline loop'),
+          ),
+        ),
+      );
     });
   });
 }

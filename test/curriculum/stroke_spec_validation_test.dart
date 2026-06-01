@@ -338,5 +338,25 @@ void main() {
       expect(validateReferenceStrokes([alifBadStroke]), isNotEmpty);
       expect(validateStroke(alifBadStroke), isNotEmpty);
     });
+
+    test('a malformed (non-[x,y]) point is reported, not thrown (WR-01)', () {
+      // validateStroke is public; a caller may pass a point that is not an
+      // [x, y] pair. It must surface a RANGE violation, never throw RangeError
+      // from the downstream geometric checks.
+      const bad = StrokeSpec(
+        order: 1,
+        label: 'broken',
+        type: 'line',
+        points: [
+          [0.5],
+          [0.5, 1.0],
+        ],
+        direction: 'topToBottom',
+      );
+
+      late List<String> result;
+      expect(() => result = validateStroke(bad), returnsNormally);
+      expect(result, isNotEmpty);
+    });
   });
 }

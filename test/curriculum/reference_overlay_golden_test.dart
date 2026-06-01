@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qalam/core/scoring/reference_path.dart';
 import 'package:qalam/models/letter.dart';
+import 'package:qalam/theme/text_styles.dart';
 
 Letter _loadAlif() {
   final raw = File('assets/curriculum/letters.json').readAsStringSync();
@@ -108,7 +109,7 @@ void main() {
                           child: Text(
                             alif.char,
                             style: const TextStyle(
-                              fontFamily: 'Noto Naskh Arabic',
+                              fontFamily: QalamFonts.arabic,
                               fontSize: 360,
                               color: Color(0xFF1A2B2B),
                             ),

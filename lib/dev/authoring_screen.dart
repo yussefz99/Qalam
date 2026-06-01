@@ -103,11 +103,26 @@ class _AuthoringScreenState extends ConsumerState<AuthoringScreen> {
         label: 'stroke_${_strokes.length + 1}',
         // A single-point tap defaults to a dot; a swipe defaults to a line.
         type: isDot ? 'dot' : 'line',
-        direction: isDot ? 'tap' : 'topToBottom',
+        // Default the direction from the captured endpoints so the export
+        // passes the validator's DIRECTION check without manual tagging; the
+        // owner can still override via the dropdown.
+        direction: isDot ? 'tap' : _inferDirection(active),
         points: active,
       ));
       _active = null;
     });
+  }
+
+  /// Infers a default direction from a multi-point stroke's endpoints: the
+  /// dominant axis (greater absolute delta) decides horizontal vs vertical, the
+  /// sign decides the orientation. Matches the validator's first→last contract.
+  String _inferDirection(List<Offset> pts) {
+    final dx = pts.last.dx - pts.first.dx;
+    final dy = pts.last.dy - pts.first.dy;
+    if (dx.abs() >= dy.abs()) {
+      return dx >= 0 ? 'leftToRight' : 'rightToLeft';
+    }
+    return dy >= 0 ? 'topToBottom' : 'bottomToTop';
   }
 
   void _clearAll() => setState(() {
