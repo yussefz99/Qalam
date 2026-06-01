@@ -16,11 +16,17 @@ import 'demo_routes.dart';
 
 part 'app_router.g.dart';
 
+/// Compile-time flag that boots the app straight into the presentation demo
+/// walkthrough (phase 02.1.1). Off by default — `flutter run` starts at '/' as
+/// usual. Pass `--dart-define=DEMO=true` to launch at `/demo/home` so the full
+/// Home → Watch → Trace → Feedback → Celebration loop is tappable for a demo.
+const bool kDemoMode = bool.fromEnvironment('DEMO');
+
 /// App router, exposed as a Riverpod-codegen provider (Riverpod-only — D-11).
 @Riverpod(keepAlive: true)
 GoRouter appRouter(Ref ref) {
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: kDemoMode ? '/demo/home' : '/',
     routes: <RouteBase>[
       GoRoute(
         path: '/',
