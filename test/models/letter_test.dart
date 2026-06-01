@@ -122,6 +122,57 @@ void main() {
       expect(stroke.points[0][1], closeTo(0.9, 0.001));
     });
 
+    test('StrokeSpec.fromJson with type "curve" yields type == "curve"', () {
+      final strokeJson = {
+        'order': 1,
+        'label': 'bowl',
+        'type': 'curve',
+        'points': [
+          [0.1, 0.5],
+          [0.5, 0.7],
+          [0.9, 0.5],
+        ],
+        'direction': 'leftToRight',
+      };
+
+      final stroke = StrokeSpec.fromJson(strokeJson);
+
+      expect(stroke.type, 'curve');
+    });
+
+    test('StrokeSpec.fromJson with no type key defaults to "line"', () {
+      final strokeJson = {
+        'order': 1,
+        'label': 'vertical_stroke',
+        'points': [
+          [0.5, 0.0],
+          [0.5, 1.0],
+        ],
+        'direction': 'topToBottom',
+      };
+
+      final stroke = StrokeSpec.fromJson(strokeJson);
+
+      expect(stroke.type, 'line');
+    });
+
+    test('StrokeSpec.fromJson with type "dot" and one point parses', () {
+      final strokeJson = {
+        'order': 2,
+        'label': 'dot',
+        'type': 'dot',
+        'points': [
+          [0.5, 1.2],
+        ],
+        'direction': 'tap',
+      };
+
+      final stroke = StrokeSpec.fromJson(strokeJson);
+
+      expect(stroke.type, 'dot');
+      expect(stroke.points.length, 1);
+    });
+
     test('CommonMistake.fromJson maps id, check, feedback', () {
       final mistakeJson = {
         'id': 'too_short',

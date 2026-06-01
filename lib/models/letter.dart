@@ -32,6 +32,15 @@ class LetterForms {
 class StrokeSpec {
   final int order;
   final String label;
+
+  /// Stroke kind: "line" | "curve" | "dot" (D-03).
+  ///
+  /// A plain String (not a Dart enum) on purpose — keeps `letters.json`
+  /// legible to the owner and his mother and keeps the magic low for a Dart
+  /// newcomer. Validity is enforced by the pure-Dart validator in
+  /// `lib/core/scoring/stroke_validation.dart`, not by the type system.
+  /// A "dot" is a single-point tap; "line"/"curve" are open centerlines.
+  final String type;
   final List<List<double>> points; // normalized 0..1 coordinate pairs
   final String direction;
 
@@ -40,6 +49,7 @@ class StrokeSpec {
     required this.label,
     required this.points,
     required this.direction,
+    this.type = 'line',
   });
 
   factory StrokeSpec.fromJson(Map<String, dynamic> json) {
@@ -51,6 +61,9 @@ class StrokeSpec {
     return StrokeSpec(
       order: json['order'] as int,
       label: json['label'] as String,
+      // Safe default so existing Phase-2 letters.json (no "type" key) still
+      // parses; points remain the source of truth, direction a checked hint.
+      type: json['type'] as String? ?? 'line',
       points: points,
       direction: json['direction'] as String,
     );
