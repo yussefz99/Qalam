@@ -91,9 +91,13 @@ void main() {
     // Gold is allowed here ONLY for the start-dot, via the reward token.
     expect(painter.startDotColor, QalamColors.reward);
 
-    // The guide is not a touch target — it sits under an IgnorePointer.
+    // The guide is not a touch target — it sits under an active IgnorePointer.
     expect(
-      find.ancestor(of: guide, matching: find.byType(IgnorePointer)),
+      find.ancestor(
+        of: guide,
+        matching: find.byWidgetPredicate(
+            (w) => w is IgnorePointer && w.ignoring),
+      ),
       findsOneWidget,
     );
   });
