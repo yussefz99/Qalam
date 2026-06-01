@@ -104,6 +104,10 @@ void main() {
     expect(tester.getSize(backHome).height,
         greaterThanOrEqualTo(QalamTargets.targetComfy));
 
+    // The celebration is a tall scrollable column; bring the CTA into view
+    // before tapping (it sits below the fold on the small test viewport).
+    await tester.ensureVisible(backHome);
+    await tester.pumpAndSettle();
     await tester.tap(backHome);
     await tester.pumpAndSettle();
     expect(

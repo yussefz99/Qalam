@@ -17,13 +17,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../demo/screens/demo_celebration_screen.dart';
 import '../demo/screens/demo_feedback_screen.dart';
 import '../demo/screens/demo_home_screen.dart';
 import '../demo/screens/demo_trace_screen.dart';
 import '../demo/screens/demo_watch_screen.dart';
-import '../theme/colors.dart';
-import '../theme/dimens.dart';
-import '../theme/text_styles.dart';
 
 /// The six ordered steps of the demo walkthrough (DP-04).
 ///
@@ -131,49 +129,7 @@ Widget _screenFor(DemoStep step) {
     case DemoStep.feedbackPass:
       return const DemoFeedbackScreen(variant: DemoFeedbackVariant.pass);
     case DemoStep.celebration:
-      return _DemoPlaceholder(step: step);
+      return const DemoCelebrationScreen();
   }
 }
 
-/// A calm parchment scaffold naming the step + a single tappable "next" CTA, so
-/// the demo group is navigable before the real screens land. Tokens only
-/// (DP-02): parchment background, ink-teal accent, no raw hex/magic numbers.
-class _DemoPlaceholder extends StatelessWidget {
-  const _DemoPlaceholder({required this.step});
-
-  final DemoStep step;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: QalamColors.bg,
-      body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(QalamSpace.space8),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  step.label,
-                  style: QalamTextStyles.display,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: QalamSpace.space8),
-                FilledButton(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: QalamColors.primary,
-                    minimumSize: const Size(QalamTargets.targetLarge,
-                        QalamTargets.targetComfy),
-                  ),
-                  onPressed: () => context.go(step.next.path),
-                  child: Text('Next', style: QalamTextStyles.button),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
