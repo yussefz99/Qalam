@@ -1,0 +1,29 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 280" width="200" height="280" aria-label="Qalam mascot, writing">
+  <ellipse cx="100" cy="265" rx="60" ry="8" fill="#0E5B5F" opacity="0.10"></ellipse>
+  <path d="M60 60 Q60 40 100 40 Q140 40 140 60 L140 210 Q140 230 100 230 Q60 230 60 210 Z" fill="#0E5B5F"></path>
+  <path d="M60 110 Q100 116 140 110" fill="none" stroke="#0a4448" stroke-width="2" opacity="0.5"></path>
+  <path d="M60 160 Q100 166 140 160" fill="none" stroke="#0a4448" stroke-width="2" opacity="0.5"></path>
+  <path d="M72 60 Q70 130 76 200" stroke="#1a797d" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.7"></path>
+  <path d="M60 210 L100 270 L140 210 Z" fill="#168A8F"></path>
+  <path d="M100 230 L100 270" stroke="#F2A60C" stroke-width="2" stroke-linecap="round"></path>
+
+  <rect x="70" y="80" width="60" height="60" rx="14" fill="#FAF6EE"></rect>
+  
+  <ellipse cx="86" cy="108" rx="4" ry="6" fill="#222A2E"></ellipse>
+  <ellipse cx="114" cy="108" rx="4" ry="6" fill="#222A2E"></ellipse>
+  <circle cx="84.5" cy="105" r="1.6" fill="#fff"></circle>
+  <circle cx="112.5" cy="105" r="1.6" fill="#fff"></circle>
+  
+  <path d="M92 126 Q100 124 108 126" fill="none" stroke="#222A2E" stroke-width="2.5" stroke-linecap="round"></path>
+
+  
+  <path d="M58 160 Q44 200 70 215" stroke="#0E5B5F" stroke-width="10" stroke-linecap="round" fill="none"></path>
+  <circle cx="70" cy="215" r="8" fill="#0E5B5F"></circle>
+  
+  <path d="M142 160 Q170 200 168 235" stroke="#0E5B5F" stroke-width="10" stroke-linecap="round" fill="none"></path>
+  <circle cx="168" cy="235" r="8" fill="#0E5B5F"></circle>
+
+  
+  <path d="M100 270 Q120 275 140 268" stroke="#F2A60C" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.7"></path>
+</svg>
