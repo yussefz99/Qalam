@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../demo/screens/demo_home_screen.dart';
 import '../theme/colors.dart';
 import '../theme/dimens.dart';
 import '../theme/text_styles.dart';
@@ -106,9 +107,25 @@ List<RouteBase> demoRoutes() {
       GoRoute(
         path: step.path,
         builder: (BuildContext context, GoRouterState state) =>
-            _DemoPlaceholder(step: step),
+            _screenFor(step),
       ),
   ];
+}
+
+/// Resolves a [DemoStep] to its screen. Real screens land plan-by-plan (03/04/
+/// 05) and replace their entry here; steps without a real screen yet fall back
+/// to the calm [_DemoPlaceholder] so the walkthrough stays navigable end-to-end.
+Widget _screenFor(DemoStep step) {
+  switch (step) {
+    case DemoStep.home:
+      return const DemoHomeScreen();
+    case DemoStep.watch:
+    case DemoStep.trace:
+    case DemoStep.feedbackMiss:
+    case DemoStep.feedbackPass:
+    case DemoStep.celebration:
+      return _DemoPlaceholder(step: step);
+  }
 }
 
 /// A calm parchment scaffold naming the step + a single tappable "next" CTA, so
