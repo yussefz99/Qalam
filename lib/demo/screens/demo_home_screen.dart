@@ -17,7 +17,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../l10n/app_localizations.dart';
-import '../../router/demo_routes.dart';
 import '../../theme/brand_theme_ext.dart';
 import '../../theme/colors.dart';
 import '../../theme/dimens.dart';
@@ -70,7 +69,8 @@ class DemoHomeScreen extends StatelessWidget {
                     _LessonCard(
                       eyebrow: eyebrow,
                       title: lessonTitle,
-                      onTap: () => context.go(DemoStep.watch.path),
+                      // Canonical path is DemoStep.watch.path ('/demo/watch').
+                      onTap: () => context.go('/demo/watch'),
                     ),
                   ],
                 ),

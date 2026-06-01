@@ -19,7 +19,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../l10n/app_localizations.dart';
-import '../../router/demo_routes.dart';
 import '../../theme/brand_theme_ext.dart';
 import '../../theme/colors.dart';
 import '../../theme/dimens.dart';
@@ -77,7 +76,8 @@ class DemoWatchScreen extends StatelessWidget {
                     const SizedBox(height: QalamSpace.space8),
                     _StartTracingButton(
                       label: startTracing,
-                      onPressed: () => context.go(DemoStep.trace.path),
+                      // Canonical path is DemoStep.trace.path ('/demo/trace').
+                      onPressed: () => context.go('/demo/trace'),
                     ),
                   ],
                 ),
