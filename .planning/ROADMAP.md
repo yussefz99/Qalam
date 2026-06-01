@@ -26,6 +26,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundations & RTL Shell** - Runnable RTL app skeleton with Arabic font, routing, theme, and local DB; resolves the connected-script rendering question. (completed 2026-05-31)
 - [ ] **Phase 2: Curriculum Schema & First-Letter Seed** - A faithful curriculum data schema plus a small owner's-mother-signed-off seed (forms, reference stroke paths, common mistakes) for the first letters.
+- [ ] **Phase 02.1: Stroke Reference Correction** (INSERTED) - Replace broken glyph-outline reference strokes with correct open-centerline teaching strokes; in-app authoring trace screen, schema `type` field + closed-loop validator, and a re-signed-off alif. Unblocks Phase 3.
 - [ ] **Phase 3: Trace One Letter End-to-End** - A child can watch the stroke-order animation, trace a real seeded letter, get on-device geometric feedback, and earn a quiet star — the whole loop, thin.
 - [ ] **Phase 4: Scoring Quality & Calibration** - The scorer rejects wrong-order/sloppy work and accepts good-faith child attempts, with per-letter tolerances calibrated against real child samples with the owner's mother.
 - [ ] **Phase 5: Profiles & Onboarding** - A parent creates a local child profile (name + grade), and the child picks an avatar and nickname on first open.
@@ -80,11 +81,32 @@ Plans:
 - [ ] 02-02-PLAN.md — Wave 2: Typed Dart models (Letter, Lesson, sub-types) + unit tests
 - [ ] 02-03-PLAN.md — Wave 3: CurriculumRepository (rootBundle loader, Riverpod provider) + integration tests + Phase 2 completeness gate
 
+### Phase 02.1: Stroke Reference Correction (INSERTED)
+
+**Goal**: Replace the broken glyph-**outline** reference strokes (a closed silhouette loop, perimeter ≈ 3.27) with correct **open centerline** teaching strokes that a pen tip actually travels. Build an in-app authoring trace screen the owner (with his mother) uses to capture each stroke in her prescribed order and direction over a faint Noto Naskh glyph; add a `type` field (line/curve/dot) to the schema and a load-time validator that rejects closed-loop/outline strokes; and re-author **alif** correctly with the owner's re-sign-off as the proven exemplar. The other 27 letters stay `signedOff: false` placeholders, authored at Phase 7's existing sign-off gate. This unblocks Phase 3 (the scorer and the "watch me write" animation both require a correct centerline).
+**Mode:** mvp
+**Depends on**: Phase 2
+**Requirements**: (corrects the CUR-01 seed — ordered reference stroke paths + owner's-mother sign-off; prerequisite for S1-04 and S1-05 in Phase 3)
+**Success Criteria** (what must be TRUE):
+
+  1. No non-dot reference stroke is a closed outline loop — a load-time/test validator rejects closed loops, out-of-range coordinates, and any `direction` string that disagrees with the actual point order; the test suite fails if an outline reaches `letters.json`.
+  2. The owner can author a letter's strokes in-app by tracing over a faint Noto Naskh glyph, in his mother's order and direction, exporting normalized `referenceStrokes` (`order`, `label`, `type`, `direction`).
+  3. Alif carries a correct open top→bottom centerline (length ≈ 1.0, monotonic, straight), its three `commonMistakes` checks are valid against it, and it is re-signed-off by the owner after a visual overlay confirmation.
+  4. The same authored path drives the dotted guide, the stroke-order animation, and the geometric scorer (one source of truth, S1-04) — verified by a path-identity test and a per-letter overlay golden.
+
+**Plans**: TBD
+**UI hint**: minor — an internal owner/authoring tool (trace screen + overlay golden), not child-facing brand UI; a full UI-SPEC is optional (`--skip-ui` acceptable).
+**Research hint**: DONE — see `.planning/research/STROKE-REFERENCE.md` (method survey, data-model change, staged fix, alif correction, owner decisions) and `03-RESEARCH.md` Q1. Plan with `--skip-research`.
+
+Plans:
+
+- [ ] TBD (run /gsd-plan-phase 02.1 to break down)
+
 ### Phase 3: Trace One Letter End-to-End
 
 **Goal**: The full core loop working thin: for a seeded letter, the child can watch and replay the correct-stroke-order animation, trace the dotted guide with a stylus, and receive instant on-device feedback on shape and stroke order from a first-cut custom geometric scorer, earning a single quiet star on a clean pass.
 **Mode:** mvp
-**Depends on**: Phase 2
+**Depends on**: Phase 2, Phase 02.1 (corrected centerline reference strokes — the scorer and animation require it)
 **Requirements**: S1-04, S1-05, S1-10, PLAT-03
 **Success Criteria** (what must be TRUE):
 
