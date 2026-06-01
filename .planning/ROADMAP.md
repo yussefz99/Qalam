@@ -121,7 +121,12 @@ Plans:
   3. Within ~300 ms of stylus-up and fully offline, the child sees feedback that evaluates stroke count, order, direction, and shape — with the failing stroke highlighted and a specific named fix (never a generic "try again").
   4. A clean completion shows a single quiet star; there are no streaks, badges, confetti, timers, or over-praise.
 
-**Plans**: TBD
+**Plans**: 4 plans
+Plans:
+- [ ] 03-01-PLAN.md — Wave 1 (TDD): pure-Dart geometric stroke scorer + resampler + named-mistake mapping (S1-05)
+- [ ] 03-02-PLAN.md — Wave 1: Drift LetterMastery table + 1→2 migration + ProgressRepository (S1-10/D-09)
+- [ ] 03-03-PLAN.md — Wave 2: stylus-filtered capture canvas + dotted guide + PathMetric stroke-order animation + recognizer seam (S1-04/S1-05/D-13/D-16)
+- [ ] 03-04-PLAN.md — Wave 3: Watch→Trace→Celebrate flow + session controller + one-star celebration + anti-gamification omissions (S1-04/S1-05/S1-10/PLAT-03)
 **UI hint**: yes
 **Research hint**: yes — DEEPEST-RISK PHASE. The custom geometric stroke-order/shape scorer is NOT provided by ML Kit (ML Kit returns only {text, score} as a secondary letter-identity check). Stroke capture must use low-level pointer events (not GestureDetector) to preserve per-stroke order/count; the ML Kit Arabic model must be downloaded-and-cached before first scoring. Flag for deep iteration with the owner's mother.
 
@@ -240,7 +245,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 |-------|----------------|--------|-----------|
 | 1. Foundations & RTL Shell | 3/3 | Complete   | 2026-05-31 |
 | 2. Curriculum Schema & First-Letter Seed | 0/3 | Planned | - |
-| 3. Trace One Letter End-to-End | 0/TBD | Not started | - |
+| 3. Trace One Letter End-to-End | 0/4 | Planned | - |
 | 4. Scoring Quality & Calibration | 0/TBD | Not started | - |
 | 5. Profiles & Onboarding | 0/TBD | Not started | - |
 | 6. Lesson Progression & Home | 0/TBD | Not started | - |
