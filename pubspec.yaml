@@ -84,6 +84,7 @@ flutter:
     - assets/curriculum/
     - assets/fonts/
     - assets/icons/
+    - assets/mascot/
     - assets/logo.svg
 
   # Bundled local TTFs — NO google_fonts/CDN (offline rule, D-03). These
