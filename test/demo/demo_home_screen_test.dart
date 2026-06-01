@@ -1,15 +1,15 @@
-// Behavior contract for the de-gamified demo Home (plan 02.1.1-03, DP-04/DP-06).
+// Contract for the presentation demo Home (plan 02.1.1-03, rebuilt 2026-06-02).
 //
-// Home opens the walkthrough narrative: the idle mascot, a warm static greeting,
-// and an alif "Today's Lesson" card that taps through to Watch. It must PROVE the
-// anti-gamification stance even in the demo (DP-06, BINDING) — the mockup's star
-// counter / weekly tally / three-star rating are OMITTED and asserted absent.
+// OWNER OVERRIDE: this Home is faithful to docs/design home.png, INCLUDING the
+// gamification chrome (header star count, three-star lesson rating, "This Week ·
+// N stars" tally). That intentionally reverses the earlier anti-gamification
+// assertion this file used to enforce — see CLAUDE.md "Decided" (to reconcile).
+// The lesson card remains the one interactive affordance → Watch.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:qalam/demo/demo_alif.dart';
 import 'package:qalam/demo/screens/demo_home_screen.dart';
 import 'package:qalam/l10n/app_localizations.dart';
 import 'package:qalam/theme/app_theme.dart';
@@ -17,8 +17,6 @@ import 'package:qalam/theme/colors.dart';
 import 'package:qalam/widgets/arabic_text.dart';
 import 'package:qalam/widgets/qalam_mascot.dart';
 
-/// A marker the Watch slot resolves to, so Test 2 can prove navigation landed
-/// on /demo/watch WITHOUT depending on the real DemoWatchScreen (built later).
 class _WatchSentinel extends StatelessWidget {
   const _WatchSentinel();
   @override
@@ -49,41 +47,35 @@ Widget _harness(GoRouter router) => MaterialApp.router(
     );
 
 void main() {
-  testWidgets('Test 1: renders idle mascot, warm greeting, and alif lesson card',
-      (tester) async {
+  testWidgets('Test 1: idle mascot, welcome, and Baa lesson card', (tester) async {
     await tester.pumpWidget(_harness(_router()));
     await tester.pumpAndSettle();
 
-    // Idle-pose mascot present.
     expect(
       find.byWidgetPredicate(
           (w) => w is QalamMascot && w.pose == QalamPose.idle),
       findsOneWidget,
     );
+    expect(find.text('Welcome back, Layla.'), findsOneWidget);
 
-    // The warm static greeting (gen-l10n demoHomeGreeting).
-    expect(find.text("Let's learn, Layla."), findsOneWidget);
-
-    // The alif glyph rendered through the ArabicText RTL island (not raw Text).
+    // The Baa lesson tile renders through the ArabicText RTL island.
     expect(
-      find.byWidgetPredicate(
-          (w) => w is ArabicText && w.text == DemoAlif.glyph),
+      find.byWidgetPredicate((w) => w is ArabicText && w.text == 'ب'),
       findsOneWidget,
     );
-
-    // The lesson title.
-    expect(find.text('Alif'), findsOneWidget);
+    expect(find.text('The letter Baa'), findsOneWidget);
   });
 
-  testWidgets('Test 2: tapping the alif lesson card navigates to /demo/watch',
+  testWidgets('Test 2: tapping the lesson card navigates to /demo/watch',
       (tester) async {
     final GoRouter router = _router();
     await tester.pumpWidget(_harness(router));
     await tester.pumpAndSettle();
 
-    // Tap the alif glyph island (it lives inside the tappable lesson card).
-    await tester.tap(find.byWidgetPredicate(
-        (w) => w is ArabicText && w.text == DemoAlif.glyph));
+    final Finder card = find.byKey(const Key('demoLessonCard'));
+    await tester.ensureVisible(card);
+    await tester.pumpAndSettle();
+    await tester.tap(card);
     await tester.pumpAndSettle();
 
     expect(
@@ -93,22 +85,23 @@ void main() {
     expect(find.byType(_WatchSentinel), findsOneWidget);
   });
 
-  testWidgets('Test 3 (BINDING): no gamification chrome on Home', (tester) async {
+  testWidgets('Test 3: faithful-to-mockup chrome (nav rail + gamification)',
+      (tester) async {
     await tester.pumpWidget(_harness(_router()));
     await tester.pumpAndSettle();
 
-    final RegExp gamification =
-        RegExp(r'(stars?\b|weekly|streak|badge|\+\s*\d)', caseSensitive: false);
-    expect(
-      find.byWidgetPredicate(
-        (w) => w is Text && w.data != null && gamification.hasMatch(w.data!),
-      ),
-      findsNothing,
-      reason: 'Home must omit star counter / weekly tally / streak hype (DP-06)',
-    );
+    // Left nav rail.
+    expect(find.text('Home'), findsOneWidget);
+    expect(find.text('Journey'), findsOneWidget);
+    expect(find.text('Parent'), findsOneWidget);
+
+    // Gamification chrome present per the owner override (was BINDING-absent).
+    expect(find.text('39'), findsOneWidget); // header star count
+    expect(find.text('THIS WEEK'), findsOneWidget);
+    expect(find.text('3 lessons · 9 stars'), findsOneWidget);
   });
 
-  testWidgets('Test 4: plain Scaffold on parchment, never white', (tester) async {
+  testWidgets('Test 4: parchment Scaffold, never white', (tester) async {
     await tester.pumpWidget(_harness(_router()));
     await tester.pumpAndSettle();
 
