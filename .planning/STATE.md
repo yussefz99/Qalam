@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 Phase: 03
 Plan: Not started
 Status: Executing Phase 02.1.1
-Last activity: 2026-06-01 - Completed quick task 260601-wa0: DEMO launch flag (boot app at /demo/home)
+Last activity: 2026-06-02 - Completed quick task 260602-00f: demo Home rebuilt faithful to home.png (owner override re: gamification)
 
 Progress: [██░░░░░░░░] 20% (2 of 10 phases complete)
 
@@ -96,6 +96,7 @@ None yet.
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260601-wa0 | Add DEMO launch flag to boot app at /demo/home | 2026-06-01 | eed35c0 | [260601-wa0-add-demo-launch-flag-to-boot-app-at-demo](./quick/260601-wa0-add-demo-launch-flag-to-boot-app-at-demo/) |
+| 260602-00f | Rebuild demo Home faithful to home.png (owner override: gamification) | 2026-06-02 | 586b195 | [260602-00f-rebuild-demo-home-faithful-to-home-png-d](./quick/260602-00f-rebuild-demo-home-faithful-to-home-png-d/) |
 
 ## Deferred Items
 
