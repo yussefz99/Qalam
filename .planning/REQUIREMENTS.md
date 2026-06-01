@@ -52,7 +52,7 @@ CUR-/PLAT- IDs.
 
 ### Curriculum Content & Platform (derived from research)
 
-- [ ] **CUR-01**: The full curriculum (28 letters + words + sentences + grammar) authored by the owner's mother is held in a faithful data schema that the code only reads
+- [x] **CUR-01**: The full curriculum (28 letters + words + sentences + grammar) authored by the owner's mother is held in a faithful data schema that the code only reads
   - *Accept:* schema holds, per letter: contextual forms, ordered reference stroke paths (coordinates), stroke order, intro order, clean-reps-to-advance, per-letter pass tolerances, 3–4 common mistakes (each with a child-friendly fix message), and audio references; words/sentences/grammar content modeled; placeholder entries (if any) are explicitly marked; owner's-mother sign-off gate before lessons ship
 - [ ] **PLAT-01**: The app runs fully offline, local-only, with no account or login (satisfies NTH-05 by design)
   - *Accept:* every v1 flow works airplane-mode; the ML Kit Arabic model is fetched once at onboarding then cached; verified on a fresh install with no network
@@ -103,7 +103,7 @@ Which phase covers which requirement. Each v1 requirement maps to exactly one ph
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | PLAT-02 | Phase 1 — Foundations & RTL Shell | Complete |
-| CUR-01 | Phase 7 — Full Curriculum & Pronunciation Audio (seeded in Phase 2) | Pending |
+| CUR-01 | Phase 7 — Full Curriculum & Pronunciation Audio (seeded in Phase 2) | Complete |
 | S1-04 | Phase 3 — Trace One Letter End-to-End | Pending |
 | S1-05 | Phase 3 — Trace One Letter End-to-End (deepened in Phase 4) | Pending |
 | S1-10 | Phase 3 — Trace One Letter End-to-End | Pending |
