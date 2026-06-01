@@ -122,7 +122,7 @@ Plans:
   4. The Celebration shows exactly ONE quiet star + the mascot + a warm line; the screens are clean of debug chrome and ready to screenshot.
 
 **Mode:** mvp
-**Plans:** 4/5 plans executed
+**Plans:** 5/5 plans complete
 **UI hint:** yes — pure presentation UI; reuse Phase 3's 03-UI-SPEC + design kit. Mocked data only.
 **Research hint:** no — design is locked (Phase 3 UI-SPEC + docs/design/kit). Skip research; plan directly.
 
@@ -143,7 +143,7 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3)*
 
-- [ ] 02.1.1-05-PLAN.md — HERO Feedback (coral failing stroke + specific named fix; clean-pass praise) + Celebration (ONE quiet star→Back Home) (S1-05/PLAT-03)
+- [x] 02.1.1-05-PLAN.md — HERO Feedback (coral failing stroke + specific named fix; clean-pass praise) + Celebration (ONE quiet star→Back Home) (S1-05/PLAT-03)
 
 ### Phase 3: Trace One Letter End-to-End
 
