@@ -38,8 +38,10 @@ owner's Claude Design** (`docs/design/kit/`).
   HandwritingRecognizer seam is left ready, but no ML Kit in Phase 3).
 - **Scorer calibration / strictness tuning** against real child samples with the
   owner's mother → **Phase 4** (Phase 3 ships a deliberately lenient first-cut).
-- A rebuilt **Home** screen (needs profiles, Phase 5; progression, Phase 6) — stays a
-  Phase-1 shell.
+- A *fully* rebuilt **Home** with real profiles (Phase 5) and progression/journey data
+  (Phase 6). **Amended by D-17:** a presentable **demo home shell** (de-gamified, static
+  greeting, locked future nav) IS pulled into Phase 3 for the 2026-06-02 meeting; the
+  data-backed Home is still Phase 5/6.
 - The **Journey / alphabet map** where the star normally lands → **Phase 6**.
 - **Pronunciation audio** / the "Play sound" button → **Phase 7** (no audio assets
   exist yet; the button is omitted in Phase 3).
@@ -142,6 +144,26 @@ owner's Claude Design** (`docs/design/kit/`).
   (Phase 4 SC#2). Leave the `HandwritingRecognizer` interface seam ready but
   unimplemented-by-ML-Kit in Phase 3. This isolates the flagged model-download risk
   out of the deepest-risk phase.
+
+### Demo home screen (added 2026-06-01 — pulled forward for course-staff meeting)
+
+- **D-17:** **A presentable "demo home" is pulled forward into Phase 3**, amending D-02's
+  "minimal Start entry point / NOT a rebuilt Home." Rationale: a crucial course-staff
+  meeting on 2026-06-02 needs a partial app that *feels* real — Home → Watch → Trace →
+  Celebrate → Home. This supersedes the "rebuilt Home → Phase 5/6" out-of-scope line for
+  the **demo shell only** (no profiles, no real progression data — those stay Phase 5/6).
+  Built faithfully to `docs/design/kit/project/screenshots/home.png` **warmth** (mascot,
+  "Welcome back", a "Today's lesson" card showing the **alif** glyph that taps into the
+  trace flow at `lesson_01`), with these binding constraints:
+  - **De-gamified (owner's call):** OMIT the header running-star counter ("⭐ 39"), the
+    "THIS WEEK · N stars" weekly tally + weekly progress bar, and the per-lesson 3-star
+    rating on the lesson card. Consistent with D-03/D-08, PLAT-03, and
+    [[design-predates-antigamification]]. Stars remain mastery-only.
+  - **No dead routes:** the **Journey** and **Parent** side-nav items and any "See
+    journey" affordance render as visibly **"Coming soon" / locked** (disabled, not
+    wired) — they signal the roadmap without breaking. Journey is Phase 6, Parent Phase 9.
+  - The greeting name is a **static placeholder** (no profile system yet, Phase 5); do
+    not invent a fake stars/lessons dataset to populate omitted widgets.
 
 ### Claude's Discretion
 
