@@ -12,6 +12,7 @@ import '../dev/glyph_audit_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/practice_screen.dart';
 import '../screens/settings_screen.dart';
+import 'demo_routes.dart';
 
 part 'app_router.g.dart';
 
@@ -48,6 +49,12 @@ GoRouter appRouter(Ref ref) {
         path: '/dev/authoring',
         builder: (context, state) => const AuthoringScreen(),
       ),
+      // DEMO WALKTHROUGH — the phase-02.1.1 presentation route group (DP-03).
+      // Six ordered, tappable demo screens (Home → Watch → Trace →
+      // Feedback·miss → Feedback·pass → Celebration → Home) with no dead ends.
+      // Screen plans (03/04/05) replace the placeholder builders with real
+      // widgets; the path map + ordering stay fixed here. See demo_routes.dart.
+      ...demoRoutes(),
       // SEAM ONLY — /parent/* PIN-gated parent area lands in P9 (CONTEXT D-08).
       // Do NOT build the PIN gate now. When it lands, add the route here and a
       // redirect guard, e.g.:

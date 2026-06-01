@@ -59,5 +59,95 @@
   "keepWriting": "Keep Writing",
   "@keepWriting": {
     "description": "Non-destructive dismiss action on the Clear-canvas confirmation dialog."
+  },
+
+  "demoHomeGreeting": "Let's learn, Layla.",
+  "@demoHomeGreeting": {
+    "description": "Demo Home warm greeting. Static placeholder name (no profile system — Phase 5). DP-05/specifics."
+  },
+
+  "demoLessonEyebrow": "TODAY'S LESSON",
+  "@demoLessonEyebrow": {
+    "description": "Demo Home eyebrow above the alif lesson card (Label scale, dotted-caption voice)."
+  },
+
+  "demoLessonTitle": "Alif",
+  "@demoLessonTitle": {
+    "description": "Demo Home lesson-card title — the one signed-off letter for this loop."
+  },
+
+  "demoWatchEyebrow": "WATCH · STROKE ORDER",
+  "@demoWatchEyebrow": {
+    "description": "Watch step eyebrow (03-UI-SPEC Copywriting Contract, verbatim)."
+  },
+
+  "demoWatchHeading": "Watch Me Write Alif.",
+  "@demoWatchHeading": {
+    "description": "Watch step heading — the mascot Qalam speaks in first person."
+  },
+
+  "demoWatchTip": "Start at the gold dot. Follow the line down.",
+  "@demoWatchTip": {
+    "description": "Watch tip-card body (03-UI-SPEC). Calm, specific guidance — never hype."
+  },
+
+  "demoTraceEyebrow": "YOUR TURN · TRACE",
+  "@demoTraceEyebrow": {
+    "description": "Trace step eyebrow (03-UI-SPEC Copywriting Contract, verbatim)."
+  },
+
+  "demoTraceHeading": "Now You Trace Alif.",
+  "@demoTraceHeading": {
+    "description": "Trace step heading — hands the pen to the child."
+  },
+
+  "demoTraceProgress": "Stroke 1 of 1",
+  "@demoTraceProgress": {
+    "description": "Trace per-stroke progress (alif is one stroke). Western numerals only; pedagogical, not a score."
+  },
+
+  "demoStartTracing": "Start Tracing",
+  "@demoStartTracing": {
+    "description": "Watch → Trace CTA (Title Case)."
+  },
+
+  "demoTraceSubmit": "Done — Check My Work",
+  "@demoTraceSubmit": {
+    "description": "Warm, child-appropriate Trace submit / stylus-up CTA (Title Case). Plan 04 references this key BY NAME for the Trace submit affordance."
+  },
+
+  "demoTryAgain": "Try Again",
+  "@demoTryAgain": {
+    "description": "Trace miss retry CTA — retry the SAME stroke after a named fix; unlimited, no counter (Title Case)."
+  },
+
+  "demoCelebrationEyebrow": "MASTERED",
+  "@demoCelebrationEyebrow": {
+    "description": "Celebration eyebrow / mastery label (03-UI-SPEC), shown with one gold star glyph."
+  },
+
+  "demoCelebrationHeading": "You Learned Alif.",
+  "@demoCelebrationHeading": {
+    "description": "Celebration heading — calm, dignified mastery moment (Title Case)."
+  },
+
+  "demoCelebrationPraiseAr": "أحسنت",
+  "@demoCelebrationPraiseAr": {
+    "description": "Celebration Arabic praise island (RTL, Noto Naskh) — 'well done', paired with the English line. Never bold/italic/letterSpaced."
+  },
+
+  "demoBackHome": "Back Home",
+  "@demoBackHome": {
+    "description": "Celebration primary CTA returning to demo Home (Title Case). No 'See journey' — Journey is Phase 6."
+  },
+
+  "demoMissFix": "Start your alif at the top and come down — not from the bottom up.",
+  "@demoMissFix": {
+    "description": "HERO miss state — a SPECIFIC named fix in the tutor's warm voice. Verbatim from letters.json alif commonMistakes[wrong_direction].feedback. Never a generic bounce; always names the exact fix."
+  },
+
+  "demoPassPraise": "Beautiful — straight and tall. أحسنت.",
+  "@demoPassPraise": {
+    "description": "Clean-pass praise — specific warm praise that names what was good (the straight, tall alif). Never over-praise sloppy work."
   }
 }
