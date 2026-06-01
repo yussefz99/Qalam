@@ -122,7 +122,7 @@ Plans:
   4. The Celebration shows exactly ONE quiet star + the mascot + a warm line; the screens are clean of debug chrome and ready to screenshot.
 
 **Mode:** mvp
-**Plans:** 2/5 plans executed
+**Plans:** 3/5 plans executed
 **UI hint:** yes — pure presentation UI; reuse Phase 3's 03-UI-SPEC + design kit. Mocked data only.
 **Research hint:** no — design is locked (Phase 3 UI-SPEC + docs/design/kit). Skip research; plan directly.
 
@@ -135,7 +135,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1)*
 
-- [ ] 02.1.1-03-PLAN.md — De-gamified demo Home (mascot+greeting+alif card→Watch) + Watch screen (dotted alif + gold start-dot + write mascot→Trace) (S1-04/PLAT-03)
+- [x] 02.1.1-03-PLAN.md — De-gamified demo Home (mascot+greeting+alif card→Watch) + Watch screen (dotted alif + gold start-dot + write mascot→Trace) (S1-04/PLAT-03)
 
 **Wave 3** *(blocked on Wave 2)*
 
