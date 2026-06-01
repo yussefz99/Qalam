@@ -3,7 +3,7 @@
 // Two layers, ONE source of truth (Pitfall 5): both the dotted reference guide
 // and the ink overlay are derived from the same resolved, normalized reference
 // points (DemoAlif / ReferencePath.resolve) scaled to the canvas — the glyph is
-// PAINTED, never rendered as a Text('…') string that could drift from the
+// PAINTED, never rendered as a Text('…') string that could diverge from the
 // traced path.
 //
 //   1. Dotted guide  — the full reference path as evenly dashed segments, in a
