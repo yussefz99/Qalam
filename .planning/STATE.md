@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 Phase: 03
 Plan: Not started
 Status: Executing Phase 02.1.1
-Last activity: 2026-06-01
+Last activity: 2026-06-01 - Completed quick task 260601-wa0: DEMO launch flag (boot app at /demo/home)
 
 Progress: [██░░░░░░░░] 20% (2 of 10 phases complete)
 
@@ -90,6 +90,12 @@ None yet.
 - **Geometric stroke scorer (deepest risk, Phase 3–4):** NOT provided by ML Kit (ML Kit gives only {text, score}); custom build + per-letter calibration against real child samples.
 - **Offline / one-time model download (open question, Phase 10):** verify on a fresh, no-network install.
 - ~~**Phase 2 sign-off gate:**~~ CLOSED — alif signedOff: true, 1 referenceStroke (64 pts), 3 commonMistakes authored. Phase 3 is unblocked.
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260601-wa0 | Add DEMO launch flag to boot app at /demo/home | 2026-06-01 | eed35c0 | [260601-wa0-add-demo-launch-flag-to-boot-app-at-demo](./quick/260601-wa0-add-demo-launch-flag-to-boot-app-at-demo/) |
 
 ## Deferred Items
 
