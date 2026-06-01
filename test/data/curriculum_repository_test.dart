@@ -1,7 +1,37 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qalam/data/curriculum_repository.dart';
 import 'package:qalam/models/letter.dart';
 import 'package:qalam/models/lesson.dart';
+
+/// A letter whose single non-dot stroke is a CLOSED loop (first ≈ last, long
+/// perimeter) — the exact shape the load-time D-04 guard must reject.
+const _loopLetterJson = '''
+{
+  "id": "alif",
+  "char": "ا",
+  "name": {"ar": "x", "display": "Alif"},
+  "introOrder": 1,
+  "forms": {"isolated": "ا", "initial": "ا", "medial": "ا", "final": "ا"},
+  "referenceStrokes": [
+    {
+      "order": 1,
+      "label": "vertical_stroke",
+      "type": "line",
+      "points": [[0.1, 0.1], [0.9, 0.1], [0.5, 0.9], [0.1, 0.1]],
+      "direction": "topToBottom"
+    }
+  ],
+  "cleanRepsToAdvance": 3,
+  "commonMistakes": [],
+  "mistakesStatus": "authored",
+  "signedOff": true,
+  "audio": {"letter": null, "examples": []}
+}
+''';
+
+String _loopLettersJson() => '{"letters": [$_loopLetterJson]}';
 
 // Minimal valid alif letter JSON string for fixtures
 const _alifEntry = '''
@@ -154,6 +184,30 @@ void main() {
       final second = await repo.getLetters();
 
       expect(identical(first, second), true);
+    });
+  });
+
+  group('CurriculumRepository — load-time D-04 guard (T-02.1-03)', () {
+    test('the SHIPPED letters.json passes the validator at load', () async {
+      // Read the real shipped asset off disk (not a fixture) and load it through
+      // the repository — no outline may ship, so this must not throw.
+      final shipped =
+          File('assets/curriculum/letters.json').readAsStringSync();
+      final repo = CurriculumRepository.fromStrings(shipped, _lesson01Json);
+
+      final letters = await repo.getLetters();
+
+      expect(letters.length, 28);
+      expect(letters.first.id, 'alif');
+    });
+
+    test('a closed-loop reference stroke makes load throw', () async {
+      final repo = CurriculumRepository.fromStrings(
+        _loopLettersJson(),
+        _lesson01Json,
+      );
+
+      await expectLater(repo.getLetters(), throwsA(isA<StateError>()));
     });
   });
 }

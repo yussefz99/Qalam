@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import 'package:qalam/core/scoring/stroke_validation.dart';
 import 'package:qalam/models/letter.dart';
 import 'package:qalam/models/lesson.dart';
 
@@ -37,10 +38,27 @@ class CurriculumRepository {
     final lettersDecoded =
         (json.decode(lettersRaw) as Map<String, dynamic>)['letters']
             as List<dynamic>;
-    _letters = (lettersDecoded
+    final parsed = (lettersDecoded
             .map((e) => Letter.fromJson(e as Map<String, dynamic>))
             .toList())
       ..sort((a, b) => a.introOrder.compareTo(b.introOrder));
+
+    // Load-time D-04 guard (T-02.1-03): run the closed-loop/direction/dot/range/
+    // order validator over every letter's reference strokes. An outline (or any
+    // invalid stroke) must NEVER load silently — throw with the offending letter
+    // id + violation messages. Validate into a local first so a throw does not
+    // poison the cache (`_letters` stays null and a retry re-runs the guard).
+    for (final letter in parsed) {
+      final violations = validateReferenceStrokes(letter.referenceStrokes);
+      if (violations.isNotEmpty) {
+        throw StateError(
+          'Invalid referenceStrokes for letter "${letter.id}": '
+          '${violations.join('; ')}',
+        );
+      }
+    }
+
+    _letters = parsed;
     _lettersView = List.unmodifiable(_letters!);
 
     final lessonsDecoded =
