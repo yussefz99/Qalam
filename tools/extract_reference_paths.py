@@ -1,23 +1,52 @@
 """
-Arabic letter contour extraction tool for Qalam.
+Arabic letter AUTHORING-HINT extractor for Qalam.
 
-Reads assets/fonts/NotoNaskhArabic-Regular.ttf, extracts per-letter glyph
-contours as normalized 0..1 polylines (N=64 points per contour), and writes
-tools/candidate_paths.json for the owner to inspect and map to teaching strokes.
+================================ DEPRECATION ================================
+THIS TOOL NO LONGER EMITS TEACHING STROKES, AND IT NEVER WILL AGAIN.
+
+Outlines are NOT teaching strokes. A glyph *outline* (the closed contour
+around the letter's printed body) is the wrong shape for both the geometric
+stroke scorer and the "watch me write" pen-tip animation (S1-04). The body
+*centerline* — the path a pen actually travels — is authored by the owner in
+the in-app trace screen, in the order/direction the owner's mother prescribes.
+See `.planning/research/STROKE-REFERENCE.md` (§2 why outlines are wrong, §7.1
+what this tool is allowed to do).
+
+This tool was repurposed (D-05) to emit only AUTHORING HINTS:
+  (a) dot centroids — one [x, y] per dot contour, normalized 0..1 in the
+      shared per-letter bounding box (a hint for "how many dot marks and
+      roughly where"); and
+  (b) the glyph bounding box — a faint backdrop reference to trace over.
+
+It does NOT, and must not, emit any body-outline polyline. The previous
+`tools/candidate_paths.json` body-outline output is dead; the output is now
+`tools/authoring_hints.json`, renamed so no one pastes outlines into the
+curriculum (`letters.json`) again. The validation guard in
+STROKE-REFERENCE.md §7.4 enforces that no outline reaches `letters.json`.
+============================================================================
+
+How dots are identified: the font-contour dot separation already works
+(baa=2, taa=3, sheen=4 contours; the body is always the single largest
+contour). We keep that separation logic, take the *centroid* of each small
+dot contour, and discard the body contour entirely. Counters/holes (haa_f,
+qaaf inner ring) are font artifacts, not pen strokes — heuristically, the
+body is the contour with the largest bounding-box area and every other
+contour is treated as a candidate dot mark for the owner to confirm.
 
 Usage (run from the project root):
-    pip install fonttools
+    pip install fonttools          # optional; tool degrades gracefully without it
     python tools/extract_reference_paths.py
+
+Output: tools/authoring_hints.json — per-letter dot centroids + glyph bbox.
 """
 
 import json
-import math
 import sys
 from pathlib import Path
 
 FONT_PATH = Path("assets/fonts/NotoNaskhArabic-Regular.ttf")
-OUTPUT_PATH = Path("tools/candidate_paths.json")
-POINTS_PER_CONTOUR = 64
+# Renamed (D-05): never again a *_paths.json that could be pasted as strokes.
+OUTPUT_PATH = Path("tools/authoring_hints.json")
 
 # 28 Arabic letters: (codepoint, id, char)
 LETTERS = [
@@ -52,102 +81,13 @@ LETTERS = [
 ]
 
 
-def quadratic_bezier_polyline(pts, n=POINTS_PER_CONTOUR):
-    """
-    Convert a closed TrueType quadratic-bezier contour to an n-point polyline.
-
-    pts: list of (x, y, on_curve) from fonttools GlyphCoordinates.
-    Returns list of [x, y] floats.
-    """
-    # Build explicit segment list: each segment is a list of control points
-    # (on-curve endpoints with any off-curve points between them).
-    # TrueType: consecutive off-curve points imply an implicit on-curve midpoint.
-    n_pts = len(pts)
-    if n_pts == 0:
-        return []
-
-    # Expand implicit on-curve points between consecutive off-curve points
-    expanded = []
-    for i, (x, y, on) in enumerate(pts):
-        expanded.append((x, y, on))
-        nx, ny, non = pts[(i + 1) % n_pts]
-        if not on and not non:
-            expanded.append(((x + nx) / 2, (y + ny) / 2, True))
-
-    # Build segments: each segment = [p0_on, ...off-curves..., p1_on]
-    segments = []
-    start = None
-    seg = []
-    for x, y, on in expanded:
-        if on:
-            if start is None:
-                start = (x, y)
-                seg = [(x, y)]
-            else:
-                seg.append((x, y))
-                segments.append(seg)
-                seg = [(x, y)]
-        else:
-            seg.append((x, y))
-    # Close: connect last point back to start
-    if start is not None and seg and seg[-1] != start:
-        seg.append(start)
-        segments.append(seg)
-
-    if not segments:
-        return []
-
-    # Sample each segment proportionally to get n total points
-    def eval_quad(p0, ctrl, p1, t):
-        x = (1 - t) ** 2 * p0[0] + 2 * (1 - t) * t * ctrl[0] + t ** 2 * p1[0]
-        y = (1 - t) ** 2 * p0[1] + 2 * (1 - t) * t * ctrl[1] + t ** 2 * p1[1]
-        return x, y
-
-    def eval_linear(p0, p1, t):
-        return p0[0] + t * (p1[0] - p0[0]), p0[1] + t * (p1[1] - p0[1])
-
-    def segment_length_approx(seg, steps=8):
-        length = 0.0
-        prev = None
-        for i in range(steps + 1):
-            t = i / steps
-            pt = sample_segment(seg, t)
-            if prev is not None:
-                length += math.hypot(pt[0] - prev[0], pt[1] - prev[1])
-            prev = pt
-        return max(length, 1e-9)
-
-    def sample_segment(seg, t):
-        if len(seg) == 2:
-            return eval_linear(seg[0], seg[1], t)
-        elif len(seg) == 3:
-            return eval_quad(seg[0], seg[1], seg[2], t)
-        else:
-            # Degree-reduce multi-off-curve: split into quadratics
-            # For now treat as a chain of quadratics
-            # n_quads = len(seg) - 2 ... not typical but handle gracefully
-            # Just sample the linear fallback
-            return eval_linear(seg[0], seg[-1], t)
-
-    lengths = [segment_length_approx(s) for s in segments]
-    total_len = sum(lengths)
-    points = []
-    accumulated = 0.0
-    for seg, seg_len in zip(segments, lengths):
-        seg_share = seg_len / total_len
-        seg_n = max(1, round(n * seg_share))
-        for i in range(seg_n):
-            t = i / seg_n
-            pt = sample_segment(seg, t)
-            points.append(pt)
-    # Trim or pad to exactly n
-    while len(points) < n:
-        points.append(points[-1])
-    return [[x, y] for x, y in points[:n]]
-
-
 def get_simple_contours(glyph):
-    """Return list of raw point lists for a simple glyph's contours."""
+    """Return list of raw point lists for a simple glyph's contours.
+
+    Each contour is a list of (x, y, on_curve) tuples. NOTE: this raw point
+    data is used ONLY to compute per-contour bounding boxes and centroids —
+    it is never normalized into, or emitted as, a teaching-stroke polyline.
+    """
     coords = glyph.coordinates
     flags = glyph.flags
     endpoints = glyph.endPtsOfContours
@@ -165,72 +105,75 @@ def get_simple_contours(glyph):
     return contours
 
 
-def resolve_glyph_contours(glyph_set, glyph_name, visited=None):
-    """
-    Recursively resolve a glyph (simple or composite) to a flat list of
-    raw TrueType contours. Each contour is a list of (x, y, on_curve).
-    """
-    if visited is None:
-        visited = set()
-    if glyph_name in visited:
-        return []
-    visited.add(glyph_name)
-
-    if glyph_name not in glyph_set:
-        return []
-
-    g = glyph_set[glyph_name]
-    # Access the underlying glyph object
-    if hasattr(g, '_glyph'):
-        glyph = g._glyph
-    else:
-        glyph = g
-
-    if not hasattr(glyph, 'numberOfContours') or glyph.numberOfContours is None:
-        return []
-
-    if glyph.numberOfContours >= 0:
-        # Simple glyph
-        try:
-            return get_simple_contours(glyph)
-        except Exception:
-            return []
-    else:
-        # Composite glyph — resolve each component
-        all_contours = []
-        if hasattr(glyph, 'components'):
-            for comp in glyph.components:
-                sub = resolve_glyph_contours(glyph_set, comp.glyphName, visited.copy())
-                all_contours.extend(sub)
-        return all_contours
+def contour_bbox(raw_contour):
+    """Return (x_min, y_min, x_max, y_max) for a raw contour."""
+    xs = [x for (x, y, _) in raw_contour]
+    ys = [y for (x, y, _) in raw_contour]
+    return min(xs), min(ys), max(xs), max(ys)
 
 
-def normalize_contours(raw_contours):
-    """
-    Normalize all contour points to 0..1 using the shared per-letter bounding box.
-    Returns (normalized_polylines, contour_count).
+def contour_centroid(raw_contour):
+    """Return the (x, y) centroid of a raw contour's points."""
+    n = len(raw_contour)
+    if n == 0:
+        return 0.0, 0.0
+    sx = sum(x for (x, y, _) in raw_contour)
+    sy = sum(y for (x, y, _) in raw_contour)
+    return sx / n, sy / n
+
+
+def separate_dots_and_bbox(raw_contours):
+    """Separate dot contours from the body contour and compute the glyph bbox.
+
+    Returns (dot_centroids_normalized, glyph_bbox) where:
+      - dot_centroids_normalized is a list of [x, y] floats in 0..1 within the
+        shared per-letter bounding box, one per dot contour (body excluded);
+      - glyph_bbox is {"x_min","y_min","x_max","y_max"} in raw font units.
+
+    The body is the contour with the largest bounding-box area; every other
+    contour is treated as a candidate dot mark. This intentionally produces NO
+    polyline — only centroids and the bbox (authoring hints, not strokes).
     """
     if not raw_contours:
-        return [], 0
+        return [], None
 
+    # Shared per-letter bbox across all contours.
     all_x = [x for c in raw_contours for (x, y, _) in c]
     all_y = [y for c in raw_contours for (x, y, _) in c]
     x_min, x_max = min(all_x), max(all_x)
     y_min, y_max = min(all_y), max(all_y)
+    w = (x_max - x_min) or 1.0
+    h = (y_max - y_min) or 1.0
 
-    w = x_max - x_min or 1.0
-    h = y_max - y_min or 1.0
+    glyph_bbox = {
+        "x_min": x_min,
+        "y_min": y_min,
+        "x_max": x_max,
+        "y_max": y_max,
+    }
 
-    polylines = []
-    for raw in raw_contours:
-        pts = quadratic_bezier_polyline(raw)
-        normalized = [
-            [round((x - x_min) / w, 4), round((y - y_min) / h, 4)]
-            for x, y in pts
-        ]
-        polylines.append(normalized)
+    if len(raw_contours) == 1:
+        # Only the body — no dots to hint.
+        return [], glyph_bbox
 
-    return polylines, len(polylines)
+    # Identify the body contour: the one with the largest bbox area.
+    def area(c):
+        bx0, by0, bx1, by1 = contour_bbox(c)
+        return (bx1 - bx0) * (by1 - by0)
+
+    body_index = max(range(len(raw_contours)), key=lambda i: area(raw_contours[i]))
+
+    dot_centroids = []
+    for i, c in enumerate(raw_contours):
+        if i == body_index:
+            continue
+        cx, cy = contour_centroid(c)
+        dot_centroids.append([
+            round((cx - x_min) / w, 4),
+            round((cy - y_min) / h, 4),
+        ])
+
+    return dot_centroids, glyph_bbox
 
 
 def main():
@@ -248,26 +191,31 @@ def main():
     print(f"Loading {FONT_PATH} ...")
     font = TTFont(str(FONT_PATH))
     cmap = font.getBestCmap()
-    glyph_set = font.getGlyphSet()
 
-    # Also grab the raw glyf table for composite resolution
     glyf_table = font.get("glyf")
 
-    result = {}
+    result = {
+        "_note": (
+            "AUTHORING HINTS ONLY — dot centroids + glyph bbox. These are NOT "
+            "teaching strokes. Body centerlines are authored by the owner in the "
+            "in-app trace screen. See .planning/research/STROKE-REFERENCE.md."
+        ),
+        "letters": {},
+    }
 
     for codepoint, letter_id, char in LETTERS:
         glyph_name = cmap.get(codepoint)
         if glyph_name is None:
             print(f"  WARNING: codepoint U+{codepoint:04X} ({letter_id}) not in cmap — skipping")
-            result[letter_id] = {
+            result["letters"][letter_id] = {
                 "char": char,
                 "codepoint": f"U+{codepoint:04X}",
                 "contour_count": 0,
-                "contours": [],
+                "dot_centroids": [],
+                "glyph_bbox": None,
             }
             continue
 
-        # Use raw glyf table for reliable composite resolution
         raw_contours = []
         if glyf_table and glyph_name in glyf_table:
             glyph = glyf_table[glyph_name]
@@ -275,10 +223,10 @@ def main():
                 if glyph.numberOfContours >= 0:
                     try:
                         raw_contours = get_simple_contours(glyph)
-                    except Exception as e:
+                    except Exception:
                         raw_contours = []
                 else:
-                    # Composite: resolve recursively using glyf table
+                    # Composite: resolve recursively using the glyf table.
                     def resolve_via_glyf(name, visited=None):
                         if visited is None:
                             visited = set()
@@ -293,43 +241,36 @@ def main():
                                 return get_simple_contours(g)
                             except Exception:
                                 return []
-                        else:
-                            contours = []
-                            if hasattr(g, 'components'):
-                                for comp in g.components:
-                                    contours.extend(resolve_via_glyf(comp.glyphName, visited.copy()))
-                            return contours
+                        contours = []
+                        if hasattr(g, 'components'):
+                            for comp in g.components:
+                                contours.extend(resolve_via_glyf(comp.glyphName, visited.copy()))
+                        return contours
                     raw_contours = resolve_via_glyf(glyph_name)
 
-        polylines, count = normalize_contours(raw_contours)
+        dot_centroids, glyph_bbox = separate_dots_and_bbox(raw_contours)
 
-        contours_out = []
-        for i, pts in enumerate(polylines):
-            contours_out.append({
-                "index": i,
-                "label": f"contour_{i}",
-                "point_count": len(pts),
-                "points": pts,
-            })
-
-        result[letter_id] = {
+        result["letters"][letter_id] = {
             "char": char,
             "codepoint": f"U+{codepoint:04X}",
-            "contour_count": count,
-            "contours": contours_out,
+            "contour_count": len(raw_contours),
+            # HINTS ONLY — no body-outline polyline is ever emitted here.
+            "dot_centroids": dot_centroids,
+            "glyph_bbox": glyph_bbox,
         }
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
 
-    print(f"\nWrote {OUTPUT_PATH} with {len(result)} letters.\n")
-    print("--- Summary ---")
+    print(f"\nWrote {OUTPUT_PATH} (authoring hints) with {len(result['letters'])} letters.\n")
+    print("--- Summary (contours / dot hints) ---")
     for _, letter_id, char in LETTERS:
-        entry = result.get(letter_id, {})
+        entry = result["letters"].get(letter_id, {})
         count = entry.get("contour_count", 0)
+        dots = len(entry.get("dot_centroids", []))
         char_safe = char.encode("ascii", "backslashreplace").decode("ascii")
-        print(f"  {letter_id} ({char_safe}): {count} contour(s)")
+        print(f"  {letter_id} ({char_safe}): {count} contour(s), {dots} dot hint(s)")
 
 
 if __name__ == "__main__":
