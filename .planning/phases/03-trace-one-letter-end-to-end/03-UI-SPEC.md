@@ -94,20 +94,38 @@ not for the 64px floor. One task per screen (kids-UX).
 
 ## Typography
 
-English roles (`QalamTextStyles` — exactly the subset this phase renders):
+This phase declares two **script-isolated** type scales: an **English scale** (LTR
+chrome — capped at 4 roles) and an **Arabic scale** (RTL content islands only). The
+Arabic sizes are NOT part of the 4-role English cap — they render only inside isolated
+RTL blocks (the mastered glyph, the praise line), in different families and joining
+rules, and must be read as a distinct scale.
+
+### English type scale — exactly 4 roles (`QalamTextStyles`)
 
 | Role | Size | Weight | Line Height | Font | Used for |
 |------|------|--------|-------------|------|----------|
 | Display / H1 | 42px | 600 | 1.15 | Fredoka | "Watch me write alif." / "Now you trace alif." / "You learned alif." |
-| Heading / H3 | 28px | 500 | 1.3 | Fredoka | Tip-card heading, secondary headings |
-| Button | 24px | 500 | 1.0 | Fredoka | All button labels (Title Case) |
+| Title / Button | 24px | 500 | 1.0 (button) / 1.3 (tip-card title) | Fredoka | **All button labels** (Title Case) **and** the tip-card title — both render at the 24px Fredoka step (`q-h4` / `q-button` in the kit, `QalamTextStyles.button`) |
 | Body | 18px | 400 | 1.5 | Nunito | Tip text, the named-fix feedback line |
 | Label / caption | 16px | 600 | 1.3 | Nunito | "WATCH · STROKE ORDER", "YOUR TURN · TRACE", "MASTERED", "Stroke X of N" |
 
-> The design surfaces 5 English roles here; weight variation is two-value in practice
-> (Fredoka 500/600 for display+headings+buttons, Nunito 400/600 for body+labels).
+> **4-role English scale: 42 → 24 → 18 → 16.** The previously separate 28px (`q-h3`)
+> tip-card heading is **dropped for this phase** and folded into the 24px Title/Button
+> step (the kit's `q-h4` = `q-button` = 24px Fredoka — already a shared anchor in
+> `colors_and_type.css` L172/L176 and `QalamTextStyles.button`). This phase ships only
+> the entry screen + three loop screens, whose only secondary heading is the single
+> tip-card title; at that proportion 24px reads correctly against the 42px H1 and avoids
+> a fifth role. The 28px `q-h3` token still exists in `lib/theme/` for later phases that
+> need a true intermediate heading — it is simply **not rendered in Phase 3**.
+>
+> Weight variation is two-value: Fredoka 500/600 (display + title/button), Nunito 400/600
+> (body + label).
 
-Arabic roles (`QalamTextStyles` — RTL islands only; never bold/italic/letterSpacing):
+### Arabic type scale — RTL islands only (`QalamTextStyles`; distinct from the English cap)
+
+Never bold, never italic, never letterSpacing. These sizes do **not** count against the
+4-role English scale above — they appear only inside isolated RTL content blocks in
+different fonts (Cairo / Noto Naskh) with their own line-height and joining rules.
 
 | Role | Size | Weight | Line Height | Font | Used for |
 |------|------|--------|-------------|------|----------|
@@ -163,7 +181,7 @@ exact fix — never a generic "Oops, try again!"** (PLAT-03, Pitfall 7).
 |---------|------|
 | Watch step eyebrow | `WATCH · STROKE ORDER` |
 | Watch step heading | `Watch me write alif.` |
-| Watch tip card | `Start at the gold dot. Follow the line down.` (heading "Tip", "gold dot" emphasized in gold text) |
+| Watch tip card | Title `Tip` + body `Start at the gold dot. Follow the line down.` (tip-card title at the 24px Title step; "gold dot" emphasized in gold text in the body) |
 | Trace step eyebrow | `YOUR TURN · TRACE` |
 | Trace step heading | `Now you trace alif.` |
 | Trace progress | `Stroke 1 of 1` (alif is one stroke; the model supports `Stroke X of N`) |
@@ -177,6 +195,7 @@ exact fix — never a generic "Oops, try again!"** (PLAT-03, Pitfall 7).
 
 | Element | Copy |
 |---------|------|
+| Primary CTA — Entry screen | `Start` (single minimal entry point → Watch step, D-02; short label is intentional for ages 5–10) |
 | Primary CTA — Watch step | `I'll Try` (advances Watch → Trace) |
 | Secondary — Watch step | `Watch Again` (replays the demo; D-10) |
 | Secondary — Trace step | `Replay` (replays the demo over the guide) |
@@ -184,12 +203,17 @@ exact fix — never a generic "Oops, try again!"** (PLAT-03, Pitfall 7).
 | Primary CTA — Trace pass (pre-mastery) | `Next` (advance to the next clean rep) |
 | Primary CTA — Celebration | `Back Home` |
 
+> CTA labels are deliberately short (`Replay`, `Try Again`, `Next`, `Start`). For the
+> 5–10 target each sits next to an unambiguous heading/context and a single primary
+> action per screen (one-task kids-UX), so a verb-only label reads clearly without a
+> noun object. Brevity is the child-friendliness choice here, not an omission.
+
 ### Empty / first-entry state
 
 | Element | Copy |
 |---------|------|
 | Entry heading (minimal Start entry point, D-02) | `Let's learn alif.` |
-| Entry body + next step | `Watch how it's written, then trace it yourself.` (single "Start" CTA → Watch step) |
+| Entry body + next step | `Watch how it's written, then trace it yourself.` (single `Start` CTA → Watch step) |
 
 > There is no "no data" empty state inside the loop — the child always has alif to
 > trace. The "empty" state is simply the entry point before the loop begins.
