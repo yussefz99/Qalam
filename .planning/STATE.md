@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 03.1 Plan 02 complete — full JourneyScreen layout, 28 nodes, path painter
-last_updated: "2026-06-07T17:52:14Z"
+stopped_at: Phase 03.1 complete — Journey Map Screen implemented, human verify passed
+last_updated: "2026-06-07T21:30:00Z"
 last_activity: 2026-06-07
 progress:
   total_phases: 12
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
-**Current focus:** Phase 03.1 — Journey Map Screen (plan 02 of 3 complete)
+**Current focus:** Phase 04 — Practice Screen (Phase 03.1 complete)
 
 ## Current Position
 
-Phase: 03.1 IN PROGRESS — plans 01-02 done, plan 03 next
-Plan: 03.1-02 complete; 03.1-03 (pulse animation, tap handlers, star badges, checkpoint) next
-Status: Journey Map screen visually complete — 28 nodes, path painter, 4 states, TODAY pill, header pill
-Last activity: 2026-06-07 — Completed Phase 03.1-02: JourneyPathPainter (grey trail + green overlay), full JourneyScreen with 28 letter nodes at pixel-exact positions, 4 visual states, _DashedCirclePainter, _TodayChip, Level 1 header pill. flutter analyze: zero issues.
+Phase: 03.1 COMPLETE → ready for Phase 04
+Plan: 03.1-03 complete (all 3 plans of Phase 03.1 done)
+Status: Journey Map Screen fully implemented — winding path, 28 letter nodes, 4 node states, pulse animation, tap routing, gold star badges, Level 1 Quiz checkpoint, Level 2 locked banner. Human verify passed.
+Last activity: 2026-06-07 - Completed Phase 03.1: Journey Map Screen — winding path with 28 letter nodes, 4 node states, pulse animation, tap routing, Level 1/2 checkpoint/banner. Human verify passed.
 
 Progress: [██░░░░░░░░] 20% (2 of 10 phases complete)
 
@@ -110,5 +110,5 @@ Items acknowledged and carried forward from previous milestone close:
 ## Session Continuity
 
 Last session: 2026-06-07
-Stopped at: Phase 03.1 Plan 02 complete — full JourneyScreen layout, 28 nodes, path painter
-Resume file: .planning/phases/03.1-journey-map-screen/03.1-02-SUMMARY.md
+Stopped at: Phase 03.1 complete — Journey Map Screen implemented, human verify passed
+Resume file: .planning/phases/03.1-journey-map-screen/03.1-03-SUMMARY.md
