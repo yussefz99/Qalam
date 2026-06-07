@@ -432,5 +432,86 @@
   "comingSoon": "Coming soon",
   "@comingSoon": {
     "description": "Locked nav item sublabel shown under Journey and Parent nav entries."
+  },
+
+  "practiceTutorName": "Qalam",
+  "@practiceTutorName": {
+    "description": "Tutor panel — mascot name label displayed below the mascot in the left zone of the trace workspace."
+  },
+
+  "practiceTutorRole": "Your Writing Tutor",
+  "@practiceTutorRole": {
+    "description": "Tutor panel — mascot role subtitle displayed below the name in the left zone."
+  },
+
+  "practiceTutorCoaching": "Take your time. Start at the gold dot and bring it straight down.",
+  "@practiceTutorCoaching": {
+    "description": "Default idle-state coaching line shown in the tutor bubble during the trace phase. Calm, specific — references the gold start-dot."
+  },
+
+  "practiceTutorThinking": "Let me look at your {letter}",
+  "@practiceTutorThinking": {
+    "description": "Tutor bubble prefix shown while scoring is in progress (thinking state). Followed by the thinking-dots animation.",
+    "placeholders": {
+      "letter": {
+        "type": "String",
+        "example": "alif"
+      }
+    }
+  },
+
+  "practiceTutorSays": "Qalam says",
+  "@practiceTutorSays": {
+    "description": "Tone label displayed above the bubble body in showFix and showPraise phases. Attributes the feedback to the tutor."
+  },
+
+  "practiceTraceLeadIn": "Now you trace",
+  "@practiceTraceLeadIn": {
+    "description": "First word-group of the trace workspace heading, followed by the Arabic glyph and romanized name. Display scale (42px Fredoka)."
+  },
+
+  "practiceCleanRepsLabel": "Clean reps",
+  "@practiceCleanRepsLabel": {
+    "description": "Label above the clean-rep pip row in the trace workspace heading. Pedagogical progress indicator — not a score."
+  },
+
+  "practiceTraceHint": "Lift your pen when you finish the stroke.",
+  "@practiceTraceHint": {
+    "description": "Soft hint shown on the left of the bottom action row during the trace phase. Calm, instructional — never hype."
+  },
+
+  "practiceSoundLabel": "Sound",
+  "@practiceSoundLabel": {
+    "description": "Eyebrow label on the Sound section card in the tutor panel. Title case."
+  },
+
+  "practiceHearLetterLabel": "Hear the letter",
+  "@practiceHearLetterLabel": {
+    "description": "Accessibility / semantics label for the round speaker button in the Sound card. Also used as the button tooltip."
+  },
+
+  "practiceShowMeAgainButton": "Show Me Again",
+  "@practiceShowMeAgainButton": {
+    "description": "Ghost button in the showFix bottom-action row — triggers the ghost cast overlay on the canvas. Title Case."
+  },
+
+  "practiceCastWatchLine": "Watch — start at the dot and come all the way down.",
+  "@practiceCastWatchLine": {
+    "description": "Tutor bubble neutral coaching line shown while the ghost cast overlay is playing. Calm, specific."
+  },
+
+  "practiceWatchMeLabel": "Watch Me",
+  "@practiceWatchMeLabel": {
+    "description": "Tag label on the Watch Me corner card in the top-right of the trace canvas. Ink-teal, Label scale."
+  },
+
+  "practiceWatchMeHint": "Tap to show me here",
+  "@practiceWatchMeHint": {
+    "description": "Secondary hint line on the Watch Me corner card. fgMuted, small — guides the child to tap for a ghost cast."
+  },
+
+  "practiceClearButton": "Clear",
+  "@practiceClearButton": {
+    "description": "Compact ghost control at the bottom-left of the trace canvas — clears the current stroke attempt and starts fresh."
   }
 }

@@ -2,25 +2,28 @@
 //
 // Wires the full core learning loop for alif (lesson_01):
 //   1. Watch phase — StrokeOrderAnimation auto-plays; Watch Again / I'll Try.
-//   2. Trace phase — StrokeCanvas captures stylus; scored on stylus-up.
-//   3. ShowFix phase — FeedbackPanel + Try Again.
-//   4. Celebrate phase — MasteryCelebration + Back Home.
+//   2. Trace / ShowFix / ShowPraise phases — _TraceWorkspace (landscape, three
+//      zones: TutorPanel left, hero center with StrokeCanvas, action row bottom).
+//   3. Celebrate phase — MasteryCelebration + Back Home.
 //
 // State machine: practiceSessionController(lessonId: 'lesson_01') via Riverpod.
 // Scoring: scoreStroke(points, referenceStroke) → StrokeResult → controller.
 //
 // ANTI-GAMIFICATION (PLAT-03 / D-03 / D-08):
 //   - NO "THIS WEEK" / weekly bar / star tally.
-//   - NO "Play sound" / "Listen" button (Phase 7).
 //   - NO "Mark correct" button (D-06 — scorer only).
 //   - NO "See journey" button (Phase 6).
 //   - NO running star counter.
 //   - NO confetti.
+//   Sound control ("Hear the letter") IS present — owner pulled Phase-7 audio
+//   forward. The button is disabled until letter.audio.letter is populated.
 //   Enforced by practice_screen_test.dart.
 //
 // SECURITY (T-03-01/T-01-05): stroke points live in StrokeCanvas widget State.
 // Only StrokeResult enters the session controller — no raw Offset list is
 // lifted to provider scope.
+
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,17 +34,18 @@ import '../../core/scoring/scoring_models.dart';
 import '../../data/curriculum_repository.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/letter.dart';
+import '../../providers/audio_providers.dart';
 import '../../providers/practice_providers.dart';
 import '../../theme/brand_theme_ext.dart';
 import '../../theme/colors.dart';
 import '../../theme/dimens.dart';
 import '../../theme/text_styles.dart';
 import '../../widgets/arabic_text.dart';
-import 'widgets/feedback_panel.dart';
+import '../../widgets/qalam_mascot.dart';
 import 'widgets/mastery_celebration.dart';
-import 'widgets/praise_panel.dart';
 import 'widgets/stroke_canvas.dart';
 import 'widgets/stroke_order_animation.dart';
+import 'widgets/tutor_panel.dart';
 
 /// The Phase-3 practice screen — the full Watch → Trace → Celebrate loop.
 ///
@@ -160,7 +164,7 @@ class _PracticeScreenState extends ConsumerState<PracticeScreen> {
 }
 
 // ---------------------------------------------------------------------------
-// _PracticeBody — switches between Watch / Trace+ShowFix phases
+// _PracticeBody — switches between Watch / Trace+ShowFix+ShowPraise phases
 // ---------------------------------------------------------------------------
 
 /// The body of the practice screen. Loads the letter via curriculum repo and
@@ -206,23 +210,20 @@ class _PracticeBody extends ConsumerWidget {
               animKey: animKey,
               onAdvanceToTrace: onAdvanceToTrace,
             ),
-          PracticePhase.trace => _TracePhase(
+          // trace, showFix, showPraise all share one landscape workspace.
+          PracticePhase.trace ||
+          PracticePhase.showFix ||
+          PracticePhase.showPraise =>
+            _TraceWorkspace(
               letter: letter,
               state: state,
+              // Empty-stroke-safe: placeholder letters (no referenceStrokes)
+              // never reach the scorer.
               onStrokeSubmitted: (List<Offset> pts) =>
-                  onStrokeSubmitted(pts, letter.referenceStrokes.first),
-            ),
-          PracticePhase.showPraise => _PraisePhase(
-              letter: letter,
-              state: state,
+                  letter.referenceStrokes.isEmpty
+                      ? Future<void>.value()
+                      : onStrokeSubmitted(pts, letter.referenceStrokes.first),
               onContinueAfterPraise: onContinueAfterPraise,
-            ),
-          PracticePhase.showFix => _ShowFixPhase(
-              letter: letter,
-              state: state,
-              animKey: animKey,
-              onStrokeSubmitted: (List<Offset> pts) =>
-                  onStrokeSubmitted(pts, letter.referenceStrokes.first),
               onRetry: onRetry,
             ),
           PracticePhase.celebrate => const SizedBox.shrink(),
@@ -233,7 +234,7 @@ class _PracticeBody extends ConsumerWidget {
 }
 
 // ---------------------------------------------------------------------------
-// _WatchPhase
+// _WatchPhase — unchanged from Phase-3 original
 // ---------------------------------------------------------------------------
 
 class _WatchPhase extends StatelessWidget {
@@ -322,231 +323,682 @@ class _WatchPhase extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// _TracePhase
+// _TraceWorkspace — landscape Row: TutorPanel | hero canvas | (action row)
 // ---------------------------------------------------------------------------
 
-class _TracePhase extends StatelessWidget {
-  const _TracePhase({
+// Structural width constants from the mockup — no tokens exist for panel sizing.
+const double _kTutorPanelWidth = 262.0; // Left tutor panel width (mockup spec).
+const double _kWatchMeCornerWidth = 160.0; // Watch Me corner card (mockup spec).
+
+/// Visible think beat — a named, deliberate pause before forwarding the score
+/// so the tutor's bubble visually "thinks". Not [QalamMotion.durCheer] (700ms
+/// has a different semantic). This is a UX beat, not a cheer duration.
+const Duration _kThinkBeat = Duration(milliseconds: 700);
+
+/// Shared workspace for trace, showFix, and showPraise phases.
+///
+/// Landscape three-zone layout:
+///   LEFT  — TutorPanel (mascot + bubble + Sound card), fixed [_kTutorPanelWidth].
+///   CENTER — Expanded hero: heading row, canvas card, action row.
+///
+/// Local state manages the ghost cast overlay and canvas epoch — nothing in
+/// the session controller or scorer is touched here.
+class _TraceWorkspace extends ConsumerStatefulWidget {
+  const _TraceWorkspace({
     required this.letter,
     required this.state,
     required this.onStrokeSubmitted,
-  });
-
-  final Letter letter;
-  final PracticeState state;
-  final void Function(List<Offset> points) onStrokeSubmitted;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final heading = l10n?.practiceTraceHeading ?? 'Now you trace alif.';
-    final strokeProg = l10n?.practiceStrokeProgress ?? 'Stroke 1 of 1';
-    final repN = state.cleanReps + 1;
-    final repTotal = state.cleanRepsToAdvance;
-    final repLabel = l10n?.practiceRepProgress(repN) ?? '$repN of $repTotal';
-
-    return Padding(
-      // Tighter horizontal inset so the writing surface runs nearly edge-to-edge
-      // — children need a wide, generous canvas to form a letter comfortably.
-      padding: const EdgeInsets.symmetric(
-        horizontal: QalamSpace.space4,
-        vertical: QalamSpace.space5,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          // Heading.
-          Text(heading, style: QalamTextStyles.display),
-          const SizedBox(height: QalamSpace.space3),
-
-          // Progress indicators — pedagogical, not a score.
-          Row(
-            children: <Widget>[
-              Text(strokeProg, style: QalamTextStyles.label),
-              const SizedBox(width: QalamSpace.space6),
-              Text(repLabel, style: QalamTextStyles.label),
-            ],
-          ),
-          const SizedBox(height: QalamSpace.space5),
-
-          // Trace canvas — expanded to fill, framed with a soft surface card.
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: QalamColors.surface,
-                borderRadius: BorderRadius.circular(QalamRadii.xl),
-                boxShadow: QalamShadows.shadowMd,
-                border: Border.all(color: QalamColors.border, width: 1.5),
-              ),
-              padding: const EdgeInsets.all(QalamSpace.space3),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(QalamRadii.lg),
-                child: ColoredBox(
-                  color: QalamColors.bg,
-                  child: StrokeCanvas(
-                    referenceStrokes: letter.referenceStrokes,
-                    onStrokeSubmitted: onStrokeSubmitted,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: QalamSpace.space6),
-        ],
-      ),
-    );
-  }
-}
-
-// ---------------------------------------------------------------------------
-// _ShowFixPhase
-// ---------------------------------------------------------------------------
-
-class _ShowFixPhase extends StatelessWidget {
-  const _ShowFixPhase({
-    required this.letter,
-    required this.state,
-    required this.animKey,
-    required this.onStrokeSubmitted,
+    required this.onContinueAfterPraise,
     required this.onRetry,
   });
 
   final Letter letter;
   final PracticeState state;
-  final GlobalKey<StrokeOrderAnimationState> animKey;
-  final void Function(List<Offset> points) onStrokeSubmitted;
+  final Future<void> Function(List<Offset> points) onStrokeSubmitted;
+  final VoidCallback onContinueAfterPraise;
   final VoidCallback onRetry;
+
+  @override
+  ConsumerState<_TraceWorkspace> createState() => _TraceWorkspaceState();
+}
+
+class _TraceWorkspaceState extends ConsumerState<_TraceWorkspace> {
+  bool _isScoring = false;
+  bool _isCasting = false;
+
+  /// Bumping this key gives StrokeCanvas a fresh instance (clears ink).
+  int _canvasEpoch = 0;
+
+  /// Bumping this triggers a new ghost StrokeOrderAnimation that auto-plays once.
+  int _castEpoch = 0;
+
+  /// GlobalKey for the corner loop animation — allows external replay() calls.
+  final GlobalKey<StrokeOrderAnimationState> _cornerKey =
+      GlobalKey<StrokeOrderAnimationState>();
+
+  /// Periodic timer that replays the corner animation with a deliberate pause
+  /// so it doesn't compete with the main canvas. Cancelled in dispose().
+  Timer? _cornerLoop;
+
+  // ---------------------------------------------------------------------------
+  // Lifecycle
+  // ---------------------------------------------------------------------------
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.letter.referenceStrokes.isNotEmpty) {
+      // The gap between replays is intentional — the corner animation should
+      // idle quietly and not compete visually with the child's canvas work.
+      // interval = durWrite (1400ms animation) + durCheer (700ms idle gap) = 2100ms.
+      _cornerLoop = Timer.periodic(
+        QalamMotion.durWrite + QalamMotion.durCheer,
+        (_) {
+          if (!_isCasting) {
+            _cornerKey.currentState?.replay();
+          }
+        },
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _cornerLoop?.cancel();
+    super.dispose();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Actions
+  // ---------------------------------------------------------------------------
+
+  /// Wrap the stroke submission with a visible think beat so the tutor bubble
+  /// animates before the phase transition.
+  Future<void> _handleSubmit(List<Offset> points) async {
+    if (widget.letter.referenceStrokes.isEmpty) return; // placeholder: no crash
+    setState(() => _isScoring = true);
+    await Future<void>.delayed(_kThinkBeat);
+    if (!mounted) return;
+    await widget.onStrokeSubmitted(points);
+    if (mounted) setState(() => _isScoring = false);
+  }
+
+  /// Cast the stroke-order ghost overlay on the canvas. Ignored if already
+  /// casting or if the letter has no reference strokes.
+  void _cast() {
+    if (_isCasting || widget.letter.referenceStrokes.isEmpty) return;
+    setState(() {
+      _isCasting = true;
+      _castEpoch++;
+    });
+    Future<void>.delayed(QalamMotion.durWrite + QalamMotion.durBase, () {
+      if (mounted) setState(() => _isCasting = false);
+    });
+  }
+
+  /// Clear the canvas by giving StrokeCanvas a fresh key.
+  void _clear() => setState(() => _canvasEpoch++);
+
+  // ---------------------------------------------------------------------------
+  // Build helpers
+  // ---------------------------------------------------------------------------
+
+  /// Compute the tutor panel inputs based on current scoring / phase state.
+  ({
+    QalamPose pose,
+    BubbleTone tone,
+    String? toneLabel,
+    String? bubbleText,
+    Widget? bubbleChild,
+  })
+      _tutorParams(AppLocalizations? l10n) {
+    if (_isCasting) {
+      return (
+        pose: QalamPose.write,
+        tone: BubbleTone.none,
+        toneLabel: null,
+        bubbleText: l10n?.practiceCastWatchLine ??
+            'Watch — start at the dot and come all the way down.',
+        bubbleChild: null,
+      );
+    }
+
+    if (_isScoring) {
+      final thinkingPrefix = l10n?.practiceTutorThinking(
+            widget.letter.name.display,
+          ) ??
+          'Let me look at your ${widget.letter.name.display}';
+      return (
+        pose: QalamPose.think,
+        tone: BubbleTone.none,
+        toneLabel: null,
+        bubbleText: null,
+        bubbleChild: ThinkingDots(prefix: thinkingPrefix),
+      );
+    }
+
+    switch (widget.state.phase) {
+      case PracticePhase.trace:
+        return (
+          pose: QalamPose.idle,
+          tone: BubbleTone.none,
+          toneLabel: null,
+          bubbleText: l10n?.practiceTutorCoaching ??
+              'Take your time. Start at the gold dot and bring it straight down.',
+          bubbleChild: null,
+        );
+      case PracticePhase.showFix:
+        final mistakeId = widget.state.lastMistakeId ?? MistakeId.fallback;
+        return (
+          pose: QalamPose.tryAgain,
+          tone: BubbleTone.coral,
+          toneLabel: l10n?.practiceTutorSays ?? 'Qalam says',
+          bubbleText: _feedbackString(l10n, mistakeId),
+          bubbleChild: null,
+        );
+      case PracticePhase.showPraise:
+        final repsRemaining =
+            (widget.state.cleanRepsToAdvance - widget.state.cleanReps)
+                .clamp(1, 999);
+        return (
+          pose: QalamPose.cheer,
+          tone: BubbleTone.leaf,
+          toneLabel: l10n?.practiceTutorSays ?? 'Qalam says',
+          bubbleText: null,
+          bubbleChild: _PraiseContent(
+            l10n: l10n,
+            repsRemaining: repsRemaining,
+          ),
+        );
+      // These phases are handled elsewhere; provide safe defaults.
+      case PracticePhase.watch:
+      case PracticePhase.celebrate:
+        return (
+          pose: QalamPose.idle,
+          tone: BubbleTone.none,
+          toneLabel: null,
+          bubbleText: '',
+          bubbleChild: null,
+        );
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Build
+  // ---------------------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final tryAgainLabel = l10n?.practiceTryAgainButton ?? 'Try Again';
-    final replayLabel = l10n?.practiceReplayButton ?? 'Replay';
-    final mistakeId = state.lastMistakeId ?? MistakeId.fallback;
+    final params = _tutorParams(l10n);
 
-    return Padding(
-      padding: const EdgeInsets.all(QalamSpace.space6),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          // Named-fix feedback panel — framed in coral, authored string.
-          FeedbackPanel(mistakeId: mistakeId),
-          const SizedBox(height: QalamSpace.space6),
+    // Audio — null ⇒ Hear button disabled (letter.audio not yet populated).
+    final audioPlayer = ref.read(audioPlayerProvider);
+    final onHear = widget.letter.audio?.letter != null
+        ? () => audioPlayer.playLetter(widget.letter.audio!.letter!)
+        : null;
 
-          // Canvas — child can see what they drew (read-only visual).
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: QalamColors.surface,
-                borderRadius: BorderRadius.circular(QalamRadii.xl),
-                boxShadow: QalamShadows.shadowMd,
+    final traceLeadIn = l10n?.practiceTraceLeadIn ?? 'Now you trace';
+    final cleanRepsLabel = l10n?.practiceCleanRepsLabel ?? 'Clean reps';
+    final strokeProg = l10n?.practiceStrokeProgress ?? 'Stroke 1 of 1';
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        // LEFT — Tutor panel (fixed width).
+        SizedBox(
+          width: _kTutorPanelWidth,
+          child: TutorPanel(
+            pose: params.pose,
+            tone: params.tone,
+            letter: widget.letter,
+            toneLabel: params.toneLabel,
+            bubbleText: params.bubbleText,
+            bubbleChild: params.bubbleChild,
+            onHear: onHear,
+          ),
+        ),
+
+        // CENTER — Hero (heading + canvas + action row).
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              QalamSpace.space4,
+              QalamSpace.space5,
+              QalamSpace.space4,
+              QalamSpace.space4,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                // Heading row — letter-agnostic Wrap (never clips).
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: QalamSpace.space2,
+                  children: <Widget>[
+                    Text(traceLeadIn, style: QalamTextStyles.display),
+                    if (widget.letter.name.ar.isNotEmpty)
+                      ArabicText(
+                        widget.letter.name.ar,
+                        // Match the display heading scale (≥ adjacent English),
+                        // not the 96px arDisplay role which would dwarf the line.
+                        style: QalamTextStyles.arDisplay.copyWith(
+                          fontSize: QalamFontSizes.fz42,
+                          height: 1.15,
+                        ),
+                      ),
+                    Text(
+                      '— ${widget.letter.name.display}.',
+                      style: QalamTextStyles.display,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: QalamSpace.space3),
+
+                // Progress row: stroke counter + clean-rep pips.
+                Row(
+                  children: <Widget>[
+                    Text(strokeProg, style: QalamTextStyles.label),
+                    const SizedBox(width: QalamSpace.space4),
+                    Text(cleanRepsLabel, style: QalamTextStyles.label),
+                    const SizedBox(width: QalamSpace.space2),
+                    // Clean-rep pips — ink-teal (primary) fill, NOT gold.
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: List<Widget>.generate(
+                        widget.state.cleanRepsToAdvance,
+                        (int i) {
+                          final bool filled = i < widget.state.cleanReps;
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                              right: QalamSpace.space1,
+                            ),
+                            child: Container(
+                              width: QalamSpace.space3,
+                              height: QalamSpace.space3,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: filled
+                                    ? QalamColors.primary
+                                    : Colors.transparent,
+                                border: Border.all(
+                                  color: filled
+                                      ? QalamColors.primary
+                                      : QalamColors.border,
+                                  width: 1.5,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: QalamSpace.space3),
+
+                // Canvas card — the largest element on screen.
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: QalamColors.surface,
+                      borderRadius: BorderRadius.circular(QalamRadii.xl),
+                      boxShadow: QalamShadows.shadowMd,
+                      border:
+                          Border.all(color: QalamColors.border, width: 1.5),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(QalamRadii.lg),
+                      child: ColoredBox(
+                        color: QalamColors.bg,
+                        child: Stack(
+                          children: <Widget>[
+                            // Main trace canvas — fills the stack.
+                            Positioned.fill(
+                              child: StrokeCanvas(
+                                key: ValueKey(_canvasEpoch),
+                                referenceStrokes:
+                                    widget.letter.referenceStrokes,
+                                onStrokeSubmitted: _handleSubmit,
+                              ),
+                            ),
+
+                            // Ghost cast overlay — one-shot auto-play.
+                            if (_isCasting)
+                              Positioned.fill(
+                                child: IgnorePointer(
+                                  child: Opacity(
+                                    opacity: 0.24,
+                                    child: StrokeOrderAnimation(
+                                      key: ValueKey('ghost-$_castEpoch'),
+                                      referenceStrokes:
+                                          widget.letter.referenceStrokes,
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                            // Watch Me corner card — top-right.
+                            Positioned(
+                              top: QalamSpace.space4,
+                              right: QalamSpace.space4,
+                              child: _WatchMeCorner(
+                                cornerKey: _cornerKey,
+                                letter: widget.letter,
+                                onTap: _cast,
+                                l10n: l10n,
+                              ),
+                            ),
+
+                            // Clear button — bottom-left compact ghost.
+                            Positioned(
+                              left: QalamSpace.space4,
+                              bottom: QalamSpace.space4,
+                              child: _ClearButton(
+                                onPressed: _clear,
+                                label: l10n?.practiceClearButton ?? 'Clear',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: QalamSpace.space3),
+
+                // Bottom action row — content-sized, right-aligned buttons.
+                _ActionRow(
+                  phase: widget.state.phase,
+                  isScoring: _isScoring,
+                  l10n: l10n,
+                  onCast: _cast,
+                  onRetry: () {
+                    _clear();
+                    widget.onRetry();
+                  },
+                  onContinueAfterPraise: () {
+                    _clear();
+                    widget.onContinueAfterPraise();
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// _WatchMeCorner — top-right corner card inside the canvas stack
+// ---------------------------------------------------------------------------
+
+class _WatchMeCorner extends StatelessWidget {
+  const _WatchMeCorner({
+    required this.cornerKey,
+    required this.letter,
+    required this.onTap,
+    required this.l10n,
+  });
+
+  final GlobalKey<StrokeOrderAnimationState> cornerKey;
+  final Letter letter;
+  final VoidCallback onTap;
+  final AppLocalizations? l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    final watchMeLabel = l10n?.practiceWatchMeLabel ?? 'Watch Me';
+    final watchMeHint = l10n?.practiceWatchMeHint ?? 'Tap to show me here';
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: _kWatchMeCornerWidth,
+        constraints: const BoxConstraints(minHeight: QalamTargets.targetMin),
+        decoration: BoxDecoration(
+          color: QalamColors.surfaceRaised,
+          border: Border.all(color: QalamColors.border, width: 1.0),
+          borderRadius: BorderRadius.circular(QalamRadii.lg),
+          boxShadow: QalamShadows.shadowMd,
+        ),
+        padding: const EdgeInsets.all(QalamSpace.space2),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            // "Watch Me" tag
+            Text(
+              watchMeLabel,
+              style: QalamTextStyles.label.copyWith(
+                color: QalamColors.primary,
               ),
-              padding: const EdgeInsets.all(QalamSpace.space4),
+            ),
+            const SizedBox(height: QalamSpace.space1),
+
+            // Mini animation frame
+            SizedBox(
+              height: QalamSpace.space20,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(QalamRadii.lg),
+                borderRadius: BorderRadius.circular(QalamRadii.md),
                 child: ColoredBox(
                   color: QalamColors.bg,
-                  child: StrokeCanvas(
+                  child: StrokeOrderAnimation(
+                    key: cornerKey,
                     referenceStrokes: letter.referenceStrokes,
-                    onStrokeSubmitted: onStrokeSubmitted,
                   ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: QalamSpace.space6),
+            const SizedBox(height: QalamSpace.space1),
 
-          // Button row: Replay (ghost) + Try Again (primary).
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: _GhostButton(
-                  label: replayLabel,
-                  onPressed: () {
-                    animKey.currentState?.replay();
-                    onRetry();
-                  },
+            // Hint line
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  watchMeHint,
+                  style: QalamTextStyles.label.copyWith(
+                    color: QalamColors.fgMuted,
+                    fontSize: QalamFontSizes.fz12,
+                  ),
                 ),
-              ),
-              const SizedBox(width: QalamSpace.space4),
-              Expanded(
-                flex: 2,
-                child: _PrimaryButton(
-                  label: tryAgainLabel,
-                  onPressed: onRetry,
+                const SizedBox(width: QalamSpace.space1),
+                const Icon(
+                  Icons.chevron_right,
+                  size: 14,
+                  color: QalamColors.fgMuted,
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
 // ---------------------------------------------------------------------------
-// _PraisePhase — warm per-rep affirmation after a clean trace (not mastery yet)
+// _ClearButton — compact ghost at bottom-left of canvas
 // ---------------------------------------------------------------------------
 
-class _PraisePhase extends StatelessWidget {
-  const _PraisePhase({
-    required this.letter,
-    required this.state,
+class _ClearButton extends StatelessWidget {
+  const _ClearButton({required this.onPressed, required this.label});
+
+  final VoidCallback onPressed;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: QalamTargets.targetMin,
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: QalamColors.primary,
+          side: const BorderSide(color: QalamColors.primary, width: 1.5),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(QalamRadii.lg),
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: QalamSpace.space4,
+            vertical: QalamSpace.space2,
+          ),
+        ),
+        onPressed: onPressed,
+        child: Text(
+          label,
+          style: QalamTextStyles.button.copyWith(
+            color: QalamColors.primary,
+            fontSize: QalamFontSizes.fz16,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// _ActionRow — bottom of the hero center, phase-driven
+// ---------------------------------------------------------------------------
+
+class _ActionRow extends StatelessWidget {
+  const _ActionRow({
+    required this.phase,
+    required this.isScoring,
+    required this.l10n,
+    required this.onCast,
+    required this.onRetry,
     required this.onContinueAfterPraise,
   });
 
-  final Letter letter;
-  final PracticeState state;
+  final PracticePhase phase;
+  final bool isScoring;
+  final AppLocalizations? l10n;
+  final VoidCallback onCast;
+  final VoidCallback onRetry;
   final VoidCallback onContinueAfterPraise;
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final keepGoingLabel = l10n?.practiceKeepGoingButton ?? 'Keep going';
-    final repsRemaining =
-        (state.cleanRepsToAdvance - state.cleanReps).clamp(1, 999);
+    final traceHint =
+        l10n?.practiceTraceHint ?? 'Lift your pen when you finish the stroke.';
+    final showMeAgain = l10n?.practiceShowMeAgainButton ?? 'Show Me Again';
+    final tryAgain = l10n?.practiceTryAgainButton ?? 'Try Again';
+    final keepGoing = l10n?.practiceKeepGoingButton ?? 'Keep going';
 
-    return Padding(
-      padding: const EdgeInsets.all(QalamSpace.space6),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          // Warm, specific per-rep praise — leaf-green, never gold/hype.
-          PraisePanel(repsRemaining: repsRemaining),
-          const SizedBox(height: QalamSpace.space6),
-
-          // The letter the child just wrote cleanly — a calm "you did this".
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: QalamColors.surface,
-                borderRadius: BorderRadius.circular(QalamRadii.xl),
-                boxShadow: QalamShadows.shadowMd,
-              ),
-              alignment: Alignment.center,
-              child: ArabicText(
-                letter.char,
-                style: QalamTextStyles.arDisplay.copyWith(
-                  color: QalamColors.success,
+    switch (phase) {
+      case PracticePhase.trace:
+        // Trace + scoring: soft hint left, no action buttons.
+        return Container(
+          constraints:
+              const BoxConstraints(minHeight: QalamTargets.targetMin),
+          alignment: Alignment.centerLeft,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Container(
+                width: QalamSpace.space2,
+                height: QalamSpace.space2,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: QalamColors.primary,
                 ),
               ),
-            ),
+              const SizedBox(width: QalamSpace.space2),
+              Text(
+                traceHint,
+                style: QalamTextStyles.label.copyWith(
+                  color: QalamColors.fgMuted,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: QalamSpace.space6),
+        );
 
-          // Keep going — child taps to trace the next rep.
-          _PrimaryButton(
-            label: keepGoingLabel,
+      case PracticePhase.showFix:
+        // showFix: Show Me Again (ghost) + Try Again (primary), right-aligned.
+        return Container(
+          constraints:
+              const BoxConstraints(minHeight: QalamTargets.targetMin),
+          alignment: Alignment.centerRight,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              _GhostButton(
+                label: showMeAgain,
+                onPressed: onCast,
+              ),
+              const SizedBox(width: QalamSpace.space4),
+              _PrimaryButton(
+                label: tryAgain,
+                onPressed: onRetry,
+              ),
+            ],
+          ),
+        );
+
+      case PracticePhase.showPraise:
+        // showPraise: Keep Going (primary), right-aligned.
+        return Container(
+          constraints:
+              const BoxConstraints(minHeight: QalamTargets.targetMin),
+          alignment: Alignment.centerRight,
+          child: _PrimaryButton(
+            label: keepGoing,
             onPressed: onContinueAfterPraise,
           ),
-        ],
-      ),
+        );
+
+      default:
+        return const SizedBox(height: QalamTargets.targetMin);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// _PraiseContent — inline bubble content for showPraise
+// ---------------------------------------------------------------------------
+
+/// Renders the praise content inline in the TutorPanel bubble so it reuses
+/// the authored PraisePanel strings without mounting PraisePanel as a widget.
+class _PraiseContent extends StatelessWidget {
+  const _PraiseContent({required this.l10n, required this.repsRemaining});
+
+  final AppLocalizations? l10n;
+  final int repsRemaining;
+
+  @override
+  Widget build(BuildContext context) {
+    final arabic = l10n?.practicePraiseArabic ?? 'أحسنت';
+    final line = l10n?.practicePraiseLine ?? "That's a clean alif. Nicely done.";
+    final remaining = l10n?.practicePraiseRemaining(repsRemaining) ??
+        '$repsRemaining more in a row to master it.';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        ArabicText(
+          arabic,
+          style: QalamTextStyles.arBody.copyWith(color: QalamColors.success),
+        ),
+        const SizedBox(height: QalamSpace.space2),
+        Text(line, style: QalamTextStyles.body),
+        const SizedBox(height: QalamSpace.space3),
+        Text(
+          remaining,
+          style:
+              QalamTextStyles.label.copyWith(color: QalamColors.success),
+        ),
+      ],
     );
   }
 }
 
 // ---------------------------------------------------------------------------
-// Shared button widgets
+// Shared button widgets — kept from Phase-3 original
 // ---------------------------------------------------------------------------
 
 /// Ghost / secondary button — outlined on parchment.
@@ -650,5 +1102,31 @@ class _TipCard extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Lifted feedback string helper — from feedback_panel.dart
+// ---------------------------------------------------------------------------
+
+/// Maps a [MistakeId] to the correct l10n getter.
+///
+/// Feedback ALWAYS comes from authored strings — never a generic "Oops".
+/// Lifted from FeedbackPanel so the TutorPanel bubble can use the same strings
+/// without mounting FeedbackPanel as a widget.
+String _feedbackString(AppLocalizations? l10n, MistakeId id) {
+  switch (id) {
+    case MistakeId.tooShort:
+      return l10n?.practiceFeedbackTooShort ??
+          'Your alif needs to be taller — draw it from the top all the way down.';
+    case MistakeId.wrongDirection:
+      return l10n?.practiceFeedbackWrongDirection ??
+          'Start your alif at the top and come down — not from the bottom up.';
+    case MistakeId.tooCurved:
+      return l10n?.practiceFeedbackTooCurved ??
+          'Alif is a straight line — try to keep it as straight as you can.';
+    case MistakeId.fallback:
+      return l10n?.practiceFeedbackFallback ??
+          'Something looks off — try again, slower this time.';
   }
 }
