@@ -1,31 +1,37 @@
 // DemoFeedbackScreen — the HERO of the walkthrough (DP-04/DP-05/DP-06).
 //
-// The MISS variant is the shot that sells the product: it proves Qalam
-// diagnoses a SPECIFIC stroke problem and offers a SPECIFIC fix in the tutor's
-// warm voice. The failing alif is highlighted in CORAL (QalamColors.warnSoft) —
-// never red, never a red X — and the tryAgain-pose mascot sits beside a warmly
-// framed named-fix card (the verbatim DemoAlif.heroMissFix line). Its gentle
-// "Try Again" CTA carries the natural narrative forward: the child retries and
-// THIS time it's clean, so the CTA navigates to the clean-pass variant
-// (DemoStep.feedbackMiss.next == feedbackPass) — the clean-pass state is
-// reachable by tapping, no dead end. There is no retry tally and no pressure
-// (DP-06).
+// No 1:1 design page exists for feedback, so the two states are built from the
+// brand feedback tokens (docs/design/kit/.../preview/colors-feedback.html):
 //
-// The PASS variant is a quiet, specific affirmation (QalamColors.success) with
-// warm praise, advancing to Celebration. Tokens only; copy via gen-l10n.
+//   MISS  — the shot that sells the product. The failing baa stroke is painted
+//           CORAL (QalamColors.warnSoft) — never red, never a red X — beside the
+//           tryAgain-pose mascot and a warm coral card carrying a SPECIFIC named
+//           fix in the tutor's voice (the verbatim DemoBaa.heroMissFix). Its
+//           gentle, counter-free "Try Again" carries the narrative forward: the
+//           child retries and THIS time it's clean, so it navigates to the
+//           clean-pass variant — reachable by tapping, no dead end (DP-06).
+//
+//   PASS  — a quiet, specific affirmation. The clean stroke is painted LEAF
+//           (QalamColors.success) with warm praise, advancing to Celebration.
+//
+// Both canvases PAINT the baa from the single DemoBaa source (Pitfall 5).
+// Tokens only; copy via gen-l10n; parchment ground, never white; never red.
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../router/demo_routes.dart';
-import '../../theme/brand_theme_ext.dart';
 import '../../theme/colors.dart';
 import '../../theme/dimens.dart';
 import '../../theme/text_styles.dart';
-import '../demo_alif.dart';
-import '../widgets/dotted_guide_painter.dart';
 import '../../widgets/qalam_mascot.dart';
+import '../demo_baa.dart';
+import '../widgets/demo_chrome.dart';
+import '../widgets/dotted_guide_painter.dart';
+
+const double _kMascotSize = 160;
+const double _kCanvasSize = 300;
 
 /// Which feedback state to show — selected by route (miss is the default the
 /// Trace submit lands on; pass is the retry-now-clean state).
@@ -38,22 +44,17 @@ class DemoFeedbackScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: QalamColors.bg, // parchment — never white
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 720),
-              child: Padding(
-                padding: const EdgeInsets.all(QalamSpace.space8),
-                child: variant == DemoFeedbackVariant.miss
-                    ? const _MissView()
-                    : const _PassView(),
-              ),
-            ),
-          ),
+    return DemoChrome(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(
+          QalamSpace.space10,
+          QalamSpace.space4,
+          QalamSpace.space10,
+          QalamSpace.space8,
         ),
+        child: variant == DemoFeedbackVariant.miss
+            ? const _MissView()
+            : const _PassView(),
       ),
     );
   }
@@ -67,75 +68,35 @@ class _MissView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations? l10n = AppLocalizations.of(context);
-    final String fix = l10n?.demoMissFix ?? DemoAlif.heroMissFix;
+    final String fix = l10n?.demoMissFix ?? DemoBaa.heroMissFix;
+    final String chip = l10n?.demoMissChip ?? "Let's fix this";
     final String tryAgain = l10n?.demoTryAgain ?? 'Try Again';
 
-    final List<Offset> points =
-        DemoAlif.referencePoints.map((p) => Offset(p[0], p[1])).toList();
-
     return Column(
-      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        Wrap(
+          alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: QalamSpace.space6,
+          runSpacing: QalamSpace.space6,
           children: <Widget>[
-            const QalamMascot(
-              pose: QalamPose.tryAgain,
-              size: QalamSpace.space20,
-            ),
-            const SizedBox(width: QalamSpace.space6),
-            // The failing alif, highlighted coral (the full stroke, inked wrong).
-            Container(
-              decoration: BoxDecoration(
-                color: QalamColors.surface,
-                borderRadius: BorderRadius.circular(QalamRadii.xl),
-                boxShadow: QalamShadows.shadowMd,
-              ),
-              padding: const EdgeInsets.all(QalamSpace.space4),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(QalamRadii.lg),
-                child: ColoredBox(
-                  color: QalamColors.bg,
-                  child: IgnorePointer(
-                    child: CustomPaint(
-                      size: const Size(
-                          QalamSpace.space20, QalamSpace.space20 * 2),
-                      painter: DottedGuidePainter(
-                        referencePoints: points,
-                        inkProgress: 1.0,
-                        inkColor: QalamColors.warnSoft, // coral, never red
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+            const QalamMascot(pose: QalamPose.tryAgain, size: _kMascotSize),
+            _FeedbackCanvas(
+              inkColor: QalamColors.warnSoft, // coral, never red
+              chipLabel: chip,
+              chipTint: QalamColors.warnSoftTint,
+              chipColor: QalamColors.warnSoft,
             ),
           ],
         ),
         const SizedBox(height: QalamSpace.space8),
-        // The specific named fix, in a warm coral-tinted card (the tutor's voice).
-        Container(
-          constraints: const BoxConstraints(maxWidth: 520),
-          decoration: BoxDecoration(
-            color: QalamColors.warnSoftTint,
-            borderRadius: BorderRadius.circular(QalamRadii.lg),
-          ),
-          padding: const EdgeInsets.symmetric(
-            horizontal: QalamSpace.space6,
-            vertical: QalamSpace.space5,
-          ),
-          child: Text(
-            fix,
-            style: QalamTextStyles.body,
-            textAlign: TextAlign.center,
-          ),
-        ),
+        _MessageCard(message: fix, tint: QalamColors.warnSoftTint),
         const SizedBox(height: QalamSpace.space8),
-        _StickerButton(
-          buttonKey: const Key('demoTryAgainCta'),
+        DemoPrimaryCta(
+          ctaKey: const Key('demoTryAgainCta'),
           label: tryAgain,
+          icon: Icons.refresh_rounded,
           // Forward to the clean-pass state — the retry-now-clean narrative.
           onPressed: () => context.go(DemoStep.feedbackMiss.next.path),
         ),
@@ -152,37 +113,35 @@ class _PassView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations? l10n = AppLocalizations.of(context);
-    final String praise =
-        l10n?.demoPassPraise ?? 'Beautiful — straight and tall. أحسنت.';
+    final String praise = l10n?.demoPassPraise ?? DemoBaa.passPraise;
+    final String chip = l10n?.demoPassChip ?? 'Beautiful work';
     final String continueLabel = l10n?.demoPassContinue ?? 'Continue';
 
     return Column(
-      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        const QalamMascot(pose: QalamPose.idle, size: QalamSpace.space20),
-        const SizedBox(height: QalamSpace.space6),
-        // Quiet success affirmation — subtle, never a loud score.
-        Container(
-          constraints: const BoxConstraints(maxWidth: 520),
-          decoration: BoxDecoration(
-            color: QalamColors.successTint,
-            borderRadius: BorderRadius.circular(QalamRadii.lg),
-          ),
-          padding: const EdgeInsets.symmetric(
-            horizontal: QalamSpace.space6,
-            vertical: QalamSpace.space5,
-          ),
-          child: Text(
-            praise,
-            style: QalamTextStyles.body,
-            textAlign: TextAlign.center,
-          ),
+        Wrap(
+          alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: QalamSpace.space6,
+          runSpacing: QalamSpace.space6,
+          children: <Widget>[
+            const QalamMascot(pose: QalamPose.cheer, size: _kMascotSize),
+            _FeedbackCanvas(
+              inkColor: QalamColors.success, // leaf — the clean stroke
+              chipLabel: chip,
+              chipTint: QalamColors.successTint,
+              chipColor: QalamColors.success,
+            ),
+          ],
         ),
         const SizedBox(height: QalamSpace.space8),
-        _StickerButton(
-          buttonKey: const Key('demoPassContinueCta'),
+        _MessageCard(message: praise, tint: QalamColors.successTint),
+        const SizedBox(height: QalamSpace.space8),
+        DemoPrimaryCta(
+          ctaKey: const Key('demoPassContinueCta'),
           label: continueLabel,
+          icon: Icons.arrow_forward_rounded,
           onPressed: () => context.go(DemoStep.feedbackPass.next.path),
         ),
       ],
@@ -190,50 +149,101 @@ class _PassView extends StatelessWidget {
   }
 }
 
-/// Shared sticker-shadow primary CTA. Keyed and >= targetComfy so contract tests
-/// can assert size and tap target.
-class _StickerButton extends StatelessWidget {
-  const _StickerButton({
-    required this.buttonKey,
-    required this.label,
-    required this.onPressed,
+/// The white canvas painting the full baa stroke in the feedback color, with a
+/// floating chip over it.
+class _FeedbackCanvas extends StatelessWidget {
+  const _FeedbackCanvas({
+    required this.inkColor,
+    required this.chipLabel,
+    required this.chipTint,
+    required this.chipColor,
   });
 
-  final Key buttonKey;
-  final String label;
-  final VoidCallback onPressed;
+  final Color inkColor;
+  final String chipLabel;
+  final Color chipTint;
+  final Color chipColor;
 
   @override
   Widget build(BuildContext context) {
-    final QalamTheme qalam =
-        Theme.of(context).extension<QalamTheme>() ?? QalamTheme.light;
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(QalamRadii.lg),
-        boxShadow: qalam.buttonShadow,
-      ),
-      child: Material(
-        color: QalamColors.primary,
-        borderRadius: BorderRadius.circular(QalamRadii.lg),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          key: buttonKey,
-          onTap: onPressed,
-          child: Container(
-            constraints:
-                const BoxConstraints(minHeight: QalamTargets.targetComfy),
-            padding: const EdgeInsets.symmetric(
-              horizontal: QalamSpace.space12,
-              vertical: QalamSpace.space4,
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              label,
-              style:
-                  QalamTextStyles.button.copyWith(color: QalamColors.fgOnPrimary),
-            ),
+    return Stack(
+      alignment: Alignment.topCenter,
+      children: <Widget>[
+        DemoCanvasCard(
+          size: _kCanvasSize,
+          painter: DottedGuidePainter(
+            referencePoints:
+                DemoBaa.referencePoints.map((p) => Offset(p[0], p[1])).toList(),
+            inkProgress: 1.0, // the full stroke, inked in the feedback color
+            inkColor: inkColor,
+            showStartDot: true,
+            startDotColor: QalamColors.reward, // gold — start-dot only
+            diacriticDots:
+                DemoBaa.diacriticDots.map((p) => Offset(p[0], p[1])).toList(),
           ),
         ),
+        Positioned(
+          top: QalamSpace.space5,
+          child: _FeedbackChip(label: chipLabel, tint: chipTint, color: chipColor),
+        ),
+      ],
+    );
+  }
+}
+
+class _FeedbackChip extends StatelessWidget {
+  const _FeedbackChip({
+    required this.label,
+    required this.tint,
+    required this.color,
+  });
+
+  final String label;
+  final Color tint;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: QalamSpace.space4,
+        vertical: QalamSpace.space2,
+      ),
+      decoration: BoxDecoration(
+        color: tint,
+        borderRadius: BorderRadius.circular(QalamRadii.pill),
+      ),
+      child: Text(
+        label,
+        style: QalamTextStyles.label.copyWith(color: color),
+      ),
+    );
+  }
+}
+
+/// The warm tinted card carrying the named fix / praise, in the tutor's voice.
+class _MessageCard extends StatelessWidget {
+  const _MessageCard({required this.message, required this.tint});
+
+  final String message;
+  final Color tint;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 560),
+      decoration: BoxDecoration(
+        color: tint,
+        borderRadius: BorderRadius.circular(QalamRadii.lg),
+      ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: QalamSpace.space6,
+        vertical: QalamSpace.space5,
+      ),
+      child: Text(
+        message,
+        style: QalamTextStyles.body,
+        textAlign: TextAlign.center,
       ),
     );
   }
