@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 03 COMPLETE → ready for Phase 04
-Plan: All 6 plans done (03-00 through 03-05)
+Plan: All 6 plans done (03-00 through 03-05); + UI quick task 260607-pr1 (practice three-zone redesign) landed on main
 Status: Phase 3 "Trace One Letter End-to-End" complete
 Last activity: 2026-06-07 - Completed all Phase 3 plans: asset bundling, geometric stroke scorer (TDD), mastery persistence (Drift), StrokeCanvas + StrokeOrderAnimation widgets, full practice loop (session controller + PracticeScreen + FeedbackPanel + MasteryCelebration), and demo home upgrade. 151/151 tests pass.
 
@@ -98,6 +98,7 @@ None yet.
 | 260601-wa0 | Add DEMO launch flag to boot app at /demo/home | 2026-06-01 | eed35c0 | [260601-wa0-add-demo-launch-flag-to-boot-app-at-demo](./quick/260601-wa0-add-demo-launch-flag-to-boot-app-at-demo/) |
 | 260602-00f | Rebuild demo Home faithful to home.png (owner override: gamification) | 2026-06-02 | 586b195 | [260602-00f-rebuild-demo-home-faithful-to-home-png-d](./quick/260602-00f-rebuild-demo-home-faithful-to-home-png-d/) |
 | 260602-bw1 | Rebuild Watch/Trace/Feedback/Celebration faithful to mockups; demo loop → Baa (owner override: gamification) | 2026-06-02 | 326c221 | [260602-bw1-rebuild-demo-walkthrough-baa](./quick/260602-bw1-rebuild-demo-walkthrough-baa/) |
+| 260607-pr1 | Practice screen three-zone Trace/ShowFix/ShowPraise tutor redesign + Hear-the-letter (UI-only; scorer/state-machine/persistence untouched) | 2026-06-07 | 8f8eb56 | [practice-redesign spec](../docs/design/practice-redesign/) |
 
 ## Deferred Items
 
