@@ -10,8 +10,8 @@
 // Anti-gamification invariants (PLAT-03 / D-13):
 //   - NO QalamColors.reward (gold) on this screen.
 //   - NO ⭐ counter, no "THIS WEEK" tally, no streak, no score, no badge.
-//   - Journey and Parent are inert — no onTap, visibly labelled "Coming soon".
-//   - context.go('/journey') and context.go('/parent') are ABSENT.
+//   - Parent is inert — no onTap, visibly labelled "Coming soon" (Phase 9).
+//   - Journey nav item unlocked in Phase 03.1: context.go('/journey') wired.
 //
 // Null-safe l10n reads throughout:  l10n?.getter ?? 'fallback'  (D-05 compat).
 // The D-05 direction test wraps this in bare MaterialApp (no router, no scope);
@@ -107,14 +107,13 @@ class _HomeNavRail extends StatelessWidget {
             onTap: null, // Already on Home.
           ),
           const SizedBox(height: QalamSpace.space4),
-          // Journey — locked, Phase 6.
+          // Journey — unlocked in Phase 03.1, navigates to /journey.
           _NavItem(
-            iconAsset: 'assets/icons/lock.svg',
+            iconAsset: 'assets/icons/map.svg',
             label: l10n?.navJourney ?? 'Journey',
             isActive: false,
-            isLocked: true,
-            sublabel: l10n?.comingSoon ?? 'Coming soon',
-            onTap: null, // Inert — no route.
+            isLocked: false,
+            onTap: () => context.go('/journey'),
           ),
           const SizedBox(height: QalamSpace.space4),
           // Parent — locked, Phase 9.

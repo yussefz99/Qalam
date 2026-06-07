@@ -75,7 +75,7 @@ final class PracticeSessionControllerProvider
 }
 
 String _$practiceSessionControllerHash() =>
-    r'5999de8f836337b0dd472cb4415911263fc35116';
+    r'25f30ddecf0342425e8b0d1e06dd881674e5c53c';
 
 /// Riverpod Notifier: session controller keyed by lessonId.
 ///

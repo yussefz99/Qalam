@@ -7,7 +7,7 @@
 //   - Exactly ONE gold star — QalamColors.reward ONLY for this star.
 //   - NO running star counter, NO "+N today", NO "THIS WEEK" stat.
 //   - NO three-star rating, NO streak, NO badge hype.
-//   - NO "See journey" button — Journey is Phase 6.
+//   - 'See journey' button — wired in Phase 03.1 to /journey.
 //   - NO confetti, NO sound blast.
 //   - The star earning is information ("you mastered alif"), not a score.
 //
@@ -21,6 +21,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../../theme/colors.dart';
@@ -148,6 +149,29 @@ class _MasteryCelebrationState extends State<MasteryCelebration>
                   _BackHomeButton(
                     label: backHomeLabel,
                     onPressed: widget.onBackHome,
+                  ),
+                  const SizedBox(height: QalamSpace.space4),
+
+                  // "See journey" ghost link — navigation affordance only.
+                  // No star count, no "+N" copy, no score (D-23/D-24).
+                  // Wired in Phase 03.1 to /journey.
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      minHeight: QalamTargets.targetMin,
+                    ),
+                    child: TextButton(
+                      onPressed: () => context.go('/journey'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: QalamColors.fgMuted,
+                        backgroundColor: Colors.transparent,
+                      ),
+                      child: Text(
+                        l10n?.journeySeeJourney ?? 'See journey',
+                        style: QalamTextStyles.body.copyWith(
+                          color: QalamColors.fgMuted,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),

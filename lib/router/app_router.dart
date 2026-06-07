@@ -9,6 +9,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../dev/authoring_screen.dart';
 import '../dev/glyph_audit_screen.dart';
+import '../features/journey/journey_screen.dart';
 import '../screens/home_screen.dart';
 import '../features/practice/practice_screen.dart';
 import '../screens/settings_screen.dart';
@@ -39,6 +40,10 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: '/settings',
         builder: (context, state) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: '/journey',
+        builder: (context, state) => const JourneyScreen(),
       ),
       // DEBUG SEAM — the D-12 glyph-audit harness. Reachable only by typing this
       // route on an emulator/tablet; it is NOT surfaced in the user-facing nav.

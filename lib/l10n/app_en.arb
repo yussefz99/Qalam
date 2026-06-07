@@ -513,5 +513,10 @@
   "practiceClearButton": "Clear",
   "@practiceClearButton": {
     "description": "Compact ghost control at the bottom-left of the trace canvas — clears the current stroke attempt and starts fresh."
+  },
+
+  "journeySeeJourney": "See journey",
+  "@journeySeeJourney": {
+    "description": "Ghost navigation link on the MasteryCelebration screen. Navigates to /journey. Navigation affordance only — no star count, no score (Phase 03.1 D-23/D-24)."
   }
 }
