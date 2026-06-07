@@ -82,6 +82,11 @@ abstract final class QalamMotion {
   static const Duration durBase = Duration(milliseconds: 220);
   static const Duration durSlow = Duration(milliseconds: 420);
   static const Duration durCheer = Duration(milliseconds: 700);
+
+  /// "Watch me write" pen-tracing pace — deliberately slow and followable so a
+  /// 5–10yo can track the stroke order. Paired with a linear curve for an even
+  /// pen speed (no lurch-then-crawl).
+  static const Duration durWrite = Duration(milliseconds: 1400);
 }
 
 /// Ink-stroke rendering constants for the Practice spike (UI-SPEC Ink Rendering).

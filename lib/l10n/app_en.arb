@@ -348,6 +348,37 @@
     "description": "Fallback named-fix when no authored commonMistake matches. Calm, specific — NEVER 'Oops, try again!' (PLAT-03 / Pitfall 7)."
   },
 
+  "practicePraiseEyebrow": "NICE",
+  "@practicePraiseEyebrow": {
+    "description": "Eyebrow shown above the per-rep praise panel after a clean trace. Calm, never hype — no '+1' or points (PLAT-03 anti-gamification)."
+  },
+
+  "practicePraiseArabic": "أحسنت",
+  "@practicePraiseArabic": {
+    "description": "Per-rep praise Arabic word (RTL, Noto Naskh) — 'well done' — shown after each clean rep. Same warm register as the mastery celebration, smaller moment."
+  },
+
+  "practicePraiseLine": "That's a clean alif. Nicely done.",
+  "@practicePraiseLine": {
+    "description": "Warm, specific per-rep praise after a clean trace. Tutor's voice — calm, never 'Great job!!!' hype. Names what was good."
+  },
+
+  "practicePraiseRemaining": "{n} more in a row to master it.",
+  "@practicePraiseRemaining": {
+    "description": "Informational line telling the child how many consecutive clean reps remain. Pedagogical progress, NOT a score. Western numerals only.",
+    "placeholders": {
+      "n": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+
+  "practiceKeepGoingButton": "Keep going",
+  "@practiceKeepGoingButton": {
+    "description": "Primary button on the per-rep praise panel — advances to trace the next rep."
+  },
+
   "practiceCelebrationLine": "You learned alif.",
   "@practiceCelebrationLine": {
     "description": "Mastery celebration warm line — the learning moment stated calmly. Paired with the Arabic praise island."

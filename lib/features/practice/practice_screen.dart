@@ -36,8 +36,10 @@ import '../../theme/brand_theme_ext.dart';
 import '../../theme/colors.dart';
 import '../../theme/dimens.dart';
 import '../../theme/text_styles.dart';
+import '../../widgets/arabic_text.dart';
 import 'widgets/feedback_panel.dart';
 import 'widgets/mastery_celebration.dart';
+import 'widgets/praise_panel.dart';
 import 'widgets/stroke_canvas.dart';
 import 'widgets/stroke_order_animation.dart';
 
@@ -129,6 +131,10 @@ class _PracticeScreenState extends ConsumerState<PracticeScreen> {
               .read(practiceSessionControllerProvider(PracticeScreen._lessonId)
                   .notifier)
               .advanceToTrace(),
+          onContinueAfterPraise: () => ref
+              .read(practiceSessionControllerProvider(PracticeScreen._lessonId)
+                  .notifier)
+              .continueAfterPraise(),
           onRetry: () => ref
               .read(practiceSessionControllerProvider(PracticeScreen._lessonId)
                   .notifier)
@@ -145,6 +151,8 @@ class _PracticeScreenState extends ConsumerState<PracticeScreen> {
       case PracticePhase.trace:
       case PracticePhase.showFix:
         return l10n?.practiceTraceEyebrow ?? 'YOUR TURN · TRACE';
+      case PracticePhase.showPraise:
+        return l10n?.practicePraiseEyebrow ?? 'NICE';
       case PracticePhase.celebrate:
         return l10n?.practiceMasteredEyebrow ?? 'MASTERED';
     }
@@ -164,6 +172,7 @@ class _PracticeBody extends ConsumerWidget {
     required this.animKey,
     required this.onStrokeSubmitted,
     required this.onAdvanceToTrace,
+    required this.onContinueAfterPraise,
     required this.onRetry,
   });
 
@@ -173,6 +182,7 @@ class _PracticeBody extends ConsumerWidget {
   final Future<void> Function(List<Offset> points, StrokeSpec referenceStroke)
       onStrokeSubmitted;
   final VoidCallback onAdvanceToTrace;
+  final VoidCallback onContinueAfterPraise;
   final VoidCallback onRetry;
 
   @override
@@ -201,6 +211,11 @@ class _PracticeBody extends ConsumerWidget {
               state: state,
               onStrokeSubmitted: (List<Offset> pts) =>
                   onStrokeSubmitted(pts, letter.referenceStrokes.first),
+            ),
+          PracticePhase.showPraise => _PraisePhase(
+              letter: letter,
+              state: state,
+              onContinueAfterPraise: onContinueAfterPraise,
             ),
           PracticePhase.showFix => _ShowFixPhase(
               letter: letter,
@@ -331,7 +346,12 @@ class _TracePhase extends StatelessWidget {
     final repLabel = l10n?.practiceRepProgress(repN) ?? '$repN of $repTotal';
 
     return Padding(
-      padding: const EdgeInsets.all(QalamSpace.space6),
+      // Tighter horizontal inset so the writing surface runs nearly edge-to-edge
+      // — children need a wide, generous canvas to form a letter comfortably.
+      padding: const EdgeInsets.symmetric(
+        horizontal: QalamSpace.space4,
+        vertical: QalamSpace.space5,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -347,17 +367,18 @@ class _TracePhase extends StatelessWidget {
               Text(repLabel, style: QalamTextStyles.label),
             ],
           ),
-          const SizedBox(height: QalamSpace.space6),
+          const SizedBox(height: QalamSpace.space5),
 
-          // Trace canvas — expanded to fill.
+          // Trace canvas — expanded to fill, framed with a soft surface card.
           Expanded(
             child: Container(
               decoration: BoxDecoration(
                 color: QalamColors.surface,
                 borderRadius: BorderRadius.circular(QalamRadii.xl),
                 boxShadow: QalamShadows.shadowMd,
+                border: Border.all(color: QalamColors.border, width: 1.5),
               ),
-              padding: const EdgeInsets.all(QalamSpace.space4),
+              padding: const EdgeInsets.all(QalamSpace.space3),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(QalamRadii.lg),
                 child: ColoredBox(
@@ -456,6 +477,67 @@ class _ShowFixPhase extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// _PraisePhase — warm per-rep affirmation after a clean trace (not mastery yet)
+// ---------------------------------------------------------------------------
+
+class _PraisePhase extends StatelessWidget {
+  const _PraisePhase({
+    required this.letter,
+    required this.state,
+    required this.onContinueAfterPraise,
+  });
+
+  final Letter letter;
+  final PracticeState state;
+  final VoidCallback onContinueAfterPraise;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final keepGoingLabel = l10n?.practiceKeepGoingButton ?? 'Keep going';
+    final repsRemaining =
+        (state.cleanRepsToAdvance - state.cleanReps).clamp(1, 999);
+
+    return Padding(
+      padding: const EdgeInsets.all(QalamSpace.space6),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          // Warm, specific per-rep praise — leaf-green, never gold/hype.
+          PraisePanel(repsRemaining: repsRemaining),
+          const SizedBox(height: QalamSpace.space6),
+
+          // The letter the child just wrote cleanly — a calm "you did this".
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: QalamColors.surface,
+                borderRadius: BorderRadius.circular(QalamRadii.xl),
+                boxShadow: QalamShadows.shadowMd,
+              ),
+              alignment: Alignment.center,
+              child: ArabicText(
+                letter.char,
+                style: QalamTextStyles.arDisplay.copyWith(
+                  color: QalamColors.success,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: QalamSpace.space6),
+
+          // Keep going — child taps to trace the next rep.
+          _PrimaryButton(
+            label: keepGoingLabel,
+            onPressed: onContinueAfterPraise,
           ),
         ],
       ),

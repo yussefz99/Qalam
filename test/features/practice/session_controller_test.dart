@@ -129,15 +129,45 @@ void main() {
       expect(state.phase, PracticePhase.trace);
     });
 
-    test('3 clean passes → celebrate phase, cleanReps=3', () async {
+    test('clean pass (not yet mastery) → showPraise phase, cleanReps increments',
+        () async {
+      final notifier = container
+          .read(practiceSessionControllerProvider('lesson_01').notifier);
+      notifier.advanceToTrace();
+
+      await notifier.onStrokeResult(const StrokeResult(passed: true));
+
+      final state =
+          container.read(practiceSessionControllerProvider('lesson_01'));
+      expect(state.phase, PracticePhase.showPraise);
+      expect(state.cleanReps, 1);
+    });
+
+    test('continueAfterPraise() → back to trace for the next rep', () async {
+      final notifier = container
+          .read(practiceSessionControllerProvider('lesson_01').notifier);
+      notifier.advanceToTrace();
+      await notifier.onStrokeResult(const StrokeResult(passed: true));
+
+      notifier.continueAfterPraise();
+
+      final state =
+          container.read(practiceSessionControllerProvider('lesson_01'));
+      expect(state.phase, PracticePhase.trace);
+      expect(state.cleanReps, 1); // streak preserved across praise
+    });
+
+    test('3 clean passes IN A ROW → celebrate phase, cleanReps=3', () async {
       final notifier = container
           .read(practiceSessionControllerProvider('lesson_01').notifier);
       notifier.advanceToTrace();
       const pass = StrokeResult(passed: true);
 
-      await notifier.onStrokeResult(pass);
-      await notifier.onStrokeResult(pass);
-      await notifier.onStrokeResult(pass);
+      await notifier.onStrokeResult(pass); // → showPraise (1)
+      notifier.continueAfterPraise(); // → trace
+      await notifier.onStrokeResult(pass); // → showPraise (2)
+      notifier.continueAfterPraise(); // → trace
+      await notifier.onStrokeResult(pass); // → celebrate (3)
 
       final state =
           container.read(practiceSessionControllerProvider('lesson_01'));
@@ -145,7 +175,7 @@ void main() {
       expect(state.cleanReps, 3);
     });
 
-    test('3 clean passes → recordMastery called once with letterId=alif, cleanReps=3',
+    test('3 clean passes in a row → recordMastery called once, alif, cleanReps=3',
         () async {
       final notifier = container
           .read(practiceSessionControllerProvider('lesson_01').notifier);
@@ -153,7 +183,9 @@ void main() {
       const pass = StrokeResult(passed: true);
 
       await notifier.onStrokeResult(pass);
+      notifier.continueAfterPraise();
       await notifier.onStrokeResult(pass);
+      notifier.continueAfterPraise();
       await notifier.onStrokeResult(pass);
 
       expect(fakeProgress.calls, hasLength(1));
@@ -161,7 +193,7 @@ void main() {
       expect(fakeProgress.calls.first.cleanReps, 3);
     });
 
-    test('miss → showFix phase, cleanReps unchanged (D-05), lastMistakeId set',
+    test('miss → showFix phase, RESETS streak to 0, lastMistakeId set',
         () async {
       final notifier = container
           .read(practiceSessionControllerProvider('lesson_01').notifier);
@@ -171,13 +203,44 @@ void main() {
           StrokeResult(passed: false, mistakeId: MistakeId.tooShort);
 
       await notifier.onStrokeResult(pass); // cleanReps → 1
-      await notifier.onStrokeResult(miss); // must NOT advance cleanReps
+      notifier.continueAfterPraise();
+      await notifier.onStrokeResult(miss); // streak must reset to 0
 
       final state =
           container.read(practiceSessionControllerProvider('lesson_01'));
       expect(state.phase, PracticePhase.showFix);
-      expect(state.cleanReps, 1);
+      expect(state.cleanReps, 0);
       expect(state.lastMistakeId, MistakeId.tooShort);
+    });
+
+    test('a miss mid-streak means mastery needs 3 fresh in a row', () async {
+      final notifier = container
+          .read(practiceSessionControllerProvider('lesson_01').notifier);
+      notifier.advanceToTrace();
+      const pass = StrokeResult(passed: true);
+      const miss =
+          StrokeResult(passed: false, mistakeId: MistakeId.tooShort);
+
+      // Two clean, then a miss — streak wiped.
+      await notifier.onStrokeResult(pass);
+      notifier.continueAfterPraise();
+      await notifier.onStrokeResult(pass);
+      notifier.continueAfterPraise();
+      await notifier.onStrokeResult(miss); // reset to 0
+      notifier.retry();
+
+      // Now three fresh in a row are required.
+      await notifier.onStrokeResult(pass);
+      notifier.continueAfterPraise();
+      await notifier.onStrokeResult(pass);
+      notifier.continueAfterPraise();
+      await notifier.onStrokeResult(pass);
+
+      final state =
+          container.read(practiceSessionControllerProvider('lesson_01'));
+      expect(state.phase, PracticePhase.celebrate);
+      expect(state.cleanReps, 3);
+      expect(fakeProgress.calls, hasLength(1));
     });
 
     test('retry() → back to trace, lastMistakeId cleared', () async {

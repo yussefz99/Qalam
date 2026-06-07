@@ -57,12 +57,15 @@ class StrokeOrderAnimationState extends State<StrokeOrderAnimation>
 
     _controller = AnimationController(
       vsync: this,
-      duration: QalamMotion.durSlow, // 420ms — gentle write pacing
+      duration: QalamMotion.durWrite, // 1400ms — slow enough for a child to follow
     );
 
+    // Linear curve = even pen speed. easeOutQuart sprinted then crawled at the
+    // end, which read as "too fast then stuck"; a constant pace tracks like a
+    // real hand writing the stroke.
     _animation = CurvedAnimation(
       parent: _controller,
-      curve: QalamMotion.easeOutQuart, // Cubic(0.22, 1, 0.36, 1)
+      curve: Curves.linear,
     );
 
     // Auto-play once on first build (D-10).

@@ -27,10 +27,14 @@ enum PracticePhase {
   /// The child is tracing (stylus on canvas, waiting for a stroke result).
   trace,
 
+  /// A stroke passed but mastery isn't reached yet — showing the warm
+  /// per-rep praise panel. The child taps "Keep going" to trace again.
+  showPraise,
+
   /// A stroke failed — showing the named-fix feedback panel.
   showFix,
 
-  /// 3 clean reps completed — the mastery celebration is shown.
+  /// Required clean reps completed in a row — the mastery celebration is shown.
   celebrate,
 }
 
@@ -138,7 +142,7 @@ class PracticeSessionController extends _$PracticeSessionController {
     if (result.passed) {
       final newReps = state.cleanReps + 1;
       if (newReps >= state.cleanRepsToAdvance) {
-        // Mastery earned — persist and celebrate.
+        // Mastery earned — required clean reps achieved IN A ROW.
         // DB write is best-effort: a storage failure must not block the child
         // from seeing the celebration they earned.
         try {
@@ -151,19 +155,28 @@ class PracticeSessionController extends _$PracticeSessionController {
           phase: PracticePhase.celebrate,
         );
       } else {
-        // Another clean rep needed.
+        // Clean rep, but not mastery yet — show warm per-rep praise. The child
+        // taps "Keep going" (continueAfterPraise) to trace the next rep.
         state = state.copyWith(
           cleanReps: newReps,
-          phase: PracticePhase.trace,
+          phase: PracticePhase.showPraise,
         );
       }
     } else {
-      // Miss — show the named fix. cleanReps does NOT increment (D-05).
+      // Miss — reset the streak to 0 (mastery requires N clean reps IN A ROW)
+      // and show the named fix.
       state = state.copyWith(
+        cleanReps: 0,
         phase: PracticePhase.showFix,
         lastMistakeId: result.mistakeId ?? MistakeId.fallback,
       );
     }
+  }
+
+  /// Return from ShowPraise to Trace so the child traces the next clean rep.
+  void continueAfterPraise() {
+    if (state.phase != PracticePhase.showPraise) return;
+    state = state.copyWith(phase: PracticePhase.trace);
   }
 
   /// Return from ShowFix to Trace so the child can retry the same stroke.
