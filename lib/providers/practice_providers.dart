@@ -139,7 +139,13 @@ class PracticeSessionController extends _$PracticeSessionController {
       final newReps = state.cleanReps + 1;
       if (newReps >= state.cleanRepsToAdvance) {
         // Mastery earned — persist and celebrate.
-        await _recordMastery(newReps);
+        // DB write is best-effort: a storage failure must not block the child
+        // from seeing the celebration they earned.
+        try {
+          await _recordMastery(newReps);
+        } catch (_) {
+          // Swallow — celebrate regardless.
+        }
         state = state.copyWith(
           cleanReps: newReps,
           phase: PracticePhase.celebrate,

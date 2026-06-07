@@ -10,7 +10,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../dev/authoring_screen.dart';
 import '../dev/glyph_audit_screen.dart';
 import '../screens/home_screen.dart';
-import '../screens/practice_screen.dart';
+import '../features/practice/practice_screen.dart';
 import '../screens/settings_screen.dart';
 import 'demo_routes.dart';
 
