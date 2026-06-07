@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 3 complete — all 6 plans done, 151 tests passing
+stopped_at: Phase 03.1 Plan 01 complete — journey foundation, routing, and nav wired
 last_updated: "2026-06-07T00:00:00.000Z"
 last_activity: 2026-06-07
 progress:
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
-**Current focus:** Phase 04 — next
+**Current focus:** Phase 03.1 — Journey Map Screen (plan 01 of 2 complete)
 
 ## Current Position
 
-Phase: 03 COMPLETE → ready for Phase 04
-Plan: All 6 plans done (03-00 through 03-05)
-Status: Phase 3 "Trace One Letter End-to-End" complete
-Last activity: 2026-06-07 - Completed all Phase 3 plans: asset bundling, geometric stroke scorer (TDD), mastery persistence (Drift), StrokeCanvas + StrokeOrderAnimation widgets, full practice loop (session controller + PracticeScreen + FeedbackPanel + MasteryCelebration), and demo home upgrade. 151/151 tests pass.
+Phase: 03.1 IN PROGRESS — plan 01 done, plan 02 next
+Plan: 03.1-01 complete; 03.1-02 (Journey Map screen UI) next
+Status: Journey data foundation + routing wired; Wave 2 can build the screen
+Last activity: 2026-06-07 — Completed Phase 03.1-01: JourneyProgress model (TDD, 6 tests), mockJourneyProgressProvider (Riverpod keepAlive), /journey GoRoute, Journey nav item unlocked, "See journey" ghost button in MasteryCelebration. flutter analyze: zero issues.
 
 Progress: [██░░░░░░░░] 20% (2 of 10 phases complete)
 
@@ -110,5 +110,5 @@ Items acknowledged and carried forward from previous milestone close:
 ## Session Continuity
 
 Last session: 2026-06-07
-Stopped at: Phase 3 complete — all 6 plans executed, 151 tests pass
-Resume file: .planning/phases/03-trace-one-letter-end-to-end/ (all SUMMARY files present)
+Stopped at: Phase 03.1 Plan 01 complete — journey foundation, routing, and nav wired
+Resume file: .planning/phases/03.1-journey-map-screen/03.1-01-SUMMARY.md
