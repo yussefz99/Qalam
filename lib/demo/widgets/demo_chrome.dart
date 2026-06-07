@@ -352,21 +352,26 @@ class DemoGhostButton extends StatelessWidget {
             : null,
       ),
       alignment: Alignment.center,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          if (icon != null) ...<Widget>[
-            Icon(icon, color: QalamColors.primaryPressed, size: 22),
-            const SizedBox(width: QalamSpace.space2),
-          ],
-          Text(
-            label,
-            style: QalamTextStyles.button.copyWith(
-              color: QalamColors.primaryPressed,
-              fontSize: QalamFontSizes.fz20,
+      // Scale-down keeps the label on one line in a narrow side card without
+      // overflowing, and is a no-op in the wide bottom action rows.
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            if (icon != null) ...<Widget>[
+              Icon(icon, color: QalamColors.primaryPressed, size: 22),
+              const SizedBox(width: QalamSpace.space2),
+            ],
+            Text(
+              label,
+              style: QalamTextStyles.button.copyWith(
+                color: QalamColors.primaryPressed,
+                fontSize: QalamFontSizes.fz20,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
 

@@ -1,30 +1,33 @@
-// DemoWatchScreen — the stroke-order demonstration (DP-03/DP-07).
+// DemoWatchScreen — the stroke-order demonstration, rebuilt 1:1 with the design
+// `DemoScreen` mockup (docs/design/kit/.../screenshots/02-*).
 //
-// Watch shows the child HOW alif is formed before they try it: the write-pose
-// Qalam mascot beside a dotted alif guide, with a numbered gold start-dot at the
-// top and one calm tip. A single "Start Tracing" CTA leads into Trace.
+// Watch shows the child HOW baa is formed before they try it: the walkthrough
+// chrome (nav rail + header), the write-pose Qalam mascot beside a white canvas
+// that PAINTS the dotted baa guide — with a numbered gold start-dot and the
+// distinguishing diacritic dot — plus an aqua "TIP" card, and a "Start Tracing"
+// CTA into Trace.
 //
-// ONE SOURCE OF TRUTH (Pitfall 5): the dotted guide is PAINTED from
-// `DemoAlif.referencePoints` — the same normalized geometry every demo screen
-// shares — and is never rendered as a glyph string. A glyph would drift from the
-// scored/traced path; painting the reference points guarantees guide ==
-// reference.
-//
-// Gold is REWARDS-ONLY everywhere in the app; the numbered start-dot is the one
-// sanctioned gold use on this screen (UI-SPEC), via QalamColors.reward. There is
-// no audio-playback affordance (DP-07). Static demo (DP-01): the guide is
-// painted once, no engine, no animation required. Tokens only.
+// ONE SOURCE OF TRUTH (Pitfall 5): the guide is PAINTED from
+// `DemoBaa.referencePoints` (the geometry every demo screen shares) — never a
+// Text('ب') that could drift from the traced path. Mocked demo (DP-01): no
+// engine, no animation required; the audio/replay affordances are faithful to
+// the mockup but decorative. Tokens only; parchment ground, never white.
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../l10n/app_localizations.dart';
-import '../../theme/brand_theme_ext.dart';
 import '../../theme/colors.dart';
 import '../../theme/dimens.dart';
 import '../../theme/text_styles.dart';
 import '../../widgets/qalam_mascot.dart';
-import '../demo_alif.dart';
+import '../demo_baa.dart';
+import '../widgets/demo_chrome.dart';
+import '../widgets/dotted_guide_painter.dart';
+
+const double _kMascotSize = 160;
+const double _kCanvasSize = 300;
+const double _kSideCardWidth = 240;
 
 class DemoWatchScreen extends StatelessWidget {
   const DemoWatchScreen({super.key});
@@ -33,256 +36,151 @@ class DemoWatchScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppLocalizations? l10n = AppLocalizations.of(context);
     final String eyebrow = l10n?.demoWatchEyebrow ?? 'WATCH · STROKE ORDER';
-    final String heading = l10n?.demoWatchHeading ?? 'Watch Me Write Alif.';
-    final String tip =
-        l10n?.demoWatchTip ?? 'Start at the gold dot. Follow the line down.';
+    final String heading = l10n?.demoWatchHeading ?? 'Watch me write baa.';
     final String startTracing = l10n?.demoStartTracing ?? 'Start Tracing';
+    final String watchAgain = l10n?.demoWatchAgain ?? 'Watch again';
 
-    return Scaffold(
-      backgroundColor: QalamColors.bg, // parchment — never white
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 720),
-              child: Padding(
-                padding: const EdgeInsets.all(QalamSpace.space8),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text(eyebrow, style: QalamTextStyles.label),
-                    const SizedBox(height: QalamSpace.space2),
-                    Text(
-                      heading,
-                      style: QalamTextStyles.display,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: QalamSpace.space8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        const QalamMascot(
-                          pose: QalamPose.write,
-                          size: QalamSpace.space20,
-                        ),
-                        const SizedBox(width: QalamSpace.space6),
-                        const _DottedGuideCard(),
-                      ],
-                    ),
-                    const SizedBox(height: QalamSpace.space8),
-                    _TipCard(tip: tip),
-                    const SizedBox(height: QalamSpace.space8),
-                    _StartTracingButton(
-                      label: startTracing,
-                      // Canonical path is DemoStep.trace.path ('/demo/trace').
-                      onPressed: () => context.go('/demo/trace'),
-                    ),
-                  ],
+    return DemoChrome(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(
+          QalamSpace.space10,
+          QalamSpace.space4,
+          QalamSpace.space10,
+          QalamSpace.space8,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            DemoEyebrow(eyebrow),
+            const SizedBox(height: QalamSpace.space2),
+            Text(heading, style: QalamTextStyles.display),
+            const SizedBox(height: QalamSpace.space6),
+            Wrap(
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: QalamSpace.space6,
+              runSpacing: QalamSpace.space6,
+              children: const <Widget>[
+                QalamMascot(pose: QalamPose.write, size: _kMascotSize),
+                _WatchCanvas(),
+                _TipCard(),
+              ],
+            ),
+            const SizedBox(height: QalamSpace.space8),
+            Row(
+              children: <Widget>[
+                DemoGhostButton(
+                  label: watchAgain,
+                  icon: Icons.refresh_rounded,
                 ),
-              ),
+                const Spacer(),
+                DemoPrimaryCta(
+                  ctaKey: const Key('demoStartTracingCta'),
+                  label: startTracing,
+                  icon: Icons.arrow_forward_rounded,
+                  // Canonical path is DemoStep.trace.path ('/demo/trace').
+                  onPressed: () => context.go('/demo/trace'),
+                ),
+              ],
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 }
 
-/// The dotted-alif canvas — a soft-aqua frame with a parchment inset (mirroring
-/// the Practice ink card), holding the painted guide. Wrapped in [IgnorePointer]
-/// because the demonstration is non-interactive: it is something to watch, not a
-/// touch target.
-class _DottedGuideCard extends StatelessWidget {
-  const _DottedGuideCard();
+/// The white canvas painting the dotted baa guide + gold start-dot + diacritic
+/// dot, with a decorative "Replay" chip in the corner (mockup-faithful).
+class _WatchCanvas extends StatelessWidget {
+  const _WatchCanvas();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: QalamColors.surface, // soft-aqua frame
-        borderRadius: BorderRadius.circular(QalamRadii.xl),
-        boxShadow: QalamShadows.shadowMd,
-      ),
-      padding: const EdgeInsets.all(QalamSpace.space4),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(QalamRadii.lg),
-        child: ColoredBox(
-          color: QalamColors.bg, // parchment writing ground — never white
-          child: IgnorePointer(
-            child: CustomPaint(
-              size: const Size(QalamSpace.space24, QalamSpace.space24 * 2),
-              painter: DottedAlifPainter(
-                points: DemoAlif.referencePoints,
-                guideColor: QalamColors.inkStroke,
-                startDotColor: QalamColors.reward, // gold — start-dot only
-              ),
-            ),
+    final AppLocalizations? l10n = AppLocalizations.of(context);
+    return Stack(
+      children: <Widget>[
+        DemoCanvasCard(
+          size: _kCanvasSize,
+          painter: DottedGuidePainter(
+            referencePoints:
+                DemoBaa.referencePoints.map((p) => Offset(p[0], p[1])).toList(),
+            inkProgress: 0, // Watch = guide only (nothing traced yet)
+            showStartDot: true,
+            startDotColor: QalamColors.reward, // gold — start-dot only
+            diacriticDots:
+                DemoBaa.diacriticDots.map((p) => Offset(p[0], p[1])).toList(),
           ),
         ),
-      ),
-    );
-  }
-}
-
-/// Paints the alif guide as a DOTTED line through the shared reference points
-/// (normalized 0..1), with a numbered gold start-dot at the first point.
-///
-/// Public so the Watch contract test can prove the guide is fed from
-/// [DemoAlif.referencePoints] (one source of truth) and that the start-dot uses
-/// the reward token — without rendering the glyph as Text.
-class DottedAlifPainter extends CustomPainter {
-  DottedAlifPainter({
-    required this.points,
-    required this.guideColor,
-    required this.startDotColor,
-  });
-
-  /// Normalized (0..1) reference points the guide is drawn from.
-  final List<List<double>> points;
-
-  /// Color of the dotted guide line (deep-ink).
-  final Color guideColor;
-
-  /// Color of the numbered start-dot (gold reward token — the only gold here).
-  final Color startDotColor;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (points.isEmpty) return;
-
-    // Inset so the guide and start-dot never touch the card edges.
-    const double inset = QalamSpace.space5;
-    final Rect field = Rect.fromLTWH(
-      inset,
-      inset,
-      size.width - inset * 2,
-      size.height - inset * 2,
-    );
-    Offset toPixel(List<double> p) =>
-        Offset(field.left + p[0] * field.width, field.top + p[1] * field.height);
-
-    final List<Offset> pixels = points.map(toPixel).toList();
-
-    // Dotted guide: evenly spaced dots stippled along each segment.
-    final Paint dot = Paint()
-      ..color = guideColor
-      ..style = PaintingStyle.fill
-      ..isAntiAlias = true;
-    const double dotRadius = 3;
-    const double spacing = QalamSpace.space4; // gap between guide dots
-    for (int i = 0; i < pixels.length - 1; i++) {
-      final Offset a = pixels[i];
-      final Offset b = pixels[i + 1];
-      final double segLen = (b - a).distance;
-      if (segLen == 0) continue;
-      final int steps = (segLen / spacing).floor();
-      for (int s = 0; s <= steps; s++) {
-        final double t = steps == 0 ? 0 : s / steps;
-        canvas.drawCircle(Offset.lerp(a, b, t)!, dotRadius, dot);
-      }
-    }
-
-    // Numbered gold start-dot at the first reference point (top of alif).
-    final Offset start = pixels.first;
-    const double startRadius = QalamSpace.space3; // 12px
-    canvas.drawCircle(
-      start,
-      startRadius,
-      Paint()
-        ..color = startDotColor
-        ..style = PaintingStyle.fill
-        ..isAntiAlias = true,
-    );
-    final TextPainter number = TextPainter(
-      text: TextSpan(
-        text: '1',
-        style: QalamTextStyles.label.copyWith(
-          color: QalamColors.fgOnPrimary,
-          height: 1.0,
+        Positioned(
+          right: QalamSpace.space4,
+          bottom: QalamSpace.space4,
+          child: _CanvasChip(
+            label: l10n?.demoReplay ?? 'Replay',
+            icon: Icons.refresh_rounded,
+          ),
         ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
-    number.paint(
-      canvas,
-      start - Offset(number.width / 2, number.height / 2),
+      ],
     );
   }
-
-  @override
-  bool shouldRepaint(DottedAlifPainter oldDelegate) =>
-      oldDelegate.points != points ||
-      oldDelegate.guideColor != guideColor ||
-      oldDelegate.startDotColor != startDotColor;
 }
 
-/// The calm one-line tip beneath the guide.
+/// The aqua "TIP" side card — calm one-line guidance + a (decorative) audio
+/// affordance, faithful to the mockup.
 class _TipCard extends StatelessWidget {
-  const _TipCard({required this.tip});
-
-  final String tip;
+  const _TipCard();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(maxWidth: 520),
-      decoration: BoxDecoration(
-        color: QalamColors.primaryTint, // gentle teal wash
-        borderRadius: BorderRadius.circular(QalamRadii.lg),
-      ),
-      padding: const EdgeInsets.symmetric(
-        horizontal: QalamSpace.space6,
-        vertical: QalamSpace.space4,
-      ),
-      child: Text(
-        tip,
-        style: QalamTextStyles.body,
-        textAlign: TextAlign.center,
+    final AppLocalizations? l10n = AppLocalizations.of(context);
+    final String tipLabel = l10n?.demoWatchTipLabel ?? 'TIP';
+    final String tip =
+        l10n?.demoWatchTip ?? 'Start at the gold dot. Follow the curve to the left.';
+    final String hearSound = l10n?.demoWatchHearSound ?? 'Hear the sound';
+
+    return SizedBox(
+      width: _kSideCardWidth,
+      child: DemoAquaCard(
+        eyebrow: tipLabel,
+        children: <Widget>[
+          Text(tip, style: QalamTextStyles.body),
+          const SizedBox(height: QalamSpace.space4),
+          DemoGhostButton(label: hearSound, icon: Icons.volume_up_rounded),
+        ],
       ),
     );
   }
 }
 
-/// The primary "Start Tracing" CTA with the signature sticker shadow. Keyed and
-/// >= targetComfy so the contract test can assert its size and tap target.
-class _StartTracingButton extends StatelessWidget {
-  const _StartTracingButton({required this.label, required this.onPressed});
+/// A compact pill chip overlaid on the canvas (decorative Replay affordance).
+class _CanvasChip extends StatelessWidget {
+  const _CanvasChip({required this.label, required this.icon});
 
   final String label;
-  final VoidCallback onPressed;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
-    final QalamTheme qalam =
-        Theme.of(context).extension<QalamTheme>() ?? QalamTheme.light;
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(QalamRadii.lg),
-        boxShadow: qalam.buttonShadow,
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: QalamSpace.space3,
+        vertical: QalamSpace.space2,
       ),
-      child: Material(
-        color: QalamColors.primary, // ink-teal — the primary CTA
-        borderRadius: BorderRadius.circular(QalamRadii.lg),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          key: const Key('demoStartTracingCta'),
-          onTap: onPressed,
-          child: Container(
-            constraints: const BoxConstraints(minHeight: QalamTargets.targetComfy),
-            padding: const EdgeInsets.symmetric(
-              horizontal: QalamSpace.space12,
-              vertical: QalamSpace.space4,
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              label,
-              style:
-                  QalamTextStyles.button.copyWith(color: QalamColors.fgOnPrimary),
-            ),
+      decoration: BoxDecoration(
+        color: QalamColors.surfaceRaised,
+        borderRadius: BorderRadius.circular(QalamRadii.pill),
+        border: Border.all(color: QalamColors.border, width: 2),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Icon(icon, size: 18, color: QalamColors.primaryPressed),
+          const SizedBox(width: QalamSpace.space1),
+          Text(
+            label,
+            style: QalamTextStyles.label.copyWith(color: QalamColors.primaryPressed),
           ),
-        ),
+        ],
       ),
     );
   }
