@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 03.1 Plan 01 complete — journey foundation, routing, and nav wired
-last_updated: "2026-06-07T00:00:00.000Z"
+stopped_at: Phase 03.1 Plan 02 complete — full JourneyScreen layout, 28 nodes, path painter
+last_updated: "2026-06-07T17:52:14Z"
 last_activity: 2026-06-07
 progress:
   total_phases: 12
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
-**Current focus:** Phase 03.1 — Journey Map Screen (plan 01 of 2 complete)
+**Current focus:** Phase 03.1 — Journey Map Screen (plan 02 of 3 complete)
 
 ## Current Position
 
-Phase: 03.1 IN PROGRESS — plan 01 done, plan 02 next
-Plan: 03.1-01 complete; 03.1-02 (Journey Map screen UI) next
-Status: Journey data foundation + routing wired; Wave 2 can build the screen
-Last activity: 2026-06-07 — Completed Phase 03.1-01: JourneyProgress model (TDD, 6 tests), mockJourneyProgressProvider (Riverpod keepAlive), /journey GoRoute, Journey nav item unlocked, "See journey" ghost button in MasteryCelebration. flutter analyze: zero issues.
+Phase: 03.1 IN PROGRESS — plans 01-02 done, plan 03 next
+Plan: 03.1-02 complete; 03.1-03 (pulse animation, tap handlers, star badges, checkpoint) next
+Status: Journey Map screen visually complete — 28 nodes, path painter, 4 states, TODAY pill, header pill
+Last activity: 2026-06-07 — Completed Phase 03.1-02: JourneyPathPainter (grey trail + green overlay), full JourneyScreen with 28 letter nodes at pixel-exact positions, 4 visual states, _DashedCirclePainter, _TodayChip, Level 1 header pill. flutter analyze: zero issues.
 
 Progress: [██░░░░░░░░] 20% (2 of 10 phases complete)
 
@@ -110,5 +110,5 @@ Items acknowledged and carried forward from previous milestone close:
 ## Session Continuity
 
 Last session: 2026-06-07
-Stopped at: Phase 03.1 Plan 01 complete — journey foundation, routing, and nav wired
-Resume file: .planning/phases/03.1-journey-map-screen/03.1-01-SUMMARY.md
+Stopped at: Phase 03.1 Plan 02 complete — full JourneyScreen layout, 28 nodes, path painter
+Resume file: .planning/phases/03.1-journey-map-screen/03.1-02-SUMMARY.md

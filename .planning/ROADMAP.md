@@ -197,11 +197,11 @@ Plans:
 
 **Wave 1**
 
-- [ ] 03.1-01-PLAN.md -- Wave 1: JourneyProgress model + JourneyNodeState enum + mockJourneyProgressProvider + /journey GoRoute + unlock Home nav + wire "See journey"
+- [x] 03.1-01-PLAN.md -- Wave 1: JourneyProgress model + JourneyNodeState enum + mockJourneyProgressProvider + /journey GoRoute + unlock Home nav + wire "See journey"
 
 **Wave 2** *(blocked on Wave 1)*
 
-- [ ] 03.1-02-PLAN.md -- Wave 2: JourneyScreen layout + JourneyPathPainter winding path + 28 positioned nodes + 4 visual states + TODAY pill + Level 1 header pill
+- [x] 03.1-02-PLAN.md -- Wave 2: JourneyScreen layout + JourneyPathPainter winding path + 28 positioned nodes + 4 visual states + TODAY pill + Level 1 header pill
 
 **Wave 3** *(blocked on Wave 2)*
 
