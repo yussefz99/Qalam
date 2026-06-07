@@ -268,6 +268,25 @@ class JourneyScreen extends ConsumerWidget {
                 ),
               ),
             ),
+
+            // ── Back to Home button (last = on top for hit testing) ─────────
+            Positioned(
+              top: 16,
+              left: 16,
+              child: IconButton(
+                onPressed: () => context.go('/'),
+                icon: const Icon(Icons.home_rounded),
+                color: QalamColors.primary,
+                iconSize: 28,
+                style: IconButton.styleFrom(
+                  backgroundColor: QalamColors.primaryTint,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(QalamRadii.md),
+                  ),
+                  minimumSize: const Size(48, 48),
+                ),
+              ),
+            ),
           ],
         ),
       ),

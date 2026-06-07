@@ -155,39 +155,42 @@ class _NavItem extends StatelessWidget {
 
     return Opacity(
       opacity: isLocked ? 0.5 : 1.0,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: QalamSpace.space3),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            SizedBox(
-              width: QalamTargets.targetMin,
-              height: QalamTargets.targetMin,
-              child: Center(
-                child: _SafeSvgIcon(
-                  asset: iconAsset,
-                  size: QalamSpace.space8,
-                  color: labelColor,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: QalamSpace.space3),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              SizedBox(
+                width: QalamTargets.targetMin,
+                height: QalamTargets.targetMin,
+                child: Center(
+                  child: _SafeSvgIcon(
+                    asset: iconAsset,
+                    size: QalamSpace.space8,
+                    color: labelColor,
+                  ),
                 ),
               ),
-            ),
-            Text(
-              label,
-              style: QalamTextStyles.label.copyWith(color: labelColor),
-              textAlign: TextAlign.center,
-            ),
-            if (sublabel != null) ...<Widget>[
-              const SizedBox(height: QalamSpace.space1),
               Text(
-                sublabel!,
-                style: QalamTextStyles.label.copyWith(
-                  color: QalamColors.fgMuted,
-                  fontSize: QalamFontSizes.fz12,
-                ),
+                label,
+                style: QalamTextStyles.label.copyWith(color: labelColor),
                 textAlign: TextAlign.center,
               ),
+              if (sublabel != null) ...<Widget>[
+                const SizedBox(height: QalamSpace.space1),
+                Text(
+                  sublabel!,
+                  style: QalamTextStyles.label.copyWith(
+                    color: QalamColors.fgMuted,
+                    fontSize: QalamFontSizes.fz12,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
