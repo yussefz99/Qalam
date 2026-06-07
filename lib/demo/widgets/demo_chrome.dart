@@ -441,6 +441,70 @@ class DemoCanvasCard extends StatelessWidget {
   }
 }
 
+/// A compact pill chip overlaid on a canvas (the decorative "Replay" affordance
+/// in the corner of the Watch/Trace/Feedback canvases).
+class DemoCanvasChip extends StatelessWidget {
+  const DemoCanvasChip({super.key, required this.label, required this.icon});
+
+  final String label;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: QalamSpace.space3,
+        vertical: QalamSpace.space2,
+      ),
+      decoration: BoxDecoration(
+        color: QalamColors.surfaceRaised,
+        borderRadius: BorderRadius.circular(QalamRadii.pill),
+        border: Border.all(color: QalamColors.border, width: 2),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Icon(icon, size: 18, color: QalamColors.primaryPressed),
+          const SizedBox(width: QalamSpace.space1),
+          Text(
+            label,
+            style:
+                QalamTextStyles.label.copyWith(color: QalamColors.primaryPressed),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// A gold/reward progress bar (the Trace "Stroke X of Y" tracker, faithful to
+/// the mockup). [value] is 0..1.
+class DemoProgressBar extends StatelessWidget {
+  const DemoProgressBar({super.key, required this.value, this.width = 200});
+
+  final double value;
+  final double width;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: width,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(QalamRadii.pill),
+        child: Stack(
+          children: <Widget>[
+            Container(height: 16, color: QalamColors.surface),
+            FractionallySizedBox(
+              widthFactor: value.clamp(0.0, 1.0),
+              child: Container(height: 16, color: QalamColors.reward),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 /// The brand gold star (assets/icons/star.svg) with a calm icon fallback.
 class DemoStarIcon extends StatelessWidget {
   const DemoStarIcon({super.key, required this.size, this.color = QalamColors.reward});
