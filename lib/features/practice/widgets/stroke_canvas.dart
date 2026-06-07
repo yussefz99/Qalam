@@ -74,8 +74,11 @@ class _StrokeCanvasState extends State<StrokeCanvas> {
   /// Production: stylus only. Debug with acceptTouch: also finger/touch.
   bool _accept(PointerDeviceKind kind) {
     if (kind == PointerDeviceKind.stylus) return true;
-    if (kDebugMode && widget.acceptTouch && kind == PointerDeviceKind.touch) {
-      return true;
+    if (kDebugMode && widget.acceptTouch) {
+      // Accept touch AND mouse in debug mode so emulator testing works.
+      if (kind == PointerDeviceKind.touch || kind == PointerDeviceKind.mouse) {
+        return true;
+      }
     }
     return false;
   }
