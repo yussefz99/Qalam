@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 3 UI-SPEC approved
-last_updated: "2026-06-01T20:10:25.660Z"
-last_activity: 2026-06-01
+stopped_at: Phase 3 complete — all 6 plans done, 151 tests passing
+last_updated: "2026-06-07T00:00:00.000Z"
+last_activity: 2026-06-07
 progress:
   total_phases: 12
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 21
-  completed_plans: 15
-  percent: 33
+  completed_plans: 21
+  percent: 42
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
-**Current focus:** Phase 02.1.1 — presentation-demo-screens-alif-core-loop
+**Current focus:** Phase 04 — next
 
 ## Current Position
 
-Phase: 03
-Plan: Not started
-Status: Executing Phase 02.1.1
-Last activity: 2026-06-02 - Completed quick task 260602-bw1: rebuilt the remaining demo walkthrough screens (Watch/Trace/Feedback/Celebration) faithful to the mockups; switched the demo loop to Baa for coherence with the rebuilt Home (owner override re: gamification)
+Phase: 03 COMPLETE → ready for Phase 04
+Plan: All 6 plans done (03-00 through 03-05)
+Status: Phase 3 "Trace One Letter End-to-End" complete
+Last activity: 2026-06-07 - Completed all Phase 3 plans: asset bundling, geometric stroke scorer (TDD), mastery persistence (Drift), StrokeCanvas + StrokeOrderAnimation widgets, full practice loop (session controller + PracticeScreen + FeedbackPanel + MasteryCelebration), and demo home upgrade. 151/151 tests pass.
 
 Progress: [██░░░░░░░░] 20% (2 of 10 phases complete)
 
@@ -109,6 +109,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-01T15:15:26.097Z
-Stopped at: Phase 3 UI-SPEC approved
-Resume file: .planning/phases/03-trace-one-letter-end-to-end/03-UI-SPEC.md
+Last session: 2026-06-07
+Stopped at: Phase 3 complete — all 6 plans executed, 151 tests pass
+Resume file: .planning/phases/03-trace-one-letter-end-to-end/ (all SUMMARY files present)

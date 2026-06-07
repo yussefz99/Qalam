@@ -27,7 +27,21 @@ class AppSettings extends Table {
   Set<Column> get primaryKey => {key};
 }
 
-@DriftDatabase(tables: [AppSettings])
+/// Per-letter mastery record — Phase 3 (D-09, Plan 03-02).
+///
+/// SECURITY (T-03-01/T-01-05): only letterId, cleanReps, and masteredAt are
+/// stored. Captured stroke points are NEVER persisted here or anywhere else —
+/// they stay in-memory only and are discarded on dispose.
+class LetterMastery extends Table {
+  TextColumn get letterId => text()();
+  IntColumn get cleanReps => integer()();
+  DateTimeColumn get masteredAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {letterId};
+}
+
+@DriftDatabase(tables: [AppSettings, LetterMastery])
 class AppDatabase extends _$AppDatabase {
   /// Pass a [QueryExecutor] (e.g. `NativeDatabase.memory()`) in tests; defaults
   /// to a lazily-opened on-device file in app-private storage.
@@ -43,7 +57,16 @@ class AppDatabase extends _$AppDatabase {
   final bool _ownsExecutor;
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onCreate: (m) => m.createAll(),
+        onUpgrade: (m, from, to) async {
+          // Pitfall 4: guard by version to make the migration idempotent.
+          if (from < 2) await m.createTable(letterMastery);
+        },
+      );
 
   @override
   Future<void> close() {
@@ -66,6 +89,38 @@ class AppDatabase extends _$AppDatabase {
         .getSingleOrNull();
     return row?.value;
   }
+
+  // ---------------------------------------------------------------------------
+  // LetterMastery accessors (mirror setSetting/getSetting pattern)
+  // SECURITY: only letterId/cleanReps/masteredAt — never stroke points (T-03-01)
+  // ---------------------------------------------------------------------------
+
+  /// Record (or overwrite) a letter mastery result.
+  Future<void> recordMastery({
+    required String letterId,
+    required int cleanReps,
+  }) =>
+      into(letterMastery).insertOnConflictUpdate(
+        LetterMasteryCompanion.insert(
+          letterId: letterId,
+          cleanReps: cleanReps,
+          masteredAt: DateTime.now(),
+        ),
+      );
+
+  /// Returns true if the letter has a mastery record.
+  Future<bool> isMastered(String letterId) async =>
+      (await (select(letterMastery)
+                ..where((t) => t.letterId.equals(letterId)))
+              .getSingleOrNull()) !=
+      null;
+
+  /// Returns the recorded clean-rep count for the letter, or null if absent.
+  Future<int?> cleanRepsFor(String letterId) async =>
+      (await (select(letterMastery)
+                ..where((t) => t.letterId.equals(letterId)))
+              .getSingleOrNull())
+          ?.cleanReps;
 }
 
 LazyDatabase _openConnection() {

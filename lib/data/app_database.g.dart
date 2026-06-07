@@ -211,15 +211,291 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
   }
 }
 
+class $LetterMasteryTable extends LetterMastery
+    with TableInfo<$LetterMasteryTable, LetterMasteryData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LetterMasteryTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _letterIdMeta = const VerificationMeta(
+    'letterId',
+  );
+  @override
+  late final GeneratedColumn<String> letterId = GeneratedColumn<String>(
+    'letter_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _cleanRepsMeta = const VerificationMeta(
+    'cleanReps',
+  );
+  @override
+  late final GeneratedColumn<int> cleanReps = GeneratedColumn<int>(
+    'clean_reps',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _masteredAtMeta = const VerificationMeta(
+    'masteredAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> masteredAt = GeneratedColumn<DateTime>(
+    'mastered_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [letterId, cleanReps, masteredAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'letter_mastery';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LetterMasteryData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('letter_id')) {
+      context.handle(
+        _letterIdMeta,
+        letterId.isAcceptableOrUnknown(data['letter_id']!, _letterIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_letterIdMeta);
+    }
+    if (data.containsKey('clean_reps')) {
+      context.handle(
+        _cleanRepsMeta,
+        cleanReps.isAcceptableOrUnknown(data['clean_reps']!, _cleanRepsMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cleanRepsMeta);
+    }
+    if (data.containsKey('mastered_at')) {
+      context.handle(
+        _masteredAtMeta,
+        masteredAt.isAcceptableOrUnknown(data['mastered_at']!, _masteredAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_masteredAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {letterId};
+  @override
+  LetterMasteryData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LetterMasteryData(
+      letterId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}letter_id'],
+      )!,
+      cleanReps: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}clean_reps'],
+      )!,
+      masteredAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}mastered_at'],
+      )!,
+    );
+  }
+
+  @override
+  $LetterMasteryTable createAlias(String alias) {
+    return $LetterMasteryTable(attachedDatabase, alias);
+  }
+}
+
+class LetterMasteryData extends DataClass
+    implements Insertable<LetterMasteryData> {
+  final String letterId;
+  final int cleanReps;
+  final DateTime masteredAt;
+  const LetterMasteryData({
+    required this.letterId,
+    required this.cleanReps,
+    required this.masteredAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['letter_id'] = Variable<String>(letterId);
+    map['clean_reps'] = Variable<int>(cleanReps);
+    map['mastered_at'] = Variable<DateTime>(masteredAt);
+    return map;
+  }
+
+  LetterMasteryCompanion toCompanion(bool nullToAbsent) {
+    return LetterMasteryCompanion(
+      letterId: Value(letterId),
+      cleanReps: Value(cleanReps),
+      masteredAt: Value(masteredAt),
+    );
+  }
+
+  factory LetterMasteryData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LetterMasteryData(
+      letterId: serializer.fromJson<String>(json['letterId']),
+      cleanReps: serializer.fromJson<int>(json['cleanReps']),
+      masteredAt: serializer.fromJson<DateTime>(json['masteredAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'letterId': serializer.toJson<String>(letterId),
+      'cleanReps': serializer.toJson<int>(cleanReps),
+      'masteredAt': serializer.toJson<DateTime>(masteredAt),
+    };
+  }
+
+  LetterMasteryData copyWith({
+    String? letterId,
+    int? cleanReps,
+    DateTime? masteredAt,
+  }) => LetterMasteryData(
+    letterId: letterId ?? this.letterId,
+    cleanReps: cleanReps ?? this.cleanReps,
+    masteredAt: masteredAt ?? this.masteredAt,
+  );
+  LetterMasteryData copyWithCompanion(LetterMasteryCompanion data) {
+    return LetterMasteryData(
+      letterId: data.letterId.present ? data.letterId.value : this.letterId,
+      cleanReps: data.cleanReps.present ? data.cleanReps.value : this.cleanReps,
+      masteredAt: data.masteredAt.present
+          ? data.masteredAt.value
+          : this.masteredAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LetterMasteryData(')
+          ..write('letterId: $letterId, ')
+          ..write('cleanReps: $cleanReps, ')
+          ..write('masteredAt: $masteredAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(letterId, cleanReps, masteredAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LetterMasteryData &&
+          other.letterId == this.letterId &&
+          other.cleanReps == this.cleanReps &&
+          other.masteredAt == this.masteredAt);
+}
+
+class LetterMasteryCompanion extends UpdateCompanion<LetterMasteryData> {
+  final Value<String> letterId;
+  final Value<int> cleanReps;
+  final Value<DateTime> masteredAt;
+  final Value<int> rowid;
+  const LetterMasteryCompanion({
+    this.letterId = const Value.absent(),
+    this.cleanReps = const Value.absent(),
+    this.masteredAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LetterMasteryCompanion.insert({
+    required String letterId,
+    required int cleanReps,
+    required DateTime masteredAt,
+    this.rowid = const Value.absent(),
+  }) : letterId = Value(letterId),
+       cleanReps = Value(cleanReps),
+       masteredAt = Value(masteredAt);
+  static Insertable<LetterMasteryData> custom({
+    Expression<String>? letterId,
+    Expression<int>? cleanReps,
+    Expression<DateTime>? masteredAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (letterId != null) 'letter_id': letterId,
+      if (cleanReps != null) 'clean_reps': cleanReps,
+      if (masteredAt != null) 'mastered_at': masteredAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LetterMasteryCompanion copyWith({
+    Value<String>? letterId,
+    Value<int>? cleanReps,
+    Value<DateTime>? masteredAt,
+    Value<int>? rowid,
+  }) {
+    return LetterMasteryCompanion(
+      letterId: letterId ?? this.letterId,
+      cleanReps: cleanReps ?? this.cleanReps,
+      masteredAt: masteredAt ?? this.masteredAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (letterId.present) {
+      map['letter_id'] = Variable<String>(letterId.value);
+    }
+    if (cleanReps.present) {
+      map['clean_reps'] = Variable<int>(cleanReps.value);
+    }
+    if (masteredAt.present) {
+      map['mastered_at'] = Variable<DateTime>(masteredAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LetterMasteryCompanion(')
+          ..write('letterId: $letterId, ')
+          ..write('cleanReps: $cleanReps, ')
+          ..write('masteredAt: $masteredAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $AppSettingsTable appSettings = $AppSettingsTable(this);
+  late final $LetterMasteryTable letterMastery = $LetterMasteryTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [appSettings];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+    appSettings,
+    letterMastery,
+  ];
 }
 
 typedef $$AppSettingsTableCreateCompanionBuilder =
@@ -361,12 +637,182 @@ typedef $$AppSettingsTableProcessedTableManager =
       AppSetting,
       PrefetchHooks Function()
     >;
+typedef $$LetterMasteryTableCreateCompanionBuilder =
+    LetterMasteryCompanion Function({
+      required String letterId,
+      required int cleanReps,
+      required DateTime masteredAt,
+      Value<int> rowid,
+    });
+typedef $$LetterMasteryTableUpdateCompanionBuilder =
+    LetterMasteryCompanion Function({
+      Value<String> letterId,
+      Value<int> cleanReps,
+      Value<DateTime> masteredAt,
+      Value<int> rowid,
+    });
+
+class $$LetterMasteryTableFilterComposer
+    extends Composer<_$AppDatabase, $LetterMasteryTable> {
+  $$LetterMasteryTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get letterId => $composableBuilder(
+    column: $table.letterId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get cleanReps => $composableBuilder(
+    column: $table.cleanReps,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get masteredAt => $composableBuilder(
+    column: $table.masteredAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$LetterMasteryTableOrderingComposer
+    extends Composer<_$AppDatabase, $LetterMasteryTable> {
+  $$LetterMasteryTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get letterId => $composableBuilder(
+    column: $table.letterId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get cleanReps => $composableBuilder(
+    column: $table.cleanReps,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get masteredAt => $composableBuilder(
+    column: $table.masteredAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LetterMasteryTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LetterMasteryTable> {
+  $$LetterMasteryTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get letterId =>
+      $composableBuilder(column: $table.letterId, builder: (column) => column);
+
+  GeneratedColumn<int> get cleanReps =>
+      $composableBuilder(column: $table.cleanReps, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get masteredAt => $composableBuilder(
+    column: $table.masteredAt,
+    builder: (column) => column,
+  );
+}
+
+class $$LetterMasteryTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LetterMasteryTable,
+          LetterMasteryData,
+          $$LetterMasteryTableFilterComposer,
+          $$LetterMasteryTableOrderingComposer,
+          $$LetterMasteryTableAnnotationComposer,
+          $$LetterMasteryTableCreateCompanionBuilder,
+          $$LetterMasteryTableUpdateCompanionBuilder,
+          (
+            LetterMasteryData,
+            BaseReferences<
+              _$AppDatabase,
+              $LetterMasteryTable,
+              LetterMasteryData
+            >,
+          ),
+          LetterMasteryData,
+          PrefetchHooks Function()
+        > {
+  $$LetterMasteryTableTableManager(_$AppDatabase db, $LetterMasteryTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LetterMasteryTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LetterMasteryTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$LetterMasteryTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> letterId = const Value.absent(),
+                Value<int> cleanReps = const Value.absent(),
+                Value<DateTime> masteredAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LetterMasteryCompanion(
+                letterId: letterId,
+                cleanReps: cleanReps,
+                masteredAt: masteredAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String letterId,
+                required int cleanReps,
+                required DateTime masteredAt,
+                Value<int> rowid = const Value.absent(),
+              }) => LetterMasteryCompanion.insert(
+                letterId: letterId,
+                cleanReps: cleanReps,
+                masteredAt: masteredAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$LetterMasteryTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LetterMasteryTable,
+      LetterMasteryData,
+      $$LetterMasteryTableFilterComposer,
+      $$LetterMasteryTableOrderingComposer,
+      $$LetterMasteryTableAnnotationComposer,
+      $$LetterMasteryTableCreateCompanionBuilder,
+      $$LetterMasteryTableUpdateCompanionBuilder,
+      (
+        LetterMasteryData,
+        BaseReferences<_$AppDatabase, $LetterMasteryTable, LetterMasteryData>,
+      ),
+      LetterMasteryData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
   $$AppSettingsTableTableManager get appSettings =>
       $$AppSettingsTableTableManager(_db, _db.appSettings);
+  $$LetterMasteryTableTableManager get letterMastery =>
+      $$LetterMasteryTableTableManager(_db, _db.letterMastery);
 }
 
 // **************************************************************************
