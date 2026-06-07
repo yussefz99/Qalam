@@ -1,26 +1,31 @@
-// JourneyScreen — full winding-path Journey Map (Phase 03.1, plan 02).
+// JourneyScreen — full winding-path Journey Map (Phase 03.1, plan 02/03).
 //
 // Replaces the plan 01 placeholder. Renders 28 Arabic letter nodes on a
 // fixed 1180×816 canvas with:
 //   - JourneyPathPainter (grey trail + green completed overlay)
-//   - 28 Positioned letter nodes with 4 visual states (complete/current/future/locked)
-//   - TODAY pill chip above the current node
-//   - Level 1 header pill (top-center)
+//   - 28 Positioned JourneyNodeWidget nodes with 4 visual states
+//     (complete/current/future/locked) and pulse glow animation on current
+//   - Level 1 Quiz checkpoint box below Row 4
+//   - Level 2 locked banner at the bottom
+//
+// ANTI-GAMIFICATION INVARIANTS (D-23/D-24 — enforced by design review):
+//   - No running star counter, no streak, no "+N" copy anywhere.
+//   - No QalamColors.reward use outside of JourneyNodeWidget star badges.
+//   - Stars appear ONLY as ★★★ badge on complete nodes — mastery info, not score.
 //
 // Data source: mockJourneyProgressProvider (mock, Phase 03.1 — real wiring in Phase 6).
 // Layout: NO vertical scrolling; all 28 nodes fit on one screen (D-09).
 
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../models/journey_progress.dart';
 import '../../providers/journey_providers.dart';
 import '../../theme/colors.dart';
 import '../../theme/dimens.dart';
 import '../../theme/text_styles.dart';
-import '../../widgets/arabic_text.dart';
+import 'widgets/journey_node_widget.dart';
 import 'widgets/journey_path_painter.dart';
 
 // ── Letter record type ───────────────────────────────────────────────────────
@@ -179,8 +184,90 @@ class JourneyScreen extends ConsumerWidget {
 
             // ── 28 letter nodes ─────────────────────────────────────────────
             for (var i = 0; i < _kLetters.length; i++) ...[
-              _buildNode(i, _kLetters[i], progress),
+              _buildNode(context, i, _kLetters[i], progress),
             ],
+
+            // ── Level 1 Quiz checkpoint (D-19) ──────────────────────────────
+            // Centered at x=590, y=660. Box width ≈ 280px → left = 590 - 140 = 450.
+            // Box height ≈ 52px → top = 660 - 26 = 634.
+            Positioned(
+              left: 450,
+              top: 634,
+              child: const _CheckpointBox(),
+            ),
+            // Subtext below the checkpoint box.
+            Positioned(
+              left: 0,
+              right: 0,
+              top: 694,
+              child: Center(
+                child: Text(
+                  'Complete all 28 letters to unlock',
+                  style: QalamTextStyles.label.copyWith(
+                    color: QalamColors.fgMuted,
+                    fontSize: 13,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+
+            // ── Level 2 locked banner (D-20) ────────────────────────────────
+            // Centered at x=590, y=752. Width=400 → left = 590 - 200 = 390.
+            // Height ≈ 70px → top = 752 - 35 = 717.
+            Positioned(
+              left: 390,
+              top: 717,
+              child: Opacity(
+                opacity: 0.72,
+                child: Container(
+                  width: 400,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 28,
+                    vertical: 18,
+                  ),
+                  decoration: BoxDecoration(
+                    color: QalamColors.bgDeep,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: QalamColors.borderSoft,
+                      width: 2,
+                    ),
+                    // TODO(03.1): dashed border for fidelity
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.lock_rounded,
+                        size: 28,
+                        color: QalamColors.fgMuted,
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Level 2 — Words',
+                              style: QalamTextStyles.heading.copyWith(
+                                color: QalamColors.fgMuted,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'Unlocks after completing the Level 1 Quiz',
+                              style: QalamTextStyles.label.copyWith(
+                                color: QalamColors.fgMuted,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -189,6 +276,7 @@ class JourneyScreen extends ConsumerWidget {
 
   /// Build a Positioned node widget for the letter at [index].
   Widget _buildNode(
+    BuildContext context,
     int index,
     _LetterRecord letter,
     JourneyProgress progress,
@@ -202,216 +290,56 @@ class JourneyScreen extends ConsumerWidget {
     return Positioned(
       left: pos.dx - 34, // 34 = half of 68px node diameter
       top: pos.dy - 34,
-      child: _JourneyNode(glyph: letter.glyph, name: letter.name, state: state),
+      child: JourneyNodeWidget(
+        glyph: letter.glyph,
+        name: letter.name,
+        state: state,
+        onTap: (state == JourneyNodeState.complete ||
+                state == JourneyNodeState.current)
+            ? () => context.go('/practice')
+            : null,
+      ),
     );
   }
 }
 
-// ── _JourneyNode ─────────────────────────────────────────────────────────────
+// ── _CheckpointBox ────────────────────────────────────────────────────────────
 
-/// A single letter node on the Journey Map.
-class _JourneyNode extends StatelessWidget {
-  const _JourneyNode({
-    required this.glyph,
-    required this.name,
-    required this.state,
-  });
-
-  final String glyph;
-  final String name;
-  final JourneyNodeState state;
+/// Level 1 Quiz checkpoint box — locked until all 28 letters are mastered.
+/// Positioned below Row 4 near y=660 (D-19).
+class _CheckpointBox extends StatelessWidget {
+  const _CheckpointBox();
 
   @override
   Widget build(BuildContext context) {
-    final isMuted =
-        state == JourneyNodeState.future || state == JourneyNodeState.locked;
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(
-          // Extra height at top to accommodate the TODAY chip (28px above circle).
-          height: state == JourneyNodeState.current ? 96 + 7.0 : 68 + 7.0,
-          child: Stack(
-            alignment: Alignment.bottomCenter,
-            clipBehavior: Clip.none,
-            children: [
-              // TODAY chip — only for current node, positioned above circle
-              if (state == JourneyNodeState.current)
-                const Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: Center(child: _TodayChip()),
-                ),
-              // The 68px circle node
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Center(child: _NodeCircle(glyph: glyph, state: state)),
-              ),
-            ],
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 14),
+      decoration: BoxDecoration(
+        color: QalamColors.bgDeep,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: QalamColors.borderSoft, width: 2),
+        boxShadow: const [
+          BoxShadow(color: QalamColors.borderSoft, offset: Offset(0, 4)),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.lock_outline_rounded,
+            size: 20,
+            color: QalamColors.fgMuted,
           ),
-        ),
-        const SizedBox(height: 7),
-        Text(
-          name,
-          style: QalamTextStyles.label.copyWith(
-            color: isMuted ? QalamColors.fgMuted : QalamColors.fg,
-            fontSize: 13,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ],
-    );
-  }
-}
-
-// ── _NodeCircle ───────────────────────────────────────────────────────────────
-
-/// The 68×68 circular tile for a journey node.
-class _NodeCircle extends StatelessWidget {
-  const _NodeCircle({required this.glyph, required this.state});
-
-  final String glyph;
-  final JourneyNodeState state;
-
-  @override
-  Widget build(BuildContext context) {
-    final Color fill;
-    final List<BoxShadow> shadows;
-    final Color glyphColor;
-
-    switch (state) {
-      case JourneyNodeState.complete:
-        fill = QalamColors.success;
-        shadows = const [
-          BoxShadow(color: Color(0xFF2A8A60), offset: Offset(0, 5)),
-        ];
-        glyphColor = Colors.white;
-      case JourneyNodeState.current:
-        fill = QalamColors.primary;
-        shadows = const [
-          BoxShadow(color: QalamColors.primaryPressed, offset: Offset(0, 5)),
-        ];
-        glyphColor = Colors.white;
-      case JourneyNodeState.future:
-        // Future nodes use a dashed circle border via CustomPaint overlay.
-        return SizedBox(
-          width: 68,
-          height: 68,
-          child: CustomPaint(
-            painter: _DashedCirclePainter(),
-            child: Center(
-              child: ArabicText(
-                glyph,
-                style: const TextStyle(
-                  fontSize: 32,
-                  height: 1,
-                  color: QalamColors.fgMuted,
-                  fontFamily: QalamFonts.arabicDisplay,
-                ),
-              ),
+          const SizedBox(width: 10),
+          Text(
+            'Level 1 Quiz',
+            style: QalamTextStyles.heading.copyWith(
+              color: QalamColors.fgMuted,
             ),
           ),
-        );
-      case JourneyNodeState.locked:
-        fill = const Color(0xFFCDD8DA); // warm grey — no semantic token
-        shadows = const [];
-        glyphColor = QalamColors.fgMuted;
-    }
-
-    // complete / current / locked — solid circle
-    return Container(
-      width: 68,
-      height: 68,
-      decoration: BoxDecoration(
-        color: fill,
-        shape: BoxShape.circle,
-        boxShadow: shadows,
-      ),
-      child: Center(
-        child: ArabicText(
-          glyph,
-          style: TextStyle(
-            fontSize: 32,
-            height: 1,
-            color: glyphColor,
-            fontFamily: QalamFonts.arabicDisplay,
-          ),
-        ),
+        ],
       ),
     );
   }
 }
 
-// ── _DashedCirclePainter ──────────────────────────────────────────────────────
-
-/// CustomPainter that draws a dashed circle border for future nodes.
-///
-/// Divides the circumference into alternating dash/gap arcs drawn via [Canvas.drawArc].
-class _DashedCirclePainter extends CustomPainter {
-  const _DashedCirclePainter();
-
-  static const double _dashLength = 6.0;
-  static const double _gapLength = 4.0;
-  static const double _strokeWidth = 2.5;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final radius = (size.shortestSide / 2) - (_strokeWidth / 2);
-    final center = Offset(size.width / 2, size.height / 2);
-    final circumference = 2 * math.pi * radius;
-
-    final dashAngle = (_dashLength / circumference) * 2 * math.pi;
-    final gapAngle = (_gapLength / circumference) * 2 * math.pi;
-    final stepAngle = dashAngle + gapAngle;
-
-    final paint = Paint()
-      ..color = QalamColors.border // aqua-edge #D6E8E8
-      ..strokeWidth = _strokeWidth
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
-    final rect = Rect.fromCircle(center: center, radius: radius);
-
-    // Start from the top (−π/2) and draw dashes around the full circle.
-    var startAngle = -math.pi / 2;
-    while (startAngle < -math.pi / 2 + 2 * math.pi) {
-      canvas.drawArc(rect, startAngle, dashAngle, false, paint);
-      startAngle += stepAngle;
-    }
-  }
-
-  @override
-  bool shouldRepaint(_DashedCirclePainter oldDelegate) => false;
-}
-
-// ── _TodayChip ────────────────────────────────────────────────────────────────
-
-/// "TODAY" pill label shown above the current letter node.
-class _TodayChip extends StatelessWidget {
-  const _TodayChip();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-      decoration: BoxDecoration(
-        color: QalamColors.primary,
-        borderRadius: BorderRadius.circular(QalamRadii.pill),
-      ),
-      child: const Text(
-        'TODAY',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 10,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 1.0,
-          fontFamily: QalamFonts.body,
-        ),
-      ),
-    );
-  }
-}
