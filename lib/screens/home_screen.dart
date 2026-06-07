@@ -1,18 +1,21 @@
-// Home screen — the Walking Skeleton's visible end-to-end proof.
+// Home screen — warm demo home (Phase 03-05).
 //
-// Wires together every Phase-1 foundation seam in one running screen:
-//   - قلم brand logo via flutter_svg (brand-asset seam) + Cairo wordmark
-//   - parchment background + soft-aqua placeholder card (semantic tokens only)
-//   - heading + body copy from gen-l10n AppLocalizations (no hardcoded copy)
-//   - one real vocalized Arabic string through the ArabicText RTL island
-//     (the on-screen proof of connected-script shaping)
-//   - the round-tripped Drift value (skeletonProof) shown small/muted —
-//     the persistence seam made visible
-//   - an Open Practice CTA with the signature sticker shadow → /practice
+// Shows:
+//   - Left NavigationRail: Home (active), Journey (locked), Parent (locked).
+//   - Qalam mascot (assets/mascot/qalam-idle.svg) with graceful fallback.
+//   - Static greeting "Welcome back, Layla." (no profile system — Phase 5).
+//   - "Today's lesson" card for alif → navigates to /practice on tap.
+//   - _PersistenceProof (round-tripped Drift value, visible seam).
 //
-// NO stars, totals, streaks, badges, emoji, or pseudo-icons (D-13).
-// Copy reads are null-safe so the D-05 direction test (bare MaterialApp,
-// no l10n delegates) still renders.
+// Anti-gamification invariants (PLAT-03 / D-13):
+//   - NO QalamColors.reward (gold) on this screen.
+//   - NO ⭐ counter, no "THIS WEEK" tally, no streak, no score, no badge.
+//   - Journey and Parent are inert — no onTap, visibly labelled "Coming soon".
+//   - context.go('/journey') and context.go('/parent') are ABSENT.
+//
+// Null-safe l10n reads throughout:  l10n?.getter ?? 'fallback'  (D-05 compat).
+// The D-05 direction test wraps this in bare MaterialApp (no router, no scope);
+// it never taps, so context.go inside tap handlers is safe.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,129 +33,98 @@ import '../widgets/arabic_text.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  // A real, fully-vocalized Arabic sample — the visible connected-script proof.
-  // "قَلَم" (qalam = pen): three joined letters with tashkeel, the product's name.
-  static const String _arabicSample = 'قَلَم';
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final heading = l10n?.homePlaceholderHeading ?? 'Your Journey Starts Soon';
-    final body = l10n?.homePlaceholderBody ??
-        'Your letters and lessons will live here. For now, head to Practice and write.';
-    final cta = l10n?.openPractice ?? 'Open Practice';
 
     return Scaffold(
-      appBar: AppBar(
-        titleSpacing: QalamSpace.space6,
-        title: const _QalamWordmark(),
-      ),
       body: SafeArea(
-        // Scrollable so the column never overflows on short/landscape viewports.
-        child: Center(
-          child: SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 720),
-              child: Padding(
-                padding: const EdgeInsets.all(QalamSpace.space8),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    _PlaceholderCard(
-                      heading: heading,
-                      body: body,
-                      arabicSample: _arabicSample,
-                    ),
-                    const SizedBox(height: QalamSpace.space8),
-                    _OpenPracticeButton(
-                      label: cta,
-                      onPressed: () => context.go('/practice'),
-                    ),
-                    const SizedBox(height: QalamSpace.space6),
-                    // The persistence seam, made visible (round-tripped DB value).
-                    const _PersistenceProof(),
-                  ],
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            // Left nav-rail: Home (active), Journey (locked), Parent (locked).
+            _HomeNavRail(l10n: l10n),
+            // Main content area.
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: QalamSpace.space8,
+                  vertical: QalamSpace.space8,
+                ),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 720),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      // Mascot + greeting header.
+                      _GreetingHeader(l10n: l10n),
+                      const SizedBox(height: QalamSpace.space8),
+                      // Today's lesson card.
+                      _TodaysLessonCard(l10n: l10n),
+                      const SizedBox(height: QalamSpace.space6),
+                      // Persistence seam (round-tripped Drift value).
+                      const _PersistenceProof(),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 }
 
-/// The قلم wordmark: the brand SVG (asset seam) plus the Cairo wordmark, which
-/// is what actually reads on screen (flutter_svg does not rasterize the SVG's
-/// embedded text glyphs, so the Cairo wordmark below is what is visible).
-class _QalamWordmark extends StatelessWidget {
-  const _QalamWordmark();
+// ---------------------------------------------------------------------------
+// Left nav-rail
+// ---------------------------------------------------------------------------
 
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        SvgPicture.asset(
-          'assets/logo.svg',
-          height: QalamSpace.space8,
-          semanticsLabel: 'Qalam',
-        ),
-        const SizedBox(width: QalamSpace.space3),
-        const ArabicText(
-          'قلم',
-          display: true,
-          style: TextStyle(
-            fontFamily: QalamFonts.arabicDisplay,
-            fontWeight: FontWeight.w600,
-            fontSize: 32,
-            height: 1.0,
-            letterSpacing: 0,
-            color: QalamColors.primary,
-          ),
-        ),
-      ],
-    );
-  }
-}
+class _HomeNavRail extends StatelessWidget {
+  const _HomeNavRail({required this.l10n});
 
-class _PlaceholderCard extends StatelessWidget {
-  const _PlaceholderCard({
-    required this.heading,
-    required this.body,
-    required this.arabicSample,
-  });
-
-  final String heading;
-  final String body;
-  final String arabicSample;
+  final AppLocalizations? l10n;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
+      width: 120,
       decoration: BoxDecoration(
-        color: QalamColors.surface, // soft-aqua
-        borderRadius: BorderRadius.circular(QalamRadii.xl),
-        boxShadow: QalamShadows.shadowMd,
+        color: QalamColors.surface,
+        border: Border(
+          right: BorderSide(color: QalamColors.border, width: 1),
+        ),
       ),
-      padding: const EdgeInsets.all(QalamSpace.space8),
+      padding: const EdgeInsets.symmetric(vertical: QalamSpace.space8),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          // The connected-script proof: a real vocalized Arabic word, RTL island.
-          ArabicText(arabicSample, display: true, tashkeel: true),
-          const SizedBox(height: QalamSpace.space6),
-          Text(
-            heading,
-            style: QalamTextStyles.heading,
-            textAlign: TextAlign.center,
+          // Home — active.
+          _NavItem(
+            iconAsset: 'assets/icons/qalam-nib.svg',
+            label: l10n?.navHome ?? 'Home',
+            isActive: true,
+            isLocked: false,
+            onTap: null, // Already on Home.
           ),
           const SizedBox(height: QalamSpace.space4),
-          Text(
-            body,
-            style: QalamTextStyles.body,
-            textAlign: TextAlign.center,
+          // Journey — locked, Phase 6.
+          _NavItem(
+            iconAsset: 'assets/icons/lock.svg',
+            label: l10n?.navJourney ?? 'Journey',
+            isActive: false,
+            isLocked: true,
+            sublabel: l10n?.comingSoon ?? 'Coming soon',
+            onTap: null, // Inert — no route.
+          ),
+          const SizedBox(height: QalamSpace.space4),
+          // Parent — locked, Phase 9.
+          _NavItem(
+            iconAsset: 'assets/icons/lock.svg',
+            label: l10n?.navParent ?? 'Parent',
+            isActive: false,
+            isLocked: true,
+            sublabel: l10n?.comingSoon ?? 'Coming soon',
+            onTap: null, // Inert — no route.
           ),
         ],
       ),
@@ -160,44 +132,236 @@ class _PlaceholderCard extends StatelessWidget {
   }
 }
 
-class _OpenPracticeButton extends StatelessWidget {
-  const _OpenPracticeButton({required this.label, required this.onPressed});
+class _NavItem extends StatelessWidget {
+  const _NavItem({
+    required this.iconAsset,
+    required this.label,
+    required this.isActive,
+    required this.isLocked,
+    this.sublabel,
+    this.onTap,
+  });
 
+  final String iconAsset;
   final String label;
-  final VoidCallback onPressed;
+  final bool isActive;
+  final bool isLocked;
+  final String? sublabel;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final Color labelColor =
+        isActive ? QalamColors.primary : QalamColors.fgMuted;
+
+    return Opacity(
+      opacity: isLocked ? 0.5 : 1.0,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: QalamSpace.space3),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            SizedBox(
+              width: QalamTargets.targetMin,
+              height: QalamTargets.targetMin,
+              child: Center(
+                child: _SafeSvgIcon(
+                  asset: iconAsset,
+                  size: QalamSpace.space8,
+                  color: labelColor,
+                ),
+              ),
+            ),
+            Text(
+              label,
+              style: QalamTextStyles.label.copyWith(color: labelColor),
+              textAlign: TextAlign.center,
+            ),
+            if (sublabel != null) ...<Widget>[
+              const SizedBox(height: QalamSpace.space1),
+              Text(
+                sublabel!,
+                style: QalamTextStyles.label.copyWith(
+                  color: QalamColors.fgMuted,
+                  fontSize: QalamFontSizes.fz12,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Renders an SVG icon with a graceful SizedBox fallback if the asset is missing.
+class _SafeSvgIcon extends StatelessWidget {
+  const _SafeSvgIcon({
+    required this.asset,
+    required this.size,
+    this.color,
+  });
+
+  final String asset;
+  final double size;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.asset(
+      asset,
+      width: size,
+      height: size,
+      colorFilter: color != null
+          ? ColorFilter.mode(color!, BlendMode.srcIn)
+          : null,
+      placeholderBuilder: (_) => SizedBox(width: size, height: size),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Greeting header (mascot + warm text)
+// ---------------------------------------------------------------------------
+
+class _GreetingHeader extends StatelessWidget {
+  const _GreetingHeader({required this.l10n});
+
+  final AppLocalizations? l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        // Mascot: qalam-idle.svg — graceful fallback if asset missing.
+        SvgPicture.asset(
+          'assets/mascot/qalam-idle.svg',
+          width: QalamSpace.space16,
+          height: QalamSpace.space16,
+          semanticsLabel: 'Qalam',
+          placeholderBuilder: (_) => const SizedBox(
+            width: QalamSpace.space16,
+            height: QalamSpace.space16,
+          ),
+        ),
+        const SizedBox(width: QalamSpace.space6),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                l10n?.homeGreeting ?? 'Welcome back, Layla.',
+                style: QalamTextStyles.heading,
+              ),
+              const SizedBox(height: QalamSpace.space2),
+              Text(
+                l10n?.homeGreetingSubtitle ??
+                    'Qalam has a new lesson ready for you.',
+                style: QalamTextStyles.body,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Today's lesson card
+// ---------------------------------------------------------------------------
+
+class _TodaysLessonCard extends StatelessWidget {
+  const _TodaysLessonCard({required this.l10n});
+
+  final AppLocalizations? l10n;
 
   @override
   Widget build(BuildContext context) {
     final qalam = Theme.of(context).extension<QalamTheme>() ?? QalamTheme.light;
-    return DecoratedBox(
-      // The signature flat-bottom "sticker" shadow (CSS --shadow-button).
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(QalamRadii.lg),
-        boxShadow: qalam.buttonShadow,
-      ),
-      child: Material(
-        color: QalamColors.primary, // ink-teal — reserved for the primary CTA
-        borderRadius: BorderRadius.circular(QalamRadii.lg),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onPressed,
-          child: Container(
-            constraints: const BoxConstraints(minHeight: QalamTargets.targetComfy),
-            padding: const EdgeInsets.symmetric(
-              horizontal: QalamSpace.space12,
-              vertical: QalamSpace.space4,
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              label,
-              style: QalamTextStyles.button.copyWith(color: QalamColors.fgOnPrimary),
-            ),
+
+    return GestureDetector(
+      key: const Key('todaysLessonCard'),
+      onTap: () => context.go('/practice'),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(QalamRadii.xl),
+          boxShadow: QalamShadows.shadowMd,
+        ),
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: QalamColors.surface,
+            borderRadius: BorderRadius.circular(QalamRadii.xl),
+          ),
+          padding: const EdgeInsets.all(QalamSpace.space8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              // Alif glyph — the RTL island for the lesson letter.
+              Container(
+                width: QalamSpace.space16,
+                height: QalamSpace.space16,
+                decoration: BoxDecoration(
+                  color: QalamColors.primaryTint,
+                  borderRadius: BorderRadius.circular(QalamRadii.lg),
+                ),
+                alignment: Alignment.center,
+                child: const ArabicText('ا', display: true),
+              ),
+              const SizedBox(width: QalamSpace.space6),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      l10n?.homeLessonEyebrow ?? 'TODAY\'S LESSON',
+                      style: QalamTextStyles.label,
+                    ),
+                    const SizedBox(height: QalamSpace.space2),
+                    Text(
+                      l10n?.homeLessonTitle ?? 'The Letter Alif',
+                      style: QalamTextStyles.heading,
+                    ),
+                    const SizedBox(height: QalamSpace.space2),
+                    Text(
+                      l10n?.homeLessonSubtitle ?? 'Stroke order and tracing',
+                      style: QalamTextStyles.body,
+                    ),
+                  ],
+                ),
+              ),
+              // Forward-arrow affordance (uses the button shadow as the primary
+              // CTA accent — teal, no gold, no reward token).
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: QalamColors.primary,
+                  borderRadius: BorderRadius.circular(QalamRadii.pill),
+                  boxShadow: qalam.buttonShadow,
+                ),
+                child: const SizedBox(
+                  width: QalamTargets.targetComfy,
+                  height: QalamTargets.targetComfy,
+                  child: Icon(
+                    Icons.chevron_right_rounded,
+                    color: QalamColors.fgOnPrimary,
+                    size: QalamSpace.space8,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 }
+
+// ---------------------------------------------------------------------------
+// Persistence seam (kept from Phase 1 walking skeleton)
+// ---------------------------------------------------------------------------
 
 /// Shows the round-tripped Drift value (the visible persistence seam).
 ///

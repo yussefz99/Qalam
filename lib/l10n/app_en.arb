@@ -235,5 +235,171 @@
   "demoCelebrationStarsWord": "stars",
   "@demoCelebrationStarsWord": { "description": "Celebration star-total unit word." },
   "demoCelebrationStarsDelta": "+3 today",
-  "@demoCelebrationStarsDelta": { "description": "Celebration stars earned this lesson (gamification chrome, owner override)." }
+  "@demoCelebrationStarsDelta": { "description": "Celebration stars earned this lesson (gamification chrome, owner override)." },
+
+  "practiceWatchEyebrow": "WATCH · STROKE ORDER",
+  "@practiceWatchEyebrow": {
+    "description": "Watch step eyebrow label (Label scale, ALL CAPS). Shown above the heading on the Watch phase screen."
+  },
+
+  "practiceTraceEyebrow": "YOUR TURN · TRACE",
+  "@practiceTraceEyebrow": {
+    "description": "Trace step eyebrow label (Label scale, ALL CAPS). Shown above the heading on the Trace phase screen."
+  },
+
+  "practiceMasteredEyebrow": "MASTERED",
+  "@practiceMasteredEyebrow": {
+    "description": "Mastery celebration eyebrow / badge label (Label scale, ALL CAPS). Shown with exactly one gold star glyph."
+  },
+
+  "practiceWatchHeading": "Watch me write alif.",
+  "@practiceWatchHeading": {
+    "description": "Watch phase heading — the mascot Qalam speaks in first person. Display scale (42px Fredoka)."
+  },
+
+  "practiceTraceHeading": "Now you trace alif.",
+  "@practiceTraceHeading": {
+    "description": "Trace phase heading — hands the pen to the child. Display scale (42px Fredoka)."
+  },
+
+  "practiceMasteredHeading": "You learned alif.",
+  "@practiceMasteredHeading": {
+    "description": "Mastery celebration heading. Display scale (42px Fredoka). Calm, not hype."
+  },
+
+  "practiceTipLabel": "Tip",
+  "@practiceTipLabel": {
+    "description": "Tip card title (Title/Button scale 24px Fredoka). Short label above the tip body."
+  },
+
+  "practiceTipBody": "Start at the gold dot. Follow the line down.",
+  "@practiceTipBody": {
+    "description": "Tip card body — specific, calm guidance for alif. Body scale (18px Nunito). 'gold dot' references the reward-colored start marker."
+  },
+
+  "practiceStartButton": "Start",
+  "@practiceStartButton": {
+    "description": "Entry screen primary CTA advancing into the Watch step. Title Case, short for ages 5-10."
+  },
+
+  "practiceIllTryButton": "I'll Try",
+  "@practiceIllTryButton": {
+    "description": "Watch step primary CTA advancing Watch to Trace. Title Case."
+  },
+
+  "practiceWatchAgainButton": "Watch Again",
+  "@practiceWatchAgainButton": {
+    "description": "Watch step secondary ghost button — replays the stroke-order demonstration. Title Case."
+  },
+
+  "practiceReplayButton": "Replay",
+  "@practiceReplayButton": {
+    "description": "Trace step secondary ghost button — replays the demo over the guide. Title Case."
+  },
+
+  "practiceTryAgainButton": "Try Again",
+  "@practiceTryAgainButton": {
+    "description": "Trace miss retry CTA — retries the SAME stroke after a named fix. Unlimited, no counter. Title Case."
+  },
+
+  "practiceNextButton": "Next",
+  "@practiceNextButton": {
+    "description": "Trace clean-pass CTA (pre-mastery) — advances to the next rep. Title Case."
+  },
+
+  "practiceBackHomeButton": "Back Home",
+  "@practiceBackHomeButton": {
+    "description": "Celebration screen primary CTA returning to Home. Title Case. No 'See journey' — Journey is Phase 6."
+  },
+
+  "practiceStrokeProgress": "Stroke 1 of 1",
+  "@practiceStrokeProgress": {
+    "description": "Trace per-stroke progress indicator. Alif has one stroke. Pedagogical counter (not a score). Western numerals only."
+  },
+
+  "practiceRepProgress": "{n} of 3",
+  "@practiceRepProgress": {
+    "description": "Clean-rep progress during a session (e.g. '1 of 3'). Neutral progress indicator, NOT a score. Western numerals only.",
+    "placeholders": {
+      "n": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+
+  "practiceFeedbackTooShort": "Your alif needs to be taller — draw it from the top all the way down.",
+  "@practiceFeedbackTooShort": {
+    "description": "Named fix for MistakeId.tooShort / strokeLengthBelowThreshold. VERBATIM from alif commonMistakes in letters.json. Tutor's warm, specific voice — never 'Oops'."
+  },
+
+  "practiceFeedbackWrongDirection": "Start your alif at the top and come down — not from the bottom up.",
+  "@practiceFeedbackWrongDirection": {
+    "description": "Named fix for MistakeId.wrongDirection / strokeDirectionInverted. VERBATIM from alif commonMistakes in letters.json. Tutor's warm, specific voice."
+  },
+
+  "practiceFeedbackTooCurved": "Alif is a straight line — try to keep it as straight as you can.",
+  "@practiceFeedbackTooCurved": {
+    "description": "Named fix for MistakeId.tooCurved / strokeCurvatureExceedsThreshold. VERBATIM from alif commonMistakes in letters.json. Tutor's warm, specific voice."
+  },
+
+  "practiceFeedbackFallback": "Something looks off — try again, slower this time.",
+  "@practiceFeedbackFallback": {
+    "description": "Fallback named-fix when no authored commonMistake matches. Calm, specific — NEVER 'Oops, try again!' (PLAT-03 / Pitfall 7)."
+  },
+
+  "practiceCelebrationLine": "You learned alif.",
+  "@practiceCelebrationLine": {
+    "description": "Mastery celebration warm line — the learning moment stated calmly. Paired with the Arabic praise island."
+  },
+
+  "practiceCelebrationArabic": "أحسنت",
+  "@practiceCelebrationArabic": {
+    "description": "Mastery celebration Arabic praise (RTL island, Noto Naskh) — 'well done'. Never bold/italic/letterSpaced. Paired with the English celebration line."
+  },
+
+  "homeGreeting": "Welcome back, Layla.",
+  "@homeGreeting": {
+    "description": "Home screen warm greeting heading. Static placeholder name — no profile system yet. Anti-gamification: no stars/streaks/counters here."
+  },
+
+  "homeGreetingSubtitle": "Qalam has a new lesson ready for you.",
+  "@homeGreetingSubtitle": {
+    "description": "Home screen greeting subtitle — tutor's calm voice, one sentence. Pitched to ages 5-10."
+  },
+
+  "homeLessonEyebrow": "TODAY'S LESSON",
+  "@homeLessonEyebrow": {
+    "description": "Home screen 'Today's Lesson' card eyebrow — Label scale, ALL CAPS. Pedagogical label, not gamification."
+  },
+
+  "homeLessonTitle": "The Letter Alif",
+  "@homeLessonTitle": {
+    "description": "Home screen lesson card title. Alif is the first signed-off curriculum letter."
+  },
+
+  "homeLessonSubtitle": "Stroke order and tracing",
+  "@homeLessonSubtitle": {
+    "description": "Home screen lesson card subtitle — a brief description of what the lesson contains."
+  },
+
+  "navHome": "Home",
+  "@navHome": {
+    "description": "Left nav-rail label — Home (active state)."
+  },
+
+  "navJourney": "Journey",
+  "@navJourney": {
+    "description": "Left nav-rail label — Journey (locked, Phase 6)."
+  },
+
+  "navParent": "Parent",
+  "@navParent": {
+    "description": "Left nav-rail label — Parent (locked, Phase 9)."
+  },
+
+  "comingSoon": "Coming soon",
+  "@comingSoon": {
+    "description": "Locked nav item sublabel shown under Journey and Parent nav entries."
+  }
 }
