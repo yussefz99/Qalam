@@ -28,6 +28,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 2: Curriculum Schema & First-Letter Seed** - A faithful curriculum data schema plus a small owner's-mother-signed-off seed (forms, reference stroke paths, common mistakes) for the first letters.
 - [x] **Phase 02.1: Stroke Reference Correction** (INSERTED) - Replace broken glyph-outline reference strokes with correct open-centerline teaching strokes; in-app authoring trace screen, schema `type` field + closed-loop validator, and a re-signed-off alif. Unblocks Phase 3. (completed 2026-06-01)
 - [ ] **Phase 3: Trace One Letter End-to-End** - A child can watch the stroke-order animation, trace a real seeded letter, get on-device geometric feedback, and earn a quiet star — the whole loop, thin.
+- [ ] **Phase 03.1: Journey Map Screen** (INSERTED) - Winding-path progress view showing all 28 letters as nodes; mocked progress data; pulse animation on current letter; tap to practice; unlocked from Home nav.
 - [ ] **Phase 4: Scoring Quality & Calibration** - The scorer rejects wrong-order/sloppy work and accepts good-faith child attempts, with per-letter tolerances calibrated against real child samples with the owner's mother.
 - [ ] **Phase 5: Profiles & Onboarding** - A parent creates a local child profile (name + grade), and the child picks an avatar and nickname on first open.
 - [ ] **Phase 6: Lesson Progression & Home** - On open the child sees today's prepared lesson with one Start; the next lesson unlocks only after passing the current one.
@@ -174,6 +175,40 @@ Plans:
 
 **UI hint**: yes
 **Research hint**: yes — DEEPEST-RISK PHASE. The custom geometric stroke-order/shape scorer is NOT provided by ML Kit (ML Kit returns only {text, score} as a secondary letter-identity check). Stroke capture must use low-level pointer events (not GestureDetector) to preserve per-stroke order/count; the ML Kit Arabic model must be downloaded-and-cached before first scoring. Flag for deep iteration with the owner's mother.
+
+
+
+### Phase 03.1: Journey Map Screen (INSERTED)
+
+**Goal**: Implement the Journey Map screen in Flutter: a winding-path progress view showing all 28 letters as nodes across 4 rows of 7, with 4 node states (complete/current/future/locked), pulse animation on the current letter, a Level 1 Quiz checkpoint, and a locked Level 2 banner. Wired from the Home nav-rail and navigates to the Practice screen on node tap. Uses mocked progress data.
+**Depends on**: Phase 3 (nav shell, theme tokens, GoRouter, MasteryCelebration widget)
+**Requirements**: D-01 through D-24 (see 03.1-CONTEXT.md)
+**Success Criteria** (what must be TRUE):
+
+  1. All 28 Arabic letters appear as nodes in 4 rows of 7, following the alternating direction from the design reference (Row 1 R-to-L, Row 2 L-to-R, etc.).
+  2. Node visual states match the mock progress (alif/baa/taa complete, thaa current, 5-28 future); current node pulses with a 2.4s glow animation.
+  3. Tapping a complete or current node navigates to /practice; tapping future/locked nodes is inert.
+  4. The Journey nav item on the Home screen is unlocked; the "See journey" button in MasteryCelebration is wired to /journey.
+  5. No running star counter, no streak, no "+N" copy anywhere on the screen.
+
+**Plans**: 3 plans
+
+Plans:
+
+**Wave 1**
+
+- [ ] 03.1-01-PLAN.md -- Wave 1: JourneyProgress model + JourneyNodeState enum + mockJourneyProgressProvider + /journey GoRoute + unlock Home nav + wire "See journey"
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [ ] 03.1-02-PLAN.md -- Wave 2: JourneyScreen layout + JourneyPathPainter winding path + 28 positioned nodes + 4 visual states + TODAY pill + Level 1 header pill
+
+**Wave 3** *(blocked on Wave 2)*
+
+- [ ] 03.1-03-PLAN.md -- Wave 3: Pulse animation + tap handlers + gold star badges + Level 1 Quiz checkpoint + Level 2 locked banner + human verify checkpoint
+
+**UI hint**: yes -- PRIMARY design reference: docs/design/kit/project/ui_kits/qalam_app/journey_preview.html
+**Research hint**: no -- design is locked (journey_preview.html). Plan directly.
 
 ### Phase 4: Scoring Quality & Calibration
 
