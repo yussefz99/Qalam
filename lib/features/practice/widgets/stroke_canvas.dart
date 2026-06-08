@@ -14,8 +14,11 @@
 // SECURITY (T-03-01 / T-01-05): captured points live IN MEMORY ONLY, in
 // widget State. They are never printed, logged, or persisted. Points are
 // discarded on dispose and on every pointer-cancel. Only the completed
-// List<Offset> is forwarded once via onStrokeSubmitted; the caller scores
-// and then discards it.
+// strokes are forwarded once via onStrokeSubmitted / onLetterComplete; the
+// caller scores and then discards them. Plan 04-04 widened this from a
+// single-stroke surface to a whole-letter accumulating surface (no
+// per-pointer-down clear) so a multi-stroke letter (baa = boat + dot) survives
+// to scoreLetter; the accumulated List<List<Offset>> is still in-memory-only.
 
 import 'dart:ui' show PathMetric, PointMode;
 
@@ -32,15 +35,22 @@ import '../../../theme/dimens.dart';
 /// Interactive trace canvas.
 ///
 /// The parent hands in the letter's [referenceStrokes] (from the curriculum
-/// data) and an [onStrokeSubmitted] callback. Every time the child lifts the
-/// stylus (or accepted pointer), [onStrokeSubmitted] is called with the
-/// completed point list for scoring. The canvas then clears itself for the
-/// next stroke attempt.
+/// data) and stroke callbacks. The canvas ACCUMULATES a whole multi-stroke
+/// letter: each time the child lifts the stylus, the finished stroke is appended
+/// (and [onStrokeSubmitted] fires for any immediate per-stroke feedback). Once
+/// the child has drawn as many strokes as the reference has
+/// ([referenceStrokes.length] — the letter-complete signal, Open Q1), the whole
+/// accumulated letter is forwarded once via [onLetterComplete] for scoreLetter.
+///
+/// Prior strokes are NEVER discarded on a new pointer-down (the Plan 04-04 fix to
+/// the single-stroke accumulation bug) — so baa's boat survives while the child
+/// draws its dot.
 class StrokeCanvas extends StatefulWidget {
   const StrokeCanvas({
     super.key,
     required this.referenceStrokes,
-    required this.onStrokeSubmitted,
+    this.onStrokeSubmitted,
+    this.onLetterComplete,
     this.acceptTouch = DebugFlags.allowFingerInput,
   });
 
@@ -48,9 +58,17 @@ class StrokeCanvas extends StatefulWidget {
   /// Resolved via ReferencePath.resolve at paint time — S1-04 one-source-of-truth.
   final List<StrokeSpec> referenceStrokes;
 
-  /// Called on pointer-up with the list of local Offsets the child drew.
+  /// Called on each pointer-up with the single completed stroke the child just
+  /// drew, for optional immediate per-stroke feedback. Optional — a caller that
+  /// only wants whole-letter verdicts can supply [onLetterComplete] alone.
   /// The caller is responsible for scoring and then discarding the points.
-  final void Function(List<Offset> points) onStrokeSubmitted;
+  final void Function(List<Offset> points)? onStrokeSubmitted;
+
+  /// Called ONCE the accumulated stroke count reaches [referenceStrokes.length]
+  /// (the letter-complete signal), with the whole multi-stroke letter for
+  /// scoreLetter. Each element is one completed stroke's local Offsets, in draw
+  /// order. The caller scores the whole letter and then discards the points.
+  final void Function(List<List<Offset>> strokes)? onLetterComplete;
 
   /// Whether to accept touch events in addition to stylus events.
   /// Defaults to DebugFlags.allowFingerInput (true in debug builds).
@@ -65,8 +83,14 @@ class _StrokeCanvasState extends State<StrokeCanvas> {
   /// In-progress stroke points — in-memory only (T-03-01 / T-01-05).
   List<Offset>? _activePoints;
 
-  /// Completed strokes waiting to be repainted (cleared on each new attempt).
+  /// Completed strokes ACCUMULATED for the whole letter (in-memory only,
+  /// T-03-01 / T-01-05). NOT cleared on each new pointer-down — a multi-stroke
+  /// letter (baa = boat + dot) accumulates here until the letter-complete signal.
   final List<List<Offset>> _completedStrokes = <List<Offset>>[];
+
+  /// True once [onLetterComplete] has fired for this letter, so we never
+  /// double-fire if an extra stroke somehow arrives after completion.
+  bool _letterComplete = false;
 
   // --- input filter --------------------------------------------------------
 
@@ -89,8 +113,9 @@ class _StrokeCanvasState extends State<StrokeCanvas> {
     if (!_accept(event.kind)) return;
     final Offset local = _localPos(event.position);
     setState(() {
-      // Clear previous attempt so the child always starts fresh.
-      _completedStrokes.clear();
+      // ACCUMULATE — do NOT clear prior strokes (Plan 04-04 fix). A multi-stroke
+      // letter keeps every completed stroke until the letter-complete signal;
+      // the parent clears the canvas (via a fresh key) between letters.
       _activePoints = <Offset>[local];
     });
   }
@@ -116,13 +141,31 @@ class _StrokeCanvasState extends State<StrokeCanvas> {
     final List<Offset>? active = _activePoints;
     if (active == null || active.isEmpty) return;
     setState(() {
-      _completedStrokes
-        ..clear()
-        ..add(active);
+      // APPEND the finished stroke to the whole-letter accumulation — never
+      // clear (Plan 04-04). The painter repaints all accumulated strokes.
+      _completedStrokes.add(active);
       _activePoints = null;
     });
-    // Forward to the caller for scoring — points are never stored further.
-    widget.onStrokeSubmitted(List<Offset>.unmodifiable(active));
+
+    // Optional immediate per-stroke feedback — points are never stored further.
+    widget.onStrokeSubmitted?.call(List<Offset>.unmodifiable(active));
+
+    // Letter-complete signal (Open Q1 — count-reached): once the child has drawn
+    // as many strokes as the reference has, forward the WHOLE accumulated letter
+    // once for scoreLetter. Guarded against double-fire.
+    final int expected = widget.referenceStrokes.length;
+    if (!_letterComplete &&
+        expected > 0 &&
+        _completedStrokes.length >= expected) {
+      _letterComplete = true;
+      widget.onLetterComplete?.call(
+        List<List<Offset>>.unmodifiable(
+          _completedStrokes
+              .map((List<Offset> s) => List<Offset>.unmodifiable(s))
+              .toList(growable: false),
+        ),
+      );
+    }
   }
 
   // --- coordinate helper ---------------------------------------------------
@@ -158,6 +201,7 @@ class _StrokeCanvasState extends State<StrokeCanvas> {
     // Points are in-memory only — discard on dispose (T-03-01 / T-01-05).
     _activePoints = null;
     _completedStrokes.clear();
+    _letterComplete = false;
     super.dispose();
   }
 }

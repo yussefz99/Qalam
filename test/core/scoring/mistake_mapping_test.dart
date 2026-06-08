@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qalam/core/scoring/geometric_stroke_scorer.dart';
 import 'package:qalam/core/scoring/scoring_models.dart';
+import 'package:qalam/l10n/app_localizations.dart';
+import 'package:qalam/l10n/app_localizations_en.dart';
 import 'package:qalam/models/letter.dart';
 
 /// S1-05 — MistakeId → authored feedback string mapping.
@@ -104,6 +106,60 @@ void main() {
       expect(feedback, isNotEmpty);
       // Must not contain any generic "Oops" phrase — tutor's voice is always specific.
       expect(feedback!.toLowerCase(), isNot(contains('oops')));
+    });
+  });
+
+  // ── Plan 04-04: whole-letter MistakeIds → AUTHORED l10n strings ───────────────
+  //
+  // The four new whole-letter failure categories (count/order/dot/identity) each
+  // resolve to an authored l10n string in practice_screen's _feedbackString —
+  // NEVER the generic fallback (Pitfall 7 / PLAT-03). We assert the authored
+  // l10n getters they reference exist, are non-empty, and are specific (not the
+  // fallback copy, not "Oops"). The mapping below mirrors _feedbackString's new
+  // arms exactly — breaking one requires changing the other.
+  group('whole-letter MistakeId → authored l10n (Plan 04-04, Pitfall 7)', () {
+    final AppLocalizations l10n = AppLocalizationsEn();
+
+    // Mirrors practice_screen.dart _feedbackString's four new cases.
+    String authoredFor(MistakeId id) {
+      switch (id) {
+        case MistakeId.wrongStrokeCount:
+          return l10n.practiceFeedbackWrongStrokeCount;
+        case MistakeId.wrongStrokeOrder:
+          return l10n.practiceFeedbackWrongStrokeOrder;
+        case MistakeId.dotMisplaced:
+          return l10n.practiceFeedbackDotMisplaced;
+        case MistakeId.wrongLetterIdentity:
+          return l10n.practiceFeedbackWrongLetterIdentity;
+        default:
+          fail('MistakeId $id is not a whole-letter category');
+      }
+    }
+
+    const wholeLetterIds = <MistakeId>[
+      MistakeId.wrongStrokeCount,
+      MistakeId.wrongStrokeOrder,
+      MistakeId.dotMisplaced,
+      MistakeId.wrongLetterIdentity,
+    ];
+
+    for (final id in wholeLetterIds) {
+      test('$id maps to a non-empty, specific authored l10n string', () {
+        final feedback = authoredFor(id);
+        expect(feedback, isNotEmpty, reason: '$id must have authored copy');
+        // Never the generic fallback string and never "Oops" — the tutor's
+        // voice is always specific (PLAT-03 / Pitfall 7).
+        expect(feedback, isNot(equals(l10n.practiceFeedbackFallback)),
+            reason: '$id must not fall through to the generic fallback');
+        expect(feedback.toLowerCase(), isNot(contains('oops')));
+      });
+    }
+
+    test('getting-ready copy exists and is calm (not an error)', () {
+      expect(l10n.practiceGettingReadyTitle, isNotEmpty);
+      expect(l10n.practiceGettingReadyBody, isNotEmpty);
+      expect(l10n.practiceGettingReadyTitle.toLowerCase(),
+          isNot(contains('error')));
     });
   });
 }

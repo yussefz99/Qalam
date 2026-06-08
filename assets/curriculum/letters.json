@@ -20,11 +20,26 @@
           "label": "vertical_stroke",
           "type": "line",
           "points": [
-            [0.5, 0.0],
-            [0.5, 0.25],
-            [0.5, 0.5],
-            [0.5, 0.75],
-            [0.5, 1.0]
+            [
+              0.5,
+              0
+            ],
+            [
+              0.5,
+              0.25
+            ],
+            [
+              0.5,
+              0.5
+            ],
+            [
+              0.5,
+              0.75
+            ],
+            [
+              0.5,
+              1
+            ]
           ],
           "direction": "topToBottom"
         }
@@ -49,6 +64,9 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": true,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
@@ -68,11 +86,72 @@
         "medial": "ـبـ",
         "final": "ـب"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.9,
+              0.4
+            ],
+            [
+              0.6,
+              0.55
+            ],
+            [
+              0.3,
+              0.55
+            ],
+            [
+              0.1,
+              0.4
+            ]
+          ],
+          "direction": "rightToLeft"
+        },
+        {
+          "order": 2,
+          "label": "dot",
+          "type": "dot",
+          "points": [
+            [
+              0.5,
+              0.8
+            ]
+          ],
+          "direction": "tap"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_stroke_count",
+          "check": "strokeCountMismatch",
+          "feedback": "Baa is two parts — the boat, then one dot underneath."
+        },
+        {
+          "id": "wrong_stroke_order",
+          "check": "strokeOrderWrong",
+          "feedback": "Draw the boat first, then the dot underneath."
+        },
+        {
+          "id": "dot_wrong",
+          "check": "dotPositionWrong",
+          "feedback": "Baa's dot goes under the boat, not on top."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try baa again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
@@ -92,11 +171,84 @@
         "medial": "ـتـ",
         "final": "ـت"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.9,
+              0.4
+            ],
+            [
+              0.6,
+              0.55
+            ],
+            [
+              0.3,
+              0.55
+            ],
+            [
+              0.1,
+              0.4
+            ]
+          ],
+          "direction": "rightToLeft"
+        },
+        {
+          "order": 2,
+          "label": "dot_right",
+          "type": "dot",
+          "points": [
+            [
+              0.6,
+              0.18
+            ]
+          ],
+          "direction": "tap"
+        },
+        {
+          "order": 3,
+          "label": "dot_left",
+          "type": "dot",
+          "points": [
+            [
+              0.4,
+              0.18
+            ]
+          ],
+          "direction": "tap"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_stroke_count",
+          "check": "strokeCountMismatch",
+          "feedback": "Taa is the boat plus two dots on top — count them: one, two."
+        },
+        {
+          "id": "wrong_stroke_order",
+          "check": "strokeOrderWrong",
+          "feedback": "Draw the boat first, then the two dots on top."
+        },
+        {
+          "id": "dot_wrong",
+          "check": "dotPositionWrong",
+          "feedback": "Taa's two dots go above the boat, not below."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try taa again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
@@ -116,11 +268,96 @@
         "medial": "ـثـ",
         "final": "ـث"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.9,
+              0.4
+            ],
+            [
+              0.6,
+              0.55
+            ],
+            [
+              0.3,
+              0.55
+            ],
+            [
+              0.1,
+              0.4
+            ]
+          ],
+          "direction": "rightToLeft"
+        },
+        {
+          "order": 2,
+          "label": "dot_right",
+          "type": "dot",
+          "points": [
+            [
+              0.6,
+              0.2
+            ]
+          ],
+          "direction": "tap"
+        },
+        {
+          "order": 3,
+          "label": "dot_left",
+          "type": "dot",
+          "points": [
+            [
+              0.4,
+              0.2
+            ]
+          ],
+          "direction": "tap"
+        },
+        {
+          "order": 4,
+          "label": "dot_top",
+          "type": "dot",
+          "points": [
+            [
+              0.5,
+              0.08
+            ]
+          ],
+          "direction": "tap"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_stroke_count",
+          "check": "strokeCountMismatch",
+          "feedback": "Thaa is the boat plus three dots on top — count them: one, two, three."
+        },
+        {
+          "id": "wrong_stroke_order",
+          "check": "strokeOrderWrong",
+          "feedback": "Draw the boat first, then the three dots."
+        },
+        {
+          "id": "dot_wrong",
+          "check": "dotPositionWrong",
+          "feedback": "Thaa has three dots above the boat, like a little triangle."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try thaa again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
@@ -140,14 +377,87 @@
         "medial": "ـجـ",
         "final": "ـج"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.78,
+              0.3
+            ],
+            [
+              0.5,
+              0.34
+            ],
+            [
+              0.32,
+              0.46
+            ],
+            [
+              0.5,
+              0.62
+            ],
+            [
+              0.7,
+              0.66
+            ],
+            [
+              0.42,
+              0.84
+            ],
+            [
+              0.18,
+              0.72
+            ]
+          ],
+          "direction": "rightToLeft"
+        },
+        {
+          "order": 2,
+          "label": "dot",
+          "type": "dot",
+          "points": [
+            [
+              0.46,
+              0.56
+            ]
+          ],
+          "direction": "tap"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_stroke_count",
+          "check": "strokeCountMismatch",
+          "feedback": "Jeem is the curl, then one dot inside underneath."
+        },
+        {
+          "id": "wrong_stroke_order",
+          "check": "strokeOrderWrong",
+          "feedback": "Draw the curl first, then the dot."
+        },
+        {
+          "id": "dot_wrong",
+          "check": "dotPositionWrong",
+          "feedback": "Jeem's dot sits inside, below the curve — not on top."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try jeem again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     },
     {
@@ -164,14 +474,75 @@
         "medial": "ـحـ",
         "final": "ـح"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.78,
+              0.3
+            ],
+            [
+              0.5,
+              0.34
+            ],
+            [
+              0.32,
+              0.46
+            ],
+            [
+              0.5,
+              0.62
+            ],
+            [
+              0.7,
+              0.66
+            ],
+            [
+              0.42,
+              0.84
+            ],
+            [
+              0.18,
+              0.72
+            ]
+          ],
+          "direction": "rightToLeft"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_shape",
+          "check": "strokeCurvatureExceedsThreshold",
+          "feedback": "Haa is one smooth curl with a round belly — no dot at all."
+        },
+        {
+          "id": "wrong_direction",
+          "check": "strokeDirectionInverted",
+          "feedback": "Start at the top and sweep down into the belly."
+        },
+        {
+          "id": "too_short",
+          "check": "strokeLengthBelowThreshold",
+          "feedback": "Give the belly room — let the curve drop down."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try haa again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     },
     {
@@ -188,14 +559,87 @@
         "medial": "ـخـ",
         "final": "ـخ"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.78,
+              0.3
+            ],
+            [
+              0.5,
+              0.34
+            ],
+            [
+              0.32,
+              0.46
+            ],
+            [
+              0.5,
+              0.62
+            ],
+            [
+              0.7,
+              0.66
+            ],
+            [
+              0.42,
+              0.84
+            ],
+            [
+              0.18,
+              0.72
+            ]
+          ],
+          "direction": "rightToLeft"
+        },
+        {
+          "order": 2,
+          "label": "dot",
+          "type": "dot",
+          "points": [
+            [
+              0.55,
+              0.12
+            ]
+          ],
+          "direction": "tap"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_stroke_count",
+          "check": "strokeCountMismatch",
+          "feedback": "Khaa is the curl, then one dot on top."
+        },
+        {
+          "id": "wrong_stroke_order",
+          "check": "strokeOrderWrong",
+          "feedback": "Draw the curl first, then the dot above."
+        },
+        {
+          "id": "dot_wrong",
+          "check": "dotPositionWrong",
+          "feedback": "Khaa's one dot goes above the curve."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try khaa again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     },
     {
@@ -212,14 +656,63 @@
         "medial": "د",
         "final": "د"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.7,
+              0.22
+            ],
+            [
+              0.64,
+              0.46
+            ],
+            [
+              0.5,
+              0.6
+            ],
+            [
+              0.26,
+              0.6
+            ]
+          ],
+          "direction": "rightToLeft"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_shape",
+          "check": "strokeCurvatureExceedsThreshold",
+          "feedback": "Daal is a little open hook — keep the corner, no full curve."
+        },
+        {
+          "id": "wrong_direction",
+          "check": "strokeDirectionInverted",
+          "feedback": "Start at the top and come down into the hook."
+        },
+        {
+          "id": "too_short",
+          "check": "strokeLengthBelowThreshold",
+          "feedback": "Make the hook a bit bigger."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try daal again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     },
     {
@@ -236,14 +729,75 @@
         "medial": "ذ",
         "final": "ذ"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.7,
+              0.22
+            ],
+            [
+              0.64,
+              0.46
+            ],
+            [
+              0.5,
+              0.6
+            ],
+            [
+              0.26,
+              0.6
+            ]
+          ],
+          "direction": "rightToLeft"
+        },
+        {
+          "order": 2,
+          "label": "dot",
+          "type": "dot",
+          "points": [
+            [
+              0.55,
+              0.12
+            ]
+          ],
+          "direction": "tap"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_stroke_count",
+          "check": "strokeCountMismatch",
+          "feedback": "Dhaal is the hook, then one dot on top."
+        },
+        {
+          "id": "wrong_stroke_order",
+          "check": "strokeOrderWrong",
+          "feedback": "Draw the hook first, then the dot above."
+        },
+        {
+          "id": "dot_wrong",
+          "check": "dotPositionWrong",
+          "feedback": "Dhaal's one dot goes above the hook."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try dhaal again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     },
     {
@@ -260,14 +814,63 @@
         "medial": "ر",
         "final": "ر"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.72,
+              0.24
+            ],
+            [
+              0.6,
+              0.46
+            ],
+            [
+              0.46,
+              0.62
+            ],
+            [
+              0.3,
+              0.8
+            ]
+          ],
+          "direction": "rightToLeft"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_shape",
+          "check": "strokeCurvatureExceedsThreshold",
+          "feedback": "Raa is a smooth curve that dips down below the line."
+        },
+        {
+          "id": "wrong_direction",
+          "check": "strokeDirectionInverted",
+          "feedback": "Start at the top and curve down to the left."
+        },
+        {
+          "id": "too_short",
+          "check": "strokeLengthBelowThreshold",
+          "feedback": "Let raa swing down a little lower."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try raa again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     },
     {
@@ -284,14 +887,75 @@
         "medial": "ز",
         "final": "ز"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.72,
+              0.24
+            ],
+            [
+              0.6,
+              0.46
+            ],
+            [
+              0.46,
+              0.62
+            ],
+            [
+              0.3,
+              0.8
+            ]
+          ],
+          "direction": "rightToLeft"
+        },
+        {
+          "order": 2,
+          "label": "dot",
+          "type": "dot",
+          "points": [
+            [
+              0.6,
+              0.12
+            ]
+          ],
+          "direction": "tap"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_stroke_count",
+          "check": "strokeCountMismatch",
+          "feedback": "Zaay is raa with one dot on top."
+        },
+        {
+          "id": "wrong_stroke_order",
+          "check": "strokeOrderWrong",
+          "feedback": "Draw the curve first, then the dot above."
+        },
+        {
+          "id": "dot_wrong",
+          "check": "dotPositionWrong",
+          "feedback": "Zaay's one dot goes above the curve."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try zaay again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     },
     {
@@ -308,14 +972,87 @@
         "medial": "ـسـ",
         "final": "ـس"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.92,
+              0.42
+            ],
+            [
+              0.84,
+              0.3
+            ],
+            [
+              0.76,
+              0.42
+            ],
+            [
+              0.68,
+              0.3
+            ],
+            [
+              0.6,
+              0.42
+            ],
+            [
+              0.52,
+              0.3
+            ],
+            [
+              0.44,
+              0.42
+            ],
+            [
+              0.3,
+              0.58
+            ],
+            [
+              0.18,
+              0.5
+            ],
+            [
+              0.12,
+              0.34
+            ]
+          ],
+          "direction": "rightToLeft"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_shape",
+          "check": "strokeCurvatureExceedsThreshold",
+          "feedback": "Seen has three little teeth, then a bowl — keep all three teeth."
+        },
+        {
+          "id": "wrong_direction",
+          "check": "strokeDirectionInverted",
+          "feedback": "Start on the right and go across to the left."
+        },
+        {
+          "id": "too_short",
+          "check": "strokeLengthBelowThreshold",
+          "feedback": "Make the teeth clear and even."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try seen again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     },
     {
@@ -332,14 +1069,123 @@
         "medial": "ـشـ",
         "final": "ـش"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.92,
+              0.42
+            ],
+            [
+              0.84,
+              0.3
+            ],
+            [
+              0.76,
+              0.42
+            ],
+            [
+              0.68,
+              0.3
+            ],
+            [
+              0.6,
+              0.42
+            ],
+            [
+              0.52,
+              0.3
+            ],
+            [
+              0.44,
+              0.42
+            ],
+            [
+              0.3,
+              0.58
+            ],
+            [
+              0.18,
+              0.5
+            ],
+            [
+              0.12,
+              0.34
+            ]
+          ],
+          "direction": "rightToLeft"
+        },
+        {
+          "order": 2,
+          "label": "dot_right",
+          "type": "dot",
+          "points": [
+            [
+              0.6,
+              0.14
+            ]
+          ],
+          "direction": "tap"
+        },
+        {
+          "order": 3,
+          "label": "dot_mid",
+          "type": "dot",
+          "points": [
+            [
+              0.5,
+              0.06
+            ]
+          ],
+          "direction": "tap"
+        },
+        {
+          "order": 4,
+          "label": "dot_left",
+          "type": "dot",
+          "points": [
+            [
+              0.4,
+              0.14
+            ]
+          ],
+          "direction": "tap"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_stroke_count",
+          "check": "strokeCountMismatch",
+          "feedback": "Sheen is seen with three dots on top — count them: one, two, three."
+        },
+        {
+          "id": "wrong_stroke_order",
+          "check": "strokeOrderWrong",
+          "feedback": "Draw the teeth first, then the three dots."
+        },
+        {
+          "id": "dot_wrong",
+          "check": "dotPositionWrong",
+          "feedback": "Sheen's three dots sit above the teeth, like a little triangle."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try sheen again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     },
     {
@@ -356,14 +1202,75 @@
         "medial": "ـصـ",
         "final": "ـص"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.86,
+              0.46
+            ],
+            [
+              0.7,
+              0.32
+            ],
+            [
+              0.5,
+              0.36
+            ],
+            [
+              0.45,
+              0.5
+            ],
+            [
+              0.6,
+              0.55
+            ],
+            [
+              0.4,
+              0.6
+            ],
+            [
+              0.18,
+              0.56
+            ]
+          ],
+          "direction": "rightToLeft"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_shape",
+          "check": "strokeCurvatureExceedsThreshold",
+          "feedback": "Saad is a round body, then a flat line along the bottom."
+        },
+        {
+          "id": "wrong_direction",
+          "check": "strokeDirectionInverted",
+          "feedback": "Start on the right and work to the left."
+        },
+        {
+          "id": "too_short",
+          "check": "strokeLengthBelowThreshold",
+          "feedback": "Give the body a nice round shape."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try saad again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     },
     {
@@ -380,14 +1287,87 @@
         "medial": "ـضـ",
         "final": "ـض"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.86,
+              0.46
+            ],
+            [
+              0.7,
+              0.32
+            ],
+            [
+              0.5,
+              0.36
+            ],
+            [
+              0.45,
+              0.5
+            ],
+            [
+              0.6,
+              0.55
+            ],
+            [
+              0.4,
+              0.6
+            ],
+            [
+              0.18,
+              0.56
+            ]
+          ],
+          "direction": "rightToLeft"
+        },
+        {
+          "order": 2,
+          "label": "dot",
+          "type": "dot",
+          "points": [
+            [
+              0.55,
+              0.12
+            ]
+          ],
+          "direction": "tap"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_stroke_count",
+          "check": "strokeCountMismatch",
+          "feedback": "Daad is saad with one dot on top."
+        },
+        {
+          "id": "wrong_stroke_order",
+          "check": "strokeOrderWrong",
+          "feedback": "Draw the body first, then the dot above."
+        },
+        {
+          "id": "dot_wrong",
+          "check": "dotPositionWrong",
+          "feedback": "Daad's one dot goes above the body."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try daad again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     },
     {
@@ -404,14 +1384,87 @@
         "medial": "ـطـ",
         "final": "ـط"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.8,
+              0.52
+            ],
+            [
+              0.6,
+              0.42
+            ],
+            [
+              0.45,
+              0.52
+            ],
+            [
+              0.56,
+              0.62
+            ],
+            [
+              0.36,
+              0.62
+            ],
+            [
+              0.2,
+              0.52
+            ]
+          ],
+          "direction": "rightToLeft"
+        },
+        {
+          "order": 2,
+          "label": "stem",
+          "type": "line",
+          "points": [
+            [
+              0.3,
+              0.16
+            ],
+            [
+              0.3,
+              0.58
+            ]
+          ],
+          "direction": "topToBottom"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_stroke_count",
+          "check": "strokeCountMismatch",
+          "feedback": "Taa is the body and the standing line up top — two parts."
+        },
+        {
+          "id": "wrong_stroke_order",
+          "check": "strokeOrderWrong",
+          "feedback": "Draw the body first, then the standing line."
+        },
+        {
+          "id": "wrong_shape",
+          "check": "strokeCurvatureExceedsThreshold",
+          "feedback": "Keep the body round and the line straight and tall."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try taa again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     },
     {
@@ -428,14 +1481,99 @@
         "medial": "ـظـ",
         "final": "ـظ"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.8,
+              0.52
+            ],
+            [
+              0.6,
+              0.42
+            ],
+            [
+              0.45,
+              0.52
+            ],
+            [
+              0.56,
+              0.62
+            ],
+            [
+              0.36,
+              0.62
+            ],
+            [
+              0.2,
+              0.52
+            ]
+          ],
+          "direction": "rightToLeft"
+        },
+        {
+          "order": 2,
+          "label": "stem",
+          "type": "line",
+          "points": [
+            [
+              0.3,
+              0.16
+            ],
+            [
+              0.3,
+              0.58
+            ]
+          ],
+          "direction": "topToBottom"
+        },
+        {
+          "order": 3,
+          "label": "dot",
+          "type": "dot",
+          "points": [
+            [
+              0.6,
+              0.16
+            ]
+          ],
+          "direction": "tap"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_stroke_count",
+          "check": "strokeCountMismatch",
+          "feedback": "Zhaa is taa plus one dot on top — body, line, then dot."
+        },
+        {
+          "id": "wrong_stroke_order",
+          "check": "strokeOrderWrong",
+          "feedback": "Body first, then the standing line, then the dot."
+        },
+        {
+          "id": "dot_wrong",
+          "check": "dotPositionWrong",
+          "feedback": "Zhaa's dot goes on top, near the line."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try zhaa again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     },
     {
@@ -452,14 +1590,75 @@
         "medial": "ـعـ",
         "final": "ـع"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.58,
+              0.2
+            ],
+            [
+              0.36,
+              0.3
+            ],
+            [
+              0.42,
+              0.46
+            ],
+            [
+              0.62,
+              0.46
+            ],
+            [
+              0.6,
+              0.6
+            ],
+            [
+              0.4,
+              0.82
+            ],
+            [
+              0.18,
+              0.7
+            ]
+          ],
+          "direction": "rightToLeft"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_shape",
+          "check": "strokeCurvatureExceedsThreshold",
+          "feedback": "Ayn opens at the top, then curves down into a belly."
+        },
+        {
+          "id": "wrong_direction",
+          "check": "strokeDirectionInverted",
+          "feedback": "Start at the open top and sweep down."
+        },
+        {
+          "id": "too_short",
+          "check": "strokeLengthBelowThreshold",
+          "feedback": "Let the belly drop down nicely."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try ayn again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     },
     {
@@ -476,14 +1675,87 @@
         "medial": "ـغـ",
         "final": "ـغ"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.58,
+              0.2
+            ],
+            [
+              0.36,
+              0.3
+            ],
+            [
+              0.42,
+              0.46
+            ],
+            [
+              0.62,
+              0.46
+            ],
+            [
+              0.6,
+              0.6
+            ],
+            [
+              0.4,
+              0.82
+            ],
+            [
+              0.18,
+              0.7
+            ]
+          ],
+          "direction": "rightToLeft"
+        },
+        {
+          "order": 2,
+          "label": "dot",
+          "type": "dot",
+          "points": [
+            [
+              0.5,
+              0.1
+            ]
+          ],
+          "direction": "tap"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_stroke_count",
+          "check": "strokeCountMismatch",
+          "feedback": "Ghayn is ayn with one dot on top."
+        },
+        {
+          "id": "wrong_stroke_order",
+          "check": "strokeOrderWrong",
+          "feedback": "Draw the body first, then the dot above."
+        },
+        {
+          "id": "dot_wrong",
+          "check": "dotPositionWrong",
+          "feedback": "Ghayn's one dot goes above the head."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try ghayn again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     },
     {
@@ -500,14 +1772,87 @@
         "medial": "ـفـ",
         "final": "ـف"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.7,
+              0.45
+            ],
+            [
+              0.74,
+              0.32
+            ],
+            [
+              0.6,
+              0.26
+            ],
+            [
+              0.48,
+              0.34
+            ],
+            [
+              0.5,
+              0.48
+            ],
+            [
+              0.34,
+              0.52
+            ],
+            [
+              0.2,
+              0.48
+            ]
+          ],
+          "direction": "rightToLeft"
+        },
+        {
+          "order": 2,
+          "label": "dot",
+          "type": "dot",
+          "points": [
+            [
+              0.62,
+              0.12
+            ]
+          ],
+          "direction": "tap"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_stroke_count",
+          "check": "strokeCountMismatch",
+          "feedback": "Faa is the round head and arm, then one dot on top."
+        },
+        {
+          "id": "wrong_stroke_order",
+          "check": "strokeOrderWrong",
+          "feedback": "Draw the head and arm first, then the dot."
+        },
+        {
+          "id": "dot_wrong",
+          "check": "dotPositionWrong",
+          "feedback": "Faa's one dot goes above the head."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try faa again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     },
     {
@@ -524,14 +1869,99 @@
         "medial": "ـقـ",
         "final": "ـق"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.58,
+              0.4
+            ],
+            [
+              0.42,
+              0.28
+            ],
+            [
+              0.3,
+              0.44
+            ],
+            [
+              0.46,
+              0.56
+            ],
+            [
+              0.66,
+              0.52
+            ],
+            [
+              0.6,
+              0.72
+            ],
+            [
+              0.4,
+              0.84
+            ]
+          ],
+          "direction": "rightToLeft"
+        },
+        {
+          "order": 2,
+          "label": "dot_right",
+          "type": "dot",
+          "points": [
+            [
+              0.55,
+              0.1
+            ]
+          ],
+          "direction": "tap"
+        },
+        {
+          "order": 3,
+          "label": "dot_left",
+          "type": "dot",
+          "points": [
+            [
+              0.4,
+              0.1
+            ]
+          ],
+          "direction": "tap"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_stroke_count",
+          "check": "strokeCountMismatch",
+          "feedback": "Qaaf is the head and tail, then two dots on top — count them: one, two."
+        },
+        {
+          "id": "wrong_stroke_order",
+          "check": "strokeOrderWrong",
+          "feedback": "Draw the body first, then the two dots."
+        },
+        {
+          "id": "dot_wrong",
+          "check": "dotPositionWrong",
+          "feedback": "Qaaf's two dots go above the head."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try qaaf again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     },
     {
@@ -548,14 +1978,79 @@
         "medial": "ـكـ",
         "final": "ـك"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.62,
+              0.18
+            ],
+            [
+              0.56,
+              0.46
+            ],
+            [
+              0.4,
+              0.62
+            ],
+            [
+              0.66,
+              0.62
+            ]
+          ],
+          "direction": "topToBottom"
+        },
+        {
+          "order": 2,
+          "label": "mark",
+          "type": "line",
+          "points": [
+            [
+              0.38,
+              0.32
+            ],
+            [
+              0.56,
+              0.42
+            ]
+          ],
+          "direction": "leftToRight"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_stroke_count",
+          "check": "strokeCountMismatch",
+          "feedback": "Kaaf is the tall shape and the little mark inside — two parts."
+        },
+        {
+          "id": "wrong_stroke_order",
+          "check": "strokeOrderWrong",
+          "feedback": "Draw the big shape first, then the little mark inside."
+        },
+        {
+          "id": "wrong_shape",
+          "check": "strokeCurvatureExceedsThreshold",
+          "feedback": "Keep the tall corner of kaaf, with the small mark tucked inside."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try kaaf again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     },
     {
@@ -572,14 +2067,67 @@
         "medial": "ـلـ",
         "final": "ـل"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.62,
+              0.1
+            ],
+            [
+              0.6,
+              0.42
+            ],
+            [
+              0.55,
+              0.62
+            ],
+            [
+              0.36,
+              0.7
+            ],
+            [
+              0.24,
+              0.6
+            ]
+          ],
+          "direction": "topToBottom"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_shape",
+          "check": "strokeCurvatureExceedsThreshold",
+          "feedback": "Laam goes straight down, then hooks along the bottom."
+        },
+        {
+          "id": "wrong_direction",
+          "check": "strokeDirectionInverted",
+          "feedback": "Start at the top and come all the way down before the hook."
+        },
+        {
+          "id": "too_short",
+          "check": "strokeLengthBelowThreshold",
+          "feedback": "Laam is tall — bring it down from the top."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try laam again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     },
     {
@@ -596,14 +2144,75 @@
         "medial": "ـمـ",
         "final": "ـم"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.56,
+              0.42
+            ],
+            [
+              0.44,
+              0.32
+            ],
+            [
+              0.36,
+              0.44
+            ],
+            [
+              0.48,
+              0.52
+            ],
+            [
+              0.62,
+              0.46
+            ],
+            [
+              0.5,
+              0.6
+            ],
+            [
+              0.5,
+              0.82
+            ]
+          ],
+          "direction": "topToBottom"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_shape",
+          "check": "strokeCurvatureExceedsThreshold",
+          "feedback": "Meem is a little round head, then a tail straight down."
+        },
+        {
+          "id": "wrong_direction",
+          "check": "strokeDirectionInverted",
+          "feedback": "Make the round head first, then drop the tail down."
+        },
+        {
+          "id": "too_short",
+          "check": "strokeLengthBelowThreshold",
+          "feedback": "Let the tail hang down below the head."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try meem again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     },
     {
@@ -620,14 +2229,79 @@
         "medial": "ـنـ",
         "final": "ـن"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.85,
+              0.3
+            ],
+            [
+              0.68,
+              0.58
+            ],
+            [
+              0.5,
+              0.66
+            ],
+            [
+              0.32,
+              0.58
+            ],
+            [
+              0.15,
+              0.3
+            ]
+          ],
+          "direction": "rightToLeft"
+        },
+        {
+          "order": 2,
+          "label": "dot",
+          "type": "dot",
+          "points": [
+            [
+              0.5,
+              0.12
+            ]
+          ],
+          "direction": "tap"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_stroke_count",
+          "check": "strokeCountMismatch",
+          "feedback": "Noon is the deep bowl, then one dot on top."
+        },
+        {
+          "id": "wrong_stroke_order",
+          "check": "strokeOrderWrong",
+          "feedback": "Draw the bowl first, then the dot above."
+        },
+        {
+          "id": "dot_wrong",
+          "check": "dotPositionWrong",
+          "feedback": "Noon's one dot goes above the middle of the bowl."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try noon again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     },
     {
@@ -644,14 +2318,67 @@
         "medial": "ـهـ",
         "final": "ـه"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.72,
+              0.36
+            ],
+            [
+              0.46,
+              0.28
+            ],
+            [
+              0.28,
+              0.46
+            ],
+            [
+              0.34,
+              0.66
+            ],
+            [
+              0.58,
+              0.74
+            ]
+          ],
+          "direction": "rightToLeft"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_shape",
+          "check": "strokeCurvatureExceedsThreshold",
+          "feedback": "Haa (ه) is a round loop — keep it round and closed-looking."
+        },
+        {
+          "id": "wrong_direction",
+          "check": "strokeDirectionInverted",
+          "feedback": "Start at the top and curl around."
+        },
+        {
+          "id": "too_short",
+          "check": "strokeLengthBelowThreshold",
+          "feedback": "Give the loop a nice round size."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try haa again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     },
     {
@@ -668,14 +2395,75 @@
         "medial": "و",
         "final": "و"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.55,
+              0.3
+            ],
+            [
+              0.4,
+              0.26
+            ],
+            [
+              0.32,
+              0.42
+            ],
+            [
+              0.46,
+              0.52
+            ],
+            [
+              0.62,
+              0.44
+            ],
+            [
+              0.5,
+              0.6
+            ],
+            [
+              0.4,
+              0.82
+            ]
+          ],
+          "direction": "topToBottom"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_shape",
+          "check": "strokeCurvatureExceedsThreshold",
+          "feedback": "Waaw is a round head with a tail that drops down."
+        },
+        {
+          "id": "wrong_direction",
+          "check": "strokeDirectionInverted",
+          "feedback": "Make the round head first, then the tail down."
+        },
+        {
+          "id": "too_short",
+          "check": "strokeLengthBelowThreshold",
+          "feedback": "Let the tail swing down below the line."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try waaw again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     },
     {
@@ -692,14 +2480,95 @@
         "medial": "ـيـ",
         "final": "ـي"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [
+              0.8,
+              0.34
+            ],
+            [
+              0.6,
+              0.48
+            ],
+            [
+              0.4,
+              0.5
+            ],
+            [
+              0.26,
+              0.4
+            ],
+            [
+              0.26,
+              0.26
+            ],
+            [
+              0.4,
+              0.22
+            ]
+          ],
+          "direction": "rightToLeft"
+        },
+        {
+          "order": 2,
+          "label": "dot_right",
+          "type": "dot",
+          "points": [
+            [
+              0.6,
+              0.74
+            ]
+          ],
+          "direction": "tap"
+        },
+        {
+          "order": 3,
+          "label": "dot_left",
+          "type": "dot",
+          "points": [
+            [
+              0.4,
+              0.74
+            ]
+          ],
+          "direction": "tap"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_stroke_count",
+          "check": "strokeCountMismatch",
+          "feedback": "Yaa is the body with two dots underneath — count them: one, two."
+        },
+        {
+          "id": "wrong_stroke_order",
+          "check": "strokeOrderWrong",
+          "feedback": "Draw the body first, then the two dots below."
+        },
+        {
+          "id": "dot_wrong",
+          "check": "dotPositionWrong",
+          "feedback": "Yaa's two dots go below the body, not above."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try yaa again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "tolerances": {
+        "preset": "normal"
       }
     }
   ]

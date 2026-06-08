@@ -134,6 +134,52 @@ class PracticeSessionController extends _$PracticeSessionController {
     state = state.copyWith(phase: PracticePhase.trace);
   }
 
+  /// Submit a whole-letter result from the canvas (Plan 04-04).
+  ///
+  /// Called by the practice screen after `scoreLetter` evaluates the whole
+  /// accumulated multi-stroke letter (count → order → shape → dot → advisory ML
+  /// Kit identity). A clean letter is a clean rep; any miss (count/order/shape/
+  /// dot/identity) resets the streak and shows the named fix — the same warm
+  /// coaching beat as a single-stroke miss. Only [LetterResult] enters — never
+  /// raw Offset points (Anti-Pattern 3 / T-04-08).
+  Future<void> onLetterResult(LetterResult result) async {
+    if (result.passed) {
+      await _registerCleanRep();
+    } else {
+      // Whole-letter miss — reset the streak and surface the named fix.
+      state = state.copyWith(
+        cleanReps: 0,
+        phase: PracticePhase.showFix,
+        lastMistakeId: result.mistakeId ?? MistakeId.fallback,
+      );
+    }
+  }
+
+  /// Records one clean rep and advances to praise or mastery accordingly.
+  /// Shared by the whole-letter and (legacy) per-stroke pass paths.
+  Future<void> _registerCleanRep() async {
+    final newReps = state.cleanReps + 1;
+    if (newReps >= state.cleanRepsToAdvance) {
+      // Mastery earned — required clean reps achieved IN A ROW. DB write is
+      // best-effort: a storage failure must not block the celebration.
+      try {
+        await _recordMastery(newReps);
+      } catch (_) {
+        // Swallow — celebrate regardless.
+      }
+      state = state.copyWith(
+        cleanReps: newReps,
+        phase: PracticePhase.celebrate,
+      );
+    } else {
+      // Clean rep, not mastery yet — show warm per-rep praise.
+      state = state.copyWith(
+        cleanReps: newReps,
+        phase: PracticePhase.showPraise,
+      );
+    }
+  }
+
   /// Submit a completed stroke result from the canvas.
   ///
   /// Called by the practice screen after scoring a submitted stroke.

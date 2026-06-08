@@ -348,6 +348,36 @@
     "description": "Fallback named-fix when no authored commonMistake matches. Calm, specific — NEVER 'Oops, try again!' (PLAT-03 / Pitfall 7)."
   },
 
+  "practiceFeedbackWrongStrokeCount": "Baa is two parts — the boat, then one dot underneath.",
+  "@practiceFeedbackWrongStrokeCount": {
+    "description": "Named fix for MistakeId.wrongStrokeCount / strokeCountMismatch (whole-letter). Placeholder copy in the tutor's warm, specific voice — the mother refines it in Plan 06. NEVER generic (Pitfall 7 / PLAT-03)."
+  },
+
+  "practiceFeedbackWrongStrokeOrder": "Draw the boat first, then add the dot underneath.",
+  "@practiceFeedbackWrongStrokeOrder": {
+    "description": "Named fix for MistakeId.wrongStrokeOrder / strokeOrderWrong (whole-letter). Placeholder copy in the tutor's warm, specific voice — refined by the mother in Plan 06. NEVER generic."
+  },
+
+  "practiceFeedbackDotMisplaced": "Baa's dot goes under the boat, not on top — try the dot again.",
+  "@practiceFeedbackDotMisplaced": {
+    "description": "Named fix for MistakeId.dotMisplaced / dotPositionWrong (whole-letter). Placeholder copy in the tutor's warm, specific voice — refined by the mother in Plan 06. NEVER generic."
+  },
+
+  "practiceFeedbackWrongLetterIdentity": "That looks like a different letter — let's write baa together, slower.",
+  "@practiceFeedbackWrongLetterIdentity": {
+    "description": "Named fix for MistakeId.wrongLetterIdentity / letterIdentityMismatch (advisory ML Kit gate, D-04). Placeholder copy in the tutor's warm, specific voice — refined by the mother in Plan 06. NEVER generic."
+  },
+
+  "practiceGettingReadyTitle": "Getting ready",
+  "@practiceGettingReadyTitle": {
+    "description": "Calm heading shown while the ML Kit Arabic model is still downloading on first launch (D-05). Never an error — the lesson still works; this is a quiet wait, not a block."
+  },
+
+  "practiceGettingReadyBody": "I'm getting your letters ready. You can start tracing now — I'll be right here.",
+  "@practiceGettingReadyBody": {
+    "description": "Calm body copy for the getting-ready state while the model downloads (D-05). Reassuring, never an error or a hard block — the geometric scorer already works."
+  },
+
   "practicePraiseEyebrow": "NICE",
   "@practicePraiseEyebrow": {
     "description": "Eyebrow shown above the per-rep praise panel after a clean trace. Calm, never hype — no '+1' or points (PLAT-03 anti-gamification)."

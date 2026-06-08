@@ -1,0 +1,94 @@
+/// Pure Dart, no dart:ui, no Flutter imports.
+///
+/// Data-driven scoring tolerances (Plan 04-01, SC#4).
+///
+/// The geometric scorer's thresholds used to live as file-level `const`s inside
+/// `geometric_stroke_scorer.dart`. This class relocates them into DATA so the
+/// curriculum (letters.json) — not code — decides how lenient each letter is.
+/// Per D-03 the curriculum picks a teacher-legible named preset
+/// (`loose`/`normal`/`strict`) and may nudge individual numeric knobs via
+/// `overrides`.
+///
+/// The `normal` preset is a LOCKED behavior-preserving anchor (RESEARCH A5): it
+/// equals today's hardcoded constants so moving the values to data does not
+/// shift alif's scoring.
+class Tolerances {
+  /// Minimum number of raw input points for a stroke to be considered complete.
+  /// A gesture ending below this count likely means the child lifted the pen
+  /// before finishing. (Was `_kMinRawPoints = 10` in geometric_stroke_scorer.)
+  final int minRawPoints;
+
+  /// Number of equidistant points the child stroke is resampled to before the
+  /// direction and curvature predicates run. 32 gives stable geometry well
+  /// within the sub-300 ms latency budget. (Was `_kResampleN = 32`.)
+  final int resampleN;
+
+  /// Maximum perpendicular distance from the best-fit chord (start→end line) in
+  /// the normalised 0..1 unit box. A child with a modest natural bow still
+  /// passes at this value; a higher ceiling is MORE permissive (lets a more
+  /// bowed stroke pass), a lower ceiling is STRICTER. (Was `_kMaxCurvature =
+  /// 0.25`.)
+  final double maxCurvature;
+
+  const Tolerances({
+    required this.minRawPoints,
+    required this.resampleN,
+    required this.maxCurvature,
+  });
+
+  /// Named presets. `normal` MUST equal the constants formerly in
+  /// geometric_stroke_scorer.dart:16,21,26 (A5). `loose`/`strict` only move the
+  /// curvature ceiling for now — that is the single shape knob Plan 02 reads;
+  /// other knobs stay at the behavior-preserving values until calibration
+  /// proves a reason to diverge them.
+  static const Map<String, Tolerances> _presets = {
+    'loose': Tolerances(
+      minRawPoints: 10,
+      resampleN: 32,
+      maxCurvature: 0.35, // more permissive than normal
+    ),
+    'normal': Tolerances(
+      minRawPoints: 10, // == _kMinRawPoints (A5)
+      resampleN: 32, // == _kResampleN (A5)
+      maxCurvature: 0.25, // == _kMaxCurvature (A5)
+    ),
+    'strict': Tolerances(
+      minRawPoints: 10,
+      resampleN: 32,
+      maxCurvature: 0.18, // stricter than normal
+    ),
+  };
+
+  /// The behavior-preserving default used whenever a letter omits a tolerances
+  /// block or names an unknown preset (pure value parsing — never throws).
+  static const Tolerances normal = Tolerances(
+    minRawPoints: 10,
+    resampleN: 32,
+    maxCurvature: 0.25,
+  );
+
+  /// Builds a [Tolerances] from a curriculum block of the shape:
+  ///   { "preset": "normal", "overrides": { "maxCurvature": 0.30 } }
+  ///
+  /// An unknown or absent `preset` falls back to `normal`. Numeric `overrides`
+  /// replace individual knobs on top of the chosen preset. Mirrors the
+  /// defensive `fromJson` idiom of `StrokeSpec.fromJson` (letter.dart:55-70):
+  /// it reads loosely-typed JSON and never throws on missing keys.
+  factory Tolerances.fromJson(Map<String, dynamic> json) {
+    final presetName = json['preset'] as String?;
+    final base = _presets[presetName] ?? normal;
+
+    final overrides = json['overrides'] as Map<String, dynamic>?;
+    if (overrides == null) return base;
+
+    final minRaw = overrides['minRawPoints'] as num?;
+    final resample = overrides['resampleN'] as num?;
+    final maxCurv = overrides['maxCurvature'] as num?;
+
+    return Tolerances(
+      minRawPoints: minRaw?.toInt() ?? base.minRawPoints,
+      resampleN: resample?.toInt() ?? base.resampleN,
+      maxCurvature: maxCurv?.toDouble() ?? base.maxCurvature,
+    );
+  }
+}

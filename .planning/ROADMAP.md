@@ -176,8 +176,6 @@ Plans:
 **UI hint**: yes
 **Research hint**: yes — DEEPEST-RISK PHASE. The custom geometric stroke-order/shape scorer is NOT provided by ML Kit (ML Kit returns only {text, score} as a secondary letter-identity check). Stroke capture must use low-level pointer events (not GestureDetector) to preserve per-stroke order/count; the ML Kit Arabic model must be downloaded-and-cached before first scoring. Flag for deep iteration with the owner's mother.
 
-
-
 ### Phase 03.1: Journey Map Screen (INSERTED)
 
 **Goal**: Implement the Journey Map screen in Flutter: a winding-path progress view showing all 28 letters as nodes across 4 rows of 7, with 4 node states (complete/current/future/locked), pulse animation on the current letter, a Level 1 Quiz checkpoint, and a locked Level 2 banner. Wired from the Home nav-rail and navigates to the Practice screen on node tap. Uses mocked progress data.
@@ -212,7 +210,7 @@ Plans:
 
 ### Phase 4: Scoring Quality & Calibration
 
-**Goal**: The geometric scorer is tuned to the right strictness: it firmly rejects wrong stroke order and wrong stroke count and sloppy shapes, while accepting good-faith age-appropriate attempts, with per-letter pass tolerances calibrated against real child handwriting samples together with the owner's mother.
+**Goal**: The geometric scorer is tuned to the right strictness: it firmly rejects wrong stroke order and wrong stroke count and sloppy shapes, while accepting good-faith age-appropriate attempts, with per-letter pass tolerances calibrated against real child handwriting samples together with the owner's mother. Built as vertical slices: the capture→accumulate→scoreLetter→feedback spine makes SC#1 real on a multi-stroke letter (baa) first, then the ML Kit identity gate, calibration harness, and the mother-in-the-loop tolerance tuning thicken it.
 **Mode:** mvp
 **Depends on**: Phase 3
 **Requirements**: (deepens S1-05 and PLAT-03 from Phase 3; no new requirement IDs)
@@ -223,8 +221,29 @@ Plans:
   3. A good-faith, size-and-position-varied child attempt passes (normalization prevents penalizing small/offset-but-correct letters).
   4. Pass tolerances are per-letter curriculum data the owner's mother can adjust without a code change, and regression tests encode the named common mistakes.
 
-**Plans**: TBD
-**Research hint**: yes — false-negative and false-positive rates must be tuned separately and per-letter against labeled child samples; this is a dedicated calibration step with the owner's mother, not a code constant.
+**Plans**: 6 plans
+
+Plans:
+
+**Wave 1**
+
+- [x] 04-01-PLAN.md — Wave 0/1: extend MistakeId + LetterResult, data-driven Tolerances (normal == legacy constants), Letter.tolerances + validator, RED LetterScorer contract tests (D-03/D-04, SC#1/SC#2/SC#4)
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [x] 04-02-PLAN.md — THE SPINE: pure-Dart scoreLetter orchestrator (count→order→per-stroke→dot, combined-bbox normalization), threshold-parameterized scorer, green contract tests (SC#1/SC#3/SC#4)
+- [x] 04-03-PLAN.md — ML Kit advisory identity gate (MlKitRecognizer, D-04) + best-effort background model download with getting-ready degradation (D-05, SC#2)
+
+**Wave 3** *(blocked on Wave 2)*
+
+- [x] 04-04-PLAN.md — Wire the spine into the UI: multi-stroke capture accumulation fix + scoreLetter in practice_screen + authored feedback l10n for new MistakeIds + getting-ready state (SC#1/SC#2/PLAT-03/D-05)
+- [x] 04-05-PLAN.md — Calibration infra: labeled-sample capture mode (D-02) + pure-Dart confusion-table harness over the real scorer + synthetic seed regression fixtures (SC#4)
+
+**Wave 4** *(blocked on Wave 3 — human-gated, real-tablet)*
+
+- [ ] 04-06-PLAN.md — autonomous:false — author + sign off baa/taa/thaa, capture real-tablet child samples, tune per-letter tolerances (FN/FP separately) with the owner's mother, freeze as regression (D-01/D-02, SC#1/SC#3/SC#4)
+
+**Research hint**: yes — false-negative and false-positive rates must be tuned separately and per-letter against labeled child samples; this is a dedicated calibration step with the owner's mother, not a code constant. Environment blocker: SC#4 tolerance-setting requires a real Android tablet + real child samples (emulator/mouse rejected); Plans 01-05 ship autonomously, Plan 06 is the isolated human-gated calibration.
 
 ### Phase 5: Profiles & Onboarding
 
@@ -344,7 +363,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 1. Foundations & RTL Shell | 3/3 | Complete   | 2026-05-31 |
 | 2. Curriculum Schema & First-Letter Seed | 0/3 | Planned | - |
 | 3. Trace One Letter End-to-End | 0/4 | Planned | - |
-| 4. Scoring Quality & Calibration | 0/TBD | Not started | - |
+| 4. Scoring Quality & Calibration | 5/6 | In Progress|  |
 | 5. Profiles & Onboarding | 4/4 | Complete | - |
 | 6. Lesson Progression & Home | 0/TBD | Not started | - |
 | 7. Full Curriculum & Pronunciation Audio | 0/TBD | Not started | - |

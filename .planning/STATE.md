@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 05-04-PLAN.md — Wave 3 home greeting integration (S1-03 "shown on home" GREEN)
-last_updated: "2026-06-08T17:46:18.125Z"
-last_activity: 2026-06-08 -- Completed 05-04-PLAN.md (Wave 3 home greeting integration)
+stopped_at: "MERGED Phase 04 (from main) into the Phase 05 branch. Phase 04: plans 01-05 complete (scoreLetter spine, ML Kit advisory gate, UI wiring, calibration harness); 04-06 DEFERRED (human-gated — needs owner's mother + Android tablet + real children to author/tune/sign-off baa-family; DRAFT strokes for all 28 letters, signedOff:false except alif). Phase 05: all 4 plans complete (child-profile data layer, onboarding screen + first-launch gate, home greeting integration); verification = human_needed (device UAT). Device boot crash fixed (sqlite3_flutter_libs 0.6.0+eol → ^0.5.41)."
+last_updated: "2026-06-08T18:10:00.000Z"
+last_activity: 2026-06-08 -- merged Phase 04 from main into phase-05-profiles-onboarding branch
 progress:
   total_phases: 13
   completed_phases: 6
-  total_plans: 28
-  completed_plans: 28
-  percent: 54
+  total_plans: 34
+  completed_plans: 33
+  percent: 46
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
-**Current focus:** Phase 05 — profiles-onboarding
+**Current focus:** Phases 04 + 05 merged on branch `phase-05-profiles-onboarding`
 
 ## Current Position
 
-Phase: 05 (profiles-onboarding) — EXECUTING
-Plan: 4 of 4 (all plans complete)
-Status: Executing Phase 05
-Last activity: 2026-06-08 -- Completed 05-04-PLAN.md (Wave 3 home greeting integration)
+Phase: 04 (scoring-quality-calibration) — 5/6 plans complete, 04-06 DEFERRED (human-gated)
+Phase: 05 (profiles-onboarding) — 4/4 plans complete, verification human_needed (device UAT)
+Status: Phase 04 (from main) merged into the Phase 05 branch; ready to PR into main
+Last activity: 2026-06-08 -- merged Phase 04 from main into phase-05-profiles-onboarding branch
 
 Progress: [██░░░░░░░░] 20% (2 of 10 phases complete)
 
@@ -56,6 +56,11 @@ Progress: [██░░░░░░░░] 20% (2 of 10 phases complete)
 | Phase 01 P01 | 18 | 2 tasks | 14 files |
 | Phase 01 P02 | ~40min | 3 tasks | 20 files |
 | Phase 01 P03 | ~25min | 3 tasks | 7 files |
+| Phase 04 P01 | 6 | 2 tasks | 9 files |
+| Phase 04 P02 | 5 | 2 tasks | 3 files |
+| Phase 04 P03 | 5 | 2 tasks | 10 files |
+| Phase 04 P04 | 11 | 2 tasks | 9 files |
+| Phase 04 P05 | 5 | 2 tasks | 5 files |
 | Phase 05 P01 | ~18min | 2 tasks | 6 files |
 | Phase 05 P02 | ~20min | 2 tasks | 7 files |
 | Phase 05 P03 | ~11min | 2 tasks | 8 files |
@@ -82,6 +87,17 @@ Recent decisions affecting current work:
 - [Phase 02]: All 28 letters authored in Phase 2 with structural data; only alif needs signedOff: true for Phase 3; remaining 27 carry referenceStrokes: [] + signedOff: false (D-05, D-07).
 - [Phase 02]: CurriculumRepository uses rootBundle (not network); keepAlive: true Riverpod provider; handles exercises.json absence gracefully (D-10).
 - [Phase 02]: lib/models/*.dart must not import from lib/data/ or lib/features/ — pure immutable domain types only.
+- [Phase 04]: Tolerances are data not code — normal preset == today's scorer constants (A5); loose/strict move only maxCurvature (0.35/0.18) for now
+- [Phase 04]: New whole-letter MistakeId values (count/order/dot/identity) keep enum-name == commonMistakes[].check; LetterResult mirrors StrokeResult; validateTolerances added as V5 sibling
+- [Phase 04]: scoreLetter is the pure-Dart whole-letter spine (count→order→shape→combined-bbox dot→advisory ML Kit gate); returns Future<LetterResult> because the D-04 identity gate is async
+- [Phase 04]: scoreStroke now reads Tolerances (default Tolerances.normal, A5 behavior-preserving); file-level threshold consts removed, predicate names unchanged (check-string contract)
+- [Phase 04]: Dot position uses whole-letter combined-bbox y-centroid (Pitfall 2) so baa-dot-below vs taa-dots-above survives normalization; ML Kit gate advisory-only with a 0.5 confidence floor (Pitfall 1)
+- [Phase 04]: MlKitRecognizer is the on-device advisory-only identity gate (D-04): reports {topCandidate, confidence} via google_mlkit_digital_ink_recognition, never a verdict; the gating decision stays in scoreLetter
+- [Phase 04]: HandwritingRecognizer.identify seam widened to a whole multi-stroke letter (List<List<List<double>>>); ML Kit score is sparse/inverted so it is NOT mapped to confidence directly
+- [Phase 04]: ModelDownloadService @Riverpod(keepAlive) background-fetches the ar model best-effort with isReady; any failure degrades to a calm getting-ready state, never hard-blocks (D-05); manager injected via overridable inkModelManagerProvider for tests
+- [Phase 04]: StrokeCanvas accumulates a whole multi-stroke letter (no per-pointer-down clear) and fires onLetterComplete at count-reached; practice_screen scores the whole letter via scoreLetter (referenceStrokes.first path removed); D-05 getting-ready is a non-blocking overlay; four whole-letter MistakeIds resolve to authored l10n, never fallback
+- [Phase 04]: Calibration harness is a pure-Dart confusion-table flutter-test running the REAL scoreLetter over labeled fixtures (FN=good-rejected, FP=named-bad-passed); no Python re-impl (A3); FN-over-FP tuning priority
+- [Phase 04]: Labeled-sample capture (D-02) added to /dev/authoring behind kDebugMode (never child-facing); reuses combined-bbox normalizeToStrokeSpecs; synthetic baa seed pins the regression contract, real-tablet captures land in Plan 06
 - [Phase 05]: Wave 0 RED contract authored — every S1-02/S1-03/gate behavior has an executable failing assertion before implementation (Nyquist). Implementer must produce: ChildProfiles table + create/get/hasProfile, ChildProfileRepository, onboarding_data (kAvatarIds/kNicknames/gradeToStartingLessonId/resolveStartingLessonId), OnboardingScreen, profile_providers (childProfileProvider, OnboardingGate).
 - [Phase 05]: Tests using flutter_test null matchers alongside drift must `import 'package:drift/drift.dart' hide isNull, isNotNull;` to avoid the matcher name collision.
 - [Phase 05]: Home greeting test pins nick_star -> label 'نجمة' and avatar key homeAvatar_avatar_1; grade kg -> startingLessonId 'alif' (S1-02 default seam).
@@ -93,6 +109,7 @@ Recent decisions affecting current work:
 - [Phase 05]: Remaining home-greeting-integration (Home reads childProfileProvider nickname) is the last Phase-5 RED test (home_screen_test Test 1) — deferred from 05-03 (out of scope; home_screen.dart not in 05-03's files). See deferred-items.md.
 - [Phase 05]: 05-04 turned the last Phase-5 RED test GREEN — Home greeting now reads childProfileProvider and renders the chosen fixed-set nickname LABEL (via ArabicText island) + chosen avatar circle (keyed homeAvatar_<id>), replacing hardcoded 'Welcome back, Layla.'. Scope-aware split (_GreetingHeader/_GreetingHeaderReader/_GreetingLayout) degrades to static greeting on no-scope/loading/error/null (T-05-07); resolveNicknameLabel(id) added to onboarding_data (ID->label in code); homeGreeting ARB is a {nickname} String template. PLAT-03 held. S1-03 "shown on home" closed end-to-end.
 - [Phase 05]: home_screen_test Test 4 (Journey nav must not navigate) stays deferred (deferred-items item 2) — stale vs commit 4d03e63 which intentionally unlocked Journey nav; not this plan's surface.
+- [Phase 05]: Device boot crash fixed — sqlite3_flutter_libs ^0.6.0 resolved to the empty 0.6.0+eol tombstone (no native lib; for the package:sqlite3 3.x migration). Our stack is drift 2.31 + sqlite3 2.9.4 (2.x); repinned ^0.5.41 so libsqlite3.so ships in the APK. Corrected 01-RESEARCH.md.
 
 ### Pending Todos
 
@@ -105,6 +122,7 @@ None yet.
 - **Geometric stroke scorer (deepest risk, Phase 3–4):** NOT provided by ML Kit (ML Kit gives only {text, score}); custom build + per-letter calibration against real child samples.
 - **Offline / one-time model download (open question, Phase 10):** verify on a fresh, no-network install.
 - ~~**Phase 2 sign-off gate:**~~ CLOSED — alif signedOff: true, 1 referenceStroke (64 pts), 3 commonMistakes authored. Phase 3 is unblocked.
+- Phase 04 plan 04-06 (baa-family sign-off) DEFERRED — blocked on real-world resources: requires a real Android tablet + the owner's mother + real children to author/label/sign off baa/taa/thaa and tune per-letter tolerances on real samples (cannot be done on emulator, per plan note). Plans 04-01..04-05 complete. Re-run /gsd:execute-phase 4 when resources available to finish 04-06 and complete the phase.
 
 ### Quick Tasks Completed
 
@@ -126,5 +144,5 @@ Items acknowledged and carried forward from previous milestone close:
 ## Session Continuity
 
 Last session: 2026-06-08
-Stopped at: Completed 05-04-PLAN.md — Wave 3 home greeting integration (S1-03 "shown on home" GREEN)
-Resume file: .planning/phases/05-profiles-onboarding/05-04-SUMMARY.md
+Stopped at: Merged Phase 04 (from main) into the phase-05-profiles-onboarding branch and resolved STATE/ROADMAP conflicts. Phase 04 = 5/6 (04-06 DEFERRED, human-gated baa-family sign-off). Phase 05 = 4/4 complete, verification human_needed (device UAT; boot crash fixed via sqlite3_flutter_libs ^0.5.41). Branch ready to PR into main.
+Resume files: .planning/phases/05-profiles-onboarding/05-04-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)

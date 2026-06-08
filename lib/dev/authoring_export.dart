@@ -124,3 +124,36 @@ String exportReferenceStrokesJson(List<CapturedStroke> strokes) {
       .toList();
   return const JsonEncoder.withIndent('  ').convert(list);
 }
+
+// ── Labeled-sample capture (D-02 calibration mode, Plan 04-05) ───────────────
+
+/// Serializes a LABELED multi-stroke calibration fixture — NOT the
+/// `referenceStrokes` fragment. The shape mirrors `calibration_fixtures.dart`'s
+/// `LabeledSample`:
+/// `{ "letterId": ..., "label": ..., "strokes": List<List<List<double>>> }`.
+///
+/// [specs] are already whole-letter combined-bbox-normalized (the caller runs
+/// [normalizeToStrokeSpecs] — the same Pitfall-2 normalization the orchestrator's
+/// dot-position check uses), so the exported fixture lives in the exact 0..1
+/// coordinate space the real `scoreLetter` consumes. Returns an empty-strokes
+/// object for no strokes.
+///
+/// SECURITY (T-04-11 / T-01-05): only labeled fixture coordinates (intended test
+/// data) are produced — no name, no age, no PII — and nothing is logged,
+/// persisted, or transmitted here; the helper only returns a String.
+String exportLabeledFixtureJson({
+  required String letterId,
+  required String label,
+  required List<StrokeSpec> specs,
+}) {
+  // A labeled fixture carries the whole letter's strokes as a bare
+  // List<List<List<double>>> (per stroke → per point → [x, y]) — the exact type
+  // scoreLetter takes as its childStrokes argument.
+  final strokeLists = specs.map((s) => s.points).toList();
+  final fixture = <String, dynamic>{
+    'letterId': letterId,
+    'label': label,
+    'strokes': strokeLists,
+  };
+  return const JsonEncoder.withIndent('  ').convert(fixture);
+}
