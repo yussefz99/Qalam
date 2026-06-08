@@ -518,5 +518,60 @@
   "journeySeeJourney": "See journey",
   "@journeySeeJourney": {
     "description": "Ghost navigation link on the MasteryCelebration screen. Navigates to /journey. Navigation affordance only — no star count, no score (Phase 03.1 D-23/D-24)."
+  },
+
+  "onboardingTitle": "Let's set up your learner",
+  "@onboardingTitle": {
+    "description": "First-launch onboarding card heading (S1-03). Warm, calm, pitched to a parent + child sitting together. Heading scale."
+  },
+
+  "onboardingSubtitle": "Pick a grade, an avatar, and a nickname.",
+  "@onboardingSubtitle": {
+    "description": "First-launch onboarding card subtitle — one calm sentence naming the three fixed-set choices. No free-text anywhere (S1-03)."
+  },
+
+  "onboardingGradePrompt": "Grade",
+  "@onboardingGradePrompt": {
+    "description": "Section label above the grade chip selector (the parent's pick → curriculum entry point, S1-02). Label scale."
+  },
+
+  "onboardingAvatarPrompt": "Pick your avatar",
+  "@onboardingAvatarPrompt": {
+    "description": "Section label above the avatar grid (the child's pick from 6 fixed avatars, S1-03). Label scale."
+  },
+
+  "onboardingNicknamePrompt": "Pick your nickname",
+  "@onboardingNicknamePrompt": {
+    "description": "Section label above the nickname grid (the child's pick from a fixed Arabic-flavored set, S1-03). Label scale."
+  },
+
+  "onboardingGradeKg": "KG",
+  "@onboardingGradeKg": {
+    "description": "Grade chip label for kindergarten (grade key 'kg')."
+  },
+
+  "onboardingGrade1": "Grade 1",
+  "@onboardingGrade1": {
+    "description": "Grade chip label for first grade (grade key 'grade1')."
+  },
+
+  "onboardingGrade2": "Grade 2",
+  "@onboardingGrade2": {
+    "description": "Grade chip label for second grade (grade key 'grade2')."
+  },
+
+  "onboardingGrade3": "Grade 3",
+  "@onboardingGrade3": {
+    "description": "Grade chip label for third grade (grade key 'grade3')."
+  },
+
+  "onboardingGrade4plus": "Grade 4+",
+  "@onboardingGrade4plus": {
+    "description": "Grade chip label for fourth grade and up (grade key 'grade4plus')."
+  },
+
+  "onboardingSubmit": "Let's go",
+  "@onboardingSubmit": {
+    "description": "Onboarding 'Let's go' CTA pill — saves the fixed-set profile and navigates to Home. Ink-teal (no gold/reward — PLAT-03). Button scale."
   }
 }
