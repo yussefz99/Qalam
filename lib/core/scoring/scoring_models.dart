@@ -3,6 +3,7 @@
 /// Shared value types for the geometric stroke scorer (Plan 03-01).
 /// Kept in a separate file so stroke_resampler.dart can stay independent of
 /// the scorer and both can be imported by tests individually.
+library;
 
 // Predicate name → mistake identity mapping.
 // The enum value names intentionally mirror the authored commonMistakes[].check
