@@ -4,13 +4,13 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Phase 4 context gathered
-last_updated: "2026-06-08T13:09:00.702Z"
-last_activity: 2026-06-08 -- Phase 04 planning complete
+last_updated: "2026-06-08T13:20:58.038Z"
+last_activity: 2026-06-08
 progress:
   total_phases: 13
   completed_phases: 6
   total_plans: 30
-  completed_plans: 24
+  completed_plans: 25
   percent: 46
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
-**Current focus:** Phase 04 — Practice Screen (Phase 03.1 complete)
+**Current focus:** Phase 04 — scoring-quality-calibration
 
 ## Current Position
 
-Phase: 03.1 COMPLETE → ready for Phase 04
-Plan: 03.1-03 complete (all 3 plans of Phase 03.1 done)
+Phase: 04 (scoring-quality-calibration) — EXECUTING
+Plan: 2 of 6
 Status: Ready to execute
-Last activity: 2026-06-08 -- Phase 04 planning complete
+Last activity: 2026-06-08
 
 Progress: [██░░░░░░░░] 20% (2 of 10 phases complete)
 
@@ -56,6 +56,7 @@ Progress: [██░░░░░░░░] 20% (2 of 10 phases complete)
 | Phase 01 P01 | 18 | 2 tasks | 14 files |
 | Phase 01 P02 | ~40min | 3 tasks | 20 files |
 | Phase 01 P03 | ~25min | 3 tasks | 7 files |
+| Phase 04 P01 | 6 | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -78,6 +79,8 @@ Recent decisions affecting current work:
 - [Phase 02]: All 28 letters authored in Phase 2 with structural data; only alif needs signedOff: true for Phase 3; remaining 27 carry referenceStrokes: [] + signedOff: false (D-05, D-07).
 - [Phase 02]: CurriculumRepository uses rootBundle (not network); keepAlive: true Riverpod provider; handles exercises.json absence gracefully (D-10).
 - [Phase 02]: lib/models/*.dart must not import from lib/data/ or lib/features/ — pure immutable domain types only.
+- [Phase ?]: [Phase 04]: Tolerances are data not code — normal preset == today's scorer constants (A5); loose/strict move only maxCurvature (0.35/0.18) for now
+- [Phase ?]: [Phase 04]: New whole-letter MistakeId values (count/order/dot/identity) keep enum-name == commonMistakes[].check; LetterResult mirrors StrokeResult; validateTolerances added as V5 sibling
 
 ### Pending Todos
 
@@ -110,6 +113,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-08T12:28:37.283Z
+Last session: 2026-06-08T13:20:34.042Z
 Stopped at: Phase 4 context gathered
-Resume file: .planning/phases/04-scoring-quality-calibration/04-CONTEXT.md
+Resume file: None

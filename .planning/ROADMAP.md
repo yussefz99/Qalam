@@ -176,8 +176,6 @@ Plans:
 **UI hint**: yes
 **Research hint**: yes — DEEPEST-RISK PHASE. The custom geometric stroke-order/shape scorer is NOT provided by ML Kit (ML Kit returns only {text, score} as a secondary letter-identity check). Stroke capture must use low-level pointer events (not GestureDetector) to preserve per-stroke order/count; the ML Kit Arabic model must be downloaded-and-cached before first scoring. Flag for deep iteration with the owner's mother.
 
-
-
 ### Phase 03.1: Journey Map Screen (INSERTED)
 
 **Goal**: Implement the Journey Map screen in Flutter: a winding-path progress view showing all 28 letters as nodes across 4 rows of 7, with 4 node states (complete/current/future/locked), pulse animation on the current letter, a Level 1 Quiz checkpoint, and a locked Level 2 banner. Wired from the Home nav-rail and navigates to the Practice screen on node tap. Uses mocked progress data.
@@ -229,7 +227,7 @@ Plans:
 
 **Wave 1**
 
-- [ ] 04-01-PLAN.md — Wave 0/1: extend MistakeId + LetterResult, data-driven Tolerances (normal == legacy constants), Letter.tolerances + validator, RED LetterScorer contract tests (D-03/D-04, SC#1/SC#2/SC#4)
+- [x] 04-01-PLAN.md — Wave 0/1: extend MistakeId + LetterResult, data-driven Tolerances (normal == legacy constants), Letter.tolerances + validator, RED LetterScorer contract tests (D-03/D-04, SC#1/SC#2/SC#4)
 
 **Wave 2** *(blocked on Wave 1)*
 
@@ -347,7 +345,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 1. Foundations & RTL Shell | 3/3 | Complete   | 2026-05-31 |
 | 2. Curriculum Schema & First-Letter Seed | 0/3 | Planned | - |
 | 3. Trace One Letter End-to-End | 0/4 | Planned | - |
-| 4. Scoring Quality & Calibration | 0/6 | Planned | - |
+| 4. Scoring Quality & Calibration | 1/6 | In Progress|  |
 | 5. Profiles & Onboarding | 0/TBD | Not started | - |
 | 6. Lesson Progression & Home | 0/TBD | Not started | - |
 | 7. Full Curriculum & Pronunciation Audio | 0/TBD | Not started | - |
