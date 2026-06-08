@@ -14,7 +14,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:qalam/data/app_database.dart';
 import 'package:qalam/l10n/app_localizations.dart';
+import 'package:qalam/providers/profile_providers.dart';
 import 'package:qalam/screens/home_screen.dart';
 import 'package:qalam/widgets/arabic_text.dart';
 
@@ -24,7 +26,10 @@ import 'package:qalam/widgets/arabic_text.dart';
 
 /// Builds HomeScreen inside a GoRouter so context.go works.
 /// The /practice stub page is a simple scaffold that can be found by finder.
-Widget _buildWithRouter({GoRouter? router}) {
+///
+/// [profile] overrides childProfileProvider so the greeting reads the chosen
+/// fixed-set nickname (S1-03). When null the provider resolves to no profile.
+Widget _buildWithRouter({GoRouter? router, ChildProfile? profile}) {
   final goRouter = router ??
       GoRouter(
         initialLocation: '/',
@@ -42,6 +47,9 @@ Widget _buildWithRouter({GoRouter? router}) {
       );
 
   return ProviderScope(
+    overrides: [
+      childProfileProvider.overrideWith((ref) async => profile),
+    ],
     child: MaterialApp.router(
       routerConfig: goRouter,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -49,6 +57,17 @@ Widget _buildWithRouter({GoRouter? router}) {
     ),
   );
 }
+
+/// A fixed-set profile fixture — nickname `nick_star`, avatar `avatar_1`.
+/// The greeting must resolve `nick_star` to its display label (no real name).
+ChildProfile _starProfile() => ChildProfile(
+      id: 1,
+      nicknameId: 'nick_star',
+      avatarId: 'avatar_1',
+      grade: 'kg',
+      startingLessonId: 'alif',
+      createdAt: 0,
+    );
 
 // ---------------------------------------------------------------------------
 // Tests
@@ -60,16 +79,34 @@ void main() {
     // Test 1: Renders the demo home content
     // -----------------------------------------------------------------------
     testWidgets(
-        'renders greeting, lesson title, and the alif glyph (Test 1)',
+        'greeting renders the chosen nickname label and avatar, plus the alif glyph (Test 1)',
         (WidgetTester tester) async {
-      await tester.pumpWidget(_buildWithRouter());
+      // Override childProfileProvider with a fixed-set profile (S1-03): the
+      // greeting must show the resolved nickname LABEL, never a real name and
+      // never the old hardcoded 'Layla'.
+      await tester.pumpWidget(_buildWithRouter(profile: _starProfile()));
       await tester.pumpAndSettle();
 
-      // Greeting heading.
+      // The chosen nickname's display label (nick_star → 'نجمة' / Najma) renders
+      // through an ArabicText island. The old hardcoded greeting must be gone.
       expect(
         find.text('Welcome back, Layla.'),
+        findsNothing,
+        reason: 'the hardcoded "Layla" greeting must be replaced by the profile nickname.',
+      );
+      expect(
+        find.byWidgetPredicate(
+          (w) => w is ArabicText && w.text == 'نجمة',
+        ),
         findsOneWidget,
-        reason: 'Greeting heading "Welcome back, Layla." must be visible.',
+        reason: 'the resolved nickname label for nick_star ("نجمة") must render.',
+      );
+
+      // The chosen avatar is rendered in the greeting header.
+      expect(
+        find.byKey(const Key('homeAvatar_avatar_1')),
+        findsOneWidget,
+        reason: 'the chosen avatar (avatar_1) must render in the greeting header.',
       );
 
       // Lesson card title.
