@@ -10,6 +10,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../dev/authoring_screen.dart';
 import '../dev/glyph_audit_screen.dart';
 import '../features/journey/journey_screen.dart';
+import '../features/onboarding/onboarding_screen.dart';
+import '../providers/profile_providers.dart';
 import '../screens/home_screen.dart';
 import '../features/practice/practice_screen.dart';
 import '../screens/settings_screen.dart';
@@ -26,12 +28,36 @@ const bool kDemoMode = bool.fromEnvironment('DEMO');
 /// App router, exposed as a Riverpod-codegen provider (Riverpod-only — D-11).
 @Riverpod(keepAlive: true)
 GoRouter appRouter(Ref ref) {
+  // The onboarding gate (S1-03 / Plan 05-03). Seeded at boot in main.dart with a
+  // one-time hasProfile() read; flips via markProfileCreated() after onboarding.
+  // Used both as the redirect source AND as refreshListenable so the redirect
+  // re-runs the instant the gate flips (RESEARCH Pattern 3).
+  final gate = ref.watch(onboardingGateProvider);
+
   return GoRouter(
     initialLocation: kDemoMode ? '/demo/home' : '/',
+    // Re-run redirects when the gate flips (after the onboarding write).
+    refreshListenable: gate,
+    // SYNCHRONOUS redirect — NEVER await Drift here (Pitfall 2). The gate flag is
+    // read once at boot; both rules below are present to prevent a redirect loop
+    // (Pitfall 1): no-profile pins /onboarding; has-profile bounces off it.
+    redirect: (context, state) {
+      if (kDemoMode) return null; // the demo walkthrough bypasses the gate
+      final onOnboarding = state.matchedLocation == '/onboarding';
+      if (!gate.hasProfile && !onOnboarding) return '/onboarding';
+      if (gate.hasProfile && onOnboarding) return '/';
+      return null;
+    },
     routes: <RouteBase>[
       GoRoute(
         path: '/',
         builder: (context, state) => const HomeScreen(),
+      ),
+      // First-launch onboarding (S1-02 / S1-03). Reachable only via the gate; the
+      // child cannot back out (PopScope) and cannot skip (redirect).
+      GoRoute(
+        path: '/onboarding',
+        builder: (context, state) => const OnboardingScreen(),
       ),
       GoRoute(
         path: '/practice',
