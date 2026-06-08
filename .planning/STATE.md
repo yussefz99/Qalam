@@ -4,14 +4,14 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Phase 03.1 complete — Journey Map Screen implemented, human verify passed
-last_updated: "2026-06-07T21:30:00Z"
-last_activity: 2026-06-07
+last_updated: "2026-06-08T17:00:00.000Z"
+last_activity: 2026-06-08 -- Completed 05-01 Wave 0 failing-test contract
 progress:
-  total_phases: 12
-  completed_phases: 5
-  total_plans: 21
-  completed_plans: 21
-  percent: 42
+  total_phases: 13
+  completed_phases: 6
+  total_plans: 28
+  completed_plans: 25
+  percent: 48
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
-**Current focus:** Phase 04 — Practice Screen (Phase 03.1 complete)
+**Current focus:** Phase 05 — profiles-onboarding
 
 ## Current Position
 
-Phase: 03.1 COMPLETE → ready for Phase 04
-Plan: 03.1-03 complete (all 3 plans of Phase 03.1 done)
-Status: Journey Map Screen fully implemented — winding path, 28 letter nodes, 4 node states, pulse animation, tap routing, gold star badges, Level 1 Quiz checkpoint, Level 2 locked banner. Human verify passed.
-Last activity: 2026-06-07 - Completed Phase 03.1: Journey Map Screen — winding path with 28 letter nodes, 4 node states, pulse animation, tap routing, Level 1/2 checkpoint/banner. Human verify passed.
+Phase: 05 (profiles-onboarding) — EXECUTING
+Plan: 2 of 4
+Status: Executing Phase 05
+Last activity: 2026-06-08 -- Completed 05-01-PLAN.md (Wave 0 failing-test contract)
 
 Progress: [██░░░░░░░░] 20% (2 of 10 phases complete)
 
@@ -56,6 +56,7 @@ Progress: [██░░░░░░░░] 20% (2 of 10 phases complete)
 | Phase 01 P01 | 18 | 2 tasks | 14 files |
 | Phase 01 P02 | ~40min | 3 tasks | 20 files |
 | Phase 01 P03 | ~25min | 3 tasks | 7 files |
+| Phase 05 P01 | ~18min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -78,6 +79,9 @@ Recent decisions affecting current work:
 - [Phase 02]: All 28 letters authored in Phase 2 with structural data; only alif needs signedOff: true for Phase 3; remaining 27 carry referenceStrokes: [] + signedOff: false (D-05, D-07).
 - [Phase 02]: CurriculumRepository uses rootBundle (not network); keepAlive: true Riverpod provider; handles exercises.json absence gracefully (D-10).
 - [Phase 02]: lib/models/*.dart must not import from lib/data/ or lib/features/ — pure immutable domain types only.
+- [Phase 05]: Wave 0 RED contract authored — every S1-02/S1-03/gate behavior has an executable failing assertion before implementation (Nyquist). Implementer must produce: ChildProfiles table + create/get/hasProfile, ChildProfileRepository, onboarding_data (kAvatarIds/kNicknames/gradeToStartingLessonId/resolveStartingLessonId), OnboardingScreen, profile_providers (childProfileProvider, OnboardingGate).
+- [Phase 05]: Tests using flutter_test null matchers alongside drift must `import 'package:drift/drift.dart' hide isNull, isNotNull;` to avoid the matcher name collision.
+- [Phase 05]: Home greeting test pins nick_star -> label 'نجمة' and avatar key homeAvatar_avatar_1; grade kg -> startingLessonId 'alif' (S1-02 default seam).
 
 ### Pending Todos
 
@@ -110,6 +114,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-07
-Stopped at: Phase 03.1 complete — Journey Map Screen implemented, human verify passed
-Resume file: .planning/phases/03.1-journey-map-screen/03.1-03-SUMMARY.md
+Last session: 2026-06-08
+Stopped at: Completed 05-01-PLAN.md — Wave 0 failing-test contract (RED) for Phase 5 onboarding
+Resume file: .planning/phases/05-profiles-onboarding/05-01-SUMMARY.md

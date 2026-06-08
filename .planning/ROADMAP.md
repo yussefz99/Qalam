@@ -243,7 +243,7 @@ Plans:
 
 **Wave 0**
 
-- [ ] 05-01-PLAN.md — Wave 0 (Nyquist): RED test stubs for profile repo, onboarding data, onboarding screen (no free-text/PopScope), and the redirect gate (no loop); extend app_database + home_screen tests (S1-02/S1-03)
+- [x] 05-01-PLAN.md — Wave 0 (Nyquist): RED test stubs for profile repo, onboarding data, onboarding screen (no free-text/PopScope), and the redirect gate (no loop); extend app_database + home_screen tests (S1-02/S1-03) (completed 2026-06-08)
 
 **Wave 1** *(blocked on Wave 0)*
 
@@ -345,7 +345,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 2. Curriculum Schema & First-Letter Seed | 0/3 | Planned | - |
 | 3. Trace One Letter End-to-End | 0/4 | Planned | - |
 | 4. Scoring Quality & Calibration | 0/TBD | Not started | - |
-| 5. Profiles & Onboarding | 0/4 | Planned | - |
+| 5. Profiles & Onboarding | 1/4 | In Progress | - |
 | 6. Lesson Progression & Home | 0/TBD | Not started | - |
 | 7. Full Curriculum & Pronunciation Audio | 0/TBD | Not started | - |
 | 8. Sentence-Building & Grammar Exercises | 0/TBD | Not started | - |

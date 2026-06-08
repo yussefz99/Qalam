@@ -124,6 +124,12 @@ None - no external service configuration required.
 - Implementation plans must produce these exact symbols: `ChildProfiles` table + `createProfile`/`getProfile`/`hasProfile` accessors, `ChildProfileRepository` (+ `childProfileRepositoryProvider`), `onboarding_data.dart` (`kAvatarIds`, `kNicknames`, `gradeToStartingLessonId`, `resolveStartingLessonId`), `OnboardingScreen`, `profile_providers.dart` (`childProfileProvider`, `OnboardingGate`/`onboardingGateProvider`), and the keyed widgets listed above.
 - Reminder for the implementer: the home greeting test expects nickname label `'نجمة'` for `nick_star` and a widget keyed `homeAvatar_avatar_1`.
 
+## Self-Check: PASSED
+
+- All 6 test files verified present on disk.
+- All 3 commits (aa1b969, 938d2f0, cb0ea93) verified in git log.
+- All 6 test files verified RED via Flutter SDK (compile-fail on absent Wave 1-3 symbols) — no false greens.
+
 ---
 *Phase: 05-profiles-onboarding*
 *Completed: 2026-06-08*
