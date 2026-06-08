@@ -49,6 +49,7 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": true,
+      "tolerances": { "preset": "normal" },
       "audio": {
         "letter": null,
         "examples": []
@@ -68,11 +69,55 @@
         "medial": "ـبـ",
         "final": "ـب"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [0.9, 0.4],
+            [0.6, 0.55],
+            [0.3, 0.55],
+            [0.1, 0.4]
+          ],
+          "direction": "rightToLeft"
+        },
+        {
+          "order": 2,
+          "label": "dot",
+          "type": "dot",
+          "points": [
+            [0.5, 0.8]
+          ],
+          "direction": "tap"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_stroke_count",
+          "check": "strokeCountMismatch",
+          "feedback": "Baa is two parts — the boat, then one dot underneath."
+        },
+        {
+          "id": "wrong_stroke_order",
+          "check": "strokeOrderWrong",
+          "feedback": "Draw the boat first, then the dot underneath."
+        },
+        {
+          "id": "dot_wrong",
+          "check": "dotPositionWrong",
+          "feedback": "Baa's dot goes under the boat, not on top."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try baa again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": { "preset": "normal" },
       "audio": {
         "letter": null,
         "examples": []
@@ -92,11 +137,64 @@
         "medial": "ـتـ",
         "final": "ـت"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [0.9, 0.4],
+            [0.6, 0.55],
+            [0.3, 0.55],
+            [0.1, 0.4]
+          ],
+          "direction": "rightToLeft"
+        },
+        {
+          "order": 2,
+          "label": "dot_right",
+          "type": "dot",
+          "points": [
+            [0.6, 0.18]
+          ],
+          "direction": "tap"
+        },
+        {
+          "order": 3,
+          "label": "dot_left",
+          "type": "dot",
+          "points": [
+            [0.4, 0.18]
+          ],
+          "direction": "tap"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_stroke_count",
+          "check": "strokeCountMismatch",
+          "feedback": "Taa is the boat plus two dots on top — count them: one, two."
+        },
+        {
+          "id": "wrong_stroke_order",
+          "check": "strokeOrderWrong",
+          "feedback": "Draw the boat first, then the two dots on top."
+        },
+        {
+          "id": "dot_wrong",
+          "check": "dotPositionWrong",
+          "feedback": "Taa's two dots go above the boat, not below."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try taa again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": { "preset": "normal" },
       "audio": {
         "letter": null,
         "examples": []
@@ -116,11 +214,73 @@
         "medial": "ـثـ",
         "final": "ـث"
       },
-      "referenceStrokes": [],
+      "referenceStrokes": [
+        {
+          "order": 1,
+          "label": "body",
+          "type": "line",
+          "points": [
+            [0.9, 0.4],
+            [0.6, 0.55],
+            [0.3, 0.55],
+            [0.1, 0.4]
+          ],
+          "direction": "rightToLeft"
+        },
+        {
+          "order": 2,
+          "label": "dot_right",
+          "type": "dot",
+          "points": [
+            [0.6, 0.2]
+          ],
+          "direction": "tap"
+        },
+        {
+          "order": 3,
+          "label": "dot_left",
+          "type": "dot",
+          "points": [
+            [0.4, 0.2]
+          ],
+          "direction": "tap"
+        },
+        {
+          "order": 4,
+          "label": "dot_top",
+          "type": "dot",
+          "points": [
+            [0.5, 0.08]
+          ],
+          "direction": "tap"
+        }
+      ],
       "cleanRepsToAdvance": 3,
-      "commonMistakes": [],
-      "mistakesStatus": "placeholder",
+      "commonMistakes": [
+        {
+          "id": "wrong_stroke_count",
+          "check": "strokeCountMismatch",
+          "feedback": "Thaa is the boat plus three dots on top — count them: one, two, three."
+        },
+        {
+          "id": "wrong_stroke_order",
+          "check": "strokeOrderWrong",
+          "feedback": "Draw the boat first, then the three dots."
+        },
+        {
+          "id": "dot_wrong",
+          "check": "dotPositionWrong",
+          "feedback": "Thaa has three dots above the boat, like a little triangle."
+        },
+        {
+          "id": "wrong_letter",
+          "check": "letterIdentityMismatch",
+          "feedback": "That looks like a different letter — try thaa again."
+        }
+      ],
+      "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": { "preset": "normal" },
       "audio": {
         "letter": null,
         "examples": []
