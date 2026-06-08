@@ -389,9 +389,14 @@
     "description": "Mastery celebration Arabic praise (RTL island, Noto Naskh) — 'well done'. Never bold/italic/letterSpaced. Paired with the English celebration line."
   },
 
-  "homeGreeting": "Welcome back, Layla.",
+  "homeGreeting": "Welcome back, {nickname}.",
   "@homeGreeting": {
-    "description": "Home screen warm greeting heading. Static placeholder name — no profile system yet. Anti-gamification: no stars/streaks/counters here."
+    "description": "Home screen warm greeting heading. {nickname} is the child's chosen fixed-set display label (S1-03 — never a real name). Anti-gamification: no stars/streaks/counters here.",
+    "placeholders": {
+      "nickname": {
+        "type": "String"
+      }
+    }
   },
 
   "homeGreetingSubtitle": "Qalam has a new lesson ready for you.",

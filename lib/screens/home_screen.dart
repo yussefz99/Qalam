@@ -23,7 +23,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../data/app_database.dart';
+import '../features/onboarding/onboarding_data.dart';
 import '../l10n/app_localizations.dart';
+import '../providers/profile_providers.dart';
 import '../theme/brand_theme_ext.dart';
 import '../theme/colors.dart';
 import '../theme/dimens.dart';
@@ -227,6 +229,12 @@ class _SafeSvgIcon extends StatelessWidget {
 // Greeting header (mascot + warm text)
 // ---------------------------------------------------------------------------
 
+/// Greeting header — scope-aware (mirrors `_PersistenceProof`, lines 374-404).
+///
+/// The real app always supplies a [ProviderScope]; the bare D-05 direction test
+/// does not. When no scope is present this degrades to the static greeting (no
+/// avatar) instead of throwing "No ProviderScope found". When a scope IS present
+/// it defers to [_GreetingHeaderReader], which reads `childProfileProvider`.
 class _GreetingHeader extends StatelessWidget {
   const _GreetingHeader({required this.l10n});
 
@@ -234,29 +242,163 @@ class _GreetingHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool hasScope =
+        context.findAncestorWidgetOfExactType<UncontrolledProviderScope>() !=
+            null;
+    if (!hasScope) {
+      // No-scope fallback (bare harness): static greeting, no avatar.
+      return _GreetingLayout(
+        l10n: l10n,
+        avatarId: null,
+        nicknameLabel: null,
+      );
+    }
+    return _GreetingHeaderReader(l10n: l10n);
+  }
+}
+
+/// Reads `childProfileProvider` and drives the greeting line + avatar from the
+/// child's chosen fixed-set nickname/avatar (S1-03 "shown on home").
+///
+/// `.when` mirrors `_PersistenceProofReader`: on loading/error/no-profile it
+/// degrades to the static greeting so Home never blocks or crashes (T-05-07).
+class _GreetingHeaderReader extends ConsumerWidget {
+  const _GreetingHeaderReader({required this.l10n});
+
+  final AppLocalizations? l10n;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ref.watch(childProfileProvider).when(
+          data: (ChildProfile? profile) {
+            if (profile == null) {
+              return _GreetingLayout(
+                l10n: l10n,
+                avatarId: null,
+                nicknameLabel: null,
+              );
+            }
+            // Resolve fixed-set ids → presentation (label/visual) in code only.
+            return _GreetingLayout(
+              l10n: l10n,
+              avatarId: profile.avatarId,
+              nicknameLabel: resolveNicknameLabel(profile.nicknameId),
+            );
+          },
+          loading: () => _GreetingLayout(
+            l10n: l10n,
+            avatarId: null,
+            nicknameLabel: null,
+          ),
+          error: (_, _) => _GreetingLayout(
+            l10n: l10n,
+            avatarId: null,
+            nicknameLabel: null,
+          ),
+        );
+  }
+}
+
+/// Pure presentation of the greeting header. When [nicknameLabel] is non-null
+/// the greeting shows "Welcome back," + the Arabic nickname island (via
+/// [ArabicText]); when [avatarId] is non-null the chosen avatar circle replaces
+/// the mascot. Both null → the static (mascot + literal) fallback.
+class _GreetingLayout extends StatelessWidget {
+  const _GreetingLayout({
+    required this.l10n,
+    required this.avatarId,
+    required this.nicknameLabel,
+  });
+
+  final AppLocalizations? l10n;
+  final String? avatarId;
+  final String? nicknameLabel;
+
+  /// Placeholder palette mirrors AvatarGrid so the home avatar matches the one
+  /// picked at onboarding (D-3 — ID→tint in code; NOT QalamColors.reward).
+  static const List<Color> _placeholderTints = <Color>[
+    QalamColors.primaryTint,
+    QalamColors.successTint,
+    QalamColors.warnSoftTint,
+    QalamColors.bgDeep,
+    QalamColors.border,
+    QalamColors.surface,
+  ];
+
+  Color _tintFor(String id) {
+    final int index = kAvatarIds.indexOf(id);
+    if (index < 0) return QalamColors.primaryTint;
+    return _placeholderTints[index % _placeholderTints.length];
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        // Mascot: qalam-idle.svg — graceful fallback if asset missing.
-        SvgPicture.asset(
-          'assets/mascot/qalam-idle.svg',
-          width: QalamSpace.space16,
-          height: QalamSpace.space16,
-          semanticsLabel: 'Qalam',
-          placeholderBuilder: (_) => const SizedBox(
+        // Leading visual: chosen avatar circle if present, else the mascot.
+        if (avatarId != null)
+          Container(
+            key: Key('homeAvatar_$avatarId'),
             width: QalamSpace.space16,
             height: QalamSpace.space16,
+            decoration: BoxDecoration(
+              color: _tintFor(avatarId!),
+              shape: BoxShape.circle,
+              border: Border.all(color: QalamColors.border, width: 1),
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              avatarId!.split('_').last,
+              style: QalamTextStyles.heading.copyWith(color: QalamColors.fg),
+            ),
+          )
+        else
+          // Mascot: qalam-idle.svg — graceful fallback if asset missing.
+          SvgPicture.asset(
+            'assets/mascot/qalam-idle.svg',
+            width: QalamSpace.space16,
+            height: QalamSpace.space16,
+            semanticsLabel: 'Qalam',
+            placeholderBuilder: (_) => const SizedBox(
+              width: QalamSpace.space16,
+              height: QalamSpace.space16,
+            ),
           ),
-        ),
         const SizedBox(width: QalamSpace.space6),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(
-                l10n?.homeGreeting ?? 'Welcome back, Layla.',
-                style: QalamTextStyles.heading,
-              ),
+              if (nicknameLabel != null)
+                // Greeting line: English prefix + the Arabic nickname island.
+                // The nickname renders through ArabicText (RTL island), NOT raw
+                // Text and NOT a global Directionality (Pitfall 3).
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: <Widget>[
+                    Flexible(
+                      child: Text(
+                        'Welcome back, ',
+                        style: QalamTextStyles.heading,
+                      ),
+                    ),
+                    ArabicText(
+                      nicknameLabel!,
+                      style: QalamTextStyles.heading,
+                    ),
+                  ],
+                )
+              else
+                Text(
+                  // Literal fallback when no profile/scope is available. The ARB
+                  // key is a {nickname} template; with no nickname we keep the
+                  // original warm static greeting.
+                  l10n?.homeGreeting('') ?? 'Welcome back, Layla.',
+                  style: QalamTextStyles.heading,
+                ),
               const SizedBox(height: QalamSpace.space2),
               Text(
                 l10n?.homeGreetingSubtitle ??

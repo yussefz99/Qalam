@@ -62,3 +62,15 @@ const Map<String, String> gradeToStartingLessonId = <String, String>{
 /// back to 'alif' so the resolver never returns null or crashes (T-05-04).
 String resolveStartingLessonId(String grade) =>
     gradeToStartingLessonId[grade] ?? 'alif';
+
+/// Resolve a fixed-set nickname id to its display label (presentation only).
+///
+/// ID→label mapping lives HERE in code, never in the DB (S1-03 / D-3): the
+/// profile stores only the id, so labels change with no data migration. Returns
+/// `null` for an unknown id so callers degrade gracefully (no crash, no PII).
+String? resolveNicknameLabel(String nicknameId) {
+  for (final NicknameOption option in kNicknames) {
+    if (option.id == nicknameId) return option.label;
+  }
+  return null;
+}
