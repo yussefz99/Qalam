@@ -16,12 +16,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:google_mlkit_digital_ink_recognition/google_mlkit_digital_ink_recognition.dart';
+import 'package:mocktail/mocktail.dart';
 
 import 'package:qalam/data/curriculum_repository.dart';
 import 'package:qalam/data/drift_progress_repository.dart';
 import 'package:qalam/data/progress_repository.dart';
 import 'package:qalam/features/practice/practice_screen.dart';
 import 'package:qalam/l10n/app_localizations.dart';
+import 'package:qalam/services/model_download_service.dart';
+
+/// Mocked ML Kit model manager so the model-download service resolves
+/// deterministically in tests instead of hanging on an absent platform plugin.
+class _MockModelManager extends Mock
+    implements DigitalInkRecognizerModelManager {}
 
 // ---------------------------------------------------------------------------
 // Minimal curriculum fixture — same as session_controller_test.
@@ -87,10 +95,17 @@ Widget _buildScreen() {
   final fakeCurriculum =
       CurriculumRepository.fromStrings(_lettersJson, _lessonsJson);
 
+  // Model reports already-downloaded → service resolves ready, so the
+  // getting-ready banner (Plan 04-04) is absent and these pre-banner assertions
+  // hold. A real platform manager would hang the test (no plugin in headless).
+  final manager = _MockModelManager();
+  when(() => manager.isModelDownloaded(any())).thenAnswer((_) async => true);
+
   return ProviderScope(
     overrides: [
       curriculumRepositoryProvider.overrideWithValue(fakeCurriculum),
       progressRepositoryProvider.overrideWithValue(_FakeProgressRepository()),
+      inkModelManagerProvider.overrideWithValue(manager),
     ],
     child: MaterialApp(
       localizationsDelegates: AppLocalizations.localizationsDelegates,

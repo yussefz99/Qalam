@@ -29,13 +29,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/scoring/geometric_stroke_scorer.dart';
+import '../../core/recognition/handwriting_recognizer.dart';
+import '../../core/recognition/ml_kit_recognizer.dart';
+import '../../core/scoring/letter_scorer.dart';
 import '../../core/scoring/scoring_models.dart';
 import '../../data/curriculum_repository.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/letter.dart';
 import '../../providers/audio_providers.dart';
 import '../../providers/practice_providers.dart';
+import '../../services/model_download_service.dart';
 import '../../theme/brand_theme_ext.dart';
 import '../../theme/colors.dart';
 import '../../theme/dimens.dart';
@@ -67,29 +70,49 @@ class _PracticeScreenState extends ConsumerState<PracticeScreen> {
       GlobalKey<StrokeOrderAnimationState>();
 
   // ---------------------------------------------------------------------------
-  // Stroke submission — called by StrokeCanvas on stylus-up.
+  // Letter completion — called by StrokeCanvas once the whole multi-stroke
+  // letter has been accumulated (count-reached signal, Plan 04-04).
   // ---------------------------------------------------------------------------
 
-  /// Score the submitted stroke and forward only StrokeResult to the controller.
+  /// Score the whole accumulated letter via scoreLetter and forward only the
+  /// LetterResult to the controller.
   ///
   /// SECURITY: raw Offset points are used locally for scoring and then discarded.
-  /// They are never stored in provider state (Anti-Pattern 3).
-  Future<void> _onStrokeSubmitted(
-    List<Offset> points,
-    StrokeSpec referenceStroke,
+  /// They never enter provider state (Anti-Pattern 3 / T-04-08).
+  ///
+  /// ML Kit gate (D-04, advisory-only): the recognizer is supplied to scoreLetter
+  /// ONLY when the model is ready (ModelDownloadService.isReady). Until then the
+  /// gate abstains and the geometric scorer runs unchanged (D-05). The gate can
+  /// only REJECT a confidently-different letter AFTER a geometric pass — the
+  /// policy lives in scoreLetter, never here.
+  Future<void> _onLetterComplete(
+    List<List<Offset>> strokes,
+    Letter letter,
   ) async {
-    // Convert Offset list → List<List<double>> for the pure-Dart scorer.
-    final childStroke = points
-        .map((Offset o) => <double>[o.dx, o.dy])
+    // Convert Offsets → List<List<List<double>>> for the pure-Dart scorer.
+    final childStrokes = strokes
+        .map((List<Offset> stroke) => stroke
+            .map((Offset o) => <double>[o.dx, o.dy])
+            .toList(growable: false))
         .toList(growable: false);
 
-    final StrokeResult result = scoreStroke(childStroke, referenceStroke);
+    // Advisory ML Kit gate only when the model is downloaded (D-04 / D-05).
+    final bool modelReady =
+        ref.read(modelDownloadServiceProvider).isReady;
+    final HandwritingRecognizer? recognizer =
+        modelReady ? MlKitRecognizer() : null;
 
-    // Only StrokeResult (not raw points) enters the controller.
+    final LetterResult result = await scoreLetter(
+      childStrokes,
+      letter,
+      recognizer: recognizer,
+    );
+
+    // Only the LetterResult (not raw points) enters the controller.
     await ref
         .read(practiceSessionControllerProvider(PracticeScreen._lessonId)
             .notifier)
-        .onStrokeResult(result);
+        .onLetterResult(result);
   }
 
   // ---------------------------------------------------------------------------
@@ -130,7 +153,7 @@ class _PracticeScreenState extends ConsumerState<PracticeScreen> {
           lessonId: PracticeScreen._lessonId,
           state: state,
           animKey: _animKey,
-          onStrokeSubmitted: _onStrokeSubmitted,
+          onLetterComplete: _onLetterComplete,
           onAdvanceToTrace: () => ref
               .read(practiceSessionControllerProvider(PracticeScreen._lessonId)
                   .notifier)
@@ -174,7 +197,7 @@ class _PracticeBody extends ConsumerWidget {
     required this.lessonId,
     required this.state,
     required this.animKey,
-    required this.onStrokeSubmitted,
+    required this.onLetterComplete,
     required this.onAdvanceToTrace,
     required this.onContinueAfterPraise,
     required this.onRetry,
@@ -183,8 +206,8 @@ class _PracticeBody extends ConsumerWidget {
   final String lessonId;
   final PracticeState state;
   final GlobalKey<StrokeOrderAnimationState> animKey;
-  final Future<void> Function(List<Offset> points, StrokeSpec referenceStroke)
-      onStrokeSubmitted;
+  final Future<void> Function(List<List<Offset>> strokes, Letter letter)
+      onLetterComplete;
   final VoidCallback onAdvanceToTrace;
   final VoidCallback onContinueAfterPraise;
   final VoidCallback onRetry;
@@ -204,7 +227,13 @@ class _PracticeBody extends ConsumerWidget {
           );
         }
 
-        return switch (state.phase) {
+        // GETTING-READY (D-05): while the ML Kit model is still downloading,
+        // show a calm getting-ready banner over the practice surface — NEVER an
+        // error and NEVER a hard block. The geometric scorer already works; only
+        // the advisory ML Kit gate abstains until the model is ready.
+        final bool modelReady = ref.watch(modelDownloadServiceProvider).isReady;
+
+        final Widget phaseView = switch (state.phase) {
           PracticePhase.watch => _WatchPhase(
               letter: letter,
               animKey: animKey,
@@ -218,16 +247,34 @@ class _PracticeBody extends ConsumerWidget {
               letter: letter,
               state: state,
               // Empty-stroke-safe: placeholder letters (no referenceStrokes)
-              // never reach the scorer.
-              onStrokeSubmitted: (List<Offset> pts) =>
+              // never reach the scorer. The whole accumulated letter is scored
+              // once via scoreLetter (Plan 04-04), not stroke-by-stroke.
+              onLetterComplete: (List<List<Offset>> strokes) =>
                   letter.referenceStrokes.isEmpty
                       ? Future<void>.value()
-                      : onStrokeSubmitted(pts, letter.referenceStrokes.first),
+                      : onLetterComplete(strokes, letter),
               onContinueAfterPraise: onContinueAfterPraise,
               onRetry: onRetry,
             ),
           PracticePhase.celebrate => const SizedBox.shrink(),
         };
+
+        // Overlay the calm getting-ready banner while the model downloads (D-05).
+        // The lesson runs underneath — this is a quiet wait, never a block.
+        if (!modelReady && state.phase != PracticePhase.celebrate) {
+          return Stack(
+            children: <Widget>[
+              phaseView,
+              const Positioned(
+                left: QalamSpace.space4,
+                right: QalamSpace.space4,
+                top: QalamSpace.space4,
+                child: _GettingReadyBanner(),
+              ),
+            ],
+          );
+        }
+        return phaseView;
       },
     );
   }
@@ -347,14 +394,14 @@ class _TraceWorkspace extends ConsumerStatefulWidget {
   const _TraceWorkspace({
     required this.letter,
     required this.state,
-    required this.onStrokeSubmitted,
+    required this.onLetterComplete,
     required this.onContinueAfterPraise,
     required this.onRetry,
   });
 
   final Letter letter;
   final PracticeState state;
-  final Future<void> Function(List<Offset> points) onStrokeSubmitted;
+  final Future<void> Function(List<List<Offset>> strokes) onLetterComplete;
   final VoidCallback onContinueAfterPraise;
   final VoidCallback onRetry;
 
@@ -412,14 +459,15 @@ class _TraceWorkspaceState extends ConsumerState<_TraceWorkspace> {
   // Actions
   // ---------------------------------------------------------------------------
 
-  /// Wrap the stroke submission with a visible think beat so the tutor bubble
-  /// animates before the phase transition.
-  Future<void> _handleSubmit(List<Offset> points) async {
+  /// Wrap the whole-letter submission with a visible think beat so the tutor
+  /// bubble animates before the phase transition. Called once StrokeCanvas has
+  /// accumulated the whole multi-stroke letter (Plan 04-04).
+  Future<void> _handleLetterComplete(List<List<Offset>> strokes) async {
     if (widget.letter.referenceStrokes.isEmpty) return; // placeholder: no crash
     setState(() => _isScoring = true);
     await Future<void>.delayed(_kThinkBeat);
     if (!mounted) return;
-    await widget.onStrokeSubmitted(points);
+    await widget.onLetterComplete(strokes);
     if (mounted) setState(() => _isScoring = false);
   }
 
@@ -659,7 +707,9 @@ class _TraceWorkspaceState extends ConsumerState<_TraceWorkspace> {
                                 key: ValueKey(_canvasEpoch),
                                 referenceStrokes:
                                     widget.letter.referenceStrokes,
-                                onStrokeSubmitted: _handleSubmit,
+                                // Score the WHOLE accumulated letter once
+                                // (Plan 04-04), not per-stroke.
+                                onLetterComplete: _handleLetterComplete,
                               ),
                             ),
 
@@ -1106,6 +1156,69 @@ class _TipCard extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
+// _GettingReadyBanner — calm model-download wait state (D-05)
+// ---------------------------------------------------------------------------
+
+/// A calm, non-blocking banner shown while the ML Kit Arabic model is still
+/// downloading on first launch (D-05). NEVER an error and NEVER a hard block —
+/// the lesson runs underneath; the advisory ML Kit gate simply abstains until
+/// the model is ready. Uses surface/ink tokens, no coral/red, no emoji.
+class _GettingReadyBanner extends StatelessWidget {
+  const _GettingReadyBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final title = l10n?.practiceGettingReadyTitle ?? 'Getting ready';
+    final body = l10n?.practiceGettingReadyBody ??
+        "I'm getting your letters ready. You can start tracing now — "
+            "I'll be right here.";
+
+    return Container(
+      decoration: BoxDecoration(
+        color: QalamColors.surfaceRaised,
+        borderRadius: BorderRadius.circular(QalamRadii.lg),
+        border: Border.all(color: QalamColors.border, width: 1.0),
+        boxShadow: QalamShadows.shadowSm,
+      ),
+      padding: const EdgeInsets.all(QalamSpace.space4),
+      child: Row(
+        children: <Widget>[
+          const SizedBox(
+            width: QalamSpace.space5,
+            height: QalamSpace.space5,
+            child: CircularProgressIndicator(
+              strokeWidth: 2.5,
+              valueColor:
+                  AlwaysStoppedAnimation<Color>(QalamColors.primary),
+            ),
+          ),
+          const SizedBox(width: QalamSpace.space4),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  title,
+                  style: QalamTextStyles.button.copyWith(color: QalamColors.fg),
+                ),
+                const SizedBox(height: QalamSpace.space1),
+                Text(
+                  body,
+                  style: QalamTextStyles.label
+                      .copyWith(color: QalamColors.fgMuted),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Lifted feedback string helper — from feedback_panel.dart
 // ---------------------------------------------------------------------------
 
@@ -1125,17 +1238,22 @@ String _feedbackString(AppLocalizations? l10n, MistakeId id) {
     case MistakeId.tooCurved:
       return l10n?.practiceFeedbackTooCurved ??
           'Alif is a straight line — try to keep it as straight as you can.';
-    // ── Whole-letter mistakes (Plan 04-01 enum; Plan 04-02 wires the scorer +
-    //    the authored l10n getters). Specific, warm placeholder copy until then
-    //    — never a generic "Oops" (Pitfall 7 / PLAT-03). ──
+    // ── Whole-letter mistakes (Plan 04-01 enum; scored by scoreLetter, Plan
+    //    04-02). Each maps to an AUTHORED l10n string (Plan 04-04) — placeholder
+    //    copy the mother refines in Plan 06 — never the generic fallback
+    //    (Pitfall 7 / PLAT-03). ──
     case MistakeId.wrongStrokeCount:
-      return 'This letter has a few parts — draw each one, then the dot.';
+      return l10n?.practiceFeedbackWrongStrokeCount ??
+          'Baa is two parts — the boat, then one dot underneath.';
     case MistakeId.wrongStrokeOrder:
-      return 'Draw the body first, then the dot underneath.';
+      return l10n?.practiceFeedbackWrongStrokeOrder ??
+          'Draw the boat first, then add the dot underneath.';
     case MistakeId.dotMisplaced:
-      return 'Check where the dot goes — look at the letter and try again.';
+      return l10n?.practiceFeedbackDotMisplaced ??
+          "Baa's dot goes under the boat, not on top — try the dot again.";
     case MistakeId.wrongLetterIdentity:
-      return 'That looks like a different letter — look closely and try again.';
+      return l10n?.practiceFeedbackWrongLetterIdentity ??
+          "That looks like a different letter — let's write baa together, slower.";
     case MistakeId.fallback:
       return l10n?.practiceFeedbackFallback ??
           'Something looks off — try again, slower this time.';
