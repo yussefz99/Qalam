@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 05 Plan 03 complete — onboarding card + redirect gate (S1-02/S1-03) GREEN
-last_updated: "2026-06-08T17:19:39.000Z"
-last_activity: 2026-06-08 -- Completed 05-03 Wave 2 onboarding screen + router gate
+stopped_at: Phase 05 Plan 04 complete — Home greeting reads chosen nickname label + avatar (S1-03) GREEN
+last_updated: "2026-06-08T17:32:00.000Z"
+last_activity: 2026-06-08 -- Completed 05-04 Wave 3 home greeting integration
 progress:
   total_phases: 13
   completed_phases: 6
   total_plans: 28
-  completed_plans: 27
-  percent: 52
+  completed_plans: 28
+  percent: 54
 ---
 
 # Project State
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 05 (profiles-onboarding) — EXECUTING
-Plan: 4 of 4
+Plan: 4 of 4 (all plans complete)
 Status: Executing Phase 05
-Last activity: 2026-06-08 -- Completed 05-03-PLAN.md (Wave 2 onboarding screen + router gate)
+Last activity: 2026-06-08 -- Completed 05-04-PLAN.md (Wave 3 home greeting integration)
 
 Progress: [██░░░░░░░░] 20% (2 of 10 phases complete)
 
@@ -59,6 +59,7 @@ Progress: [██░░░░░░░░] 20% (2 of 10 phases complete)
 | Phase 05 P01 | ~18min | 2 tasks | 6 files |
 | Phase 05 P02 | ~20min | 2 tasks | 7 files |
 | Phase 05 P03 | ~11min | 2 tasks | 8 files |
+| Phase 05 P04 | ~12min | 1 task | 3 files |
 
 ## Accumulated Context
 
@@ -90,6 +91,8 @@ Recent decisions affecting current work:
 - [Phase 05]: 05-03 turned the screen + router-gate RED tests GREEN — OnboardingScreen (one scrollable card, grade chips/avatar grid/nickname grid/"Let's go", PopScope(canPop:false), NO free-text), app_router synchronous redirect gate (both rules, no loop) + refreshListenable, main.dart boot hasProfile() read + appDatabaseProvider/onboardingGateProvider overrides. Fresh install -> /onboarding -> tap-through -> Home; relaunch skips onboarding. S1-02 + S1-03 delivered end-to-end.
 - [Phase 05]: Onboarding card spacing compacted so the "Let's go" CTA fits within the 800x600 widget-test viewport (Wave-0 happy-path taps the CTA without scrolling).
 - [Phase 05]: Remaining home-greeting-integration (Home reads childProfileProvider nickname) is the last Phase-5 RED test (home_screen_test Test 1) — deferred from 05-03 (out of scope; home_screen.dart not in 05-03's files). See deferred-items.md.
+- [Phase 05]: 05-04 turned the last Phase-5 RED test GREEN — Home greeting now reads childProfileProvider and renders the chosen fixed-set nickname LABEL (via ArabicText island) + chosen avatar circle (keyed homeAvatar_<id>), replacing hardcoded 'Welcome back, Layla.'. Scope-aware split (_GreetingHeader/_GreetingHeaderReader/_GreetingLayout) degrades to static greeting on no-scope/loading/error/null (T-05-07); resolveNicknameLabel(id) added to onboarding_data (ID->label in code); homeGreeting ARB is a {nickname} String template. PLAT-03 held. S1-03 "shown on home" closed end-to-end.
+- [Phase 05]: home_screen_test Test 4 (Journey nav must not navigate) stays deferred (deferred-items item 2) — stale vs commit 4d03e63 which intentionally unlocked Journey nav; not this plan's surface.
 
 ### Pending Todos
 
@@ -123,5 +126,5 @@ Items acknowledged and carried forward from previous milestone close:
 ## Session Continuity
 
 Last session: 2026-06-08
-Stopped at: Completed 05-02-PLAN.md — Wave 1 child-profile data foundation (S1-02/S1-03 GREEN)
-Resume file: .planning/phases/05-profiles-onboarding/05-02-SUMMARY.md
+Stopped at: Completed 05-04-PLAN.md — Wave 3 home greeting integration (S1-03 "shown on home" GREEN)
+Resume file: .planning/phases/05-profiles-onboarding/05-04-SUMMARY.md
