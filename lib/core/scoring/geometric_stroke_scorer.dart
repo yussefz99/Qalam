@@ -3,27 +3,20 @@ import 'dart:math' as math;
 import '../../models/letter.dart';
 import 'scoring_models.dart';
 import 'stroke_resampler.dart';
+import 'tolerances.dart';
 
 // ── Tuned thresholds (lenient first-cut — Phase 4 calibrates these) ──────────
 //
-// Keep ALL scoring knobs here with doc comments explaining the chosen value.
-
-/// Minimum number of raw input points for a stroke to be considered complete.
-/// A gesture ending below this count likely means the child lifted the pen
-/// before finishing.  This is a proxy for "arc-length below threshold" — Phase 4
-/// replaces it with a canvas-size-aware arc-length check once canvas dimensions
-/// flow into the scorer alongside the stroke points.
-const int _kMinRawPoints = 10;
-
-/// Number of equidistant points the child stroke is resampled to before the
-/// direction and curvature predicates run.  32 gives stable geometry well
-/// within the sub-300 ms latency budget.
-const int _kResampleN = 32;
-
-/// Maximum perpendicular distance from the best-fit chord (start→end line)
-/// in the normalised 0..1 unit box.  A child with a modest natural bow still
-/// passes at this lenient value; the curved-alif fixture peaks at ~0.3.
-const double _kMaxCurvature = 0.25;
+// The numeric knobs no longer live as file-level `const`s here: Plan 04-01 moved
+// them into the data-driven `Tolerances` class (SC#4), and Plan 04-02 threads a
+// `Tolerances` argument through `scoreStroke`. The doc-comment RATIONALE for each
+// value stays beside its `Tolerances.normal` field (tolerances.dart) so the
+// reasoning is not lost — `Tolerances.normal` IS the behavior-preserving anchor
+// (A5) equal to the former `_kMinRawPoints=10` / `_kResampleN=32` /
+// `_kMaxCurvature=0.25`.
+//
+// `scoreStroke` defaults to `Tolerances.normal` when no per-letter block is
+// supplied, so single-stroke alif callers are unaffected.
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -32,18 +25,24 @@ const double _kMaxCurvature = 0.25;
 ///
 /// [childStroke] is a list of [x, y] pixel-coordinate pairs in capture order.
 /// [reference] is the authored [StrokeSpec] in normalised 0..1 space.
+/// [tolerances] supplies the per-letter scoring knobs (resample count, raw-point
+/// floor, curvature ceiling); it defaults to [Tolerances.normal] — the locked
+/// behavior-preserving preset — so existing single-stroke callers (alif) keep
+/// scoring exactly as before (A5).
 StrokeResult scoreStroke(
   List<List<double>> childStroke,
-  StrokeSpec reference,
-) {
+  StrokeSpec reference, [
+  Tolerances tolerances = Tolerances.normal,
+]) {
   // Predicate 1 — strokeLengthBelowThreshold
   // Applied to raw input before resampling: too few points = pen lifted early.
-  if (strokeLengthBelowThreshold(childStroke)) {
+  if (strokeLengthBelowThreshold(childStroke, tolerances)) {
     return const StrokeResult(passed: false, mistakeId: MistakeId.tooShort);
   }
 
   // Resample and normalise for the geometric predicates.
-  final normalised = normalizeToUnitBox(resample(childStroke, _kResampleN));
+  final normalised =
+      normalizeToUnitBox(resample(childStroke, tolerances.resampleN));
 
   // Predicate 2 — strokeDirectionInverted
   if (strokeDirectionInverted(normalised, reference)) {
@@ -51,7 +50,7 @@ StrokeResult scoreStroke(
   }
 
   // Predicate 3 — strokeCurvatureExceedsThreshold
-  if (strokeCurvatureExceedsThreshold(normalised)) {
+  if (strokeCurvatureExceedsThreshold(normalised, tolerances)) {
     return const StrokeResult(passed: false, mistakeId: MistakeId.tooCurved);
   }
 
@@ -86,9 +85,15 @@ String? feedbackForMistake(MistakeId id, Letter letter) {
 /// Returns true if [pts] has too few raw input points to constitute a complete
 /// stroke (child likely lifted the pen before finishing).
 ///
+/// The floor comes from [tolerances] (was the file-level `_kMinRawPoints` const;
+/// defaults to [Tolerances.normal]'s 10 — A5).
+///
 /// Named [strokeLengthBelowThreshold] to match `letters.json` check string.
-bool strokeLengthBelowThreshold(List<List<double>> pts) =>
-    pts.length < _kMinRawPoints;
+bool strokeLengthBelowThreshold(
+  List<List<double>> pts, [
+  Tolerances tolerances = Tolerances.normal,
+]) =>
+    pts.length < tolerances.minRawPoints;
 
 /// Returns true if the child stroke's direction disagrees with [reference].
 ///
@@ -121,10 +126,15 @@ bool strokeDirectionInverted(
 }
 
 /// Returns true if the maximum perpendicular distance from the chord
-/// (start→end line) through [pts] exceeds [_kMaxCurvature] in unit-box space.
+/// (start→end line) through [pts] exceeds the curvature ceiling in
+/// [tolerances] (was the file-level `_kMaxCurvature` const; defaults to
+/// [Tolerances.normal]'s 0.25 — A5) in unit-box space.
 ///
 /// Named [strokeCurvatureExceedsThreshold] to match `letters.json` check string.
-bool strokeCurvatureExceedsThreshold(List<List<double>> pts) {
+bool strokeCurvatureExceedsThreshold(
+  List<List<double>> pts, [
+  Tolerances tolerances = Tolerances.normal,
+]) {
   if (pts.length < 3) return false;
 
   final ax = pts.first[0], ay = pts.first[1];
@@ -143,5 +153,5 @@ bool strokeCurvatureExceedsThreshold(List<List<double>> pts) {
     final d = cross.abs() / len;
     if (d > maxDist) maxDist = d;
   }
-  return maxDist > _kMaxCurvature;
+  return maxDist > tolerances.maxCurvature;
 }

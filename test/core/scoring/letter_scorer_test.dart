@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:qalam/core/recognition/handwriting_recognizer.dart';
+import 'package:qalam/core/scoring/letter_scorer.dart';
 import 'package:qalam/core/scoring/scoring_models.dart';
 import 'package:qalam/core/scoring/stroke_validation.dart';
 import 'package:qalam/core/scoring/tolerances.dart';
@@ -197,57 +198,66 @@ void main() {
   // `scoreLetter` in lib/core/scoring/letter_scorer.dart, removes the `skip:`,
   // and wires the real call. The expectations below ARE the SC#1/SC#2/D-04
   // contract.
-  group('LetterScorer.scoreLetter — SC#1 / SC#2 / D-04 contract (RED, Plan 02)', () {
-    const planTwo = 'RED: scoreLetter is implemented in Plan 04-02';
+  group('LetterScorer.scoreLetter — SC#1 / SC#2 / D-04 contract (Plan 02)', () {
+    setUpAll(() {
+      // mocktail needs a registered fallback for the List<List<double>> arg type
+      // used with any() in the recognizer stubs below.
+      registerFallbackValue(<List<double>>[]);
+    });
 
-    test('SC#1 — wrong stroke COUNT → MistakeId.wrongStrokeCount', () {
+    test('SC#1 — wrong stroke COUNT → MistakeId.wrongStrokeCount', () async {
       // Given a baa (expects 2 strokes) but the child drew only 1:
-      //   final result = scoreLetter([goodBaa()[0]], baaLetter());
-      //   expect(result.passed, isFalse);
-      //   expect(result.mistakeId, equals(MistakeId.wrongStrokeCount));
-      fail('not yet implemented');
-    }, skip: planTwo);
+      final result = await scoreLetter([goodBaa()[0]], baaLetter());
+      expect(result.passed, isFalse);
+      expect(result.mistakeId, equals(MistakeId.wrongStrokeCount));
+    });
 
-    test('SC#1 — wrong stroke ORDER (dot before body) → MistakeId.wrongStrokeOrder', () {
-      //   final dotFirst = [goodBaa()[1], goodBaa()[0]];
-      //   final result = scoreLetter(dotFirst, baaLetter());
-      //   expect(result.mistakeId, equals(MistakeId.wrongStrokeOrder));
-      fail('not yet implemented');
-    }, skip: planTwo);
+    test('SC#1 — wrong stroke ORDER (dot before body) → MistakeId.wrongStrokeOrder', () async {
+      final dotFirst = [goodBaa()[1], goodBaa()[0]];
+      final result = await scoreLetter(dotFirst, baaLetter());
+      expect(result.mistakeId, equals(MistakeId.wrongStrokeOrder));
+    });
 
-    test('SC#1 — taa-dots-when-shown-baa (dot above) → MistakeId.dotMisplaced', () {
-      //   final dotAbove = [goodBaa()[0], [[90.0, 40.0]]];
-      //   final result = scoreLetter(dotAbove, baaLetter());
-      //   expect(result.mistakeId, equals(MistakeId.dotMisplaced));
-      fail('not yet implemented');
-    }, skip: planTwo);
+    test('SC#1 — taa-dots-when-shown-baa (dot above) → MistakeId.dotMisplaced', () async {
+      final dotAbove = [
+        goodBaa()[0],
+        [
+          [90.0, 40.0]
+        ],
+      ];
+      final result = await scoreLetter(dotAbove, baaLetter());
+      expect(result.mistakeId, equals(MistakeId.dotMisplaced));
+    });
 
-    test('SC#2 — confidently-different ML Kit candidate → MistakeId.wrongLetterIdentity', () {
-      //   final fake = FakeHandwritingRecognizer();
-      //   when(() => fake.identify(any())).thenAnswer(
-      //     (_) async => const RecognitionResult(topCandidate: 'ك', confidence: 0.95));
-      //   final result = scoreLetter(goodBaa(), baaLetter(), recognizer: fake);
-      //   expect(result.mistakeId, equals(MistakeId.wrongLetterIdentity));
-      fail('not yet implemented');
-    }, skip: planTwo);
+    test('SC#1 — a good-faith baa passes (count + order + dot all correct)', () async {
+      final result = await scoreLetter(goodBaa(), baaLetter());
+      expect(result.passed, isTrue);
+      expect(result.mistakeId, isNull);
+    });
 
-    test('D-04 — low-confidence/wrong candidate does NOT override a geometric pass', () {
-      //   final fake = FakeHandwritingRecognizer();
-      //   when(() => fake.identify(any())).thenAnswer(
-      //     (_) async => const RecognitionResult(topCandidate: 'ك', confidence: 0.10));
-      //   final result = scoreLetter(goodBaa(), baaLetter(), recognizer: fake);
-      //   expect(result.passed, isTrue); // advisory only — weak evidence ignored
-      fail('not yet implemented');
-    }, skip: planTwo);
+    test('SC#2 — confidently-different ML Kit candidate → MistakeId.wrongLetterIdentity', () async {
+      final fake = FakeHandwritingRecognizer();
+      when(() => fake.identify(any())).thenAnswer(
+          (_) async => const RecognitionResult(topCandidate: 'ك', confidence: 0.95));
+      final result = await scoreLetter(goodBaa(), baaLetter(), recognizer: fake);
+      expect(result.mistakeId, equals(MistakeId.wrongLetterIdentity));
+    });
 
-    test('whole-letter latency budget — scoreLetter completes in < 50 ms', () {
-      //   final sw = Stopwatch()..start();
-      //   scoreLetter(goodBaa(), baaLetter());
-      //   sw.stop();
-      //   expect(sw.elapsedMilliseconds, lessThan(50),
-      //     reason: 'sub-300 ms stylus-up feedback budget');
-      fail('not yet implemented');
-    }, skip: planTwo);
+    test('D-04 — low-confidence/wrong candidate does NOT override a geometric pass', () async {
+      final fake = FakeHandwritingRecognizer();
+      when(() => fake.identify(any())).thenAnswer(
+          (_) async => const RecognitionResult(topCandidate: 'ك', confidence: 0.10));
+      final result = await scoreLetter(goodBaa(), baaLetter(), recognizer: fake);
+      expect(result.passed, isTrue); // advisory only — weak evidence ignored
+    });
+
+    test('whole-letter latency budget — scoreLetter completes in < 50 ms', () async {
+      final sw = Stopwatch()..start();
+      await scoreLetter(goodBaa(), baaLetter());
+      sw.stop();
+      expect(sw.elapsedMilliseconds, lessThan(50),
+          reason: 'sub-300 ms stylus-up feedback budget');
+    });
   });
 
   // Keep the fake + fixtures + contract enum referenced so they are not
