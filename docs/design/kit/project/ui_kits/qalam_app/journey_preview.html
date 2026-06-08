@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Qalam — Journey Map Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --parchment:      #FAF6EE;
+  --soft-aqua:      #EAF4F4;
+  --ink-teal:       #168A8F;
+  --deep-ink:       #0E5B5F;
+  --gold-ink:       #F2A60C;
+  --leaf:           #3FB984;
+  --ink-charcoal:   #222A2E;
+  --slate:          #5C6B70;
+  --parchment-deep: #F3ECDC;
+  --parchment-edge: #E8DFC9;
+  --aqua-edge:      #D6E8E8;
+  --teal-tint:      #DCEEEF;
+  --gold-tint:      #FCEBC6;
+  --font-display:        'Fredoka', system-ui, sans-serif;
+  --font-body:           'Nunito', system-ui, sans-serif;
+  --font-arabic-display: 'Cairo', 'Noto Naskh Arabic', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  margin: 0; padding: 0; width: 100%; height: 100%;
+  background: #1a1d1f; overflow: hidden;
+  font-family: var(--font-body);
+}
+
+/* ── Stage — fixed at viewport center, JS handles scale ── */
+.stage {
+  width: 1280px; height: 900px;
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  transform-origin: center center;
+  overflow: hidden;
+  background: var(--parchment);
+  box-shadow: 0 30px 80px -20px rgba(0,0,0,.65);
+  border-radius: 8px;
+}
+
+/* ── AppBar ── */
+.appbar {
+  position: absolute; top: 0; left: 0; right: 0; height: 84px; z-index: 20;
+  background: var(--parchment); border-bottom: 1px solid var(--parchment-edge);
+  display: flex; align-items: center; gap: 16px; padding: 0 32px;
+}
+.av {
+  width: 56px; height: 56px; border-radius: 50%; flex-shrink: 0;
+  background: var(--teal-tint); border: 2px solid var(--ink-teal);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 600; font-size: 24px; color: var(--deep-ink);
+}
+.child-name  { font-family: var(--font-display); font-weight: 600; font-size: 22px; color: var(--ink-charcoal); line-height: 1.1; }
+.child-grade { font-family: var(--font-body); font-size: 14px; color: var(--slate); }
+.spacer { flex: 1; }
+.star-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--gold-tint); color: #8C5C04;
+  height: 48px; padding: 0 20px; border-radius: 999px;
+  font-family: var(--font-display); font-weight: 600; font-size: 22px;
+}
+.icon-btn {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--soft-aqua); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; color: var(--deep-ink);
+}
+
+/* ── NavRail ── */
+.navrail {
+  position: absolute; top: 84px; left: 0; bottom: 0; width: 100px; z-index: 10;
+  background: var(--parchment); border-right: 1px solid var(--parchment-edge);
+  display: flex; flex-direction: column; align-items: center; padding-top: 24px; gap: 10px;
+}
+.nav-item {
+  width: 76px; min-height: 76px; border-radius: 22px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+  border: none; background: transparent; cursor: pointer;
+  color: var(--slate); font-family: var(--font-display); font-weight: 500; font-size: 13px;
+}
+.nav-item.active { background: var(--teal-tint); color: var(--deep-ink); }
+.nav-item svg { width: 28px; height: 28px; }
+
+/* ── Content (no scroll — all fits on screen) ── */
+.content {
+  position: absolute; top: 84px; left: 100px; right: 0; bottom: 0;
+  overflow: hidden;
+}
+
+/* ── Inner canvas ── */
+.inner {
+  position: relative; width: 1180px; height: 816px;
+}
+
+/* ── Level 1 header ── */
+.level-header {
+  position: absolute; left: 590px; top: 20px;
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: 12px;
+  background: var(--teal-tint); border: 2px solid var(--ink-teal);
+  padding: 10px 28px; border-radius: 999px;
+}
+.lv-num   { font-family: var(--font-display); font-weight: 700; font-size: 20px; color: var(--deep-ink); }
+.lv-title { font-family: var(--font-body); font-weight: 700; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--slate); }
+.lv-prog  { font-family: var(--font-display); font-size: 15px; color: var(--slate); padding-left: 10px; border-left: 1px solid var(--aqua-edge); }
+
+/* ── Letter nodes ── */
+.node {
+  position: absolute; transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; gap: 7px; z-index: 5;
+}
+.circle {
+  width: 68px; height: 68px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-arabic-display); font-size: 32px; direction: rtl; line-height: 1;
+  position: relative; flex-shrink: 0;
+}
+.circle.done {
+  background: var(--leaf); color: #fff;
+  box-shadow: 0 5px 0 #2A8A60;
+}
+.circle.now {
+  background: var(--ink-teal); color: #fff;
+  box-shadow: 0 5px 0 var(--deep-ink);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+.circle.soon {
+  background: #fff; color: var(--slate);
+  border: 2.5px dashed var(--aqua-edge);
+}
+.node-label {
+  font-family: var(--font-display); font-weight: 600; font-size: 13px;
+  color: var(--ink-charcoal); text-align: center; white-space: nowrap;
+}
+.node-label.soon { color: var(--slate); }
+
+/* Stars badge on completed nodes */
+.stars {
+  position: absolute; top: -4px; right: -5px;
+  display: flex; gap: 1px;
+}
+.star { color: var(--gold-ink); font-size: 11px; line-height: 1; }
+
+/* "Today" chip above current node */
+.today-chip {
+  position: absolute; top: -28px; left: 50%; transform: translateX(-50%);
+  background: var(--ink-teal); color: #fff;
+  font-family: var(--font-body); font-weight: 700; font-size: 10px; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 3px 10px; border-radius: 999px; white-space: nowrap;
+}
+
+/* ── Checkpoint ── */
+.checkpoint {
+  position: absolute; transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 5;
+}
+.checkpoint-box {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 26px; border-radius: 20px;
+  background: var(--parchment-deep); border: 2px dashed var(--parchment-edge);
+  color: var(--slate); font-family: var(--font-display); font-weight: 600; font-size: 17px;
+  box-shadow: 0 4px 0 var(--parchment-edge);
+}
+.checkpoint-sub {
+  font-family: var(--font-body); font-size: 13px; color: var(--slate); opacity: 0.7;
+}
+
+/* ── Level 2 locked ── */
+.level2 {
+  position: absolute; transform: translateX(-50%);
+  width: 400px; padding: 18px 28px; border-radius: 24px;
+  background: var(--parchment-deep); border: 2px dashed var(--parchment-edge);
+  display: flex; align-items: center; gap: 14px;
+  opacity: 0.72;
+}
+.level2-text .level2-title { font-family: var(--font-display); font-weight: 700; font-size: 19px; color: var(--slate); }
+.level2-text .level2-sub   { font-family: var(--font-body); font-size: 13px; color: var(--slate); opacity: 0.75; margin-top: 2px; }
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 5px 0 var(--deep-ink), 0 0 0 0 rgba(22,138,143,0.45); }
+  55%       { box-shadow: 0 5px 0 var(--deep-ink), 0 0 0 14px rgba(22,138,143,0); }
+}
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+
+  <!-- ── AppBar ── -->
+  <div class="appbar">
+    <div class="av">L</div>
+    <div>
+      <div class="child-name">Layla</div>
+      <div class="child-grade">Grade 3</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="star-chip">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+      </svg>
+      39
+    </div>
+    <div class="icon-btn">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ── NavRail ── -->
+  <div class="navrail">
+    <button class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      Home
+    </button>
+    <button class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/>
+        <line x1="9" y1="3" x2="9" y2="18"/>
+        <line x1="15" y1="6" x2="15" y2="21"/>
+      </svg>
+      Journey
+    </button>
+    <button class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+      Parent
+    </button>
+  </div>
+
+  <!-- ── Content area ── -->
+  <div class="content">
+    <div class="inner">
+
+      <!-- Level 1 header -->
+      <div class="level-header">
+        <span class="lv-num">Level 1</span>
+        <span class="lv-title">Letters</span>
+        <span class="lv-prog">3 of 28 mastered</span>
+      </div>
+
+      <!--
+        Layout: 7 nodes per row × 4 rows = 28 letters, all on one screen.
+
+        X positions (7 evenly across 1180px):
+          85, 254, 422, 590, 758, 926, 1094
+
+        Row directions (Arabic feels natural starting right):
+          Row 1  R→L  y=160   letters  1–7   (Alif … Khaa)
+          Row 2  L→R  y=290   letters  8–14  (Dal  … Saad)
+          Row 3  R→L  y=420   letters 15–21  (Daad … Qaf)
+          Row 4  L→R  y=550   letters 22–28  (Kaf  … Ya)
+
+        Checkpoint  at (590, 660)
+        Level 2     at (590, 750)
+      -->
+
+      <!-- ── SVG winding path ── -->
+      <svg style="position:absolute;top:0;left:0;width:1180px;height:816px;pointer-events:none;" overflow="visible">
+
+        <!-- Full grey trail -->
+        <path
+          d="M 1094,160
+             L 125,160  Q 85,160  85,200
+             L 85,250   Q 85,290  125,290
+             L 1054,290 Q 1094,290 1094,330
+             L 1094,380 Q 1094,420 1054,420
+             L 125,420  Q 85,420  85,460
+             L 85,510   Q 85,550  125,550
+             L 1094,550
+             C 1094,625 840,660 590,660"
+          fill="none" stroke="#D6E8E8" stroke-width="22"
+          stroke-linecap="round" stroke-linejoin="round"/>
+
+        <!-- Green completed trail (letters 1–3: Alif 1094, Baa 926, Taa 758) -->
+        <path
+          d="M 1094,160 L 758,160"
+          fill="none" stroke="#3FB984" stroke-width="22"
+          stroke-linecap="round" opacity="0.6"/>
+
+      </svg>
+
+      <!-- ════════════════════════════════════════════════ -->
+      <!--  ROW 1  right → left  y=160   letters 1–7      -->
+      <!-- ════════════════════════════════════════════════ -->
+
+      <!-- 1 Alif — complete -->
+      <div class="node" style="left:1094px;top:160px;">
+        <div class="circle done">ا
+          <div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+        </div>
+        <div class="node-label">Alif</div>
+      </div>
+
+      <!-- 2 Baa — complete -->
+      <div class="node" style="left:926px;top:160px;">
+        <div class="circle done">ب
+          <div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+        </div>
+        <div class="node-label">Baa</div>
+      </div>
+
+      <!-- 3 Taa — complete -->
+      <div class="node" style="left:758px;top:160px;">
+        <div class="circle done">ت
+          <div class="stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+        </div>
+        <div class="node-label">Taa</div>
+      </div>
+
+      <!-- 4 Thaa — CURRENT TODAY -->
+      <div class="node" style="left:590px;top:160px;">
+        <div class="circle now">
+          <div class="today-chip">Today</div>
+          ث
+        </div>
+        <div class="node-label">Thaa</div>
+      </div>
+
+      <!-- 5 Jeem — future -->
+      <div class="node" style="left:422px;top:160px;">
+        <div class="circle soon">ج</div>
+        <div class="node-label soon">Jeem</div>
+      </div>
+
+      <!-- 6 Haa — future -->
+      <div class="node" style="left:254px;top:160px;">
+        <div class="circle soon">ح</div>
+        <div class="node-label soon">Haa</div>
+      </div>
+
+      <!-- 7 Khaa — future -->
+      <div class="node" style="left:85px;top:160px;">
+        <div class="circle soon">خ</div>
+        <div class="node-label soon">Khaa</div>
+      </div>
+
+      <!-- ════════════════════════════════════════════════ -->
+      <!--  ROW 2  left → right  y=290   letters 8–14     -->
+      <!-- ════════════════════════════════════════════════ -->
+
+      <div class="node" style="left:85px;top:290px;">
+        <div class="circle soon">د</div>
+        <div class="node-label soon">Dal</div>
+      </div>
+      <div class="node" style="left:254px;top:290px;">
+        <div class="circle soon">ذ</div>
+        <div class="node-label soon">Dhal</div>
+      </div>
+      <div class="node" style="left:422px;top:290px;">
+        <div class="circle soon">ر</div>
+        <div class="node-label soon">Ra</div>
+      </div>
+      <div class="node" style="left:590px;top:290px;">
+        <div class="circle soon">ز</div>
+        <div class="node-label soon">Zay</div>
+      </div>
+      <div class="node" style="left:758px;top:290px;">
+        <div class="circle soon">س</div>
+        <div class="node-label soon">Seen</div>
+      </div>
+      <div class="node" style="left:926px;top:290px;">
+        <div class="circle soon">ش</div>
+        <div class="node-label soon">Sheen</div>
+      </div>
+      <div class="node" style="left:1094px;top:290px;">
+        <div class="circle soon">ص</div>
+        <div class="node-label soon">Saad</div>
+      </div>
+
+      <!-- ════════════════════════════════════════════════ -->
+      <!--  ROW 3  right → left  y=420   letters 15–21    -->
+      <!-- ════════════════════════════════════════════════ -->
+
+      <div class="node" style="left:1094px;top:420px;">
+        <div class="circle soon">ض</div>
+        <div class="node-label soon">Daad</div>
+      </div>
+      <div class="node" style="left:926px;top:420px;">
+        <div class="circle soon">ط</div>
+        <div class="node-label soon">Taa</div>
+      </div>
+      <div class="node" style="left:758px;top:420px;">
+        <div class="circle soon">ظ</div>
+        <div class="node-label soon">Dhaa</div>
+      </div>
+      <div class="node" style="left:590px;top:420px;">
+        <div class="circle soon">ع</div>
+        <div class="node-label soon">Ain</div>
+      </div>
+      <div class="node" style="left:422px;top:420px;">
+        <div class="circle soon">غ</div>
+        <div class="node-label soon">Ghain</div>
+      </div>
+      <div class="node" style="left:254px;top:420px;">
+        <div class="circle soon">ف</div>
+        <div class="node-label soon">Fa</div>
+      </div>
+      <div class="node" style="left:85px;top:420px;">
+        <div class="circle soon">ق</div>
+        <div class="node-label soon">Qaf</div>
+      </div>
+
+      <!-- ════════════════════════════════════════════════ -->
+      <!--  ROW 4  left → right  y=550   letters 22–28    -->
+      <!-- ════════════════════════════════════════════════ -->
+
+      <div class="node" style="left:85px;top:550px;">
+        <div class="circle soon">ك</div>
+        <div class="node-label soon">Kaf</div>
+      </div>
+      <div class="node" style="left:254px;top:550px;">
+        <div class="circle soon">ل</div>
+        <div class="node-label soon">Lam</div>
+      </div>
+      <div class="node" style="left:422px;top:550px;">
+        <div class="circle soon">م</div>
+        <div class="node-label soon">Meem</div>
+      </div>
+      <div class="node" style="left:590px;top:550px;">
+        <div class="circle soon">ن</div>
+        <div class="node-label soon">Noon</div>
+      </div>
+      <div class="node" style="left:758px;top:550px;">
+        <div class="circle soon">ه</div>
+        <div class="node-label soon">Ha</div>
+      </div>
+      <div class="node" style="left:926px;top:550px;">
+        <div class="circle soon">و</div>
+        <div class="node-label soon">Waw</div>
+      </div>
+      <div class="node" style="left:1094px;top:550px;">
+        <div class="circle soon">ي</div>
+        <div class="node-label soon">Ya</div>
+      </div>
+
+      <!-- ── Level 1 Quiz checkpoint ── -->
+      <div class="checkpoint" style="left:590px;top:660px;">
+        <div class="checkpoint-box">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <rect x="3" y="11" width="18" height="11" rx="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          Level 1 Quiz
+        </div>
+        <div class="checkpoint-sub">Complete all 28 letters to unlock</div>
+      </div>
+
+      <!-- ── Level 2 locked banner ── -->
+      <div class="level2" style="left:590px;top:752px;">
+        <div style="font-size:28px;flex-shrink:0;">🔒</div>
+        <div class="level2-text">
+          <div class="level2-title">Level 2 — Words</div>
+          <div class="level2-sub">Unlocks after completing the Level 1 Quiz</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  (function () {
+    function fit() {
+      const stage = document.getElementById('stage');
+      const sx = window.innerWidth  / 1280;
+      const sy = window.innerHeight / 900;
+      const s  = Math.min(sx, sy, 1);
+      // combine centering + scale in one transform so they don't fight each other
+      stage.style.transform = `translate(-50%, -50%) scale(${s})`;
+    }
+    fit();
+    window.addEventListener('resize', fit);
+  })();
+</script>
+
+</body>
+</html>

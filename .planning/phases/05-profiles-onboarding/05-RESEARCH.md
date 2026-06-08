@@ -539,20 +539,21 @@ handles injected-vs-owned executors. [VERIFIED: lib/data/app_database.dart `_own
 | A3 | The boot-time synchronous gate read (vs async-in-redirect) is the preferred implementation. | Pattern 3 | Low — CONTEXT marks the implementation strategy as Claude's discretion; this is the simpler, loop-safe option. Planner may choose an alternative. |
 | A4 | Real avatar art is a pure asset swap (placeholder IDs `avatar_1..6` are stable). | User Constraints | Low — CONTEXT states this explicitly. |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **`startingLessonId` namespace (letter id vs lesson id).**
    - What we know: `letters.json` uses `alif`; `lessons.json` uses `lesson_01`; CONTEXT seeds the
      column with `alif`. The one authored lesson points at `alif`.
    - What's unclear: Whether Phase 6 expects to look this value up as a letter id or a lesson id.
-   - Recommendation: Store `alif` (letter id) per CONTEXT; add a code comment + flag for Phase 6 to
-     confirm. Keep the resolver in one place so a later rename is one edit.
+   - **RESOLVED:** Store `alif` (letter id) per CONTEXT; add a code comment + flag for Phase 6 to
+     confirm. Keep the resolver in one place so a later rename is one edit. (Implemented in plan 05-02.)
 
 2. **Greeting: static l10n string vs `{nickname}` placeholder.**
    - What we know: `homeGreeting` is currently a fixed string with a literal name.
    - What's unclear: Whether to localize a template or compose in the widget.
-   - Recommendation: Add a `{nickname}` placeholder ARB key and compose in the widget (nickname
+   - **RESOLVED:** Add a `{nickname}` placeholder ARB key and compose in the widget (nickname
      comes from the profile provider, label from the ID→label map). Keep a literal fallback.
+     (Implemented in plan 05-04.)
 
 ## Environment Availability
 

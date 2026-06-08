@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Qalam — Onboarding Preview (Phase 5)</title>
+<link rel="stylesheet" href="../../colors_and_type.css" />
+<style>
+  /* ---- Tablet frame: landscape Android tablet, ~1180×816 working area ---- */
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    background: #d9cfbb; /* darker mat so the parchment screen reads as the device */
+    box-sizing: border-box;
+  }
+
+  .tablet {
+    width: 1180px;
+    height: 816px;
+    max-width: 100%;
+    background: var(--bg);
+    border-radius: 28px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Soft parchment texture wash at the edges */
+  .tablet::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(120% 90% at 50% -10%, var(--teal-tint) 0%, transparent 45%),
+      radial-gradient(80% 60% at 50% 120%, var(--gold-tint) 0%, transparent 50%);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  /* ---- The setup card ---- */
+  .card {
+    position: relative;
+    width: 620px;
+    max-height: 740px;
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-md);
+    padding: 44px 48px 40px;
+    box-sizing: border-box;
+    overflow-y: auto;
+  }
+
+  /* Mascot + welcome header */
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .mascot {
+    width: 88px;
+    height: 88px;
+    border-radius: var(--radius-pill);
+    background: var(--teal-tint);
+    border: 3px solid var(--teal-wash);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 44px;
+    margin-bottom: 16px;
+  }
+  .header h1 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--fz-34);
+    color: var(--fg);
+    margin: 0 0 8px;
+  }
+  .header p {
+    font-family: var(--font-body);
+    font-size: var(--fz-18);
+    color: var(--fg-muted);
+    margin: 0;
+    max-width: 420px;
+  }
+
+  /* Field blocks */
+  .field { margin-bottom: 28px; }
+  .field-label {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: var(--fz-16);
+    color: var(--fg);
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .text-input {
+    width: 100%;
+    box-sizing: border-box;
+    height: 64px;
+    padding: 0 20px;
+    font-family: var(--font-body);
+    font-size: var(--fz-20);
+    color: var(--fg);
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    outline: none;
+  }
+  .text-input::placeholder { color: var(--fg-muted); opacity: 0.7; }
+  .text-input:focus { border-color: var(--primary); background: var(--surface-raised); }
+
+  /* Grade chips */
+  .chips { display: flex; flex-wrap: wrap; gap: 12px; }
+  .chip {
+    height: 56px;
+    padding: 0 22px;
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--fz-20);
+    color: var(--fg-muted);
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    user-select: none;
+  }
+  .chip.selected {
+    color: var(--fg-on-primary);
+    background: var(--primary);
+    border-color: var(--primary);
+  }
+
+  /* Avatar grid (6, 3 across) */
+  .avatars {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  .avatar {
+    aspect-ratio: 1;
+    border-radius: var(--radius-pill);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 40px;
+    color: #fff;
+    cursor: pointer;
+    border: 4px solid transparent;
+    position: relative;
+  }
+  .avatar.selected {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--teal-tint);
+  }
+  .avatar.selected::after {
+    content: "✓";
+    position: absolute;
+    bottom: -6px; right: -6px;
+    width: 30px; height: 30px;
+    background: var(--primary);
+    color: #fff;
+    border: 3px solid var(--surface-raised);
+    border-radius: var(--radius-pill);
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  /* Placeholder avatar colors — real illustrations swap in later */
+  .a1 { background: #168A8F; }
+  .a2 { background: #F2A60C; }
+  .a3 { background: #3FB984; }
+  .a4 { background: #FF8A6B; }
+  .a5 { background: #7C6BD6; }
+  .a6 { background: #E0608A; }
+
+  /* CTA */
+  .cta {
+    width: 100%;
+    height: 72px;
+    margin-top: 12px;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--fz-24);
+    color: var(--fg-on-primary);
+    background: var(--primary);
+    border: none;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-button);
+    cursor: pointer;
+  }
+  .cta:active { box-shadow: var(--shadow-button-press); transform: translateY(3px); }
+
+  .footnote {
+    margin: 18px 0 0;
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: var(--fz-14);
+    color: var(--fg-muted);
+  }
+
+  /* Annotation tag for the preview only */
+  .preview-note {
+    position: absolute;
+    top: 16px; left: 16px;
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--fg-muted);
+    background: var(--bg-deep);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-pill);
+    padding: 6px 14px;
+  }
+</style>
+</head>
+<body>
+  <div class="tablet">
+    <div class="preview-note">Phase 5 · Onboarding · first-launch only · MOCKUP (placeholder avatars)</div>
+
+    <div class="card">
+      <div class="header">
+        <div class="mascot">🪶</div>
+        <h1>Let's set up your child</h1>
+        <p>Qalam will be their patient writing teacher. Tell us a little about them to begin.</p>
+      </div>
+
+      <!-- Name -->
+      <div class="field">
+        <label class="field-label">Child's name</label>
+        <input class="text-input" type="text" placeholder="e.g. Layla" value="Layla" />
+      </div>
+
+      <!-- Grade -->
+      <div class="field">
+        <label class="field-label">Grade</label>
+        <div class="chips">
+          <span class="chip">KG</span>
+          <span class="chip selected">Grade 1</span>
+          <span class="chip">Grade 2</span>
+          <span class="chip">Grade 3</span>
+          <span class="chip">Grade 4+</span>
+        </div>
+      </div>
+
+      <!-- Avatar -->
+      <div class="field">
+        <label class="field-label">Pick an avatar</label>
+        <div class="avatars">
+          <div class="avatar a1 selected">L</div>
+          <div class="avatar a2">A</div>
+          <div class="avatar a3">M</div>
+          <div class="avatar a4">S</div>
+          <div class="avatar a5">N</div>
+          <div class="avatar a6">Y</div>
+        </div>
+      </div>
+
+      <button class="cta">Let's go →</button>
+      <p class="footnote">You can change this anytime in the Parent area.</p>
+    </div>
+  </div>
+</body>
+</html>
