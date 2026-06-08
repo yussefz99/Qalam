@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 4 context gathered
-last_updated: "2026-06-08T13:20:58.038Z"
+stopped_at: Completed 04-02-PLAN.md (scoreLetter spine)
+last_updated: "2026-06-08T13:29:22.302Z"
 last_activity: 2026-06-08
 progress:
   total_phases: 13
   completed_phases: 6
   total_plans: 30
-  completed_plans: 25
+  completed_plans: 26
   percent: 46
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 04 (scoring-quality-calibration) — EXECUTING
-Plan: 2 of 6
+Plan: 3 of 6
 Status: Ready to execute
 Last activity: 2026-06-08
 
@@ -57,6 +57,7 @@ Progress: [██░░░░░░░░] 20% (2 of 10 phases complete)
 | Phase 01 P02 | ~40min | 3 tasks | 20 files |
 | Phase 01 P03 | ~25min | 3 tasks | 7 files |
 | Phase 04 P01 | 6 | 2 tasks | 9 files |
+| Phase 04 P02 | 5 | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -81,6 +82,9 @@ Recent decisions affecting current work:
 - [Phase 02]: lib/models/*.dart must not import from lib/data/ or lib/features/ — pure immutable domain types only.
 - [Phase ?]: [Phase 04]: Tolerances are data not code — normal preset == today's scorer constants (A5); loose/strict move only maxCurvature (0.35/0.18) for now
 - [Phase ?]: [Phase 04]: New whole-letter MistakeId values (count/order/dot/identity) keep enum-name == commonMistakes[].check; LetterResult mirrors StrokeResult; validateTolerances added as V5 sibling
+- [Phase 04]: scoreLetter is the pure-Dart whole-letter spine (count→order→shape→combined-bbox dot→advisory ML Kit gate); returns Future<LetterResult> because the D-04 identity gate is async
+- [Phase 04]: scoreStroke now reads Tolerances (default Tolerances.normal, A5 behavior-preserving); file-level threshold consts removed, predicate names unchanged (check-string contract)
+- [Phase 04]: Dot position uses whole-letter combined-bbox y-centroid (Pitfall 2) so baa-dot-below vs taa-dots-above survives normalization; ML Kit gate advisory-only with a 0.5 confidence floor (Pitfall 1)
 
 ### Pending Todos
 
@@ -113,6 +117,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-08T13:20:34.042Z
-Stopped at: Phase 4 context gathered
+Last session: 2026-06-08T13:29:22.298Z
+Stopped at: Completed 04-02-PLAN.md (scoreLetter spine)
 Resume file: None
