@@ -37,6 +37,22 @@ const List<String> _directions = <String>[
   'tap',
 ];
 
+/// The calibration failure taxonomy (D-02, RESEARCH §Calibration Methodology
+/// step 1). `good` = a clean correct attempt; the rest name common mistakes the
+/// scorer MUST keep rejecting. `taa_when_shown_baa` is the D-01-specific
+/// right-body / wrong-dot-side mistake (the ب↔ت confusion). This is the list
+/// the label selector offers; it mirrors `kCalibrationLabels` in
+/// calibration_fixtures.dart so authored fixtures and the harness agree.
+const List<String> kCalibrationLabels = <String>[
+  'good',
+  'wrong_order',
+  'wrong_direction',
+  'wrong_count',
+  'scribble',
+  'wrong_letter',
+  'taa_when_shown_baa',
+];
+
 /// One traced + tagged stroke held in memory while authoring.
 class _AuthoredStroke {
   _AuthoredStroke({
@@ -61,6 +77,9 @@ class AuthoringScreen extends ConsumerStatefulWidget {
   static const Key canvasKey = Key('authoring-canvas');
   static const Key exportButtonKey = Key('authoring-export-button');
   static const Key exportFieldKey = Key('authoring-export-field');
+  static const Key letterIdFieldKey = Key('authoring-letter-id-field');
+  static const Key labelSelectorKey = Key('authoring-label-selector');
+  static const Key exportLabeledButtonKey = Key('authoring-export-labeled-button');
 
   @override
   ConsumerState<AuthoringScreen> createState() => _AuthoringScreenState();
@@ -69,6 +88,14 @@ class AuthoringScreen extends ConsumerStatefulWidget {
 class _AuthoringScreenState extends ConsumerState<AuthoringScreen> {
   /// The faint glyph being traced over (defaults to alif).
   String _glyph = 'ا';
+
+  /// The letter id stamped onto a labeled calibration fixture (D-02). Defaults
+  /// to baa — the D-01 calibration letter whose dot mistakes we encode first.
+  String _letterId = 'baa';
+
+  /// The calibration label applied to the current capture when exported as a
+  /// labeled fixture (the failure taxonomy — see [kCalibrationLabels]).
+  String _label = 'good';
 
   /// Completed + tagged strokes, plus the in-progress raw point list.
   final List<_AuthoredStroke> _strokes = <_AuthoredStroke>[];
@@ -131,19 +158,37 @@ class _AuthoringScreenState extends ConsumerState<AuthoringScreen> {
         _exported = '[]';
       });
 
+  List<CapturedStroke> _captured() => _strokes
+      .map((s) => CapturedStroke(
+            order: s.order,
+            label: s.label,
+            type: s.type,
+            direction: s.direction,
+            points:
+                s.points.map((o) => <double>[o.dx, o.dy]).toList(growable: false),
+          ))
+      .toList();
+
   void _export() {
-    final captured = _strokes
-        .map((s) => CapturedStroke(
-              order: s.order,
-              label: s.label,
-              type: s.type,
-              direction: s.direction,
-              points: s.points
-                  .map((o) => <double>[o.dx, o.dy])
-                  .toList(growable: false),
-            ))
-        .toList();
-    setState(() => _exported = exportReferenceStrokesJson(captured));
+    setState(() => _exported = exportReferenceStrokesJson(_captured()));
+  }
+
+  /// Exports the current capture as a LABELED calibration fixture (D-02): the
+  /// selected [_letterId] + [_label] + the whole-letter normalized strokes, in
+  /// the `calibration_fixtures.dart` shape — NOT the `referenceStrokes`
+  /// fragment. Reuses the SAME combined-bbox `normalizeToStrokeSpecs` path the
+  /// orchestrator's dot-position check relies on (Pitfall 2), so the exported
+  /// fixture lives in the exact 0..1 space `scoreLetter` consumes.
+  void _exportLabeled() {
+    // normalizeToStrokeSpecs is the shared whole-letter combined-bbox
+    // normalization (authoring_export.dart) — same path used for reference
+    // export and by the labeled-fixture serializer below.
+    final specs = normalizeToStrokeSpecs(_captured());
+    setState(() => _exported = exportLabeledFixtureJson(
+          letterId: _letterId,
+          label: _label,
+          specs: specs,
+        ));
   }
 
   @override
@@ -178,6 +223,18 @@ class _AuthoringScreenState extends ConsumerState<AuthoringScreen> {
                       textAlign: TextAlign.center,
                       onChanged: (v) =>
                           setState(() => _glyph = v.isEmpty ? ' ' : v),
+                    ),
+                  ),
+                  const SizedBox(width: QalamSpace.space4),
+                  Text('Letter id:', style: QalamTextStyles.label),
+                  const SizedBox(width: QalamSpace.space3),
+                  SizedBox(
+                    width: 120,
+                    child: TextFormField(
+                      key: AuthoringScreen.letterIdFieldKey,
+                      initialValue: _letterId,
+                      onChanged: (v) =>
+                          setState(() => _letterId = v.isEmpty ? 'baa' : v),
                     ),
                   ),
                 ],
@@ -233,8 +290,11 @@ class _AuthoringScreenState extends ConsumerState<AuthoringScreen> {
             _TagAndExportPanel(
               strokes: _strokes,
               exported: _exported,
+              label: _label,
+              onLabelChanged: (v) => setState(() => _label = v),
               onChanged: () => setState(() {}),
               onExport: _export,
+              onExportLabeled: _exportLabeled,
               onCopy: () => Clipboard.setData(ClipboardData(text: _exported)),
             ),
           ],
@@ -325,15 +385,21 @@ class _TagAndExportPanel extends StatelessWidget {
   const _TagAndExportPanel({
     required this.strokes,
     required this.exported,
+    required this.label,
+    required this.onLabelChanged,
     required this.onChanged,
     required this.onExport,
+    required this.onExportLabeled,
     required this.onCopy,
   });
 
   final List<_AuthoredStroke> strokes;
   final String exported;
+  final String label;
+  final ValueChanged<String> onLabelChanged;
   final VoidCallback onChanged;
   final VoidCallback onExport;
+  final VoidCallback onExportLabeled;
   final VoidCallback onCopy;
 
   @override
@@ -393,12 +459,38 @@ class _TagAndExportPanel extends StatelessWidget {
                   ],
                 ),
               ),
+            // Calibration label selector (the failure taxonomy, D-02). Applied
+            // to a labeled-fixture export, NOT to the referenceStrokes fragment.
+            Row(
+              children: <Widget>[
+                Text('Label:', style: QalamTextStyles.label),
+                const SizedBox(width: QalamSpace.space3),
+                DropdownButton<String>(
+                  key: AuthoringScreen.labelSelectorKey,
+                  value: label,
+                  items: <DropdownMenuItem<String>>[
+                    for (final l in kCalibrationLabels)
+                      DropdownMenuItem<String>(value: l, child: Text(l)),
+                  ],
+                  onChanged: (v) {
+                    if (v != null) onLabelChanged(v);
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: QalamSpace.space3),
             Row(
               children: <Widget>[
                 FilledButton(
                   key: AuthoringScreen.exportButtonKey,
                   onPressed: onExport,
-                  child: const Text('Export'),
+                  child: const Text('Export reference'),
+                ),
+                const SizedBox(width: QalamSpace.space3),
+                FilledButton(
+                  key: AuthoringScreen.exportLabeledButtonKey,
+                  onPressed: onExportLabeled,
+                  child: const Text('Export labeled fixture'),
                 ),
                 const SizedBox(width: QalamSpace.space3),
                 TextButton(onPressed: onCopy, child: const Text('Copy')),
