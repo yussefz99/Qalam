@@ -1,0 +1,270 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:qalam/core/recognition/handwriting_recognizer.dart';
+import 'package:qalam/core/scoring/scoring_models.dart';
+import 'package:qalam/core/scoring/stroke_validation.dart';
+import 'package:qalam/core/scoring/tolerances.dart';
+import 'package:qalam/models/letter.dart';
+
+/// SC#1 / SC#2 / D-04 — the RED contract for `LetterScorer.scoreLetter`.
+///
+/// Plan 04-01 (Wave 0) defines WHAT the whole-letter scorer must do; Plan 04-02
+/// IMPLEMENTS `scoreLetter` and turns the skipped contract tests green. The
+/// skipped tests below are intentionally RED: `scoreLetter` does not exist yet.
+/// Remove the `skip:` and wire the real `scoreLetter` import in Plan 02.
+///
+/// The non-skipped tests in this file ARE live now — they pin the Task-2
+/// foundation (Letter.tolerances backward-compat + the tolerances validator)
+/// that Plan 02 builds on.
+///
+/// SC#1 — wrong-COUNT / wrong-ORDER / taa-dots-when-shown-baa are caught with a
+///        specific named MistakeId.
+/// SC#2 — a confidently-different ML Kit candidate on a geometric pass is
+///        rejected as wrongLetterIdentity.
+/// D-04 — ML Kit is ADVISORY ONLY: a good geometric pass with a low-confidence
+///        or wrong candidate STILL passes (the gate never overrides a pass on
+///        weak evidence).
+
+/// A mocktail fake of the [HandwritingRecognizer] seam — no real ML Kit in unit
+/// tests (the model is a platform plugin). Plan 02 injects this into
+/// `scoreLetter(..., recognizer: ...)`.
+class FakeHandwritingRecognizer extends Mock implements HandwritingRecognizer {}
+
+void main() {
+  // ── Inline builders mirroring the letters.json baa entry (body line + dot) ──
+  // Pattern copied from mistake_mapping_test.dart:19-68.
+
+  /// A 2-stroke baa: a rightToLeft body line ("the boat") + a dot tap beneath.
+  Letter baaLetter() => const Letter(
+        id: 'baa',
+        char: 'ب',
+        name: LetterName(ar: 'بَاء', display: 'Baa'),
+        introOrder: 2,
+        forms: LetterForms(
+          isolated: 'ب',
+          initial: 'بـ',
+          medial: 'ـبـ',
+          final_: 'ـب',
+        ),
+        referenceStrokes: [
+          StrokeSpec(
+            order: 1,
+            label: 'body',
+            type: 'line',
+            direction: 'rightToLeft',
+            points: [
+              [0.9, 0.4],
+              [0.6, 0.55],
+              [0.3, 0.55],
+              [0.1, 0.4],
+            ],
+          ),
+          StrokeSpec(
+            order: 2,
+            label: 'dot',
+            type: 'dot',
+            direction: 'tap',
+            points: [
+              [0.5, 0.8], // dot BELOW the body — the baa identity
+            ],
+          ),
+        ],
+        cleanRepsToAdvance: 3,
+        commonMistakes: [
+          CommonMistake(
+            id: 'wrong_stroke_count',
+            check: 'strokeCountMismatch',
+            feedback: 'Baa is two parts — the boat, then one dot underneath.',
+          ),
+          CommonMistake(
+            id: 'wrong_stroke_order',
+            check: 'strokeOrderWrong',
+            feedback: 'Draw the boat first, then the dot underneath.',
+          ),
+          CommonMistake(
+            id: 'dot_wrong',
+            check: 'dotPositionWrong',
+            feedback: "Baa's dot goes under the boat, not on top.",
+          ),
+          CommonMistake(
+            id: 'wrong_letter',
+            check: 'letterIdentityMismatch',
+            feedback: 'That looks like a different letter — try baa again.',
+          ),
+        ],
+        mistakesStatus: 'authored',
+        signedOff: false,
+        tolerances: Tolerances(
+          minRawPoints: 10,
+          resampleN: 32,
+          maxCurvature: 0.30,
+        ),
+      );
+
+  // Whole-letter captured strokes are List<List<List<double>>> (per letter →
+  // per stroke → per [x,y] point). These are pixel-space synthetic captures.
+
+  /// A good-faith baa: a curved body then a dot below.
+  List<List<List<double>>> goodBaa() => [
+        // body (right→left, modest bow)
+        List<List<double>>.generate(20, (i) => [180.0 - i * 8, 100.0 + (i < 10 ? i * 2.0 : (19 - i) * 2.0)]),
+        // dot below the body
+        const [
+          [90.0, 170.0]
+        ],
+      ];
+
+  group('Letter.fromJson — tolerances backward-compat (LIVE — Task 2)', () {
+    test('a JSON map with no "tolerances" key parses with tolerances == null', () {
+      final json = <String, dynamic>{
+        'id': 'alif',
+        'char': 'ا',
+        'name': {'ar': 'اَلِف', 'display': 'Alif'},
+        'introOrder': 1,
+        'forms': {'isolated': 'ا', 'initial': 'ا', 'medial': 'ا', 'final': 'ا'},
+        'referenceStrokes': <dynamic>[],
+        'cleanRepsToAdvance': 3,
+        'commonMistakes': <dynamic>[],
+        'mistakesStatus': 'placeholder',
+        'signedOff': false,
+      };
+      final letter = Letter.fromJson(json);
+      expect(letter.tolerances, isNull);
+    });
+
+    test('a JSON map WITH a "tolerances" block parses into a Tolerances', () {
+      final json = <String, dynamic>{
+        'id': 'baa',
+        'char': 'ب',
+        'name': {'ar': 'بَاء', 'display': 'Baa'},
+        'introOrder': 2,
+        'forms': {'isolated': 'ب', 'initial': 'بـ', 'medial': 'ـبـ', 'final': 'ـب'},
+        'referenceStrokes': <dynamic>[],
+        'cleanRepsToAdvance': 3,
+        'commonMistakes': <dynamic>[],
+        'mistakesStatus': 'placeholder',
+        'signedOff': false,
+        'tolerances': {
+          'preset': 'normal',
+          'overrides': {'maxCurvature': 0.30},
+        },
+      };
+      final letter = Letter.fromJson(json);
+      expect(letter.tolerances, isNotNull);
+      expect(letter.tolerances!.maxCurvature, equals(0.30));
+      expect(letter.tolerances!.resampleN, equals(32));
+    });
+  });
+
+  group('validateTolerances (LIVE — Task 2, V5 / T-04-01)', () {
+    test('a null tolerances block is valid (no violations)', () {
+      expect(validateTolerances(null), isEmpty);
+    });
+
+    test('an in-range tolerances block is valid', () {
+      final t = Tolerances.fromJson(const {'preset': 'normal'});
+      expect(validateTolerances(t), isEmpty);
+    });
+
+    test('an out-of-range maxCurvature override is rejected (string, no throw)', () {
+      final t = Tolerances.fromJson(const {
+        'preset': 'normal',
+        'overrides': {'maxCurvature': 5.0}, // > 1 unit-box max
+      });
+      final violations = validateTolerances(t);
+      expect(violations, isNotEmpty);
+      expect(violations.first, contains('maxCurvature'));
+    });
+
+    test('a non-positive minRawPoints override is rejected', () {
+      final t = Tolerances.fromJson(const {
+        'preset': 'normal',
+        'overrides': {'minRawPoints': 0},
+      });
+      expect(validateTolerances(t), isNotEmpty);
+    });
+
+    test('validateLetter folds in a bad tolerances block', () {
+      final letter = baaLetter(); // valid strokes
+      // baaLetter's tolerances are in range, so a valid letter → no violations
+      // from the tolerances path.
+      expect(validateLetter(letter), isEmpty);
+    });
+  });
+
+  // ── RED CONTRACT for Plan 02 — scoreLetter does not exist yet ──────────────
+  // These are skipped (not deleted) so the suite compiles. Plan 02 implements
+  // `scoreLetter` in lib/core/scoring/letter_scorer.dart, removes the `skip:`,
+  // and wires the real call. The expectations below ARE the SC#1/SC#2/D-04
+  // contract.
+  group('LetterScorer.scoreLetter — SC#1 / SC#2 / D-04 contract (RED, Plan 02)', () {
+    const planTwo = 'RED: scoreLetter is implemented in Plan 04-02';
+
+    test('SC#1 — wrong stroke COUNT → MistakeId.wrongStrokeCount', () {
+      // Given a baa (expects 2 strokes) but the child drew only 1:
+      //   final result = scoreLetter([goodBaa()[0]], baaLetter());
+      //   expect(result.passed, isFalse);
+      //   expect(result.mistakeId, equals(MistakeId.wrongStrokeCount));
+      fail('not yet implemented');
+    }, skip: planTwo);
+
+    test('SC#1 — wrong stroke ORDER (dot before body) → MistakeId.wrongStrokeOrder', () {
+      //   final dotFirst = [goodBaa()[1], goodBaa()[0]];
+      //   final result = scoreLetter(dotFirst, baaLetter());
+      //   expect(result.mistakeId, equals(MistakeId.wrongStrokeOrder));
+      fail('not yet implemented');
+    }, skip: planTwo);
+
+    test('SC#1 — taa-dots-when-shown-baa (dot above) → MistakeId.dotMisplaced', () {
+      //   final dotAbove = [goodBaa()[0], [[90.0, 40.0]]];
+      //   final result = scoreLetter(dotAbove, baaLetter());
+      //   expect(result.mistakeId, equals(MistakeId.dotMisplaced));
+      fail('not yet implemented');
+    }, skip: planTwo);
+
+    test('SC#2 — confidently-different ML Kit candidate → MistakeId.wrongLetterIdentity', () {
+      //   final fake = FakeHandwritingRecognizer();
+      //   when(() => fake.identify(any())).thenAnswer(
+      //     (_) async => const RecognitionResult(topCandidate: 'ك', confidence: 0.95));
+      //   final result = scoreLetter(goodBaa(), baaLetter(), recognizer: fake);
+      //   expect(result.mistakeId, equals(MistakeId.wrongLetterIdentity));
+      fail('not yet implemented');
+    }, skip: planTwo);
+
+    test('D-04 — low-confidence/wrong candidate does NOT override a geometric pass', () {
+      //   final fake = FakeHandwritingRecognizer();
+      //   when(() => fake.identify(any())).thenAnswer(
+      //     (_) async => const RecognitionResult(topCandidate: 'ك', confidence: 0.10));
+      //   final result = scoreLetter(goodBaa(), baaLetter(), recognizer: fake);
+      //   expect(result.passed, isTrue); // advisory only — weak evidence ignored
+      fail('not yet implemented');
+    }, skip: planTwo);
+
+    test('whole-letter latency budget — scoreLetter completes in < 50 ms', () {
+      //   final sw = Stopwatch()..start();
+      //   scoreLetter(goodBaa(), baaLetter());
+      //   sw.stop();
+      //   expect(sw.elapsedMilliseconds, lessThan(50),
+      //     reason: 'sub-300 ms stylus-up feedback budget');
+      fail('not yet implemented');
+    }, skip: planTwo);
+  });
+
+  // Keep the fake + fixtures + contract enum referenced so they are not
+  // "unused" before Plan 02 wires the real scoreLetter call.
+  test('contract scaffolding is wired (fake + fixtures + MistakeId present)', () {
+    expect(FakeHandwritingRecognizer(), isA<HandwritingRecognizer>());
+    expect(goodBaa().length, equals(2));
+    expect(baaLetter().referenceStrokes.length, equals(2));
+    // The four whole-letter MistakeId values Plan 02 must return.
+    expect(
+      const [
+        MistakeId.wrongStrokeCount,
+        MistakeId.wrongStrokeOrder,
+        MistakeId.dotMisplaced,
+        MistakeId.wrongLetterIdentity,
+      ].length,
+      equals(4),
+    );
+  });
+}

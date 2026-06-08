@@ -1,3 +1,5 @@
+import '../core/scoring/tolerances.dart';
+
 class LetterName {
   final String ar;
   final String display;
@@ -116,6 +118,13 @@ class Letter {
   final bool signedOff;
   final AudioRef? audio;
 
+  /// Per-letter scoring tolerances (D-03 / SC#4 — data, not code).
+  ///
+  /// Nullable for backward-compat: Phase-2 letters with no `tolerances` block
+  /// parse with `tolerances == null` and the scorer falls back to
+  /// `Tolerances.normal`. Mirrors the [audio] nullable-nested-model precedent.
+  final Tolerances? tolerances;
+
   const Letter({
     required this.id,
     required this.char,
@@ -128,12 +137,14 @@ class Letter {
     required this.mistakesStatus,
     required this.signedOff,
     this.audio,
+    this.tolerances,
   });
 
   factory Letter.fromJson(Map<String, dynamic> json) {
     final rawStrokes = json['referenceStrokes'] as List<dynamic>? ?? [];
     final rawMistakes = json['commonMistakes'] as List<dynamic>? ?? [];
     final audioJson = json['audio'] as Map<String, dynamic>?;
+    final tolerancesJson = json['tolerances'] as Map<String, dynamic>?;
     return Letter(
       id: json['id'] as String,
       char: json['char'] as String,
@@ -150,6 +161,8 @@ class Letter {
       mistakesStatus: json['mistakesStatus'] as String,
       signedOff: json['signedOff'] as bool,
       audio: audioJson != null ? AudioRef.fromJson(audioJson) : null,
+      tolerances:
+          tolerancesJson != null ? Tolerances.fromJson(tolerancesJson) : null,
     );
   }
 }

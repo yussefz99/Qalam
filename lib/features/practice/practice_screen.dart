@@ -1125,6 +1125,17 @@ String _feedbackString(AppLocalizations? l10n, MistakeId id) {
     case MistakeId.tooCurved:
       return l10n?.practiceFeedbackTooCurved ??
           'Alif is a straight line — try to keep it as straight as you can.';
+    // ── Whole-letter mistakes (Plan 04-01 enum; Plan 04-02 wires the scorer +
+    //    the authored l10n getters). Specific, warm placeholder copy until then
+    //    — never a generic "Oops" (Pitfall 7 / PLAT-03). ──
+    case MistakeId.wrongStrokeCount:
+      return 'This letter has a few parts — draw each one, then the dot.';
+    case MistakeId.wrongStrokeOrder:
+      return 'Draw the body first, then the dot underneath.';
+    case MistakeId.dotMisplaced:
+      return 'Check where the dot goes — look at the letter and try again.';
+    case MistakeId.wrongLetterIdentity:
+      return 'That looks like a different letter — look closely and try again.';
     case MistakeId.fallback:
       return l10n?.practiceFeedbackFallback ??
           'Something looks off — try again, slower this time.';

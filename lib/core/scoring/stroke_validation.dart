@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import '../../models/letter.dart';
+import 'tolerances.dart';
 
 /// D-04 crown-jewel guard — pure Dart, no Flutter imports.
 ///
@@ -206,6 +207,68 @@ List<String> validateStroke(StrokeSpec stroke) {
   }
 
   return violations;
+}
+
+// --- Tolerances range bounds (V5 input validation, T-04-01) -------------------
+//
+// Malformed/out-of-range curriculum tolerances must degrade gracefully (return
+// a violation string) rather than crash the scorer at load. Bounds are
+// deliberately generous: they reject nonsense (negative/zero counts, a
+// curvature ceiling outside the normalised 0..1 unit box) without second-
+// guessing the owner's calibrated presets.
+
+/// Maximum sane resample count — well above `normal`'s 32; anything larger is a
+/// mistake that would blow the latency budget.
+const int kMaxResampleN = 512;
+
+/// Maximum sane raw-point floor — a stroke needing more than this to count as
+/// "complete" is almost certainly a typo.
+const int kMaxMinRawPoints = 256;
+
+/// Range-checks a parsed [tolerances] block. Returns a list of human-readable
+/// violation messages; an empty list means the values are in range. Mirrors the
+/// stroke validators: returns strings, never throws, so malformed curriculum
+/// data degrades gracefully (T-04-01).
+///
+/// A null [tolerances] (letter omitted the block) is valid — the scorer falls
+/// back to `Tolerances.normal`.
+List<String> validateTolerances(Tolerances? tolerances) {
+  final violations = <String>[];
+  if (tolerances == null) return violations;
+
+  if (tolerances.minRawPoints < 1 ||
+      tolerances.minRawPoints > kMaxMinRawPoints) {
+    violations.add(
+      'Tolerances: minRawPoints ${tolerances.minRawPoints} is out of range '
+      '[1, $kMaxMinRawPoints].',
+    );
+  }
+  if (tolerances.resampleN < 2 || tolerances.resampleN > kMaxResampleN) {
+    violations.add(
+      'Tolerances: resampleN ${tolerances.resampleN} is out of range '
+      '[2, $kMaxResampleN].',
+    );
+  }
+  // maxCurvature is a perpendicular distance in the normalised 0..1 unit box;
+  // a value outside (0, 1] is meaningless.
+  if (tolerances.maxCurvature <= 0 || tolerances.maxCurvature > 1) {
+    violations.add(
+      'Tolerances: maxCurvature ${tolerances.maxCurvature} is out of range '
+      '(0, 1].',
+    );
+  }
+
+  return violations;
+}
+
+/// Validates a whole [letter]: its reference strokes (via
+/// [validateReferenceStrokes]) plus its optional tolerances block (via
+/// [validateTolerances]). Convenience entry point for the load path.
+List<String> validateLetter(Letter letter) {
+  return [
+    ...validateReferenceStrokes(letter.referenceStrokes),
+    ...validateTolerances(letter.tolerances),
+  ];
 }
 
 /// Validates a whole letter's [strokes]: runs every single-stroke check plus
