@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 04-03-PLAN.md (ML Kit advisory identity gate + model download)
-last_updated: "2026-06-08T13:38:26.031Z"
+stopped_at: Completed 04-04-PLAN.md (wire scoreLetter spine into the practice UI)
+last_updated: "2026-06-08T13:53:31.058Z"
 last_activity: 2026-06-08
 progress:
   total_phases: 13
   completed_phases: 6
   total_plans: 30
-  completed_plans: 27
+  completed_plans: 28
   percent: 46
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 04 (scoring-quality-calibration) — EXECUTING
-Plan: 4 of 6
+Plan: 5 of 6
 Status: Ready to execute
 Last activity: 2026-06-08
 
@@ -59,6 +59,7 @@ Progress: [██░░░░░░░░] 20% (2 of 10 phases complete)
 | Phase 04 P01 | 6 | 2 tasks | 9 files |
 | Phase 04 P02 | 5 | 2 tasks | 3 files |
 | Phase 04 P03 | 5 | 2 tasks | 10 files |
+| Phase 04 P04 | 11 | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -89,6 +90,7 @@ Recent decisions affecting current work:
 - [Phase 04]: MlKitRecognizer is the on-device advisory-only identity gate (D-04): reports {topCandidate, confidence} via google_mlkit_digital_ink_recognition, never a verdict; the gating decision stays in scoreLetter
 - [Phase 04]: HandwritingRecognizer.identify seam widened to a whole multi-stroke letter (List<List<List<double>>>); ML Kit score is sparse/inverted so it is NOT mapped to confidence directly
 - [Phase 04]: ModelDownloadService @Riverpod(keepAlive) background-fetches the ar model best-effort with isReady; any failure degrades to a calm getting-ready state, never hard-blocks (D-05); manager injected via overridable inkModelManagerProvider for tests
+- [Phase ?]: [Phase 04]: StrokeCanvas accumulates a whole multi-stroke letter (no per-pointer-down clear) and fires onLetterComplete at count-reached; practice_screen scores the whole letter via scoreLetter (referenceStrokes.first path removed); D-05 getting-ready is a non-blocking overlay; four whole-letter MistakeIds resolve to authored l10n, never fallback
 
 ### Pending Todos
 
@@ -121,6 +123,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-08T13:38:26.027Z
-Stopped at: Completed 04-03-PLAN.md (ML Kit advisory identity gate + model download)
+Last session: 2026-06-08T13:53:31.055Z
+Stopped at: Completed 04-04-PLAN.md (wire scoreLetter spine into the practice UI)
 Resume file: None
