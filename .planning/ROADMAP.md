@@ -228,17 +228,35 @@ Plans:
 
 ### Phase 5: Profiles & Onboarding
 
-**Goal**: A parent can create a local child profile with name and grade (grade selecting the curriculum entry point), and on first open the child picks an avatar and nickname — all persisted locally with minimum child data.
+**Goal**: A parent can create a local child profile by picking a grade (which selects the curriculum entry point), and on first open the child picks an avatar and a nickname from fixed sets (no free-text, no real name) — all persisted locally with minimum child data.
 **Mode:** mvp
 **Depends on**: Phase 1 (DB), benefits from Phase 2 (grade→entry mapping)
 **Requirements**: S1-02, S1-03
 **Success Criteria** (what must be TRUE):
 
-  1. A parent can create a child profile with name and grade; it persists across restarts, and the grade maps to a starting lesson.
+  1. A parent can create a child profile by picking a grade; it persists across restarts, and the grade maps to a starting lesson (default alif).
   2. The child can pick an avatar and a nickname from a fixed set (no free-text identity leak); the choice persists and shows on the home surface.
   3. Child data is stored in app-private local storage only, with no cloud, no account, and no real-name exposure beyond the device.
 
-**Plans**: TBD
+**Plans**: 4 plans
+Plans:
+
+**Wave 0**
+
+- [ ] 05-01-PLAN.md — Wave 0 (Nyquist): RED test stubs for profile repo, onboarding data, onboarding screen (no free-text/PopScope), and the redirect gate (no loop); extend app_database + home_screen tests (S1-02/S1-03)
+
+**Wave 1** *(blocked on Wave 0)*
+
+- [ ] 05-02-PLAN.md — Wave 1 (data slice): ChildProfiles table + v2→v3 migration + ChildProfileRepository + childProfile/OnboardingGate providers + onboarding_data (6 avatars, 8-10 placeholder nicknames, grade→alif map) (S1-02/S1-03)
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [ ] 05-03-PLAN.md — Wave 2 (onboarding + gate slice): router /onboarding + sync redirect + boot gate read; single combined onboarding card (grade chips→avatar grid→nickname grid→Let'''s go, no free-text, PopScope) + l10n; end-to-end human verify (S1-02/S1-03)
+
+**Wave 3** *(blocked on Wave 2)*
+
+- [ ] 05-04-PLAN.md — Wave 3 (home integration slice): Home greeting reads chosen nickname label + avatar from childProfileProvider; {nickname} ARB template; scope-aware fallback; PLAT-03 preserved (S1-03)
+
 **UI hint**: yes
 
 ### Phase 6: Lesson Progression & Home
@@ -327,7 +345,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 2. Curriculum Schema & First-Letter Seed | 0/3 | Planned | - |
 | 3. Trace One Letter End-to-End | 0/4 | Planned | - |
 | 4. Scoring Quality & Calibration | 0/TBD | Not started | - |
-| 5. Profiles & Onboarding | 0/TBD | Not started | - |
+| 5. Profiles & Onboarding | 0/4 | Planned | - |
 | 6. Lesson Progression & Home | 0/TBD | Not started | - |
 | 7. Full Curriculum & Pronunciation Audio | 0/TBD | Not started | - |
 | 8. Sentence-Building & Grammar Exercises | 0/TBD | Not started | - |
