@@ -211,9 +211,10 @@ Future<MistakeId?> _identityGate(
   Letter letter,
   HandwritingRecognizer recognizer,
 ) async {
-  // Flatten the whole letter into one point list for the recognizer seam.
-  final flat = <List<double>>[for (final stroke in childStrokes) ...stroke];
-  final result = await recognizer.identify(flat);
+  // Pass the whole multi-stroke letter to the recognizer seam (widened in Plan
+  // 04-03): ML Kit recognises a letter from all its strokes together — flattening
+  // would collapse the body line and dot into one stroke and degrade recognition.
+  final result = await recognizer.identify(childStrokes);
 
   final candidate = result.topCandidate;
   if (candidate == null) return null; // no opinion → trust geometry

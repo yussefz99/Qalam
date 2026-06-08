@@ -233,9 +233,10 @@ void main() {
   // contract.
   group('LetterScorer.scoreLetter — SC#1 / SC#2 / D-04 contract (Plan 02)', () {
     setUpAll(() {
-      // mocktail needs a registered fallback for the List<List<double>> arg type
-      // used with any() in the recognizer stubs below.
-      registerFallbackValue(<List<double>>[]);
+      // mocktail needs a registered fallback for the whole-letter
+      // List<List<List<double>>> arg type used with any() in the recognizer stubs
+      // below (the seam was widened to a multi-stroke letter in Plan 04-03).
+      registerFallbackValue(<List<List<double>>>[]);
     });
 
     test('SC#1 — wrong stroke COUNT → MistakeId.wrongStrokeCount', () async {

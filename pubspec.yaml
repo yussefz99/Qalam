@@ -49,6 +49,7 @@ dependencies:
   flutter_svg: ^2.3.0             # render brand glyph SVGs
   flutter_localizations:          # i18n seam (D-07) — English-only in v1
     sdk: flutter
+  google_mlkit_digital_ink_recognition: ^0.14.2
 
 dev_dependencies:
   flutter_test:
