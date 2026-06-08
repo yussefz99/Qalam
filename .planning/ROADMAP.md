@@ -237,7 +237,7 @@ Plans:
 **Wave 3** *(blocked on Wave 2)*
 
 - [x] 04-04-PLAN.md — Wire the spine into the UI: multi-stroke capture accumulation fix + scoreLetter in practice_screen + authored feedback l10n for new MistakeIds + getting-ready state (SC#1/SC#2/PLAT-03/D-05)
-- [ ] 04-05-PLAN.md — Calibration infra: labeled-sample capture mode (D-02) + pure-Dart confusion-table harness over the real scorer + synthetic seed regression fixtures (SC#4)
+- [x] 04-05-PLAN.md — Calibration infra: labeled-sample capture mode (D-02) + pure-Dart confusion-table harness over the real scorer + synthetic seed regression fixtures (SC#4)
 
 **Wave 4** *(blocked on Wave 3 — human-gated, real-tablet)*
 
@@ -345,7 +345,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 1. Foundations & RTL Shell | 3/3 | Complete   | 2026-05-31 |
 | 2. Curriculum Schema & First-Letter Seed | 0/3 | Planned | - |
 | 3. Trace One Letter End-to-End | 0/4 | Planned | - |
-| 4. Scoring Quality & Calibration | 4/6 | In Progress|  |
+| 4. Scoring Quality & Calibration | 5/6 | In Progress|  |
 | 5. Profiles & Onboarding | 0/TBD | Not started | - |
 | 6. Lesson Progression & Home | 0/TBD | Not started | - |
 | 7. Full Curriculum & Pronunciation Audio | 0/TBD | Not started | - |
