@@ -115,6 +115,39 @@ void main() {
         ],
       ];
 
+  // ── SC#3 multi-stroke normalization fixtures ────────────────────────────────
+  // A correct baa drawn ~40% the size of goodBaa() and shoved toward the
+  // bottom-right corner of the canvas. Same shape, count, order, and dot-below;
+  // ONLY scale and offset differ. Whole-letter combined-bbox normalization must
+  // make it pass (SC#3) — size/offset are not mistakes.
+
+  /// A small, corner-offset, but otherwise-correct baa (dot still BELOW).
+  List<List<List<double>>> smallOffsetBaa() => [
+        // body: same right→left bow shape, ~40% scale, offset to (+320, +260)
+        List<List<double>>.generate(
+          20,
+          (i) => [
+            320.0 + (180.0 - i * 8) * 0.4,
+            260.0 + (100.0 + (i < 10 ? i * 2.0 : (19 - i) * 2.0)) * 0.4,
+          ],
+        ),
+        // dot below the body, scaled+offset the same way as (90, 170)
+        [
+          [320.0 + 90.0 * 0.4, 260.0 + 170.0 * 0.4]
+        ],
+      ];
+
+  /// The SAME small, corner-offset baa but with the dot ABOVE the body — the
+  /// taa pattern. Normalization must NOT erase this relative-position signal
+  /// (Pitfall 2): it still has to fail with dotMisplaced.
+  List<List<List<double>>> smallOffsetBaaDotAbove() => [
+        smallOffsetBaa()[0],
+        // dot placed ABOVE the body (mirror y=170 → y=40 before scale+offset)
+        [
+          [320.0 + 90.0 * 0.4, 260.0 + 40.0 * 0.4]
+        ],
+      ];
+
   group('Letter.fromJson — tolerances backward-compat (LIVE — Task 2)', () {
     test('a JSON map with no "tolerances" key parses with tolerances == null', () {
       final json = <String, dynamic>{
@@ -257,6 +290,31 @@ void main() {
       sw.stop();
       expect(sw.elapsedMilliseconds, lessThan(50),
           reason: 'sub-300 ms stylus-up feedback budget');
+    });
+  });
+
+  // ── SC#3 + Pitfall-2 regression pair (Plan 04-02 Task 2) ────────────────────
+  // The explicit proof that whole-letter combined-bbox normalization HELPS a
+  // good-faith size/offset-varied attempt WITHOUT hiding the ب/ت/ث dot
+  // distinction. These two assertions live in the same group on purpose: one
+  // proves normalization is lenient enough, the other proves it is not TOO
+  // lenient.
+  group('LetterScorer.scoreLetter — SC#3 multi-stroke normalization', () {
+    test('a small + corner-offset CORRECT baa passes (size/offset invariant)',
+        () async {
+      final result = await scoreLetter(smallOffsetBaa(), baaLetter());
+      expect(result.passed, isTrue,
+          reason: 'combined-bbox normalization must absorb scale + offset (SC#3)');
+      expect(result.mistakeId, isNull);
+    });
+
+    test('the SAME small baa with the dot ABOVE still fails with dotMisplaced',
+        () async {
+      final result = await scoreLetter(smallOffsetBaaDotAbove(), baaLetter());
+      expect(result.passed, isFalse);
+      expect(result.mistakeId, equals(MistakeId.dotMisplaced),
+          reason: 'normalization must NOT erase the dot relative position '
+              '(Pitfall 2 — the baa↔taa distinction)');
     });
   });
 
