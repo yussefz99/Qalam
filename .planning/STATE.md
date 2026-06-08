@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 05 Plan 02 complete — child-profile data layer (S1-02/S1-03) GREEN
-last_updated: "2026-06-08T17:04:00.000Z"
-last_activity: 2026-06-08 -- Completed 05-02 Wave 1 child-profile data foundation
+stopped_at: Phase 05 Plan 03 complete — onboarding card + redirect gate (S1-02/S1-03) GREEN
+last_updated: "2026-06-08T17:19:39.000Z"
+last_activity: 2026-06-08 -- Completed 05-03 Wave 2 onboarding screen + router gate
 progress:
   total_phases: 13
   completed_phases: 6
   total_plans: 28
-  completed_plans: 26
-  percent: 50
+  completed_plans: 27
+  percent: 52
 ---
 
 # Project State
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 05 (profiles-onboarding) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 Status: Executing Phase 05
-Last activity: 2026-06-08 -- Completed 05-02-PLAN.md (Wave 1 child-profile data foundation)
+Last activity: 2026-06-08 -- Completed 05-03-PLAN.md (Wave 2 onboarding screen + router gate)
 
 Progress: [██░░░░░░░░] 20% (2 of 10 phases complete)
 
@@ -58,6 +58,7 @@ Progress: [██░░░░░░░░] 20% (2 of 10 phases complete)
 | Phase 01 P03 | ~25min | 3 tasks | 7 files |
 | Phase 05 P01 | ~18min | 2 tasks | 6 files |
 | Phase 05 P02 | ~20min | 2 tasks | 7 files |
+| Phase 05 P03 | ~11min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -86,6 +87,9 @@ Recent decisions affecting current work:
 - [Phase 05]: 05-02 turned the data-layer RED tests GREEN — ChildProfiles table at schema v3 (fixed-set IDs only, no real name; S1-03), v2->v3 idempotent migration preserving AppSettings+LetterMastery, ChildProfileRepository, childProfileProvider, OnboardingGate, onboarding_data (6 avatars / 8 placeholder nicknames / all-grades->alif). S1-02 + S1-03 mechanism complete.
 - [Phase 05]: childProfileProvider is a HAND-WRITTEN FutureProvider, not @riverpod codegen — riverpod_generator 4.0.3 throws InvalidTypeException when a functional provider returns a Drift-generated data class (ChildProfile). Manual FutureProvider preserves the .overrideWith((ref) async => profile) test contract.
 - [Phase 05]: onboardingGate (ChangeNotifier-as-provider, the router refreshListenable) emits one un-suppressible riverpod_lint `unsupported_provider_value` warning; plugin honors no ignore form in riverpod_lint 3.1.3 — left visible + documented (prescribed pattern, not a defect).
+- [Phase 05]: 05-03 turned the screen + router-gate RED tests GREEN — OnboardingScreen (one scrollable card, grade chips/avatar grid/nickname grid/"Let's go", PopScope(canPop:false), NO free-text), app_router synchronous redirect gate (both rules, no loop) + refreshListenable, main.dart boot hasProfile() read + appDatabaseProvider/onboardingGateProvider overrides. Fresh install -> /onboarding -> tap-through -> Home; relaunch skips onboarding. S1-02 + S1-03 delivered end-to-end.
+- [Phase 05]: Onboarding card spacing compacted so the "Let's go" CTA fits within the 800x600 widget-test viewport (Wave-0 happy-path taps the CTA without scrolling).
+- [Phase 05]: Remaining home-greeting-integration (Home reads childProfileProvider nickname) is the last Phase-5 RED test (home_screen_test Test 1) — deferred from 05-03 (out of scope; home_screen.dart not in 05-03's files). See deferred-items.md.
 
 ### Pending Todos
 

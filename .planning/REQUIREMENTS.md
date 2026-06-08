@@ -12,9 +12,9 @@ CUR-/PLAT- IDs.
 
 ### Onboarding & Profiles
 
-- [ ] **S1-02**: A parent can create a child profile with name and grade, and the grade selects the curriculum entry point
+- [x] **S1-02**: A parent can create a child profile with name and grade, and the grade selects the curriculum entry point
   - *Accept:* profile persists locally; grade maps to a starting lesson; no real-name exposure beyond the device (minimum child data)
-- [ ] **S1-03**: A child can pick an avatar and nickname on first open
+- [x] **S1-03**: A child can pick an avatar and nickname on first open
   - *Accept:* selection persists; choices are from a fixed set (no free-text that leaks identity); shown on the home screen
 
 ### Daily Lesson & Progression
@@ -108,8 +108,8 @@ Which phase covers which requirement. Each v1 requirement maps to exactly one ph
 | S1-05 | Phase 3 — Trace One Letter End-to-End (deepened in Phase 4) | Complete |
 | S1-10 | Phase 3 — Trace One Letter End-to-End | Pending |
 | PLAT-03 | Phase 3 — Trace One Letter End-to-End | Complete |
-| S1-02 | Phase 5 — Profiles & Onboarding | Pending |
-| S1-03 | Phase 5 — Profiles & Onboarding | Pending |
+| S1-02 | Phase 5 — Profiles & Onboarding | Complete |
+| S1-03 | Phase 5 — Profiles & Onboarding | Complete |
 | S1-01 | Phase 6 — Lesson Progression & Home | Pending |
 | S1-09 | Phase 6 — Lesson Progression & Home | Pending |
 | S1-06 | Phase 7 — Full Curriculum & Pronunciation Audio | Pending |

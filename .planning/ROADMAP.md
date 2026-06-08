@@ -251,7 +251,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1)*
 
-- [ ] 05-03-PLAN.md — Wave 2 (onboarding + gate slice): router /onboarding + sync redirect + boot gate read; single combined onboarding card (grade chips→avatar grid→nickname grid→Let'''s go, no free-text, PopScope) + l10n; end-to-end human verify (S1-02/S1-03)
+- [x] 05-03-PLAN.md — Wave 2 (onboarding + gate slice): router /onboarding + sync redirect + boot gate read; single combined onboarding card (grade chips→avatar grid→nickname grid→Let'''s go, no free-text, PopScope) + l10n; end-to-end human verify (S1-02/S1-03) ✅
 
 **Wave 3** *(blocked on Wave 2)*
 
@@ -345,7 +345,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 2. Curriculum Schema & First-Letter Seed | 0/3 | Planned | - |
 | 3. Trace One Letter End-to-End | 0/4 | Planned | - |
 | 4. Scoring Quality & Calibration | 0/TBD | Not started | - |
-| 5. Profiles & Onboarding | 2/4 | In Progress | - |
+| 5. Profiles & Onboarding | 3/4 | In Progress | - |
 | 6. Lesson Progression & Home | 0/TBD | Not started | - |
 | 7. Full Curriculum & Pronunciation Audio | 0/TBD | Not started | - |
 | 8. Sentence-Building & Grammar Exercises | 0/TBD | Not started | - |
