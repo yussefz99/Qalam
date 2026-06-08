@@ -169,3 +169,56 @@ set `mistakesStatus:"authored"` but keep **`signedOff:false`** and `tolerances:"
 
 This would run through the GSD Plan 04-06 path (Task 2) so tests + tracking stay in sync —
 it does **not** fake her sign-off (that stays `false` until she signs).
+
+---
+
+# Full-alphabet draft (all 28 letters) — done
+
+All 28 letters now carry provisional DRAFT `referenceStrokes` + 3–4 `commonMistakes` +
+`tolerances`, **`signedOff: false`**. They render, animate, and score in the app, guarded
+by `test/curriculum/all_letters_validation_test.dart` (every letter must pass the load-time
+validator). Geometry is my reconstruction of the standard isolated forms, grouped by
+shape-family (letters that share a body and differ only in dots). **All of it awaits her
+trace + correction + sign-off.**
+
+> **Important — the child traces the FONT glyph, not these strokes.** The dotted guide a
+> child writes over is drawn from the Noto Naskh font. These `referenceStrokes` only drive
+> the stroke-order animation + the scoring centerline. So even a rough draft renders a
+> correct-looking letter to trace; her job is to fix the stroke *order/path* and the
+> *mistakes*, not the visible glyph.
+
+## Where to spend her time (confidence guide)
+
+Review in this order — the lower-confidence families are the ones my guess is most likely to
+have wrong:
+
+| Confidence | Letters | Why |
+|---|---|---|
+| 🟢 **High** (quick confirm) | ا · ب ت ث · د ذ · ر ز · ن | Simple, near-universal stroke order; boat/hook/curve/bowl |
+| 🟡 **Medium** (check shape + order) | س ش · ص ض · ط ظ · ف ق · ك · ل · م · و | Recognizable, but stroke order / part-count varies by teacher |
+| 🔴 **Lower** (most likely wrong) | ج ح خ · ع غ · ه | Loops/bellies — hardest to reconstruct; expect to re-trace |
+
+## Per-family bodies (what to confirm)
+
+- **Boat** (ب ت ث): shared bowl, dots below×1 / above×2 / above×3.
+- **Bowl** (ن): deeper round bowl, 1 dot above.
+- **Belly** (ج ح خ): the jeem-curl — dot below (ج) / none (ح) / above (خ). 🔴 confirm the curl path.
+- **Hook** (د ذ): open angular hook, dot above on ذ.
+- **Descender** (ر ز): curve dipping below the line, dot above on ز.
+- **Teeth** (س ش): three humps + bowl; ش adds three dots above.
+- **Loop+base** (ص ض): round body + flat base; ض adds a dot above.
+- **Body+stem** (ط ظ): oval body + a standing line (2 strokes); ظ adds a dot.
+- **Belly-open** (ع غ): open-top curve into a belly; غ adds a dot. 🔴 confirm.
+- **Head+arm** (ف ق): round head + arm; ف 1 dot / ق 2 dots above.
+- **Standalone**: ك (shape + inner mark), ل (tall stem + hook), م (head + tail), ه (round loop 🔴), و (head + tail).
+
+## Sign-off process for the full alphabet (same as baa-family)
+
+1. For each letter: she confirms/corrects **stroke order, direction, part-count, dots**.
+2. She **traces** the real reference stroke on `/dev/authoring` (replaces my coordinates).
+3. She confirms/rewords the **3–4 common mistakes** in her voice.
+4. Capture labeled **child samples** + **tune tolerances** (tablet) — per letter or per family.
+5. Flip **`signedOff: true`** per letter only after 1–4.
+
+Doing it **family-by-family** is fastest: confirm one body, then just the dots vary across
+its members.
