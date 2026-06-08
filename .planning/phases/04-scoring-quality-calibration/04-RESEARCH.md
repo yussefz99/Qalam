@@ -390,18 +390,21 @@ Phase 4 parameterizes the threshold constants from `letter.tolerances` and calls
 | A4 | The Arabic ML Kit model identifier is `ar` and covers letter-level (not just word) input for ب/ت/ث | ML Kit, Pitfall 5 | If `ar` under-recognizes isolated single letters, the D-04 identity gate is weaker than hoped — but D-04 only needs "is this a *completely different* letter," a low bar. Verify on tablet. |
 | A5 | `normal` preset == today's constants makes the refactor behavior-preserving | Code Examples | If alif behavior shifts after the data refactor, the existing `geometric_stroke_scorer_test.dart` fixtures will catch it (they pin cleanAlif/smallCorrect/tooShort/inverted/curved). Low risk. |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Whole-letter completion trigger.** How does the app know the child finished a multi-stroke letter (to run `scoreLetter` once)? Count-reached vs an explicit "Done" affordance.
    - What we know: capture forwards one stroke per pen-up; the session state machine scores per stroke today.
    - What's unclear: the UX for "I've drawn all the strokes."
    - Recommendation: planner decides (Claude's-discretion: Riverpod orchestrator wiring). Count-reached is lowest-friction for a 2-part letter; revisit for letters with optional connectors later.
+   - **RESOLVED in Plan 04-04 Task 1:** count-reached trigger — fire when the accumulated stroke count == `referenceStrokes.length`, surfaced via a new `onLetterComplete` callback. The explicit-"Done" affordance was declined for the 2-part baa-family as higher-friction; revisit for letters with optional connectors later.
 
 2. **Per-stroke feedback vs whole-letter feedback.** Today each stroke fails/passes independently and the streak resets on any miss. For multi-stroke letters, does feedback fire per stroke or only after the whole letter?
    - Recommendation: keep per-stroke shape feedback immediate (it's the warm coaching beat), but count/order/identity are necessarily whole-letter verdicts — surface them after the last stroke. Planner to specify the state-machine change.
+   - **RESOLVED in Plan 04-04 Task 2:** per-stroke shape feedback stays immediate (the warm coaching beat); count / order / identity are whole-letter verdicts surfaced only after the last stroke, via the specified `PracticeSessionController` state-machine change.
 
 3. **ML Kit `ar` single-letter recognition quality on the target tablet.** A5/A4 — needs an on-device spike, not desk research.
    - Recommendation: add a small "ML Kit identity spike on tablet" task early in the phase to de-risk D-04 before building the gate around it.
+   - **RESOLVED in Plan 04-06 Task 1:** confirmed on-tablet at the human checkpoint. The A4 blast radius is bounded by the D-04 advisory-only design — the geometric scorer still delivers SC#1/SC#3/SC#4 regardless, and only SC#2 degrades gracefully if `ar` under-recognizes isolated letters (the gate simply abstains rather than false-rejecting a good-faith pass).
 
 ## Environment Availability
 
