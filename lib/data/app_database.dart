@@ -41,7 +41,22 @@ class LetterMastery extends Table {
   Set<Column> get primaryKey => {letterId};
 }
 
-@DriftDatabase(tables: [AppSettings, LetterMastery])
+/// One child profile — Phase 5 (S1-02 / S1-03, Plan 05-02).
+///
+/// SECURITY (T-05-01 / S1-03): stores ONLY fixed-set IDs (nicknameId, avatarId,
+/// grade) plus a resolved startingLessonId and createdAt — there is NO real-name
+/// column and NO free-text identity field. Profile values are NEVER logged
+/// (mirrors the AppSettings/LetterMastery no-log convention above).
+class ChildProfiles extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get nicknameId => text()(); // "nick_star" — fixed-set ID, NO real name
+  TextColumn get avatarId => text()(); // "avatar_1".."avatar_6"
+  TextColumn get grade => text()(); // kg|grade1|grade2|grade3|grade4plus
+  TextColumn get startingLessonId => text()(); // resolved from grade (default "alif", S1-02)
+  IntColumn get createdAt => integer()(); // unix epoch ms
+}
+
+@DriftDatabase(tables: [AppSettings, LetterMastery, ChildProfiles])
 class AppDatabase extends _$AppDatabase {
   /// Pass a [QueryExecutor] (e.g. `NativeDatabase.memory()`) in tests; defaults
   /// to a lazily-opened on-device file in app-private storage.
@@ -57,7 +72,7 @@ class AppDatabase extends _$AppDatabase {
   final bool _ownsExecutor;
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -65,6 +80,7 @@ class AppDatabase extends _$AppDatabase {
         onUpgrade: (m, from, to) async {
           // Pitfall 4: guard by version to make the migration idempotent.
           if (from < 2) await m.createTable(letterMastery);
+          if (from < 3) await m.createTable(childProfiles);
         },
       );
 
@@ -121,6 +137,40 @@ class AppDatabase extends _$AppDatabase {
                 ..where((t) => t.letterId.equals(letterId)))
               .getSingleOrNull())
           ?.cleanReps;
+
+  // ---------------------------------------------------------------------------
+  // ChildProfiles accessors (Phase 5, S1-02 / S1-03)
+  // SECURITY: only fixed-set IDs + grade + startingLessonId + createdAt are
+  // stored — never a real name, never free text, and profile values are never
+  // logged (T-05-01).
+  // ---------------------------------------------------------------------------
+
+  /// Returns true once a child profile exists.
+  Future<bool> hasProfile() async =>
+      (await (select(childProfiles)..limit(1)).getSingleOrNull()) != null;
+
+  /// Returns the single child profile, or null if none has been created.
+  Future<ChildProfile?> getProfile() async =>
+      (select(childProfiles)..limit(1)).getSingleOrNull();
+
+  /// Create the single child profile from fixed-set IDs + a resolved
+  /// startingLessonId. Plain insert (not insertOnConflictUpdate) — onboarding
+  /// happens once.
+  Future<int> createProfile({
+    required String nicknameId,
+    required String avatarId,
+    required String grade,
+    required String startingLessonId,
+  }) =>
+      into(childProfiles).insert(
+        ChildProfilesCompanion.insert(
+          nicknameId: nicknameId,
+          avatarId: avatarId,
+          grade: grade,
+          startingLessonId: startingLessonId,
+          createdAt: DateTime.now().millisecondsSinceEpoch,
+        ),
+      );
 }
 
 LazyDatabase _openConnection() {

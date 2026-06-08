@@ -483,11 +483,417 @@ class LetterMasteryCompanion extends UpdateCompanion<LetterMasteryData> {
   }
 }
 
+class $ChildProfilesTable extends ChildProfiles
+    with TableInfo<$ChildProfilesTable, ChildProfile> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ChildProfilesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _nicknameIdMeta = const VerificationMeta(
+    'nicknameId',
+  );
+  @override
+  late final GeneratedColumn<String> nicknameId = GeneratedColumn<String>(
+    'nickname_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _avatarIdMeta = const VerificationMeta(
+    'avatarId',
+  );
+  @override
+  late final GeneratedColumn<String> avatarId = GeneratedColumn<String>(
+    'avatar_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _gradeMeta = const VerificationMeta('grade');
+  @override
+  late final GeneratedColumn<String> grade = GeneratedColumn<String>(
+    'grade',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _startingLessonIdMeta = const VerificationMeta(
+    'startingLessonId',
+  );
+  @override
+  late final GeneratedColumn<String> startingLessonId = GeneratedColumn<String>(
+    'starting_lesson_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    nicknameId,
+    avatarId,
+    grade,
+    startingLessonId,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'child_profiles';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ChildProfile> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('nickname_id')) {
+      context.handle(
+        _nicknameIdMeta,
+        nicknameId.isAcceptableOrUnknown(data['nickname_id']!, _nicknameIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nicknameIdMeta);
+    }
+    if (data.containsKey('avatar_id')) {
+      context.handle(
+        _avatarIdMeta,
+        avatarId.isAcceptableOrUnknown(data['avatar_id']!, _avatarIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_avatarIdMeta);
+    }
+    if (data.containsKey('grade')) {
+      context.handle(
+        _gradeMeta,
+        grade.isAcceptableOrUnknown(data['grade']!, _gradeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_gradeMeta);
+    }
+    if (data.containsKey('starting_lesson_id')) {
+      context.handle(
+        _startingLessonIdMeta,
+        startingLessonId.isAcceptableOrUnknown(
+          data['starting_lesson_id']!,
+          _startingLessonIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_startingLessonIdMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ChildProfile map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ChildProfile(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      nicknameId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}nickname_id'],
+      )!,
+      avatarId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}avatar_id'],
+      )!,
+      grade: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}grade'],
+      )!,
+      startingLessonId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}starting_lesson_id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ChildProfilesTable createAlias(String alias) {
+    return $ChildProfilesTable(attachedDatabase, alias);
+  }
+}
+
+class ChildProfile extends DataClass implements Insertable<ChildProfile> {
+  final int id;
+  final String nicknameId;
+  final String avatarId;
+  final String grade;
+  final String startingLessonId;
+  final int createdAt;
+  const ChildProfile({
+    required this.id,
+    required this.nicknameId,
+    required this.avatarId,
+    required this.grade,
+    required this.startingLessonId,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['nickname_id'] = Variable<String>(nicknameId);
+    map['avatar_id'] = Variable<String>(avatarId);
+    map['grade'] = Variable<String>(grade);
+    map['starting_lesson_id'] = Variable<String>(startingLessonId);
+    map['created_at'] = Variable<int>(createdAt);
+    return map;
+  }
+
+  ChildProfilesCompanion toCompanion(bool nullToAbsent) {
+    return ChildProfilesCompanion(
+      id: Value(id),
+      nicknameId: Value(nicknameId),
+      avatarId: Value(avatarId),
+      grade: Value(grade),
+      startingLessonId: Value(startingLessonId),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory ChildProfile.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ChildProfile(
+      id: serializer.fromJson<int>(json['id']),
+      nicknameId: serializer.fromJson<String>(json['nicknameId']),
+      avatarId: serializer.fromJson<String>(json['avatarId']),
+      grade: serializer.fromJson<String>(json['grade']),
+      startingLessonId: serializer.fromJson<String>(json['startingLessonId']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'nicknameId': serializer.toJson<String>(nicknameId),
+      'avatarId': serializer.toJson<String>(avatarId),
+      'grade': serializer.toJson<String>(grade),
+      'startingLessonId': serializer.toJson<String>(startingLessonId),
+      'createdAt': serializer.toJson<int>(createdAt),
+    };
+  }
+
+  ChildProfile copyWith({
+    int? id,
+    String? nicknameId,
+    String? avatarId,
+    String? grade,
+    String? startingLessonId,
+    int? createdAt,
+  }) => ChildProfile(
+    id: id ?? this.id,
+    nicknameId: nicknameId ?? this.nicknameId,
+    avatarId: avatarId ?? this.avatarId,
+    grade: grade ?? this.grade,
+    startingLessonId: startingLessonId ?? this.startingLessonId,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  ChildProfile copyWithCompanion(ChildProfilesCompanion data) {
+    return ChildProfile(
+      id: data.id.present ? data.id.value : this.id,
+      nicknameId: data.nicknameId.present
+          ? data.nicknameId.value
+          : this.nicknameId,
+      avatarId: data.avatarId.present ? data.avatarId.value : this.avatarId,
+      grade: data.grade.present ? data.grade.value : this.grade,
+      startingLessonId: data.startingLessonId.present
+          ? data.startingLessonId.value
+          : this.startingLessonId,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ChildProfile(')
+          ..write('id: $id, ')
+          ..write('nicknameId: $nicknameId, ')
+          ..write('avatarId: $avatarId, ')
+          ..write('grade: $grade, ')
+          ..write('startingLessonId: $startingLessonId, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, nicknameId, avatarId, grade, startingLessonId, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ChildProfile &&
+          other.id == this.id &&
+          other.nicknameId == this.nicknameId &&
+          other.avatarId == this.avatarId &&
+          other.grade == this.grade &&
+          other.startingLessonId == this.startingLessonId &&
+          other.createdAt == this.createdAt);
+}
+
+class ChildProfilesCompanion extends UpdateCompanion<ChildProfile> {
+  final Value<int> id;
+  final Value<String> nicknameId;
+  final Value<String> avatarId;
+  final Value<String> grade;
+  final Value<String> startingLessonId;
+  final Value<int> createdAt;
+  const ChildProfilesCompanion({
+    this.id = const Value.absent(),
+    this.nicknameId = const Value.absent(),
+    this.avatarId = const Value.absent(),
+    this.grade = const Value.absent(),
+    this.startingLessonId = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  });
+  ChildProfilesCompanion.insert({
+    this.id = const Value.absent(),
+    required String nicknameId,
+    required String avatarId,
+    required String grade,
+    required String startingLessonId,
+    required int createdAt,
+  }) : nicknameId = Value(nicknameId),
+       avatarId = Value(avatarId),
+       grade = Value(grade),
+       startingLessonId = Value(startingLessonId),
+       createdAt = Value(createdAt);
+  static Insertable<ChildProfile> custom({
+    Expression<int>? id,
+    Expression<String>? nicknameId,
+    Expression<String>? avatarId,
+    Expression<String>? grade,
+    Expression<String>? startingLessonId,
+    Expression<int>? createdAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (nicknameId != null) 'nickname_id': nicknameId,
+      if (avatarId != null) 'avatar_id': avatarId,
+      if (grade != null) 'grade': grade,
+      if (startingLessonId != null) 'starting_lesson_id': startingLessonId,
+      if (createdAt != null) 'created_at': createdAt,
+    });
+  }
+
+  ChildProfilesCompanion copyWith({
+    Value<int>? id,
+    Value<String>? nicknameId,
+    Value<String>? avatarId,
+    Value<String>? grade,
+    Value<String>? startingLessonId,
+    Value<int>? createdAt,
+  }) {
+    return ChildProfilesCompanion(
+      id: id ?? this.id,
+      nicknameId: nicknameId ?? this.nicknameId,
+      avatarId: avatarId ?? this.avatarId,
+      grade: grade ?? this.grade,
+      startingLessonId: startingLessonId ?? this.startingLessonId,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (nicknameId.present) {
+      map['nickname_id'] = Variable<String>(nicknameId.value);
+    }
+    if (avatarId.present) {
+      map['avatar_id'] = Variable<String>(avatarId.value);
+    }
+    if (grade.present) {
+      map['grade'] = Variable<String>(grade.value);
+    }
+    if (startingLessonId.present) {
+      map['starting_lesson_id'] = Variable<String>(startingLessonId.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ChildProfilesCompanion(')
+          ..write('id: $id, ')
+          ..write('nicknameId: $nicknameId, ')
+          ..write('avatarId: $avatarId, ')
+          ..write('grade: $grade, ')
+          ..write('startingLessonId: $startingLessonId, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $AppSettingsTable appSettings = $AppSettingsTable(this);
   late final $LetterMasteryTable letterMastery = $LetterMasteryTable(this);
+  late final $ChildProfilesTable childProfiles = $ChildProfilesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -495,6 +901,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     appSettings,
     letterMastery,
+    childProfiles,
   ];
 }
 
@@ -805,6 +1212,223 @@ typedef $$LetterMasteryTableProcessedTableManager =
       LetterMasteryData,
       PrefetchHooks Function()
     >;
+typedef $$ChildProfilesTableCreateCompanionBuilder =
+    ChildProfilesCompanion Function({
+      Value<int> id,
+      required String nicknameId,
+      required String avatarId,
+      required String grade,
+      required String startingLessonId,
+      required int createdAt,
+    });
+typedef $$ChildProfilesTableUpdateCompanionBuilder =
+    ChildProfilesCompanion Function({
+      Value<int> id,
+      Value<String> nicknameId,
+      Value<String> avatarId,
+      Value<String> grade,
+      Value<String> startingLessonId,
+      Value<int> createdAt,
+    });
+
+class $$ChildProfilesTableFilterComposer
+    extends Composer<_$AppDatabase, $ChildProfilesTable> {
+  $$ChildProfilesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get nicknameId => $composableBuilder(
+    column: $table.nicknameId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get avatarId => $composableBuilder(
+    column: $table.avatarId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get grade => $composableBuilder(
+    column: $table.grade,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get startingLessonId => $composableBuilder(
+    column: $table.startingLessonId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ChildProfilesTableOrderingComposer
+    extends Composer<_$AppDatabase, $ChildProfilesTable> {
+  $$ChildProfilesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get nicknameId => $composableBuilder(
+    column: $table.nicknameId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get avatarId => $composableBuilder(
+    column: $table.avatarId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get grade => $composableBuilder(
+    column: $table.grade,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get startingLessonId => $composableBuilder(
+    column: $table.startingLessonId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ChildProfilesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ChildProfilesTable> {
+  $$ChildProfilesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get nicknameId => $composableBuilder(
+    column: $table.nicknameId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get avatarId =>
+      $composableBuilder(column: $table.avatarId, builder: (column) => column);
+
+  GeneratedColumn<String> get grade =>
+      $composableBuilder(column: $table.grade, builder: (column) => column);
+
+  GeneratedColumn<String> get startingLessonId => $composableBuilder(
+    column: $table.startingLessonId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+}
+
+class $$ChildProfilesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ChildProfilesTable,
+          ChildProfile,
+          $$ChildProfilesTableFilterComposer,
+          $$ChildProfilesTableOrderingComposer,
+          $$ChildProfilesTableAnnotationComposer,
+          $$ChildProfilesTableCreateCompanionBuilder,
+          $$ChildProfilesTableUpdateCompanionBuilder,
+          (
+            ChildProfile,
+            BaseReferences<_$AppDatabase, $ChildProfilesTable, ChildProfile>,
+          ),
+          ChildProfile,
+          PrefetchHooks Function()
+        > {
+  $$ChildProfilesTableTableManager(_$AppDatabase db, $ChildProfilesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ChildProfilesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ChildProfilesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ChildProfilesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> nicknameId = const Value.absent(),
+                Value<String> avatarId = const Value.absent(),
+                Value<String> grade = const Value.absent(),
+                Value<String> startingLessonId = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+              }) => ChildProfilesCompanion(
+                id: id,
+                nicknameId: nicknameId,
+                avatarId: avatarId,
+                grade: grade,
+                startingLessonId: startingLessonId,
+                createdAt: createdAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String nicknameId,
+                required String avatarId,
+                required String grade,
+                required String startingLessonId,
+                required int createdAt,
+              }) => ChildProfilesCompanion.insert(
+                id: id,
+                nicknameId: nicknameId,
+                avatarId: avatarId,
+                grade: grade,
+                startingLessonId: startingLessonId,
+                createdAt: createdAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ChildProfilesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ChildProfilesTable,
+      ChildProfile,
+      $$ChildProfilesTableFilterComposer,
+      $$ChildProfilesTableOrderingComposer,
+      $$ChildProfilesTableAnnotationComposer,
+      $$ChildProfilesTableCreateCompanionBuilder,
+      $$ChildProfilesTableUpdateCompanionBuilder,
+      (
+        ChildProfile,
+        BaseReferences<_$AppDatabase, $ChildProfilesTable, ChildProfile>,
+      ),
+      ChildProfile,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -813,6 +1437,8 @@ class $AppDatabaseManager {
       $$AppSettingsTableTableManager(_db, _db.appSettings);
   $$LetterMasteryTableTableManager get letterMastery =>
       $$LetterMasteryTableTableManager(_db, _db.letterMastery);
+  $$ChildProfilesTableTableManager get childProfiles =>
+      $$ChildProfilesTableTableManager(_db, _db.childProfiles);
 }
 
 // **************************************************************************
