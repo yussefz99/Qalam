@@ -232,7 +232,7 @@ Plans:
 **Wave 2** *(blocked on Wave 1)*
 
 - [x] 04-02-PLAN.md — THE SPINE: pure-Dart scoreLetter orchestrator (count→order→per-stroke→dot, combined-bbox normalization), threshold-parameterized scorer, green contract tests (SC#1/SC#3/SC#4)
-- [ ] 04-03-PLAN.md — ML Kit advisory identity gate (MlKitRecognizer, D-04) + best-effort background model download with getting-ready degradation (D-05, SC#2)
+- [x] 04-03-PLAN.md — ML Kit advisory identity gate (MlKitRecognizer, D-04) + best-effort background model download with getting-ready degradation (D-05, SC#2)
 
 **Wave 3** *(blocked on Wave 2)*
 
@@ -345,7 +345,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 1. Foundations & RTL Shell | 3/3 | Complete   | 2026-05-31 |
 | 2. Curriculum Schema & First-Letter Seed | 0/3 | Planned | - |
 | 3. Trace One Letter End-to-End | 0/4 | Planned | - |
-| 4. Scoring Quality & Calibration | 2/6 | In Progress|  |
+| 4. Scoring Quality & Calibration | 3/6 | In Progress|  |
 | 5. Profiles & Onboarding | 0/TBD | Not started | - |
 | 6. Lesson Progression & Home | 0/TBD | Not started | - |
 | 7. Full Curriculum & Pronunciation Audio | 0/TBD | Not started | - |
