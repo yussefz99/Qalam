@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 04-05-PLAN.md (calibration harness + labeled-capture mode)
-last_updated: "2026-06-08T14:01:55.727Z"
+stopped_at: "Phase 04 plans 01-05 complete (scoring engine: scoreLetter spine, ML Kit advisory gate, UI wiring, calibration harness). 04-06 DEFERRED — human-gated, needs owner's mother + Android tablet + real children to author/tune/sign-off baa-family. Provisionally authored DRAFT referenceStrokes + commonMistakes + tolerances for ALL 28 letters from mother's Drive curriculum materials + standard forms (signedOff:false except alif); guarded by test/curriculum/all_letters_validation_test.dart. Practice screen still hardwired to alif — per-letter navigation/animation NOT wired (Phase 6). Sketch + sign-off checklist in docs/curriculum/baa-family-authoring-sketch.md. Phase 5 (Profiles & Onboarding) unblocked. Known baseline: 4 pre-existing test failures (2 golden font-drift + 2 stale Phase 03.1 nav tests), not regressions."
+last_updated: "2026-06-08T17:53:27.935Z"
 last_activity: 2026-06-08
 progress:
   total_phases: 13
@@ -106,6 +106,7 @@ None yet.
 - **Geometric stroke scorer (deepest risk, Phase 3–4):** NOT provided by ML Kit (ML Kit gives only {text, score}); custom build + per-letter calibration against real child samples.
 - **Offline / one-time model download (open question, Phase 10):** verify on a fresh, no-network install.
 - ~~**Phase 2 sign-off gate:**~~ CLOSED — alif signedOff: true, 1 referenceStroke (64 pts), 3 commonMistakes authored. Phase 3 is unblocked.
+- Phase 04 plan 04-06 (baa-family sign-off) DEFERRED — blocked on real-world resources: requires a real Android tablet + the owner's mother + real children to author/label/sign off baa/taa/thaa and tune per-letter tolerances on real samples (cannot be done on emulator, per plan note). Plans 04-01..04-05 complete. Re-run /gsd:execute-phase 4 when resources available to finish 04-06 and complete the phase.
 
 ### Quick Tasks Completed
 
@@ -126,6 +127,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-08T14:01:48.885Z
-Stopped at: Completed 04-05-PLAN.md (calibration harness + labeled-capture mode)
+Last session: 2026-06-08T17:53:27.926Z
+Stopped at: Phase 04 plans 01-05 complete (scoring engine: scoreLetter spine, ML Kit advisory gate, UI wiring, calibration harness). 04-06 DEFERRED — human-gated, needs owner's mother + Android tablet + real children to author/tune/sign-off baa-family. Provisionally authored DRAFT referenceStrokes + commonMistakes + tolerances for ALL 28 letters from mother's Drive curriculum materials + standard forms (signedOff:false except alif); guarded by test/curriculum/all_letters_validation_test.dart. Practice screen still hardwired to alif — per-letter navigation/animation NOT wired (Phase 6). Sketch + sign-off checklist in docs/curriculum/baa-family-authoring-sketch.md. Phase 5 (Profiles & Onboarding) unblocked. Known baseline: 4 pre-existing test failures (2 golden font-drift + 2 stale Phase 03.1 nav tests), not regressions.
 Resume file: None
