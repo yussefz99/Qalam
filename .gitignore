@@ -52,3 +52,18 @@ app.*.map.json
 
 # Golden test diff artifacts (generated on failure, not source)
 test/failures/
+**/failures/
+
+# Graphify knowledge-graph output (generated, large; rebuilt from source)
+/graphify-out/
+/.planning/graphs/
+
+# GSD auto-checkpoint (regenerated each session)
+/.planning/HANDOFF.json
+
+# Flutter DevTools per-machine config (auto-generated)
+devtools_options.yaml
+
+# Node deps for the presentation deck builder (install with npm, not vendored)
+docs/presentation/node_modules/
+docs/presentation/~$*
