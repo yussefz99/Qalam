@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Phase 6 UI-SPEC approved
-last_updated: "2026-06-11T16:46:10.366Z"
-last_activity: 2026-06-08 -- merged Phase 04 from main into phase-05-profiles-onboarding branch
+last_updated: "2026-06-11T18:37:21.788Z"
+last_activity: 2026-06-11 -- Phase 06 execution started
 progress:
   total_phases: 13
   completed_phases: 7
-  total_plans: 34
+  total_plans: 42
   completed_plans: 33
   percent: 54
 ---
@@ -21,14 +21,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
-**Current focus:** Phases 04 + 05 merged on branch `phase-05-profiles-onboarding`
+**Current focus:** Phase 06 — lesson-progression-home
 
 ## Current Position
 
-Phase: 04 (scoring-quality-calibration) — 5/6 plans complete, 04-06 DEFERRED (human-gated)
+Phase: 06 (lesson-progression-home) — EXECUTING
+Plan: 1 of 8
 Phase: 05 (profiles-onboarding) — 4/4 plans complete, verification human_needed (device UAT)
-Status: Phase 6 planned (8 plans, 5 waves) — ready to execute
-Last activity: 2026-06-08 -- merged Phase 04 from main into phase-05-profiles-onboarding branch
+Status: Executing Phase 06
+Last activity: 2026-06-11 -- Phase 06 execution started
 
 Progress: [█████░░░░░] 54% (7 of 13 tracked phases complete)
 <!-- reconciled 2026-06-11: 13 tracked phases (integer 1-10 + inserted 02.1/02.1.1/03.1). Complete: 1, 2, 02.1, 02.1.1, 3, 03.1, 5. Phase 4 in progress (5/6, 04-06 deferred). Evidence: every plan in those phases has a SUMMARY file; scorer + curriculum repo + models exist in lib/. -->
