@@ -7,11 +7,15 @@ stopped_at: "MERGED Phase 04 (from main) into the Phase 05 branch. Phase 04: pla
 last_updated: "2026-06-08T18:10:00.000Z"
 last_activity: 2026-06-08 -- merged Phase 04 from main into phase-05-profiles-onboarding branch
 progress:
+  # reconciled 2026-06-11: 13 tracked phases = integer 1-10 + inserted 02.1/02.1.1/03.1.
+  # completed_phases = 7 (1,2,02.1,02.1.1,3,03.1,5 all 100% plans done); Phase 4 in progress
+  # (5/6, 04-06 deferred); 6-10 future. completed_plans=33 of 34 (only 04-06 lacks a SUMMARY).
+  # percent = 7/13 phases = 54%.
   total_phases: 13
-  completed_phases: 6
+  completed_phases: 7
   total_plans: 34
   completed_plans: 33
-  percent: 46
+  percent: 54
 ---
 
 # Project State
@@ -30,15 +34,21 @@ Phase: 05 (profiles-onboarding) — 4/4 plans complete, verification human_neede
 Status: Phase 04 (from main) merged into the Phase 05 branch; ready to PR into main
 Last activity: 2026-06-08 -- merged Phase 04 from main into phase-05-profiles-onboarding branch
 
-Progress: [██░░░░░░░░] 20% (2 of 10 phases complete)
+Progress: [█████░░░░░] 54% (7 of 13 tracked phases complete)
+<!-- reconciled 2026-06-11: 13 tracked phases (integer 1-10 + inserted 02.1/02.1.1/03.1). Complete: 1, 2, 02.1, 02.1.1, 3, 03.1, 5. Phase 4 in progress (5/6, 04-06 deferred). Evidence: every plan in those phases has a SUMMARY file; scorer + curriculum repo + models exist in lib/. -->
+<!-- Of the 10 INTEGER milestone phases, 4 are complete (1, 2, 3, 5); Phase 4 is 5/6. -->
+
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 9
+- Total plans completed: 33 of 34 (only 04-06 deferred/human-gated)
+- Phases complete: 7 of 13 tracked (1, 2, 02.1, 02.1.1, 3, 03.1, 5); Phase 4 in progress (5/6)
 - Average duration: — min
 - Total execution time: 0.0 hours
+<!-- reconciled 2026-06-11: prior "9 plans / 2 of 10 phases" was stale and contradicted frontmatter completed_plans=33. -->
+
 
 **By Phase:**
 

@@ -25,9 +25,9 @@ needs it.
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundations & RTL Shell** - Runnable RTL app skeleton with Arabic font, routing, theme, and local DB; resolves the connected-script rendering question. (completed 2026-05-31)
-- [ ] **Phase 2: Curriculum Schema & First-Letter Seed** - A faithful curriculum data schema plus a small owner's-mother-signed-off seed (forms, reference stroke paths, common mistakes) for the first letters.
+- [x] **Phase 2: Curriculum Schema & First-Letter Seed** - A faithful curriculum data schema plus a small owner's-mother-signed-off seed (forms, reference stroke paths, common mistakes) for the first letters. (completed — commit 419cc21) <!-- reconciled 2026-06-11: all 3 plans have SUMMARY files; curriculum_repository + models exist in lib/. Checkbox was stale. -->
 - [x] **Phase 02.1: Stroke Reference Correction** (INSERTED) - Replace broken glyph-outline reference strokes with correct open-centerline teaching strokes; in-app authoring trace screen, schema `type` field + closed-loop validator, and a re-signed-off alif. Unblocks Phase 3. (completed 2026-06-01)
-- [ ] **Phase 3: Trace One Letter End-to-End** - A child can watch the stroke-order animation, trace a real seeded letter, get on-device geometric feedback, and earn a quiet star — the whole loop, thin.
+- [x] **Phase 3: Trace One Letter End-to-End** - A child can watch the stroke-order animation, trace a real seeded letter, get on-device geometric feedback, and earn a quiet star — the whole loop, thin. (completed — commit 3761794, "151 tests pass") <!-- reconciled 2026-06-11: all 6 plans (03-00..03-05) have SUMMARY files; geometric_stroke_scorer + letter_scorer exist in lib/. Checkbox was stale. -->
 - [ ] **Phase 03.1: Journey Map Screen** (INSERTED) - Winding-path progress view showing all 28 letters as nodes; mocked progress data; pulse animation on current letter; tap to practice; unlocked from Home nav.
 - [ ] **Phase 4: Scoring Quality & Calibration** - The scorer rejects wrong-order/sloppy work and accepts good-faith child attempts, with per-letter tolerances calibrated against real child samples with the owner's mother.
 - [ ] **Phase 5: Profiles & Onboarding** - A parent creates a local child profile (name + grade), and the child picks an avatar and nickname on first open.
@@ -78,9 +78,10 @@ Plans:
 **Plans**: 3 plans
 Plans:
 
-- [ ] 02-01-PLAN.md — Wave 1: Python extraction script + 28-letter letters.json + lessons.json skeleton + pubspec asset declaration + owner sign-off checkpoint for alif
-- [ ] 02-02-PLAN.md — Wave 2: Typed Dart models (Letter, Lesson, sub-types) + unit tests
-- [ ] 02-03-PLAN.md — Wave 3: CurriculumRepository (rootBundle loader, Riverpod provider) + integration tests + Phase 2 completeness gate
+- [x] 02-01-PLAN.md — Wave 1: Python extraction script + 28-letter letters.json + lessons.json skeleton + pubspec asset declaration + owner sign-off checkpoint for alif
+- [x] 02-02-PLAN.md — Wave 2: Typed Dart models (Letter, Lesson, sub-types) + unit tests
+- [x] 02-03-PLAN.md — Wave 3: CurriculumRepository (rootBundle loader, Riverpod provider) + integration tests + Phase 2 completeness gate
+<!-- reconciled 2026-06-11: 02-01/02/03 all have SUMMARY files (executed) — checkboxes were stale. -->
 
 ### Phase 02.1: Stroke Reference Correction (INSERTED)
 
@@ -159,19 +160,26 @@ Plans:
   3. Within ~300 ms of stylus-up and fully offline, the child sees feedback that evaluates stroke count, order, direction, and shape — with the failing stroke highlighted and a specific named fix (never a generic "try again").
   4. A clean completion shows a single quiet star; there are no streaks, badges, confetti, timers, or over-praise.
 
-**Plans**: 4 plansPlans:
+**Plans**: 6 plans (03-00..03-05; ROADMAP previously listed only 4)
+<!-- reconciled 2026-06-11: phase shipped 6 plans (03-00 demo-home wave + 03-05 added during execution), all with SUMMARY files. All checked. -->
+Plans:
 **Wave 1**
 
-- [ ] 03-01-PLAN.md — Wave 1 (TDD): pure-Dart geometric stroke scorer + resampler + named-mistake mapping (S1-05)
-- [ ] 03-02-PLAN.md — Wave 1: Drift LetterMastery table + 1→2 migration + ProgressRepository (S1-10/D-09)
+- [x] 03-00-PLAN.md — Wave 1: demo Home foundation (mascot + greeting + Today's-lesson alif card)
+- [x] 03-01-PLAN.md — Wave 1 (TDD): pure-Dart geometric stroke scorer + resampler + named-mistake mapping (S1-05)
+- [x] 03-02-PLAN.md — Wave 1: Drift LetterMastery table + 1→2 migration + ProgressRepository (S1-10/D-09)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 03-03-PLAN.md — Wave 2: stylus-filtered capture canvas + dotted guide + PathMetric stroke-order animation + recognizer seam (S1-04/S1-05/D-13/D-16)
+- [x] 03-03-PLAN.md — Wave 2: stylus-filtered capture canvas + dotted guide + PathMetric stroke-order animation + recognizer seam (S1-04/S1-05/D-13/D-16)
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 03-04-PLAN.md — Wave 3: Watch→Trace→Celebrate flow + session controller + one-star celebration + anti-gamification omissions (S1-04/S1-05/S1-10/PLAT-03)
+- [x] 03-04-PLAN.md — Wave 3: Watch→Trace→Celebrate flow + session controller + one-star celebration + anti-gamification omissions (S1-04/S1-05/S1-10/PLAT-03)
+
+**Wave 4**
+
+- [x] 03-05-PLAN.md — Wave 4: demo-home warmth pass (Welcome-back greeting + alif lesson card, D-17)
 
 **UI hint**: yes
 **Research hint**: yes — DEEPEST-RISK PHASE. The custom geometric stroke-order/shape scorer is NOT provided by ML Kit (ML Kit returns only {text, score} as a secondary letter-identity check). Stroke capture must use low-level pointer events (not GestureDetector) to preserve per-stroke order/count; the ML Kit Arabic model must be downloaded-and-cached before first scoring. Flag for deep iteration with the owner's mother.
@@ -203,7 +211,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2)*
 
-- [ ] 03.1-03-PLAN.md -- Wave 3: Pulse animation + tap handlers + gold star badges + Level 1 Quiz checkpoint + Level 2 locked banner + human verify checkpoint
+- [x] 03.1-03-PLAN.md -- Wave 3: Pulse animation + tap handlers + gold star badges + Level 1 Quiz checkpoint + Level 2 locked banner + human verify checkpoint <!-- reconciled 2026-06-11: has SUMMARY + commit 4a97d87; checkbox was stale. -->
 
 **UI hint**: yes -- PRIMARY design reference: docs/design/kit/project/ui_kits/qalam_app/journey_preview.html
 **Research hint**: no -- design is locked (journey_preview.html). Plan directly.
@@ -358,15 +366,25 @@ Plans:
 **Execution Order:**
 Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10
 
+<!-- reconciled 2026-06-11: Phase 2 (0/3) and Phase 3 (0/4) were stale — both fully shipped
+     (commits 419cc21, 3761794; every plan has a SUMMARY; scorer + curriculum repo live in lib/).
+     Phase 4/5 were correctly built ON TOP of completed 2/3, not in spite of them.
+     Table now includes the 3 inserted decimal phases. 13 tracked phases, 7 complete = 54%. -->
+
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundations & RTL Shell | 3/3 | Complete   | 2026-05-31 |
-| 2. Curriculum Schema & First-Letter Seed | 0/3 | Planned | - |
-| 3. Trace One Letter End-to-End | 0/4 | Planned | - |
-| 4. Scoring Quality & Calibration | 5/6 | In Progress|  |
+| 1. Foundations & RTL Shell | 3/3 | Complete | 2026-05-31 |
+| 2. Curriculum Schema & First-Letter Seed | 3/3 | Complete | 2026-06-01 |
+| 02.1 Stroke Reference Correction (INSERTED) | 4/4 | Complete | 2026-06-01 |
+| 02.1.1 Presentation Demo Screens (INSERTED) | 5/5 | Complete | 2026-06-02 |
+| 3. Trace One Letter End-to-End | 6/6 | Complete | 2026-06-02 |
+| 03.1 Journey Map Screen (INSERTED) | 3/3 | Complete | - |
+| 4. Scoring Quality & Calibration | 5/6 | In Progress (04-06 deferred, human-gated) | - |
 | 5. Profiles & Onboarding | 4/4 | Complete | - |
 | 6. Lesson Progression & Home | 0/TBD | Not started | - |
 | 7. Full Curriculum & Pronunciation Audio | 0/TBD | Not started | - |
 | 8. Sentence-Building & Grammar Exercises | 0/TBD | Not started | - |
 | 9. Parent Dashboard | 0/TBD | Not started | - |
 | 10. Offline Hardening & Release | 0/TBD | Not started | - |
+
+**Totals:** 7 of 13 tracked phases complete (54%); 33 of 34 plans complete (only 04-06 deferred).
