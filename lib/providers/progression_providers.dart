@@ -1,0 +1,125 @@
+// Live progression providers — Phase 06, plan 03 (S1-01 / S1-09).
+//
+// The phase's reactivity spine: drift `.watch()` streams from AppDatabase
+// (06-02) feed StreamProviders, and the derived Future providers recompute on
+// every emission BY CONSTRUCTION — `ref.watch(masteredLetterIdsProvider.future)`
+// re-executes the computation whenever the stream pushes a new mastery set.
+// No caller ever needs `ref.invalidate` to see a pass reflected (S1-09
+// "immediate on pass"; proven by test/providers/progression_providers_test.dart,
+// which contains zero manual refresh calls).
+//
+// NOTE (deviation, Rule 3 — same as profile_providers.dart): these are
+// HAND-WRITTEN providers, not `@riverpod` codegen. riverpod_generator 4.0.3
+// throws `InvalidTypeException` for functional providers in Drift's orbit
+// (Pitfall 3 policy: hand-write anything touching Drift types), and we keep
+// the whole file on one style for consistency.
+//
+// NEVER keep-alive (Pitfall 4): a kept-alive live provider would cache a stale
+// "today" across sessions/navigation. All four providers below are autoDispose
+// by default — the UI keeps them alive while listening, and they rebuild fresh
+// from the database streams when re-listened.
+
+import 'dart:async';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../data/app_database.dart';
+import '../data/curriculum_repository.dart';
+import '../models/lesson.dart';
+import '../models/lesson_progression.dart';
+import 'profile_providers.dart';
+
+/// Bridges a drift `.watch()` stream into an [AsyncNotifier]: the build
+/// future completes with the stream's FIRST emission, and every later
+/// emission is pushed through `state`.
+///
+/// Why not a plain `StreamProvider`: Riverpod 3 pauses a StreamProvider's
+/// subscription while it has no active listeners, which leaves a bare
+/// `container.read(provider.future)` hanging forever — the drift query never
+/// runs (verified against flutter_riverpod 3.3.1). An AsyncNotifier's build
+/// runs to completion on first read, so `.future` resolves with or without
+/// listeners, while `state = AsyncData(...)` keeps live listeners updated on
+/// every subsequent database write.
+Future<T> _bindDriftStream<T>(
+  Ref ref,
+  Stream<T> source,
+  void Function(AsyncValue<T>) push,
+) {
+  final completer = Completer<T>();
+  final sub = source.listen((value) {
+    if (!completer.isCompleted) {
+      completer.complete(value);
+    } else {
+      push(AsyncData(value));
+    }
+  }, onError: (Object error, StackTrace stackTrace) {
+    if (!completer.isCompleted) {
+      completer.completeError(error, stackTrace);
+    } else {
+      push(AsyncError(error, stackTrace));
+    }
+  });
+  ref.onDispose(sub.cancel);
+  return completer.future;
+}
+
+class _MasteredLetterIdsNotifier extends AsyncNotifier<Set<String>> {
+  @override
+  Future<Set<String>> build() => _bindDriftStream(
+        ref,
+        ref.watch(appDatabaseProvider).watchMasteredLetterIds(),
+        (value) => state = value,
+      );
+}
+
+/// The set of mastered letter ids, live from the LetterMastery table.
+///
+/// Emits the current set immediately, then a new set on every
+/// `recordMastery` write — the S1-09 immediacy substrate.
+final masteredLetterIdsProvider =
+    AsyncNotifierProvider<_MasteredLetterIdsNotifier, Set<String>>(
+  _MasteredLetterIdsNotifier.new,
+);
+
+class _CleanRepsNotifier extends AsyncNotifier<int> {
+  _CleanRepsNotifier(this.letterId);
+
+  /// The family argument — which letter's banked rep count to watch.
+  final String letterId;
+
+  @override
+  Future<int> build() => _bindDriftStream(
+        ref,
+        ref.watch(appDatabaseProvider).watchCleanReps(letterId),
+        (value) => state = value,
+      );
+}
+
+/// The banked partial clean-rep count for one letter (D-10), live from the
+/// LetterReps table. Emits 0 while the letter has never been practiced.
+final cleanRepsForLetterProvider =
+    AsyncNotifierProvider.family<_CleanRepsNotifier, int, String>(
+  _CleanRepsNotifier.new,
+);
+
+/// The full progression snapshot for the active child: today's lesson (D-06),
+/// unlocked lessons (D-02 + D-05), and the letter→lesson map.
+///
+/// Watching `masteredLetterIdsProvider.future` is what makes this recompute
+/// on every mastery emission — the no-invalidation guarantee.
+final progressionProvider = FutureProvider<ProgressionSnapshot>((ref) async {
+  final mastered = await ref.watch(masteredLetterIdsProvider.future);
+  final lessons = await ref.watch(curriculumRepositoryProvider).getLessons();
+  final ordered = [...lessons]..sort((a, b) => a.order.compareTo(b.order));
+  final profile = await ref.watch(childProfileProvider.future);
+  // Defensive: no profile yet → start at the first lesson (D-06's "unknown
+  // startingLessonId → index 0" already covers the empty-string fallback).
+  final startingLessonId = profile?.startingLessonId ??
+      (ordered.isEmpty ? '' : ordered.first.id);
+  return ProgressionSnapshot.compute(ordered, startingLessonId, mastered);
+});
+
+/// Today's lesson for the active child — null when all mastered (D-11).
+final todayLessonProvider = FutureProvider<Lesson?>(
+  (ref) async => (await ref.watch(progressionProvider.future)).today,
+);
