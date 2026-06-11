@@ -17,6 +17,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:qalam/data/app_database.dart';
 import 'package:qalam/data/drift_progress_repository.dart';
+import 'package:qalam/data/progress_repository.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -113,6 +114,29 @@ void main() {
         reason: 'letter_mastery rows must survive simulated restart',
       );
       await db2.close();
+    },
+  );
+
+  // ---------------------------------------------------------------------------
+  // Test 4 (Plan 06-02): the repository delegates the new rep-persistence API
+  // to AppDatabase — setCleanReps/getCleanReps roundtrip through the interface.
+  // ---------------------------------------------------------------------------
+  test(
+    'setCleanReps roundtrips through the repository (D-10 delegation)',
+    () async {
+      final shared = DatabaseConnection(NativeDatabase.memory());
+      final db = AppDatabase(shared.executor);
+      final ProgressRepository repo = DriftProgressRepository(db);
+
+      await repo.setCleanReps(letterId: 'baa', cleanReps: 2);
+      expect(await repo.getCleanReps('baa'), 2,
+          reason: 'the repository must delegate rep persistence to the DB');
+
+      await repo.setCleanReps(letterId: 'baa', cleanReps: 0);
+      expect(await repo.getCleanReps('baa'), 0,
+          reason: 'overwrite-to-0 must pass through the repository unchanged');
+
+      await db.close();
     },
   );
 }

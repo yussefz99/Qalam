@@ -7,8 +7,11 @@
 //
 // Pins the MECHANISM (S1-02 / S1-03 fixed sets). The actual per-grade entry
 // points and the final nickname wording are the owner's mother's domain — these
-// tests assert the SHAPE (every grade key present, default = 'alif', 6 avatars,
-// 8–10 nicknames), not the pedagogy.
+// tests assert the SHAPE (every grade key present, default = 'lesson_01', 6
+// avatars, 8–10 nicknames), not the pedagogy.
+//
+// NAMESPACE (Phase 6, Plan 06-02): startingLessonId values are LESSON ids
+// ('lesson_01'), not letter ids — decided this phase, enforced here.
 //
 // SECURITY (T-05-02): pins the exact fixed sets so out-of-set tampering is
 // detectable; only fixed-set IDs ever flow into a profile (no free text, S1-03).
@@ -27,21 +30,25 @@ void main() {
       );
     });
 
-    test('every grade currently resolves to the Phase-5 default "alif"', () {
+    test('every grade currently resolves to the default lesson "lesson_01"',
+        () {
       for (final entry in gradeToStartingLessonId.entries) {
-        expect(entry.value, 'alif',
-            reason: 'Phase 5 ships all grades → alif until the owner specifies '
-                'real per-grade entry points (D-5/S1-02)');
+        expect(entry.value, 'lesson_01',
+            reason: 'all grades → lesson_01 until the owner specifies real '
+                'per-grade entry points (D-5/S1-02); values are LESSON ids '
+                '(Plan 06-02 namespace decision)');
       }
     });
 
-    test('resolveStartingLessonId returns alif for a known grade', () {
-      expect(resolveStartingLessonId('grade2'), 'alif');
+    test('resolveStartingLessonId returns lesson_01 for a known grade', () {
+      expect(resolveStartingLessonId('grade2'), 'lesson_01');
     });
 
-    test('resolveStartingLessonId falls back to alif for an unknown grade', () {
-      expect(resolveStartingLessonId('unknown'), 'alif',
-          reason: 'unmapped grades must default to alif, never crash');
+    test('resolveStartingLessonId falls back to lesson_01 for an unknown grade',
+        () {
+      expect(resolveStartingLessonId('unknown'), 'lesson_01',
+          reason: 'unmapped grades must default to the first lesson, never '
+              'crash');
     });
   });
 

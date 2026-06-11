@@ -74,7 +74,7 @@ void main() {
           nicknameId: 'nick_star',
           avatarId: 'avatar_1',
           grade: 'kg',
-          startingLessonId: 'alif',
+          startingLessonId: 'lesson_01',
         ),
         returnsNormally,
       );
@@ -98,7 +98,7 @@ void main() {
       expect(profile, isNotNull,
           reason: 'the child profile must survive a simulated restart');
       expect(profile!.nicknameId, 'nick_star');
-      expect(profile.startingLessonId, 'alif');
+      expect(profile.startingLessonId, 'lesson_01');
       await db2.close();
     },
   );

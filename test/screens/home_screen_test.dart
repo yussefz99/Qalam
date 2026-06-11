@@ -65,7 +65,7 @@ ChildProfile _starProfile() => ChildProfile(
       nicknameId: 'nick_star',
       avatarId: 'avatar_1',
       grade: 'kg',
-      startingLessonId: 'alif',
+      startingLessonId: 'lesson_01',
       createdAt: 0,
     );
 
