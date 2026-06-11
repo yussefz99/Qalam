@@ -298,7 +298,17 @@ Plans:
   2. Locked lessons are visibly unavailable until their prerequisite is passed.
   3. Passing a lesson (meeting its clean-reps-to-advance rule) immediately unlocks the next lesson, which then appears as today's lesson.
 
-**Plans**: TBD
+**Plans:** 8 plans
+
+Plans:
+- [ ] 06-01-PLAN.md — 28-lesson catalog + pure-Dart progression engine (D-01/D-02/D-06)
+- [ ] 06-02-PLAN.md — Schema v4: LetterReps persistence, watch streams, startingLessonId namespace (D-10)
+- [ ] 06-03-PLAN.md — Live progression providers + /practice?lesson= route parameterization (S1-09 immediacy)
+- [ ] 06-04-PLAN.md — Tolerance ramp + persisted-rep write-through (D-18/D-19/D-20)
+- [ ] 06-05-PLAN.md — Home today-card live: ink-fill, prepared desk, all-mastered state (S1-01)
+- [ ] 06-06-PLAN.md — Journey live data, canonical IDs, skipped taps, highlight arrival (D-07/D-15)
+- [ ] 06-07-PLAN.md — Celebration: Next Lesson, last-lesson variant, tutor line (D-14/D-16/D-17)
+- [ ] 06-08-PLAN.md — Slow-motion ghost comparison (D-21)
 **UI hint**: yes
 
 ### Phase 7: Full Curriculum & Pronunciation Audio
