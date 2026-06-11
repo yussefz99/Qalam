@@ -11,6 +11,8 @@
 // SECURITY (T-03-01/T-01-05): no stroke coordinates are stored or transmitted.
 // Only letterId + cleanReps are persisted (via ProgressRepository) on mastery.
 
+import 'dart:math' as math;
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../core/scoring/scoring_models.dart';
@@ -44,6 +46,7 @@ class PracticeState {
     required this.phase,
     required this.cleanReps,
     required this.cleanRepsToAdvance,
+    this.tolerancePreset = 'normal',
     this.lastMistakeId,
   });
 
@@ -57,6 +60,15 @@ class PracticeState {
   /// Sourced from Letter.cleanRepsToAdvance via curriculum JSON.
   final int cleanRepsToAdvance;
 
+  /// The tolerance-ramp preset name the CURRENT rep scores at (D-18/D-20):
+  /// `ramp[min(cleanReps, ramp.length - 1)]`, recomputed whenever [cleanReps]
+  /// changes. The index is the PERSISTED rep count, not the sitting — a child
+  /// resuming at rep 2 scores at rep 2's preset. Defaults to 'normal' (the
+  /// Phase-4 behavior-preserving anchor) until the lesson's ramp resolves.
+  /// NEVER shown to the child (UI-SPEC: invisible scaffolding — no
+  /// loose/strict labels anywhere).
+  final String tolerancePreset;
+
   /// The most recent failing mistake, present only in the [PracticePhase.showFix]
   /// phase. Null in all other phases.
   final MistakeId? lastMistakeId;
@@ -65,6 +77,7 @@ class PracticeState {
     PracticePhase? phase,
     int? cleanReps,
     int? cleanRepsToAdvance,
+    String? tolerancePreset,
     // Use Object sentinel so callers can explicitly clear lastMistakeId to null.
     Object? lastMistakeId = _sentinel,
   }) {
@@ -72,6 +85,7 @@ class PracticeState {
       phase: phase ?? this.phase,
       cleanReps: cleanReps ?? this.cleanReps,
       cleanRepsToAdvance: cleanRepsToAdvance ?? this.cleanRepsToAdvance,
+      tolerancePreset: tolerancePreset ?? this.tolerancePreset,
       lastMistakeId: lastMistakeId == _sentinel
           ? this.lastMistakeId
           : lastMistakeId as MistakeId?,
@@ -89,6 +103,17 @@ const Object _sentinel = Object();
 /// family(String lessonId) — each lesson gets its own controller instance.
 @riverpod
 class PracticeSessionController extends _$PracticeSessionController {
+  /// The resolved tolerance ramp for this lesson (D-19): the per-lesson
+  /// `toleranceRamp` override when present, else the file-level
+  /// `defaultToleranceRamp` from lessons.json. Null until [_loadLetter]
+  /// resolves it — [_presetFor] degrades to 'normal' (the Phase-4 anchor).
+  List<String>? _ramp;
+
+  /// The lesson's letter id, cached by [_loadLetter] for the per-rep
+  /// write-through (D-10). Only this id and an int count ever reach storage —
+  /// never stroke data (T-06-01).
+  String? _letterId;
+
   @override
   PracticeState build(String lessonId) {
     // Load the lesson to get cleanRepsToAdvance for the letter.
@@ -102,8 +127,11 @@ class PracticeSessionController extends _$PracticeSessionController {
     );
   }
 
-  /// Loads the letter for this lesson and updates cleanRepsToAdvance from
-  /// curriculum data. Idempotent — safe to call multiple times.
+  /// Loads the letter for this lesson, updates cleanRepsToAdvance from
+  /// curriculum data, resolves the tolerance ramp (D-19), and primes the
+  /// session's rep count from the persisted LetterReps row (D-20) so a
+  /// resumed session scores at the rep index the child actually reached.
+  /// Idempotent — safe to call multiple times.
   Future<void> _loadLetter(String lessonId) async {
     final curriculumRepo = ref.read(curriculumRepositoryProvider);
     final lesson = await curriculumRepo.getLesson(lessonId);
@@ -118,8 +146,61 @@ class PracticeSessionController extends _$PracticeSessionController {
     final letter = await curriculumRepo.getLetter(letterItem.ref);
     if (letter == null) return;
 
-    // Update cleanRepsToAdvance from actual curriculum data.
-    state = state.copyWith(cleanRepsToAdvance: letter.cleanRepsToAdvance);
+    _letterId = letterItem.ref;
+
+    // D-19: the ramp is DATA — per-lesson override, else the lessons.json
+    // file-level default. An empty override is treated as absent (defensive,
+    // T-06-07: the owner's mother edits this by hand).
+    final lessonRamp = lesson.toleranceRamp;
+    _ramp = (lessonRamp != null && lessonRamp.isNotEmpty)
+        ? lessonRamp
+        : await curriculumRepo.getDefaultToleranceRamp();
+
+    // D-20: prime the rep count from the persisted row — best-effort, a
+    // storage failure degrades to 0 and never blocks the session.
+    var persisted = 0;
+    try {
+      persisted =
+          await ref.read(progressRepositoryProvider).getCleanReps(_letterId!);
+    } catch (_) {
+      // Swallow — start the sitting at 0.
+    }
+
+    // Riverpod 3 throws on touching `state` after dispose — an unlistened
+    // autoDispose provider can be torn down while the awaits above resolve.
+    if (!ref.mounted) return;
+
+    // Update cleanRepsToAdvance from actual curriculum data and seed the
+    // persisted rep index + its ramp preset.
+    state = state.copyWith(
+      cleanRepsToAdvance: letter.cleanRepsToAdvance,
+      cleanReps: persisted,
+      tolerancePreset: _presetFor(persisted),
+    );
+  }
+
+  /// The ramp preset name for [cleanReps] (D-18): index = the persisted rep
+  /// count, clamped to the last ramp entry. 'normal' until the ramp resolves.
+  String _presetFor(int cleanReps) {
+    final ramp = _ramp;
+    if (ramp == null || ramp.isEmpty) return 'normal';
+    return ramp[math.min(cleanReps, ramp.length - 1)];
+  }
+
+  /// Best-effort write-through of the banked clean-rep count (D-10),
+  /// including the explicit reset to 0 on a miss (Pitfall 7). Mirrors the
+  /// [_recordMastery] try/swallow: a storage failure must never interrupt
+  /// the session. SECURITY: only letterId + an int count leave here (T-06-01).
+  Future<void> _persistCleanReps(int cleanReps) async {
+    final letterId = _letterId;
+    if (letterId == null) return; // load not finished — nothing to address
+    try {
+      await ref
+          .read(progressRepositoryProvider)
+          .setCleanReps(letterId: letterId, cleanReps: cleanReps);
+    } catch (_) {
+      // Swallow — the in-memory session continues.
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -147,11 +228,7 @@ class PracticeSessionController extends _$PracticeSessionController {
       await _registerCleanRep();
     } else {
       // Whole-letter miss — reset the streak and surface the named fix.
-      state = state.copyWith(
-        cleanReps: 0,
-        phase: PracticePhase.showFix,
-        lastMistakeId: result.mistakeId ?? MistakeId.fallback,
-      );
+      await _registerMiss(result.mistakeId);
     }
   }
 
@@ -159,6 +236,10 @@ class PracticeSessionController extends _$PracticeSessionController {
   /// Shared by the whole-letter and (legacy) per-stroke pass paths.
   Future<void> _registerCleanRep() async {
     final newReps = state.cleanReps + 1;
+    // D-10: write the new count through to LetterReps on EVERY change
+    // (best-effort — never blocks the session).
+    await _persistCleanReps(newReps);
+    if (!ref.mounted) return; // disposed mid-await (Riverpod 3)
     if (newReps >= state.cleanRepsToAdvance) {
       // Mastery earned — required clean reps achieved IN A ROW. DB write is
       // best-effort: a storage failure must not block the celebration.
@@ -167,17 +248,36 @@ class PracticeSessionController extends _$PracticeSessionController {
       } catch (_) {
         // Swallow — celebrate regardless.
       }
+      if (!ref.mounted) return; // disposed mid-await (Riverpod 3)
       state = state.copyWith(
         cleanReps: newReps,
+        tolerancePreset: _presetFor(newReps),
         phase: PracticePhase.celebrate,
       );
     } else {
       // Clean rep, not mastery yet — show warm per-rep praise.
       state = state.copyWith(
         cleanReps: newReps,
+        tolerancePreset: _presetFor(newReps),
         phase: PracticePhase.showPraise,
       );
     }
+  }
+
+  /// Records a miss: resets the streak to 0 IN STATE AND IN STORAGE
+  /// (D-10 / Pitfall 7 — the reset is an explicit write of 0, not a skipped
+  /// write) and surfaces the named fix. Shipped default: the banked count
+  /// resets across sittings too — whether a fresh sitting should soften this
+  /// is the owner's mother's call (flagged in the 06-04 SUMMARY).
+  Future<void> _registerMiss(MistakeId? mistakeId) async {
+    await _persistCleanReps(0);
+    if (!ref.mounted) return; // disposed mid-await (Riverpod 3)
+    state = state.copyWith(
+      cleanReps: 0,
+      tolerancePreset: _presetFor(0),
+      phase: PracticePhase.showFix,
+      lastMistakeId: mistakeId ?? MistakeId.fallback,
+    );
   }
 
   /// Submit a completed stroke result from the canvas.
@@ -186,36 +286,13 @@ class PracticeSessionController extends _$PracticeSessionController {
   /// Only [StrokeResult] enters — never raw Offset points (Anti-Pattern 3).
   Future<void> onStrokeResult(StrokeResult result) async {
     if (result.passed) {
-      final newReps = state.cleanReps + 1;
-      if (newReps >= state.cleanRepsToAdvance) {
-        // Mastery earned — required clean reps achieved IN A ROW.
-        // DB write is best-effort: a storage failure must not block the child
-        // from seeing the celebration they earned.
-        try {
-          await _recordMastery(newReps);
-        } catch (_) {
-          // Swallow — celebrate regardless.
-        }
-        state = state.copyWith(
-          cleanReps: newReps,
-          phase: PracticePhase.celebrate,
-        );
-      } else {
-        // Clean rep, but not mastery yet — show warm per-rep praise. The child
-        // taps "Keep going" (continueAfterPraise) to trace the next rep.
-        state = state.copyWith(
-          cleanReps: newReps,
-          phase: PracticePhase.showPraise,
-        );
-      }
+      // Same pass path as the whole-letter flow — praise/mastery + the D-10
+      // write-through live in one place.
+      await _registerCleanRep();
     } else {
-      // Miss — reset the streak to 0 (mastery requires N clean reps IN A ROW)
-      // and show the named fix.
-      state = state.copyWith(
-        cleanReps: 0,
-        phase: PracticePhase.showFix,
-        lastMistakeId: result.mistakeId ?? MistakeId.fallback,
-      );
+      // Miss — reset the streak to 0 (mastery requires N clean reps IN A ROW),
+      // persist the reset (D-10), and show the named fix.
+      await _registerMiss(result.mistakeId);
     }
   }
 

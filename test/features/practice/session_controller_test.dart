@@ -163,6 +163,19 @@ Future<void> _settle() async {
   }
 }
 
+/// Keeps the autoDispose session provider ALIVE across `_settle()`'s async
+/// gaps — Riverpod 3 disposes an unlistened autoDispose provider almost
+/// immediately, which would discard the seeded load. The production screen
+/// always `ref.watch`es the controller, so a live listener is the faithful
+/// harness (same Riverpod-3 pause/dispose landmine as 06-03).
+void _keepAlive(ProviderContainer container) {
+  final sub = container.listen(
+    practiceSessionControllerProvider('lesson_01'),
+    (_, _) {},
+  );
+  addTearDown(sub.close);
+}
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -343,7 +356,7 @@ void main() {
       final container = _makeContainer(fakeProgress);
       addTearDown(container.dispose);
 
-      container.read(practiceSessionControllerProvider('lesson_01'));
+      _keepAlive(container);
       await _settle();
 
       final state =
@@ -362,17 +375,22 @@ void main() {
 
       // Session 1 — one clean rep, then the app "restarts" (dispose).
       final first = _makeContainer(fakeProgress);
+      final firstSub = first.listen(
+        practiceSessionControllerProvider('lesson_01'),
+        (_, _) {},
+      );
       final notifier =
           first.read(practiceSessionControllerProvider('lesson_01').notifier);
       await _settle();
       notifier.advanceToTrace();
       await notifier.onStrokeResult(pass);
+      firstSub.close();
       first.dispose();
 
       // Session 2 — fresh container over the SAME persisted store.
       final second = _makeContainer(fakeProgress);
       addTearDown(second.dispose);
-      second.read(practiceSessionControllerProvider('lesson_01'));
+      _keepAlive(second);
       await _settle();
 
       final state =
@@ -386,6 +404,7 @@ void main() {
       final fakeProgress = _FakeProgressRepository();
       final container = _makeContainer(fakeProgress);
       addTearDown(container.dispose);
+      _keepAlive(container);
       final notifier = container
           .read(practiceSessionControllerProvider('lesson_01').notifier);
       await _settle();
@@ -411,6 +430,7 @@ void main() {
       final fakeProgress = _FakeProgressRepository();
       final container = _makeContainer(fakeProgress);
       addTearDown(container.dispose);
+      _keepAlive(container);
       final notifier = container
           .read(practiceSessionControllerProvider('lesson_01').notifier);
       await _settle();
@@ -439,6 +459,7 @@ void main() {
       final fakeProgress = _FakeProgressRepository();
       final container = _makeContainer(fakeProgress);
       addTearDown(container.dispose);
+      _keepAlive(container);
       final notifier = container
           .read(practiceSessionControllerProvider('lesson_01').notifier);
       await _settle();
@@ -459,6 +480,7 @@ void main() {
       final container =
           _makeContainer(fakeProgress, lessonsJson: _lessonsJsonWithRamp);
       addTearDown(container.dispose);
+      _keepAlive(container);
       final notifier = container
           .read(practiceSessionControllerProvider('lesson_01').notifier);
       await _settle();
@@ -480,6 +502,7 @@ void main() {
       final fakeProgress = _ThrowingProgressRepository();
       final container = _makeContainer(fakeProgress);
       addTearDown(container.dispose);
+      _keepAlive(container);
       final notifier = container
           .read(practiceSessionControllerProvider('lesson_01').notifier);
       await _settle(); // getCleanReps throws — seed degrades to 0, no crash

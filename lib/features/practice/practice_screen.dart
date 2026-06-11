@@ -33,6 +33,7 @@ import '../../core/recognition/handwriting_recognizer.dart';
 import '../../core/recognition/ml_kit_recognizer.dart';
 import '../../core/scoring/letter_scorer.dart';
 import '../../core/scoring/scoring_models.dart';
+import '../../core/scoring/tolerances.dart';
 import '../../data/curriculum_repository.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/letter.dart';
@@ -136,10 +137,19 @@ class _PracticeScreenState extends ConsumerState<PracticeScreen> {
     final HandwritingRecognizer? recognizer =
         modelReady ? MlKitRecognizer() : null;
 
+    // D-18/D-20: score THIS rep at the ramp preset the controller resolved
+    // for the persisted rep index. The preset name is state, never a literal —
+    // nothing in the UI exposes it to the child (UI-SPEC: invisible
+    // scaffolding).
+    final String tolerancePreset = ref
+        .read(practiceSessionControllerProvider(_resolvedLessonId!))
+        .tolerancePreset;
+
     final LetterResult result = await scoreLetter(
       childStrokes,
       letter,
       recognizer: recognizer,
+      tolerances: Tolerances.preset(tolerancePreset),
     );
 
     // Only the LetterResult (not raw points) enters the controller.
