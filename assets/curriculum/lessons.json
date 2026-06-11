@@ -1,13 +1,539 @@
 {
+  "defaultToleranceRamp": [
+    "loose",
+    "normal",
+    "strict"
+  ],
   "lessons": [
     {
       "id": "lesson_01",
       "order": 1,
-      "title": { "display": "Lesson 1" },
+      "title": {
+        "display": "Lesson 1 — Alif"
+      },
       "items": [
-        { "type": "letter", "ref": "alif" }
+        {
+          "type": "letter",
+          "ref": "alif"
+        }
       ],
-      "unlock": { "requires": [], "passRule": "allItemsPassed" }
+      "unlock": {
+        "requires": [],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_02",
+      "order": 2,
+      "title": {
+        "display": "Lesson 2 — Baa"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "baa"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_01"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_03",
+      "order": 3,
+      "title": {
+        "display": "Lesson 3 — Taa"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "taa"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_02"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_04",
+      "order": 4,
+      "title": {
+        "display": "Lesson 4 — Thaa"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "thaa"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_03"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_05",
+      "order": 5,
+      "title": {
+        "display": "Lesson 5 — Jeem"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "jeem"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_04"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_06",
+      "order": 6,
+      "title": {
+        "display": "Lesson 6 — Haa"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "haa_c"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_05"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_07",
+      "order": 7,
+      "title": {
+        "display": "Lesson 7 — Khaa"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "khaa"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_06"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_08",
+      "order": 8,
+      "title": {
+        "display": "Lesson 8 — Daal"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "daal"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_07"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_09",
+      "order": 9,
+      "title": {
+        "display": "Lesson 9 — Dhaal"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "dhaal"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_08"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_10",
+      "order": 10,
+      "title": {
+        "display": "Lesson 10 — Raa"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "raa"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_09"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_11",
+      "order": 11,
+      "title": {
+        "display": "Lesson 11 — Zaay"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "zaay"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_10"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_12",
+      "order": 12,
+      "title": {
+        "display": "Lesson 12 — Seen"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "seen"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_11"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_13",
+      "order": 13,
+      "title": {
+        "display": "Lesson 13 — Sheen"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "sheen"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_12"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_14",
+      "order": 14,
+      "title": {
+        "display": "Lesson 14 — Saad"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "saad"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_13"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_15",
+      "order": 15,
+      "title": {
+        "display": "Lesson 15 — Daad"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "daad"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_14"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_16",
+      "order": 16,
+      "title": {
+        "display": "Lesson 16 — Taa"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "taa_h"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_15"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_17",
+      "order": 17,
+      "title": {
+        "display": "Lesson 17 — Zhaa"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "zhaa"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_16"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_18",
+      "order": 18,
+      "title": {
+        "display": "Lesson 18 — Ayn"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "ayn"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_17"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_19",
+      "order": 19,
+      "title": {
+        "display": "Lesson 19 — Ghayn"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "ghayn"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_18"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_20",
+      "order": 20,
+      "title": {
+        "display": "Lesson 20 — Faa"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "faa"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_19"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_21",
+      "order": 21,
+      "title": {
+        "display": "Lesson 21 — Qaaf"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "qaaf"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_20"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_22",
+      "order": 22,
+      "title": {
+        "display": "Lesson 22 — Kaaf"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "kaaf"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_21"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_23",
+      "order": 23,
+      "title": {
+        "display": "Lesson 23 — Laam"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "laam"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_22"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_24",
+      "order": 24,
+      "title": {
+        "display": "Lesson 24 — Meem"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "meem"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_23"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_25",
+      "order": 25,
+      "title": {
+        "display": "Lesson 25 — Noon"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "noon"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_24"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_26",
+      "order": 26,
+      "title": {
+        "display": "Lesson 26 — Haa"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "haa_f"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_25"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_27",
+      "order": 27,
+      "title": {
+        "display": "Lesson 27 — Waaw"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "waaw"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_26"
+        ],
+        "passRule": "allItemsPassed"
+      }
+    },
+    {
+      "id": "lesson_28",
+      "order": 28,
+      "title": {
+        "display": "Lesson 28 — Yaa"
+      },
+      "items": [
+        {
+          "type": "letter",
+          "ref": "yaa"
+        }
+      ],
+      "unlock": {
+        "requires": [
+          "lesson_27"
+        ],
+        "passRule": "allItemsPassed"
+      }
     }
   ]
 }
