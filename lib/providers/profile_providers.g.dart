@@ -10,18 +10,36 @@ part of 'profile_providers.dart';
 // ignore_for_file: type=lint, type=warning
 /// keepAlive — held for the app lifetime; overridden at boot with the real
 /// seed value (main.dart, Wave 2).
+///
+/// `OnboardingGate` is a `ChangeNotifier` exposed as a provider value on
+/// purpose — it is the router's `refreshListenable` (Pattern 3), not async
+/// state. riverpod_lint's `unsupported_provider_value` flags any non-Future/
+/// Stream value; the Listenable-as-provider shape is intentional here, so the
+/// diagnostic is ignored for this one declaration.
 
 @ProviderFor(onboardingGate)
 final onboardingGateProvider = OnboardingGateProvider._();
 
 /// keepAlive — held for the app lifetime; overridden at boot with the real
 /// seed value (main.dart, Wave 2).
+///
+/// `OnboardingGate` is a `ChangeNotifier` exposed as a provider value on
+/// purpose — it is the router's `refreshListenable` (Pattern 3), not async
+/// state. riverpod_lint's `unsupported_provider_value` flags any non-Future/
+/// Stream value; the Listenable-as-provider shape is intentional here, so the
+/// diagnostic is ignored for this one declaration.
 
 final class OnboardingGateProvider
     extends $FunctionalProvider<OnboardingGate, OnboardingGate, OnboardingGate>
     with $Provider<OnboardingGate> {
   /// keepAlive — held for the app lifetime; overridden at boot with the real
   /// seed value (main.dart, Wave 2).
+  ///
+  /// `OnboardingGate` is a `ChangeNotifier` exposed as a provider value on
+  /// purpose — it is the router's `refreshListenable` (Pattern 3), not async
+  /// state. riverpod_lint's `unsupported_provider_value` flags any non-Future/
+  /// Stream value; the Listenable-as-provider shape is intentional here, so the
+  /// diagnostic is ignored for this one declaration.
   OnboardingGateProvider._()
     : super(
         from: null,

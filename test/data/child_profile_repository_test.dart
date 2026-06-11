@@ -51,7 +51,7 @@ void main() {
         nicknameId: 'nick_star',
         avatarId: 'avatar_1',
         grade: 'kg',
-        startingLessonId: 'alif',
+        startingLessonId: 'lesson_01',
       );
 
       // Confirm before restart.
@@ -61,7 +61,7 @@ void main() {
       expect(created!.nicknameId, 'nick_star');
       expect(created.avatarId, 'avatar_1');
       expect(created.grade, 'kg');
-      expect(created.startingLessonId, 'alif');
+      expect(created.startingLessonId, 'lesson_01');
       await db1.close(); // injected executor stays open (P1 contract)
 
       // "Restart": fresh AppDatabase over the same underlying store.
@@ -76,7 +76,7 @@ void main() {
           reason: 'nicknameId must survive simulated restart');
       expect(reopened.avatarId, 'avatar_1');
       expect(reopened.grade, 'kg');
-      expect(reopened.startingLessonId, 'alif',
+      expect(reopened.startingLessonId, 'lesson_01',
           reason: 'resolved startingLessonId must survive (S1-02)');
       await db2.close();
     },

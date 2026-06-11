@@ -80,6 +80,27 @@ class _FakeProgressRepository implements ProgressRepository {
 
   @override
   Future<bool> isMastered(String letterId) async => false;
+
+  final Map<String, int> reps = {};
+
+  @override
+  Future<void> setCleanReps({
+    required String letterId,
+    required int cleanReps,
+  }) async {
+    reps[letterId] = cleanReps;
+  }
+
+  @override
+  Future<int> getCleanReps(String letterId) async => reps[letterId] ?? 0;
+
+  @override
+  Stream<Set<String>> watchMasteredLetterIds() =>
+      Stream.value(const <String>{});
+
+  @override
+  Stream<int> watchCleanReps(String letterId) =>
+      Stream.value(reps[letterId] ?? 0);
 }
 
 // ---------------------------------------------------------------------------

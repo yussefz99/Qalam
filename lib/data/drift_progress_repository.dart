@@ -28,6 +28,22 @@ class DriftProgressRepository implements ProgressRepository {
 
   @override
   Future<bool> isMastered(String letterId) => _db.isMastered(letterId);
+
+  @override
+  Future<void> setCleanReps({
+    required String letterId,
+    required int cleanReps,
+  }) =>
+      _db.setCleanReps(letterId: letterId, cleanReps: cleanReps);
+
+  @override
+  Future<int> getCleanReps(String letterId) => _db.getCleanReps(letterId);
+
+  @override
+  Stream<Set<String>> watchMasteredLetterIds() => _db.watchMasteredLetterIds();
+
+  @override
+  Stream<int> watchCleanReps(String letterId) => _db.watchCleanReps(letterId);
 }
 
 /// Riverpod provider for [ProgressRepository] — keepAlive mirrors the

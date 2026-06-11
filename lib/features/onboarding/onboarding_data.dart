@@ -41,27 +41,29 @@ const List<NicknameOption> kNicknames = <NicknameOption>[
   (id: 'nick_cloud', label: 'غيمة'), // Ghayma — "cloud"
 ];
 
-// TODO(owner's-mother sign-off): replace 'alif' with the real per-grade
-// entry-point ids. Phase 5 ships every grade → 'alif' (lesson 0) until she
-// specifies real entry points. The MECHANISM (a single-source map) is ours; the
-// VALUES are hers. Keep this the single source so a future change is one edit.
+// TODO(owner's-mother sign-off): replace the single default with the real
+// per-grade entry-point lesson ids. Every grade currently maps to lesson_01
+// (the first lesson) until she specifies real entry points. The MECHANISM (a
+// single-source map) is ours; the VALUES are hers. Keep this the single source
+// so a future change is one edit.
 //
-// NAMESPACE FLAG (RESEARCH Open-Q1 / Assumption A2): the value below is a LETTER
-// id ('alif', from assets/curriculum/letters.json) for now. Phase 6 decides
-// whether startingLessonId references a letter id or a distinct lesson id; the
-// single-source map keeps that future rename to one place.
+// NAMESPACE DECIDED (Phase 6, Plan 06-02 — resolves RESEARCH Open-Q1 / A2):
+// startingLessonId is a LESSON id (from assets/curriculum/lessons.json), NOT a
+// letter id. The v3→v4 migration in app_database.dart rewrites legacy
+// letter-id rows into this namespace; this map and that migration must agree.
 const Map<String, String> gradeToStartingLessonId = <String, String>{
-  'kg': 'alif',
-  'grade1': 'alif',
-  'grade2': 'alif',
-  'grade3': 'alif',
-  'grade4plus': 'alif',
+  'kg': 'lesson_01',
+  'grade1': 'lesson_01',
+  'grade2': 'lesson_01',
+  'grade3': 'lesson_01',
+  'grade4plus': 'lesson_01',
 };
 
-/// Resolve a grade to its curriculum entry point. Unknown/unmapped grades fall
-/// back to 'alif' so the resolver never returns null or crashes (T-05-04).
+/// Resolve a grade to its curriculum entry point (a LESSON id). Unknown or
+/// unmapped grades fall back to the first lesson so the resolver never returns
+/// null or crashes (T-05-04).
 String resolveStartingLessonId(String grade) =>
-    gradeToStartingLessonId[grade] ?? 'alif';
+    gradeToStartingLessonId[grade] ?? 'lesson_01';
 
 /// Resolve a fixed-set nickname id to its display label (presentation only).
 ///

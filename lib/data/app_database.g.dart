@@ -888,12 +888,279 @@ class ChildProfilesCompanion extends UpdateCompanion<ChildProfile> {
   }
 }
 
+class $LetterRepsTable extends LetterReps
+    with TableInfo<$LetterRepsTable, LetterRep> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LetterRepsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _letterIdMeta = const VerificationMeta(
+    'letterId',
+  );
+  @override
+  late final GeneratedColumn<String> letterId = GeneratedColumn<String>(
+    'letter_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _cleanRepsMeta = const VerificationMeta(
+    'cleanReps',
+  );
+  @override
+  late final GeneratedColumn<int> cleanReps = GeneratedColumn<int>(
+    'clean_reps',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [letterId, cleanReps, updatedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'letter_reps';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LetterRep> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('letter_id')) {
+      context.handle(
+        _letterIdMeta,
+        letterId.isAcceptableOrUnknown(data['letter_id']!, _letterIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_letterIdMeta);
+    }
+    if (data.containsKey('clean_reps')) {
+      context.handle(
+        _cleanRepsMeta,
+        cleanReps.isAcceptableOrUnknown(data['clean_reps']!, _cleanRepsMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cleanRepsMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {letterId};
+  @override
+  LetterRep map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LetterRep(
+      letterId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}letter_id'],
+      )!,
+      cleanReps: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}clean_reps'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $LetterRepsTable createAlias(String alias) {
+    return $LetterRepsTable(attachedDatabase, alias);
+  }
+}
+
+class LetterRep extends DataClass implements Insertable<LetterRep> {
+  final String letterId;
+  final int cleanReps;
+  final DateTime updatedAt;
+  const LetterRep({
+    required this.letterId,
+    required this.cleanReps,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['letter_id'] = Variable<String>(letterId);
+    map['clean_reps'] = Variable<int>(cleanReps);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  LetterRepsCompanion toCompanion(bool nullToAbsent) {
+    return LetterRepsCompanion(
+      letterId: Value(letterId),
+      cleanReps: Value(cleanReps),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory LetterRep.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LetterRep(
+      letterId: serializer.fromJson<String>(json['letterId']),
+      cleanReps: serializer.fromJson<int>(json['cleanReps']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'letterId': serializer.toJson<String>(letterId),
+      'cleanReps': serializer.toJson<int>(cleanReps),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  LetterRep copyWith({String? letterId, int? cleanReps, DateTime? updatedAt}) =>
+      LetterRep(
+        letterId: letterId ?? this.letterId,
+        cleanReps: cleanReps ?? this.cleanReps,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  LetterRep copyWithCompanion(LetterRepsCompanion data) {
+    return LetterRep(
+      letterId: data.letterId.present ? data.letterId.value : this.letterId,
+      cleanReps: data.cleanReps.present ? data.cleanReps.value : this.cleanReps,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LetterRep(')
+          ..write('letterId: $letterId, ')
+          ..write('cleanReps: $cleanReps, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(letterId, cleanReps, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LetterRep &&
+          other.letterId == this.letterId &&
+          other.cleanReps == this.cleanReps &&
+          other.updatedAt == this.updatedAt);
+}
+
+class LetterRepsCompanion extends UpdateCompanion<LetterRep> {
+  final Value<String> letterId;
+  final Value<int> cleanReps;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const LetterRepsCompanion({
+    this.letterId = const Value.absent(),
+    this.cleanReps = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LetterRepsCompanion.insert({
+    required String letterId,
+    required int cleanReps,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : letterId = Value(letterId),
+       cleanReps = Value(cleanReps),
+       updatedAt = Value(updatedAt);
+  static Insertable<LetterRep> custom({
+    Expression<String>? letterId,
+    Expression<int>? cleanReps,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (letterId != null) 'letter_id': letterId,
+      if (cleanReps != null) 'clean_reps': cleanReps,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LetterRepsCompanion copyWith({
+    Value<String>? letterId,
+    Value<int>? cleanReps,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return LetterRepsCompanion(
+      letterId: letterId ?? this.letterId,
+      cleanReps: cleanReps ?? this.cleanReps,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (letterId.present) {
+      map['letter_id'] = Variable<String>(letterId.value);
+    }
+    if (cleanReps.present) {
+      map['clean_reps'] = Variable<int>(cleanReps.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LetterRepsCompanion(')
+          ..write('letterId: $letterId, ')
+          ..write('cleanReps: $cleanReps, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $AppSettingsTable appSettings = $AppSettingsTable(this);
   late final $LetterMasteryTable letterMastery = $LetterMasteryTable(this);
   late final $ChildProfilesTable childProfiles = $ChildProfilesTable(this);
+  late final $LetterRepsTable letterReps = $LetterRepsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -902,6 +1169,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     appSettings,
     letterMastery,
     childProfiles,
+    letterReps,
   ];
 }
 
@@ -1429,6 +1697,165 @@ typedef $$ChildProfilesTableProcessedTableManager =
       ChildProfile,
       PrefetchHooks Function()
     >;
+typedef $$LetterRepsTableCreateCompanionBuilder =
+    LetterRepsCompanion Function({
+      required String letterId,
+      required int cleanReps,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$LetterRepsTableUpdateCompanionBuilder =
+    LetterRepsCompanion Function({
+      Value<String> letterId,
+      Value<int> cleanReps,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$LetterRepsTableFilterComposer
+    extends Composer<_$AppDatabase, $LetterRepsTable> {
+  $$LetterRepsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get letterId => $composableBuilder(
+    column: $table.letterId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get cleanReps => $composableBuilder(
+    column: $table.cleanReps,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$LetterRepsTableOrderingComposer
+    extends Composer<_$AppDatabase, $LetterRepsTable> {
+  $$LetterRepsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get letterId => $composableBuilder(
+    column: $table.letterId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get cleanReps => $composableBuilder(
+    column: $table.cleanReps,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LetterRepsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LetterRepsTable> {
+  $$LetterRepsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get letterId =>
+      $composableBuilder(column: $table.letterId, builder: (column) => column);
+
+  GeneratedColumn<int> get cleanReps =>
+      $composableBuilder(column: $table.cleanReps, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$LetterRepsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LetterRepsTable,
+          LetterRep,
+          $$LetterRepsTableFilterComposer,
+          $$LetterRepsTableOrderingComposer,
+          $$LetterRepsTableAnnotationComposer,
+          $$LetterRepsTableCreateCompanionBuilder,
+          $$LetterRepsTableUpdateCompanionBuilder,
+          (
+            LetterRep,
+            BaseReferences<_$AppDatabase, $LetterRepsTable, LetterRep>,
+          ),
+          LetterRep,
+          PrefetchHooks Function()
+        > {
+  $$LetterRepsTableTableManager(_$AppDatabase db, $LetterRepsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LetterRepsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LetterRepsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$LetterRepsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> letterId = const Value.absent(),
+                Value<int> cleanReps = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LetterRepsCompanion(
+                letterId: letterId,
+                cleanReps: cleanReps,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String letterId,
+                required int cleanReps,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => LetterRepsCompanion.insert(
+                letterId: letterId,
+                cleanReps: cleanReps,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$LetterRepsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LetterRepsTable,
+      LetterRep,
+      $$LetterRepsTableFilterComposer,
+      $$LetterRepsTableOrderingComposer,
+      $$LetterRepsTableAnnotationComposer,
+      $$LetterRepsTableCreateCompanionBuilder,
+      $$LetterRepsTableUpdateCompanionBuilder,
+      (LetterRep, BaseReferences<_$AppDatabase, $LetterRepsTable, LetterRep>),
+      LetterRep,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -1439,6 +1866,8 @@ class $AppDatabaseManager {
       $$LetterMasteryTableTableManager(_db, _db.letterMastery);
   $$ChildProfilesTableTableManager get childProfiles =>
       $$ChildProfilesTableTableManager(_db, _db.childProfiles);
+  $$LetterRepsTableTableManager get letterReps =>
+      $$LetterRepsTableTableManager(_db, _db.letterReps);
 }
 
 // **************************************************************************

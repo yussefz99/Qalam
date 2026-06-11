@@ -144,8 +144,9 @@ void main() {
       expect(repo.lastCreated!.grade, 'kg');
       expect(repo.lastCreated!.avatarId, 'avatar_1');
       expect(repo.lastCreated!.nicknameId, 'nick_star');
-      expect(repo.lastCreated!.startingLessonId, 'alif',
-          reason: 'grade kg resolves to the default starting lesson (S1-02)');
+      expect(repo.lastCreated!.startingLessonId, 'lesson_01',
+          reason: 'grade kg resolves to the default starting LESSON id '
+              '(S1-02; lesson-id namespace, Plan 06-02)');
 
       // Navigation lands on Home.
       expect(find.text('Home Stub'), findsOneWidget,
