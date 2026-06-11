@@ -319,6 +319,88 @@ void main() {
     });
   });
 
+  // ── Plan 06-04 Task 1 — Tolerances.preset + scoreLetter override ────────────
+  // D-18/D-19: the tolerance ramp is DATA. The session controller resolves a
+  // preset NAME from the ramp and the screen passes the matching Tolerances
+  // into scoreLetter. The override must WIN over letter.tolerances, and the
+  // no-override path must stay byte-for-byte Phase-4 behavior.
+
+  /// A baa whose body bows ~0.21 in unit-box space (depth 31.5px over a 152px
+  /// chord): passes `normal` (0.25) and the letter's own 0.30, FAILS `strict`
+  /// (0.18). The discriminating fixture for override-wins resolution.
+  List<List<List<double>>> bowedBaa() => [
+        // body (right→left, deep-but-honest bow: apex 31.5px below chord)
+        List<List<double>>.generate(
+          20,
+          (i) => [180.0 - i * 8, 100.0 + (i < 10 ? i * 3.5 : (19 - i) * 3.5)],
+        ),
+        // dot below the body
+        const [
+          [90.0, 200.0]
+        ],
+      ];
+
+  group('Tolerances.preset — public ramp-preset accessor (Plan 06-04)', () {
+    test('known preset names resolve to the matching preset', () {
+      expect(Tolerances.preset('loose').maxCurvature, equals(0.35));
+      expect(Tolerances.preset('normal').maxCurvature, equals(0.25));
+      expect(Tolerances.preset('strict').maxCurvature, equals(0.18));
+    });
+
+    test('normal preset IS the behavior-preserving anchor (A5)', () {
+      final t = Tolerances.preset('normal');
+      expect(t.minRawPoints, equals(Tolerances.normal.minRawPoints));
+      expect(t.resampleN, equals(Tolerances.normal.resampleN));
+      expect(t.maxCurvature, equals(Tolerances.normal.maxCurvature));
+    });
+
+    test('unknown / empty names fall back to normal (defensive, never throws)',
+        () {
+      expect(Tolerances.preset('garbage').maxCurvature,
+          equals(Tolerances.normal.maxCurvature));
+      expect(Tolerances.preset('').maxCurvature,
+          equals(Tolerances.normal.maxCurvature));
+    });
+  });
+
+  group('scoreLetter — optional tolerances override (Plan 06-04)', () {
+    test('no override → letter.tolerances applies (bowed baa passes at 0.30)',
+        () async {
+      final result = await scoreLetter(bowedBaa(), baaLetter());
+      expect(result.passed, isTrue,
+          reason: 'letter.tolerances (maxCurvature 0.30) absorbs a 0.21 bow');
+    });
+
+    test('override WINS over letter.tolerances: strict fails the same bow',
+        () async {
+      final result = await scoreLetter(
+        bowedBaa(),
+        baaLetter(),
+        tolerances: Tolerances.preset('strict'),
+      );
+      expect(result.passed, isFalse,
+          reason: 'strict (0.18) must override letter.tolerances (0.30)');
+      expect(result.mistakeId, equals(MistakeId.tooCurved));
+    });
+
+    test('loose override passes the same bow (override is symmetric)',
+        () async {
+      final result = await scoreLetter(
+        bowedBaa(),
+        baaLetter(),
+        tolerances: Tolerances.preset('loose'),
+      );
+      expect(result.passed, isTrue);
+    });
+
+    test('no-override behavioral identity: goodBaa still passes untouched',
+        () async {
+      final result = await scoreLetter(goodBaa(), baaLetter());
+      expect(result.passed, isTrue);
+      expect(result.mistakeId, isNull);
+    });
+  });
+
   // Keep the fake + fixtures + contract enum referenced so they are not
   // "unused" before Plan 02 wires the real scoreLetter call.
   test('contract scaffolding is wired (fake + fixtures + MistakeId present)', () {
