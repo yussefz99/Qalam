@@ -63,6 +63,23 @@ const String _lessonsJson = '''
 }
 ''';
 
+/// Same lesson but with a PER-LESSON toleranceRamp override (D-19): a
+/// single-element ramp so the override AND the index clamp are both proven.
+const String _lessonsJsonWithRamp = '''
+{
+  "lessons": [
+    {
+      "id": "lesson_01",
+      "order": 1,
+      "title": { "display": "Lesson 1" },
+      "items": [{ "type": "letter", "ref": "alif" }],
+      "unlock": { "requires": [], "passRule": "allItemsPassed" },
+      "toleranceRamp": ["strict"]
+    }
+  ]
+}
+''';
+
 // ---------------------------------------------------------------------------
 // Fake ProgressRepository — captures recordMastery calls.
 // ---------------------------------------------------------------------------
@@ -103,17 +120,47 @@ class _FakeProgressRepository implements ProgressRepository {
       Stream.value(reps[letterId] ?? 0);
 }
 
+/// A repository whose persistence ALWAYS fails — proves the best-effort
+/// try/swallow contract (a storage failure must never interrupt the session).
+class _ThrowingProgressRepository extends _FakeProgressRepository {
+  @override
+  Future<void> setCleanReps({
+    required String letterId,
+    required int cleanReps,
+  }) async {
+    throw StateError('disk full');
+  }
+
+  @override
+  Future<int> getCleanReps(String letterId) async {
+    throw StateError('disk full');
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Container factory
 // ---------------------------------------------------------------------------
 
-ProviderContainer _makeContainer(_FakeProgressRepository fakeProgress) {
+ProviderContainer _makeContainer(
+  _FakeProgressRepository fakeProgress, {
+  String lessonsJson = _lessonsJson,
+}) {
   final fakeCurriculum =
-      CurriculumRepository.fromStrings(_lettersJson, _lessonsJson);
+      CurriculumRepository.fromStrings(_lettersJson, lessonsJson);
   return ProviderContainer(overrides: [
     curriculumRepositoryProvider.overrideWithValue(fakeCurriculum),
     progressRepositoryProvider.overrideWithValue(fakeProgress),
   ]);
+}
+
+/// Flushes the controller's fire-and-forget `_loadLetter` async chain
+/// (getLesson → getLetter → getCleanReps → getDefaultToleranceRamp). Each
+/// `Future.delayed(zero)` is a timer event that drains all pending microtasks
+/// first, so 20 rounds comfortably settles the load path.
+Future<void> _settle() async {
+  for (var i = 0; i < 20; i++) {
+    await Future<void>.delayed(Duration.zero);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -278,6 +325,177 @@ void main() {
           container.read(practiceSessionControllerProvider('lesson_01'));
       expect(state.phase, PracticePhase.trace);
       expect(state.lastMistakeId, isNull);
+    });
+  });
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // Plan 06-04 — durable rep counts (D-10/D-20) + the tolerance ramp (D-18/D-19)
+  // ───────────────────────────────────────────────────────────────────────────
+  group('PracticeSessionController — rep persistence + tolerance ramp (06-04)',
+      () {
+    const pass = StrokeResult(passed: true);
+    const miss = StrokeResult(passed: false, mistakeId: MistakeId.tooShort);
+
+    test('seed (D-20): persisted cleanReps=2 primes state; preset is ramp[2]',
+        () async {
+      final fakeProgress = _FakeProgressRepository();
+      fakeProgress.reps['alif'] = 2;
+      final container = _makeContainer(fakeProgress);
+      addTearDown(container.dispose);
+
+      container.read(practiceSessionControllerProvider('lesson_01'));
+      await _settle();
+
+      final state =
+          container.read(practiceSessionControllerProvider('lesson_01'));
+      expect(state.cleanReps, 2,
+          reason: 'a resumed session scores at the rep index the child '
+              'actually reached (D-20)');
+      expect(state.tolerancePreset, 'strict',
+          reason: 'default ramp [loose, normal, strict] indexed by the '
+              'PERSISTED rep count');
+    });
+
+    test('restart-resume: a NEW container primes from the same repository',
+        () async {
+      final fakeProgress = _FakeProgressRepository();
+
+      // Session 1 — one clean rep, then the app "restarts" (dispose).
+      final first = _makeContainer(fakeProgress);
+      final notifier =
+          first.read(practiceSessionControllerProvider('lesson_01').notifier);
+      await _settle();
+      notifier.advanceToTrace();
+      await notifier.onStrokeResult(pass);
+      first.dispose();
+
+      // Session 2 — fresh container over the SAME persisted store.
+      final second = _makeContainer(fakeProgress);
+      addTearDown(second.dispose);
+      second.read(practiceSessionControllerProvider('lesson_01'));
+      await _settle();
+
+      final state =
+          second.read(practiceSessionControllerProvider('lesson_01'));
+      expect(state.cleanReps, 1);
+      expect(state.tolerancePreset, 'normal'); // ramp[1]
+    });
+
+    test('write-through (D-10): every clean rep persists; a miss persists 0',
+        () async {
+      final fakeProgress = _FakeProgressRepository();
+      final container = _makeContainer(fakeProgress);
+      addTearDown(container.dispose);
+      final notifier = container
+          .read(practiceSessionControllerProvider('lesson_01').notifier);
+      await _settle();
+      notifier.advanceToTrace();
+
+      await notifier.onStrokeResult(pass);
+      expect(fakeProgress.reps['alif'], 1);
+
+      notifier.continueAfterPraise();
+      await notifier.onStrokeResult(pass);
+      expect(fakeProgress.reps['alif'], 2);
+
+      notifier.continueAfterPraise();
+      await notifier.onStrokeResult(miss);
+      expect(fakeProgress.reps.containsKey('alif'), isTrue,
+          reason: 'the reset is an explicit WRITE of 0, not a missing row '
+              '(Pitfall 7)');
+      expect(fakeProgress.reps['alif'], 0);
+    });
+
+    test('ramp indexing (D-18): 0→loose, 1→normal, 2→strict, clamps at end',
+        () async {
+      final fakeProgress = _FakeProgressRepository();
+      final container = _makeContainer(fakeProgress);
+      addTearDown(container.dispose);
+      final notifier = container
+          .read(practiceSessionControllerProvider('lesson_01').notifier);
+      await _settle();
+
+      PracticeState state() =>
+          container.read(practiceSessionControllerProvider('lesson_01'));
+
+      expect(state().tolerancePreset, 'loose'); // rep 0
+      notifier.advanceToTrace();
+
+      await notifier.onStrokeResult(pass);
+      expect(state().tolerancePreset, 'normal'); // rep 1
+      notifier.continueAfterPraise();
+
+      await notifier.onStrokeResult(pass);
+      expect(state().tolerancePreset, 'strict'); // rep 2
+      notifier.continueAfterPraise();
+
+      await notifier.onStrokeResult(pass); // mastery — cleanReps 3
+      expect(state().cleanReps, 3);
+      expect(state().tolerancePreset, 'strict',
+          reason: 'index clamps at ramp.length - 1');
+    });
+
+    test('a miss resets the preset back to ramp[0]', () async {
+      final fakeProgress = _FakeProgressRepository();
+      final container = _makeContainer(fakeProgress);
+      addTearDown(container.dispose);
+      final notifier = container
+          .read(practiceSessionControllerProvider('lesson_01').notifier);
+      await _settle();
+      notifier.advanceToTrace();
+
+      await notifier.onStrokeResult(pass);
+      notifier.continueAfterPraise();
+      await notifier.onStrokeResult(miss);
+
+      final state =
+          container.read(practiceSessionControllerProvider('lesson_01'));
+      expect(state.cleanReps, 0);
+      expect(state.tolerancePreset, 'loose');
+    });
+
+    test('lesson.toleranceRamp overrides the global default (D-19)', () async {
+      final fakeProgress = _FakeProgressRepository();
+      final container =
+          _makeContainer(fakeProgress, lessonsJson: _lessonsJsonWithRamp);
+      addTearDown(container.dispose);
+      final notifier = container
+          .read(practiceSessionControllerProvider('lesson_01').notifier);
+      await _settle();
+
+      PracticeState state() =>
+          container.read(practiceSessionControllerProvider('lesson_01'));
+
+      // Single-element per-lesson ramp: rep 0 already 'strict'…
+      expect(state().tolerancePreset, 'strict');
+
+      // …and the clamp holds it there on later reps.
+      notifier.advanceToTrace();
+      await notifier.onStrokeResult(pass);
+      expect(state().tolerancePreset, 'strict');
+    });
+
+    test('persistence failures are swallowed — the session continues',
+        () async {
+      final fakeProgress = _ThrowingProgressRepository();
+      final container = _makeContainer(fakeProgress);
+      addTearDown(container.dispose);
+      final notifier = container
+          .read(practiceSessionControllerProvider('lesson_01').notifier);
+      await _settle(); // getCleanReps throws — seed degrades to 0, no crash
+      notifier.advanceToTrace();
+
+      await notifier.onStrokeResult(pass); // setCleanReps throws — swallowed
+      var state =
+          container.read(practiceSessionControllerProvider('lesson_01'));
+      expect(state.phase, PracticePhase.showPraise);
+      expect(state.cleanReps, 1);
+
+      notifier.continueAfterPraise();
+      await notifier.onStrokeResult(miss); // reset write throws — swallowed
+      state = container.read(practiceSessionControllerProvider('lesson_01'));
+      expect(state.phase, PracticePhase.showFix);
+      expect(state.cleanReps, 0);
     });
   });
 }
