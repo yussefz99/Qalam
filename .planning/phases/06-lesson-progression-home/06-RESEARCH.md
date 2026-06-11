@@ -641,19 +641,22 @@ surfaces (binding UI-SPEC omission table).
 
 ## Open Questions
 
-1. **Mastery celebration golden re-bake environment**
+1. **Mastery celebration golden re-bake environment (RESOLVED)**
    - What we know: the celebration legitimately changes (D-14/D-16/D-17) so its golden must be re-baked; but goldens currently fail locally from font drift (environmental).
    - What's unclear: which machine produced the canonical baseline.
    - Recommendation: re-bake on the same environment that baked Phase-3 goldens, or accept the golden as locally-failing-by-font-drift and gate on widget assertions instead; planner should make this explicit in the test task.
+   - RESOLVED: 06-07 Task 2 step 4 re-bakes the celebration golden ONCE, deliberately, with provenance documented in the SUMMARY (local font-drift caveat carried; glyph_audit golden untouched) (see 06-07-PLAN).
 
-2. **Where the D-21 ghost trigger appears given the practice-redesign ShowFix zone**
+2. **Where the D-21 ghost trigger appears given the practice-redesign ShowFix zone (RESOLVED)**
    - What we know: docs/design/practice-redesign/ contains PROMPT.md + mockup.html (a UI-only redesign already applied 2026-06-07); the ghost button sits "beside Show Me Again" per UI-SPEC; `Show Me Again` lives in `_ActionRow` showFix case `[VERIFIED: practice_screen.dart:970-990]`.
    - What's unclear: whether the replay panel overlays the canvas or replaces the tutor bubble area.
    - Recommendation: side-by-side panel within the canvas card stack (same Stack that hosts the ghost-cast overlay); executor discretion within UI-SPEC labels/colors.
+   - RESOLVED: 06-08 Task 2 adopts the canvas-Stack recommendation — the side-by-side replay panels live inside the canvas card Stack that hosts the ghost-cast overlay (see 06-08-PLAN).
 
-3. **`practicePraiseLine` / Watch-phase copy for letters 2–28**
+3. **`practicePraiseLine` / Watch-phase copy for letters 2–28 (RESOLVED)**
    - What we know: alif-specific strings; per-letter coaching is curriculum content (the mother's domain, Phase 7).
    - Recommendation: generic `{letterName}` templates this phase; per-letter tips deferred to Phase 7 content authoring.
+   - RESOLVED: 06-07 ships generic `{letterName}` templates; per-letter wording deferred to Phase 7 content authoring (the owner's mother's domain) (see 06-07-PLAN).
 
 ## Environment Availability
 
