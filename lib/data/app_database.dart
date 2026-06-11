@@ -56,7 +56,24 @@ class ChildProfiles extends Table {
   IntColumn get createdAt => integer()(); // unix epoch ms
 }
 
-@DriftDatabase(tables: [AppSettings, LetterMastery, ChildProfiles])
+/// Per-letter PARTIAL clean-rep counter — Phase 6 (D-10, Plan 06-02).
+///
+/// Distinct from [LetterMastery]: a row here means "in progress" (the child has
+/// some clean reps banked toward mastery); a LetterMastery row means "passed".
+///
+/// SECURITY (T-03-01/T-06-01): only letterId, cleanReps, and updatedAt are
+/// stored. Captured stroke points are NEVER persisted here or anywhere else —
+/// they stay in-memory only and are discarded on dispose.
+class LetterReps extends Table {
+  TextColumn get letterId => text()();
+  IntColumn get cleanReps => integer()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {letterId};
+}
+
+@DriftDatabase(tables: [AppSettings, LetterMastery, ChildProfiles, LetterReps])
 class AppDatabase extends _$AppDatabase {
   /// Pass a [QueryExecutor] (e.g. `NativeDatabase.memory()`) in tests; defaults
   /// to a lazily-opened on-device file in app-private storage.
@@ -72,7 +89,7 @@ class AppDatabase extends _$AppDatabase {
   final bool _ownsExecutor;
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -81,6 +98,17 @@ class AppDatabase extends _$AppDatabase {
           // Pitfall 4: guard by version to make the migration idempotent.
           if (from < 2) await m.createTable(letterMastery);
           if (from < 3) await m.createTable(childProfiles);
+          if (from < 4) {
+            await m.createTable(letterReps);
+            // Namespace rewrite (RESEARCH Pitfall 2): startingLessonId moves
+            // from the letter-id namespace ('alif') to the lesson-id namespace
+            // ('lesson_01'). Generated names verified against app_database.g.dart
+            // ($name 'child_profiles', column 'starting_lesson_id').
+            await customStatement(
+              "UPDATE child_profiles SET starting_lesson_id = 'lesson_01' "
+              "WHERE starting_lesson_id = 'alif'",
+            );
+          }
         },
       );
 
@@ -171,6 +199,48 @@ class AppDatabase extends _$AppDatabase {
           createdAt: DateTime.now().millisecondsSinceEpoch,
         ),
       );
+
+  // ---------------------------------------------------------------------------
+  // LetterReps accessors + watch streams — Phase 6 (D-10 / S1-09, Plan 06-02)
+  // SECURITY: only letterId/cleanReps/updatedAt — never stroke points (T-06-01)
+  // ---------------------------------------------------------------------------
+
+  /// Write (or overwrite) the partial clean-rep count for a letter (D-10).
+  ///
+  /// Write-through, including 0: `setCleanReps(letterId: x, cleanReps: 0)`
+  /// resets the banked count (the Pitfall-7 reset shape).
+  Future<void> setCleanReps({
+    required String letterId,
+    required int cleanReps,
+  }) =>
+      into(letterReps).insertOnConflictUpdate(
+        LetterRepsCompanion.insert(
+          letterId: letterId,
+          cleanReps: cleanReps,
+          updatedAt: DateTime.now(),
+        ),
+      );
+
+  /// Read the banked clean-rep count for a letter; 0 when never practiced.
+  Future<int> getCleanReps(String letterId) async =>
+      (await (select(letterReps)..where((t) => t.letterId.equals(letterId)))
+              .getSingleOrNull())
+          ?.cleanReps ??
+      0;
+
+  /// Watch the set of mastered letter IDs; emits the current state first, then
+  /// on every mastery write — the S1-09 "unlock is immediate" substrate
+  /// (RESEARCH Pattern 1: first drift .watch() in the codebase).
+  Stream<Set<String>> watchMasteredLetterIds() => select(letterMastery)
+      .watch()
+      .map((rows) => rows.map((r) => r.letterId).toSet());
+
+  /// Watch the banked clean-rep count for one letter; emits 0 while no row
+  /// exists, then the new count on every [setCleanReps] write.
+  Stream<int> watchCleanReps(String letterId) =>
+      (select(letterReps)..where((t) => t.letterId.equals(letterId)))
+          .watchSingleOrNull()
+          .map((row) => row?.cleanReps ?? 0);
 }
 
 LazyDatabase _openConnection() {

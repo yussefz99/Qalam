@@ -9,6 +9,8 @@
 // in-memory file, and assert the value survived. NativeDatabase.memory() keeps
 // the test hermetic (no on-disk file, no path_provider).
 
+import 'dart:io';
+
 // Hide the Drift query-builder matchers that collide with flutter_test's
 // `isNull`/`isNotNull` expectation matchers (used by the v2→v3 migration test).
 import 'package:drift/drift.dart' hide isNull, isNotNull;
@@ -106,19 +108,24 @@ void main() {
   // startingLessonId letter-ids are rewritten into the lesson-id namespace
   // (RESEARCH Pitfall 2), WITHOUT losing settings, mastery, or profile rows.
   //
-  // Seeding a true v3-era store: we write rows with the current schema, then
-  // DROP the v4 table and rewind PRAGMA user_version to 3, so the next open
-  // runs the REAL production onUpgrade(from: 3) path — including the
-  // customStatement namespace rewrite on child_profiles.starting_lesson_id.
+  // NOTE: a shared NativeDatabase.memory() executor canNOT exercise migration —
+  // the underlying delegate stays open across AppDatabase instances, so drift's
+  // version check (and onUpgrade) only runs on the FIRST open. To run the real
+  // production onUpgrade(from: 3) path we use a temp FILE database with a fresh
+  // executor per "restart": seed rows with the current schema, then DROP the v4
+  // table and rewind PRAGMA user_version to 3 before closing.
   // ---------------------------------------------------------------------------
   test(
     'migration v3→v4: rows survive, startingLessonId "alif" is rewritten to '
     '"lesson_01", and a second restart is idempotent (S1-09 substrate)',
     () async {
-      final shared = DatabaseConnection(NativeDatabase.memory());
+      final dir = await Directory.systemTemp.createTemp('qalam_v4_migration');
+      final file = File('${dir.path}${Platform.pathSeparator}qalam.db');
+      addTearDown(() => dir.delete(recursive: true));
 
       // Seed a v3-era database.
-      final db1 = AppDatabase(shared.executor);
+      final exec1 = NativeDatabase(file);
+      final db1 = AppDatabase(exec1);
       await db1.setSetting('last_letter', 'baa');
       await db1.recordMastery(letterId: 'alif', cleanReps: 3);
       await db1.createProfile(
@@ -131,9 +138,12 @@ void main() {
       await db1.customStatement('DROP TABLE IF EXISTS letter_reps;');
       await db1.customStatement('PRAGMA user_version = 3;');
       await db1.close();
+      await exec1.close(); // injected executors are owned by the test
 
-      // "Restart" #1: opens at schemaVersion 4 → onUpgrade(from: 3) runs.
-      final db2 = AppDatabase(shared.executor);
+      // "Restart" #1: a fresh executor re-opens the file at user_version 3 →
+      // the REAL onUpgrade(from: 3) runs (createTable + namespace rewrite).
+      final exec2 = NativeDatabase(file);
+      final db2 = AppDatabase(exec2);
       expect(
         await db2.getSetting('last_letter'),
         'baa',
@@ -159,9 +169,11 @@ void main() {
       expect(await db2.getCleanReps('baa'), 1,
           reason: 'letter_reps must be created by the v3→v4 migration');
       await db2.close();
+      await exec2.close();
 
       // "Restart" #2: from == 4 → no upgrade runs; nothing changes.
-      final db3 = AppDatabase(shared.executor);
+      final exec3 = NativeDatabase(file);
+      final db3 = AppDatabase(exec3);
       expect(await db3.getSetting('last_letter'), 'baa',
           reason: 'a second restart must change nothing (idempotence)');
       expect(await db3.isMastered('alif'), isTrue);
@@ -170,6 +182,7 @@ void main() {
       expect(await db3.getCleanReps('baa'), 1,
           reason: 'letter_reps rows must survive a restart');
       await db3.close();
+      await exec3.close();
     },
   );
 
