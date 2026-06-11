@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "MERGED Phase 04 (from main) into the Phase 05 branch. Phase 04: plans 01-05 complete (scoreLetter spine, ML Kit advisory gate, UI wiring, calibration harness); 04-06 DEFERRED (human-gated — needs owner's mother + Android tablet + real children to author/tune/sign-off baa-family; DRAFT strokes for all 28 letters, signedOff:false except alif). Phase 05: all 4 plans complete (child-profile data layer, onboarding screen + first-launch gate, home greeting integration); verification = human_needed (device UAT). Device boot crash fixed (sqlite3_flutter_libs 0.6.0+eol → ^0.5.41)."
-last_updated: "2026-06-08T18:10:00.000Z"
-last_activity: 2026-06-08 -- merged Phase 04 from main into phase-05-profiles-onboarding branch
+stopped_at: "Phase 04 + Phase 05 are MERGED onto `main` and pushed to origin/main (the phase-05-profiles-onboarding branch is gone; no PR outstanding). Phase 04: plans 01-05 complete (scoreLetter spine, ML Kit advisory gate, UI wiring, calibration harness); 04-06 DEFERRED (human-gated — needs owner's mother + Android tablet + real children to author/tune/sign-off baa-family; DRAFT strokes for all 28 letters, signedOff:false except alif). Phase 05: all 4 plans complete (child-profile data layer, onboarding screen + first-launch gate, home greeting integration); verification = human_needed (device UAT). Device boot crash fixed (sqlite3_flutter_libs 0.6.0+eol → ^0.5.41). 2026-06-11: reconciled drifted STATE/ROADMAP counters (commit 2c3b656)."
+last_updated: "2026-06-11T00:00:00.000Z"
+last_activity: 2026-06-11 -- reconciled STATE/ROADMAP counters; confirmed Phase 04+05 already merged + pushed to origin/main
 progress:
   # reconciled 2026-06-11: 13 tracked phases = integer 1-10 + inserted 02.1/02.1.1/03.1.
   # completed_phases = 7 (1,2,02.1,02.1.1,3,03.1,5 all 100% plans done); Phase 4 in progress
@@ -153,6 +153,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-08
-Stopped at: Merged Phase 04 (from main) into the phase-05-profiles-onboarding branch and resolved STATE/ROADMAP conflicts. Phase 04 = 5/6 (04-06 DEFERRED, human-gated baa-family sign-off). Phase 05 = 4/4 complete, verification human_needed (device UAT; boot crash fixed via sqlite3_flutter_libs ^0.5.41). Branch ready to PR into main.
+Last session: 2026-06-11
+Stopped at: Confirmed Phase 04 + Phase 05 are already MERGED onto `main` and pushed to origin/main (no outstanding branch or PR — STATE's earlier "branch ready to PR" note was stale). Reconciled drifted STATE/ROADMAP progress counters (commit 2c3b656). Phase 04 = 5/6 (04-06 DEFERRED, human-gated baa-family sign-off). Phase 05 = 4/4 complete, verification human_needed (device UAT; boot crash fixed via sqlite3_flutter_libs ^0.5.41). Next real work: clear Phase 05 device UAT, then Phase 06 (Lesson Progression & Home).
 Resume files: .planning/phases/05-profiles-onboarding/05-04-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
