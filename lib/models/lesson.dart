@@ -39,16 +39,28 @@ class Lesson {
   final List<LessonItem> items;
   final LessonUnlock unlock;
 
+  /// Optional per-lesson tolerance ramp override (D-19), e.g.
+  /// ["loose", "normal", "strict"]. Null when the lesson has no override —
+  /// consumers fall back to the file-level defaultToleranceRamp.
+  final List<String>? toleranceRamp;
+
   const Lesson({
     required this.id,
     required this.order,
     required this.title,
     required this.items,
     required this.unlock,
+    this.toleranceRamp,
   });
 
   factory Lesson.fromJson(Map<String, dynamic> json) {
     final rawItems = json['items'] as List<dynamic>? ?? [];
+    // Defensive parse (D-19): absent or malformed toleranceRamp → null,
+    // never throw — the owner's mother edits this data by hand.
+    final rawRamp = json['toleranceRamp'];
+    final ramp = rawRamp is List
+        ? rawRamp.whereType<String>().toList()
+        : null;
     return Lesson(
       id: json['id'] as String,
       order: json['order'] as int,
@@ -57,6 +69,7 @@ class Lesson {
           .map((i) => LessonItem.fromJson(i as Map<String, dynamic>))
           .toList(),
       unlock: LessonUnlock.fromJson(json['unlock'] as Map<String, dynamic>),
+      toleranceRamp: ramp,
     );
   }
 }

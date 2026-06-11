@@ -14,6 +14,7 @@ class CurriculumRepository {
   List<Letter>? _letters;       // mutable backing list
   List<Letter>? _lettersView;   // unmodifiable view — same instance on every call
   List<Lesson>? _lessons;
+  List<String>? _defaultToleranceRamp;
 
   // Non-null = test mode; null = load from rootBundle
   final String? _lettersJsonOverride;
@@ -61,12 +62,18 @@ class CurriculumRepository {
     _letters = parsed;
     _lettersView = List.unmodifiable(_letters!);
 
-    final lessonsDecoded =
-        (json.decode(lessonsRaw) as Map<String, dynamic>)['lessons']
-            as List<dynamic>;
+    final lessonsMap = json.decode(lessonsRaw) as Map<String, dynamic>;
+    final lessonsDecoded = lessonsMap['lessons'] as List<dynamic>;
     _lessons = lessonsDecoded
         .map((e) => Lesson.fromJson(e as Map<String, dynamic>))
         .toList();
+
+    // D-19: file-level tolerance ramp — data the owner's mother can edit.
+    // Defensive parse: absent or malformed → the decided default, never throw.
+    final rawRamp = lessonsMap['defaultToleranceRamp'];
+    _defaultToleranceRamp = rawRamp is List
+        ? List.unmodifiable(rawRamp.whereType<String>())
+        : const ['loose', 'normal', 'strict'];
   }
 
   Future<List<Letter>> getLetters() async {
@@ -95,6 +102,14 @@ class CurriculumRepository {
     } on StateError {
       return null;
     }
+  }
+
+  /// D-19: the file-level tolerance ramp from lessons.json, defaulting to
+  /// ['loose', 'normal', 'strict'] when the key is absent. Consumed by the
+  /// practice flow (plan 06-04) to ramp scoring tolerance across reps.
+  Future<List<String>> getDefaultToleranceRamp() async {
+    await _ensureLoaded();
+    return _defaultToleranceRamp!;
   }
 
   /// Returns empty list if exercises.json does not exist (Phase 8 creates it).

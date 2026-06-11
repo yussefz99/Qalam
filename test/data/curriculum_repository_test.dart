@@ -187,6 +187,93 @@ void main() {
     });
   });
 
+  group('CurriculumRepository — shipped catalog integrity (Pitfall 10, T-06-05)', () {
+    // Load BOTH shipped assets off disk through the repository — this is the
+    // integrity gate: a typo'd ref in lessons.json must fail here, on every
+    // suite run, not silently break practice at runtime.
+    late CurriculumRepository repo;
+
+    setUp(() {
+      final shippedLetters =
+          File('assets/curriculum/letters.json').readAsStringSync();
+      final shippedLessons =
+          File('assets/curriculum/lessons.json').readAsStringSync();
+      repo = CurriculumRepository.fromStrings(shippedLetters, shippedLessons);
+    });
+
+    test('getLessons() returns exactly 28 lessons (D-01)', () async {
+      final lessons = await repo.getLessons();
+
+      expect(lessons.length, 28);
+    });
+
+    test('every lesson.items[].ref resolves to a letter id in letters.json',
+        () async {
+      final lessons = await repo.getLessons();
+      final letterIds = (await repo.getLetters()).map((l) => l.id).toSet();
+
+      for (final lesson in lessons) {
+        for (final item in lesson.items) {
+          expect(letterIds, contains(item.ref),
+              reason: '${lesson.id} references unknown letter "${item.ref}"');
+        }
+      }
+    });
+
+    test('every unlock.requires[] entry resolves to a lesson id', () async {
+      final lessons = await repo.getLessons();
+      final lessonIds = lessons.map((l) => l.id).toSet();
+
+      for (final lesson in lessons) {
+        for (final req in lesson.unlock.requires) {
+          expect(lessonIds, contains(req),
+              reason: '${lesson.id} requires unknown lesson "$req"');
+        }
+      }
+    });
+
+    test('orders are exactly 1..28 with no duplicates', () async {
+      final lessons = await repo.getLessons();
+      final orders = lessons.map((l) => l.order).toList()..sort();
+
+      expect(orders, List<int>.generate(28, (i) => i + 1));
+    });
+
+    test('lesson IDs are unique', () async {
+      final lessons = await repo.getLessons();
+      final ids = lessons.map((l) => l.id).toSet();
+
+      expect(ids.length, lessons.length);
+    });
+
+    test('lesson_01 has empty requires and ref alif', () async {
+      final lesson01 = await repo.getLesson('lesson_01');
+
+      expect(lesson01, isNotNull);
+      expect(lesson01!.unlock.requires, isEmpty);
+      expect(lesson01.items.single.ref, 'alif');
+    });
+
+    test('defaultToleranceRamp parses as [loose, normal, strict] (D-19)',
+        () async {
+      final ramp = await repo.getDefaultToleranceRamp();
+
+      expect(ramp, ['loose', 'normal', 'strict']);
+    });
+
+    test('getDefaultToleranceRamp() falls back to the decided default when '
+        'the key is absent', () async {
+      final fallbackRepo = CurriculumRepository.fromStrings(
+        _singleLetterJson(),
+        _lesson01Json, // fixture has no defaultToleranceRamp key
+      );
+
+      final ramp = await fallbackRepo.getDefaultToleranceRamp();
+
+      expect(ramp, ['loose', 'normal', 'strict']);
+    });
+  });
+
   group('CurriculumRepository — load-time D-04 guard (T-02.1-03)', () {
     test('the SHIPPED letters.json passes the validator at load', () async {
       // Read the real shipped asset off disk (not a fixture) and load it through

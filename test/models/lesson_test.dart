@@ -42,5 +42,20 @@ void main() {
       expect(unlock.requires.isEmpty, true);
       expect(unlock.passRule, 'allItemsPassed');
     });
+
+    test('toleranceRamp present parses as a string list (D-19)', () {
+      final lesson = Lesson.fromJson({
+        ...lesson01Json,
+        'toleranceRamp': ['loose', 'normal', 'strict'],
+      });
+
+      expect(lesson.toleranceRamp, ['loose', 'normal', 'strict']);
+    });
+
+    test('toleranceRamp absent parses as null — never throws (D-19)', () {
+      final lesson = Lesson.fromJson(lesson01Json);
+
+      expect(lesson.toleranceRamp, isNull);
+    });
   });
 }
