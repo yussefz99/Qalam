@@ -608,5 +608,43 @@
   "onboardingSubmit": "Let's go",
   "@onboardingSubmit": {
     "description": "Onboarding 'Let's go' CTA pill — saves the fixed-set profile and navigates to Home. Ink-teal (no gold/reward — PLAT-03). Button scale."
+  },
+
+  "homeLessonTitleFor": "The Letter {letterName}",
+  "@homeLessonTitleFor": {
+    "description": "Home today-card title for the prepared lesson (UI-SPEC Copywriting Contract; consumed by 06-05).",
+    "placeholders": {
+      "letterName": {
+        "type": "String"
+      }
+    }
+  },
+
+  "homeAllMasteredEyebrow": "YOUR LETTERS",
+  "@homeAllMasteredEyebrow": {
+    "description": "Home all-mastered card eyebrow (D-11 state — every lesson passed)."
+  },
+
+  "homeAllMasteredTitle": "You've mastered all your letters.",
+  "@homeAllMasteredTitle": {
+    "description": "Home all-mastered card title (D-11). Calm statement of fact — no hype (PLAT-03)."
+  },
+
+  "homeAllMasteredBody": "Visit your journey to practice any letter again.",
+  "@homeAllMasteredBody": {
+    "description": "Home all-mastered card body — points to the journey map for free practice (D-11)."
+  },
+
+  "homeInkFillSemantics": "{n} of {total} clean reps",
+  "@homeInkFillSemantics": {
+    "description": "Accessibility-only label for the ink-fill progress on the today card (D-12). NEVER rendered as visible text — no numerals on screen (PLAT-03).",
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
   }
 }

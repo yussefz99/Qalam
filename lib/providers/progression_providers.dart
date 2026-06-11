@@ -1,8 +1,8 @@
 // Live progression providers — Phase 06, plan 03 (S1-01 / S1-09).
 //
-// The phase's reactivity spine: drift `.watch()` streams from AppDatabase
-// (06-02) feed StreamProviders, and the derived Future providers recompute on
-// every emission BY CONSTRUCTION — `ref.watch(masteredLetterIdsProvider.future)`
+// The phase's reactivity spine: drift `.watch()` streams (06-02, via the
+// ProgressRepository seam) feed AsyncNotifiers, and the derived Future
+// providers recompute on every emission BY CONSTRUCTION — `ref.watch(masteredLetterIdsProvider.future)`
 // re-executes the computation whenever the stream pushes a new mastery set.
 // No caller ever needs `ref.invalidate` to see a pass reflected (S1-09
 // "immediate on pass"; proven by test/providers/progression_providers_test.dart,
@@ -23,8 +23,8 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../data/app_database.dart';
 import '../data/curriculum_repository.dart';
+import '../data/drift_progress_repository.dart';
 import '../models/lesson.dart';
 import '../models/lesson_progression.dart';
 import 'profile_providers.dart';
@@ -67,7 +67,9 @@ class _MasteredLetterIdsNotifier extends AsyncNotifier<Set<String>> {
   @override
   Future<Set<String>> build() => _bindDriftStream(
         ref,
-        ref.watch(appDatabaseProvider).watchMasteredLetterIds(),
+        // Through the ProgressRepository seam (not appDatabaseProvider
+        // directly) so widget tests can fake the streams without a database.
+        ref.watch(progressRepositoryProvider).watchMasteredLetterIds(),
         (value) => state = value,
       );
 }
@@ -90,7 +92,7 @@ class _CleanRepsNotifier extends AsyncNotifier<int> {
   @override
   Future<int> build() => _bindDriftStream(
         ref,
-        ref.watch(appDatabaseProvider).watchCleanReps(letterId),
+        ref.watch(progressRepositoryProvider).watchCleanReps(letterId),
         (value) => state = value,
       );
 }
@@ -111,11 +113,24 @@ final progressionProvider = FutureProvider<ProgressionSnapshot>((ref) async {
   final mastered = await ref.watch(masteredLetterIdsProvider.future);
   final lessons = await ref.watch(curriculumRepositoryProvider).getLessons();
   final ordered = [...lessons]..sort((a, b) => a.order.compareTo(b.order));
-  final profile = await ref.watch(childProfileProvider.future);
-  // Defensive: no profile yet → start at the first lesson (D-06's "unknown
-  // startingLessonId → index 0" already covers the empty-string fallback).
-  final startingLessonId = profile?.startingLessonId ??
-      (ordered.isEmpty ? '' : ordered.first.id);
+  // Defensive on ALL branches (T-05-07 degradation pattern): a missing
+  // profile, a profile-read error, OR a profile read that never completes
+  // (platform-channel hang — observed in headless test envs) degrades to the
+  // first lesson; never an error surface to the child. The `ref.watch`
+  // dependency stays live, so if the profile resolves AFTER the timeout the
+  // snapshot recomputes with the real startingLessonId automatically.
+  // (D-06's "unknown startingLessonId → index 0" covers the empty-string
+  // fallback.)
+  String? startingLessonId;
+  try {
+    final profile = await ref
+        .watch(childProfileProvider.future)
+        .timeout(const Duration(seconds: 3));
+    startingLessonId = profile?.startingLessonId;
+  } catch (_) {
+    startingLessonId = null;
+  }
+  startingLessonId ??= ordered.isEmpty ? '' : ordered.first.id;
   return ProgressionSnapshot.compute(ordered, startingLessonId, mastered);
 });
 

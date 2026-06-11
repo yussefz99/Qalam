@@ -38,6 +38,7 @@ import '../../l10n/app_localizations.dart';
 import '../../models/letter.dart';
 import '../../providers/audio_providers.dart';
 import '../../providers/practice_providers.dart';
+import '../../providers/progression_providers.dart';
 import '../../services/model_download_service.dart';
 import '../../theme/brand_theme_ext.dart';
 import '../../theme/colors.dart';
@@ -50,15 +51,21 @@ import 'widgets/stroke_canvas.dart';
 import 'widgets/stroke_order_animation.dart';
 import 'widgets/tutor_panel.dart';
 
-/// The Phase-3 practice screen — the full Watch → Trace → Celebrate loop.
+/// The practice screen — the full Watch → Trace → Celebrate loop.
 ///
-/// Wired to `lesson_01` (alif). Reads [practiceSessionControllerProvider]
-/// for phase state and dispatches events to the controller.
+/// Teaches [lessonId] when given (deep link `/practice?lesson=...`), else
+/// today's lesson from [todayLessonProvider]. Reads
+/// [practiceSessionControllerProvider] for phase state and dispatches events
+/// to the controller.
 class PracticeScreen extends ConsumerStatefulWidget {
-  const PracticeScreen({super.key});
+  const PracticeScreen({super.key, this.lessonId});
 
-  /// The lesson this screen teaches. Hardwired to lesson_01 (alif) for Phase 3.
-  static const String _lessonId = 'lesson_01';
+  /// The requested lesson id from the route's `?lesson=` query parameter.
+  ///
+  /// Externally influenceable (deep link / route restoration — T-06-03):
+  /// validated against the curriculum catalog before use; unknown or missing
+  /// ids degrade silently to today's lesson, never an error to the child.
+  final String? lessonId;
 
   @override
   ConsumerState<PracticeScreen> createState() => _PracticeScreenState();
@@ -68,6 +75,33 @@ class _PracticeScreenState extends ConsumerState<PracticeScreen> {
   /// Key for replaying the stroke-order animation from the Watch Again button.
   final GlobalKey<StrokeOrderAnimationState> _animKey =
       GlobalKey<StrokeOrderAnimationState>();
+
+  /// The lesson this screen teaches, resolved once in [initState]:
+  /// widget.lessonId if it exists in the catalog (allowlist, T-06-03) →
+  /// today's lesson → 'lesson_01'. Null while resolving (loading treatment).
+  String? _resolvedLessonId;
+
+  @override
+  void initState() {
+    super.initState();
+    _resolveLessonId();
+  }
+
+  Future<void> _resolveLessonId() async {
+    String? resolved;
+    final requested = widget.lessonId;
+    if (requested != null) {
+      // Catalog allowlist — a junk `?lesson=` value falls through to today.
+      final lesson =
+          await ref.read(curriculumRepositoryProvider).getLesson(requested);
+      if (lesson != null) resolved = requested;
+    }
+    if (resolved == null) {
+      final today = await ref.read(todayLessonProvider.future);
+      resolved = today?.id ?? 'lesson_01';
+    }
+    if (mounted) setState(() => _resolvedLessonId = resolved);
+  }
 
   // ---------------------------------------------------------------------------
   // Letter completion — called by StrokeCanvas once the whole multi-stroke
@@ -109,9 +143,10 @@ class _PracticeScreenState extends ConsumerState<PracticeScreen> {
     );
 
     // Only the LetterResult (not raw points) enters the controller.
+    // _resolvedLessonId is non-null here: the canvas only exists after build
+    // rendered the resolved lesson.
     await ref
-        .read(practiceSessionControllerProvider(PracticeScreen._lessonId)
-            .notifier)
+        .read(practiceSessionControllerProvider(_resolvedLessonId!).notifier)
         .onLetterResult(result);
   }
 
@@ -121,8 +156,18 @@ class _PracticeScreenState extends ConsumerState<PracticeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final lessonId = _resolvedLessonId;
+    // Still resolving which lesson to teach — neutral loading, never an error
+    // (UI-SPEC error contract).
+    if (lessonId == null) {
+      return const Scaffold(
+        backgroundColor: QalamColors.bg,
+        body: Center(child: CircularProgressIndicator.adaptive()),
+      );
+    }
+
     final state = ref.watch(
-      practiceSessionControllerProvider(PracticeScreen._lessonId),
+      practiceSessionControllerProvider(lessonId),
     );
 
     // Celebrate phase is full-screen — bypass the Scaffold shell.
@@ -150,21 +195,18 @@ class _PracticeScreenState extends ConsumerState<PracticeScreen> {
       ),
       body: SafeArea(
         child: _PracticeBody(
-          lessonId: PracticeScreen._lessonId,
+          lessonId: lessonId,
           state: state,
           animKey: _animKey,
           onLetterComplete: _onLetterComplete,
           onAdvanceToTrace: () => ref
-              .read(practiceSessionControllerProvider(PracticeScreen._lessonId)
-                  .notifier)
+              .read(practiceSessionControllerProvider(lessonId).notifier)
               .advanceToTrace(),
           onContinueAfterPraise: () => ref
-              .read(practiceSessionControllerProvider(PracticeScreen._lessonId)
-                  .notifier)
+              .read(practiceSessionControllerProvider(lessonId).notifier)
               .continueAfterPraise(),
           onRetry: () => ref
-              .read(practiceSessionControllerProvider(PracticeScreen._lessonId)
-                  .notifier)
+              .read(practiceSessionControllerProvider(lessonId).notifier)
               .retry(),
         ),
       ),

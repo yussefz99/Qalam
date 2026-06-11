@@ -106,7 +106,12 @@ Offset _nodePosition(int index) {
 /// No vertical scrolling (D-09). Data from [mockJourneyProgressProvider] (D-05/D-06).
 /// Anti-gamification: no star counters, no streaks, no "+N" copy (D-23/D-24).
 class JourneyScreen extends ConsumerWidget {
-  const JourneyScreen({super.key});
+  const JourneyScreen({super.key, this.highlightId});
+
+  /// The just-mastered letter id from the route's `?highlight=` query param
+  /// (D-15). Stored but intentionally UNUSED until plan 06-06 wires the
+  /// highlight star into the live journey map — do not consume it before then.
+  final String? highlightId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -4,6 +4,7 @@
 // /parent SEAM ONLY: the PIN-gated parent area lands in P9. The redirect hook is
 // left commented below — do NOT build the PIN gate now.
 
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -59,17 +60,33 @@ GoRouter appRouter(Ref ref) {
         path: '/onboarding',
         builder: (context, state) => const OnboardingScreen(),
       ),
+      // `?lesson=` deep-links a specific lesson (S1-09: celebration "Next
+      // Lesson", journey taps). The ValueKey forces a FRESH PracticeScreen
+      // State per lesson id (Pitfall 5) — without it, navigating from one
+      // lesson to another would reuse the old State. Query params are
+      // validated downstream against the curriculum catalog (T-06-03); the
+      // onboarding gate cannot see them (matchedLocation is path-only).
       GoRoute(
         path: '/practice',
-        builder: (context, state) => const PracticeScreen(),
+        builder: (context, state) {
+          final lessonId = state.uri.queryParameters['lesson'];
+          return PracticeScreen(
+            key: ValueKey<String?>(lessonId),
+            lessonId: lessonId,
+          );
+        },
       ),
       GoRoute(
         path: '/settings',
         builder: (context, state) => const SettingsScreen(),
       ),
+      // `?highlight=` marks the just-mastered letter's node (D-15; consumed by
+      // the journey screen in 06-06 — inert until then).
       GoRoute(
         path: '/journey',
-        builder: (context, state) => const JourneyScreen(),
+        builder: (context, state) => JourneyScreen(
+          highlightId: state.uri.queryParameters['highlight'],
+        ),
       ),
       // DEBUG SEAM — the D-12 glyph-audit harness. Reachable only by typing this
       // route on an emulator/tablet; it is NOT surfaced in the user-facing nav.

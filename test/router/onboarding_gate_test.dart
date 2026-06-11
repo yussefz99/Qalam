@@ -39,6 +39,7 @@ GoRouter _gatedRouter(OnboardingGate gate, {String initialLocation = '/'}) {
       GoRoute(path: '/', builder: (c, s) => const _Page('home')),
       GoRoute(path: '/onboarding', builder: (c, s) => const _Page('onboarding')),
       GoRoute(path: '/journey', builder: (c, s) => const _Page('journey')),
+      GoRoute(path: '/practice', builder: (c, s) => const _Page('practice')),
     ],
     errorBuilder: (context, state) => const _SentinelError(), // must NEVER hit
   );
@@ -76,6 +77,44 @@ void main() {
       expect(find.byType(_SentinelError), findsNothing);
       expect(locationOf(router), '/',
           reason: 'with a profile, /onboarding must bounce to /');
+    });
+  });
+
+  group('query params cannot affect the gate (A3 — matchedLocation is path-only)', () {
+    testWidgets(
+        'no profile: /practice?lesson=lesson_02 still redirects to /onboarding',
+        (tester) async {
+      final router = _gatedRouter(
+        OnboardingGate(false),
+        initialLocation: '/practice?lesson=lesson_02',
+      );
+      await tester.pumpWidget(_Harness(router: router));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(_SentinelError), findsNothing,
+          reason: 'query strings must not break the redirect (T-06-06)');
+      expect(locationOf(router), '/onboarding',
+          reason: 'the gate sees only the path — ?lesson= cannot bypass it');
+    });
+
+    testWidgets(
+        'has profile: /practice?lesson=lesson_02 does NOT redirect and keeps the query',
+        (tester) async {
+      final router = _gatedRouter(
+        OnboardingGate(true),
+        initialLocation: '/practice?lesson=lesson_02',
+      );
+      await tester.pumpWidget(_Harness(router: router));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(_SentinelError), findsNothing);
+      expect(locationOf(router), '/practice',
+          reason: 'with a profile the deep link resolves normally');
+      expect(
+        router.routerDelegate.currentConfiguration.uri.queryParameters['lesson'],
+        'lesson_02',
+        reason: 'the query parameter survives the redirect pass untouched',
+      );
     });
   });
 
