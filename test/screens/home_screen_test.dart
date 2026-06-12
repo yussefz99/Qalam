@@ -28,6 +28,7 @@ import 'package:qalam/data/progress_repository.dart';
 import 'package:qalam/l10n/app_localizations.dart';
 import 'package:qalam/providers/profile_providers.dart';
 import 'package:qalam/screens/home_screen.dart';
+import 'package:qalam/theme/dimens.dart';
 import 'package:qalam/widgets/arabic_text.dart';
 
 // ---------------------------------------------------------------------------
@@ -47,18 +48,22 @@ CurriculumRepository _shippedCurriculum() {
 /// Modes:
 ///  - [hang]: the mastered stream never emits → today-card stays loading.
 ///  - [masteredError]: the mastered stream errors → today-card error path.
+///  - [repsController]: when set, watchCleanReps returns this stream so a
+///    test can push live rep updates (provider-triggered rebuilds, D-13).
 class _FakeProgressRepository implements ProgressRepository {
   _FakeProgressRepository({
     this.mastered = const <String>{},
     this.reps = const <String, int>{},
     this.hang = false,
     this.masteredError = false,
+    this.repsController,
   });
 
   final Set<String> mastered;
   final Map<String, int> reps;
   final bool hang;
   final bool masteredError;
+  final StreamController<int>? repsController;
 
   // Held open so the "hang" stream never emits and never closes.
   final StreamController<Set<String>> _never =
@@ -93,8 +98,11 @@ class _FakeProgressRepository implements ProgressRepository {
   }
 
   @override
-  Stream<int> watchCleanReps(String letterId) =>
-      Stream<int>.value(reps[letterId] ?? 0);
+  Stream<int> watchCleanReps(String letterId) {
+    final controller = repsController;
+    if (controller != null) return controller.stream;
+    return Stream<int>.value(reps[letterId] ?? 0);
+  }
 }
 
 /// A fixed-set profile fixture — nickname `nick_star`, avatar `avatar_1`.
@@ -507,6 +515,130 @@ void main() {
       expect(find.text('Start Tracing'), findsNothing);
       expect(find.textContaining('UP NEXT'), findsNothing,
           reason: 'Home never lists other lessons (D-12).');
+    });
+
+    // -----------------------------------------------------------------------
+    // Test 11: prepared-desk entrance — reduced motion renders settled (D-13)
+    // -----------------------------------------------------------------------
+    testWidgets(
+        'reduced motion: the card renders fully settled on the first frame — '
+        'no entrance fade wrappers (Test 11)', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        _buildHome(
+          router: _makeRouter(),
+          profile: _starProfile(),
+          disableAnimations: true,
+        ),
+      );
+
+      // First frame: the card shell is present with NO animation wrappers.
+      expect(find.byKey(const Key('todaysLessonCard')), findsOneWidget,
+          reason: 'the card is present on the first frame.');
+      expect(find.byKey(const Key('todayCardEntranceFade')), findsNothing,
+          reason: 'reduced motion skips the entrance controller entirely.');
+      expect(find.byKey(const Key('todayCardGlyphFade')), findsNothing,
+          reason: 'reduced motion skips the glyph fade controller entirely.');
+
+      // Once the providers resolve, the content is there — still no fades.
+      await tester.pumpAndSettle();
+      expect(find.text('The Letter Alif'), findsOneWidget);
+      expect(find.byKey(const Key('todayCardEntranceFade')), findsNothing);
+      expect(find.byKey(const Key('todayCardGlyphFade')), findsNothing);
+    });
+
+    // -----------------------------------------------------------------------
+    // Test 12: prepared-desk entrance — settles over durSlow + durBase (D-13)
+    // -----------------------------------------------------------------------
+    testWidgets(
+        'entrance: card fades/slides in over durSlow, glyph fades over '
+        'durBase after it; both settled after durSlow + durBase (Test 12)',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        _buildHome(router: _makeRouter(), profile: _starProfile()),
+      );
+
+      // Mid-flight: the entrance is animating (opacity strictly < 1).
+      await tester.pump(const Duration(milliseconds: 100));
+      final Opacity midCard = tester.widget<Opacity>(
+        find.byKey(const Key('todayCardEntranceFade')),
+      );
+      expect(midCard.opacity, lessThan(1.0),
+          reason: 'the card entrance is mid-flight before durSlow elapses.');
+
+      // After durSlow the card is settled; the glyph is still fading.
+      await tester.pump(QalamMotion.durSlow);
+      final Opacity settledCard = tester.widget<Opacity>(
+        find.byKey(const Key('todayCardEntranceFade')),
+      );
+      expect(settledCard.opacity, 1.0,
+          reason: 'the card settles after durSlow (420ms).');
+
+      // After durBase more, the glyph fade is settled too.
+      await tester.pump(QalamMotion.durBase);
+      final Opacity settledGlyph = tester.widget<Opacity>(
+        find.byKey(const Key('todayCardGlyphFade')),
+      );
+      expect(settledGlyph.opacity, 1.0,
+          reason: 'the glyph fade settles durBase (220ms) after the card.');
+
+      await tester.pumpAndSettle();
+      expect(find.text('The Letter Alif'), findsOneWidget);
+    });
+
+    // -----------------------------------------------------------------------
+    // Test 13: provider-triggered rebuild does NOT restart the entrance (D-13)
+    // -----------------------------------------------------------------------
+    testWidgets(
+        'a live rep update rebuilds the card content (deeper ink) without '
+        'replaying the entrance (Test 13)', (WidgetTester tester) async {
+      final repsController = StreamController<int>();
+      addTearDown(repsController.close);
+
+      await tester.pumpWidget(
+        _buildHome(
+          router: _makeRouter(),
+          profile: _starProfile(),
+          progress: _FakeProgressRepository(
+            mastered: const {'alif'},
+            repsController: repsController,
+          ),
+        ),
+      );
+      repsController.add(1); // first emission completes the reps provider
+      await tester.pumpAndSettle();
+
+      expect(find.text('The Letter Baa'), findsOneWidget);
+      Opacity entrance = tester.widget<Opacity>(
+        find.byKey(const Key('todayCardEntranceFade')),
+      );
+      Opacity glyphFade = tester.widget<Opacity>(
+        find.byKey(const Key('todayCardGlyphFade')),
+      );
+      expect(entrance.opacity, 1.0);
+      expect(glyphFade.opacity, 1.0);
+
+      // A new persisted rep arrives → the reader rebuilds with deeper ink.
+      repsController.add(2);
+      await tester.pump();
+      await tester.pump();
+
+      final glyph = tester.widget<ArabicText>(
+        find.byWidgetPredicate((w) => w is ArabicText && w.text == 'ب'),
+      );
+      expect(glyph.style?.color?.a, closeTo(0.75, 0.01),
+          reason: 'ink deepens with the new rep: 0.25 + 0.75 × (2/3) = 0.75.');
+
+      // The entrance did NOT replay — both beats remain settled.
+      entrance = tester.widget<Opacity>(
+        find.byKey(const Key('todayCardEntranceFade')),
+      );
+      glyphFade = tester.widget<Opacity>(
+        find.byKey(const Key('todayCardGlyphFade')),
+      );
+      expect(entrance.opacity, 1.0,
+          reason: 'data refreshes never replay the entrance (D-13).');
+      expect(glyphFade.opacity, 1.0,
+          reason: 'data refreshes never replay the glyph fade (D-13).');
     });
   });
 }

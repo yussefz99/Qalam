@@ -65,8 +65,11 @@ class HomeScreen extends StatelessWidget {
                       // Mascot + greeting header.
                       _GreetingHeader(l10n: l10n),
                       const SizedBox(height: QalamSpace.space8),
-                      // Today's lesson card.
-                      _TodaysLessonCard(l10n: l10n),
+                      // Today's lesson card — settles in like a prepared
+                      // worksheet, once per arrival (D-13).
+                      _PreparedDeskEntrance(
+                        child: _TodaysLessonCard(l10n: l10n),
+                      ),
                       const SizedBox(height: QalamSpace.space6),
                       // Persistence seam (round-tripped Drift value).
                       const _PersistenceProof(),
@@ -418,6 +421,147 @@ class _GreetingLayout extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
+// Prepared-desk entrance (D-13)
+// ---------------------------------------------------------------------------
+
+/// First beat of the prepared-desk entrance (D-13): the today-card slides up
+/// ~24px while fading in — `easeOutQuart` over `durSlow` (420ms) — like a
+/// teacher laying out a worksheet.
+///
+/// Plays ONCE per arrival at Home: the one-shot decision lives in this State,
+/// which provider rebuilds below (inside the card's reader) never recreate.
+/// Reduced motion (`MediaQuery.disableAnimations`) skips the controller and
+/// renders fully settled immediately.
+class _PreparedDeskEntrance extends StatefulWidget {
+  const _PreparedDeskEntrance({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_PreparedDeskEntrance> createState() => _PreparedDeskEntranceState();
+}
+
+class _PreparedDeskEntranceState extends State<_PreparedDeskEntrance>
+    with SingleTickerProviderStateMixin {
+  AnimationController? _controller;
+  Animation<double>? _progress;
+  bool _played = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_played) return; // once per arrival — data refreshes never replay it
+    _played = true;
+    if (MediaQuery.of(context).disableAnimations) return; // settled at once
+    final controller = AnimationController(
+      vsync: this,
+      duration: QalamMotion.durSlow,
+    );
+    _controller = controller;
+    _progress = CurvedAnimation(
+      parent: controller,
+      curve: QalamMotion.easeOutQuart,
+    );
+    controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = _progress;
+    if (progress == null) return widget.child; // reduced motion: settled
+    return AnimatedBuilder(
+      animation: progress,
+      builder: (BuildContext context, Widget? child) {
+        final double v = progress.value;
+        return Opacity(
+          key: const Key('todayCardEntranceFade'),
+          opacity: v,
+          child: Transform.translate(
+            // Slide up ~24px (QalamSpace.space6) as the card settles.
+            offset: Offset(0, QalamSpace.space6 * (1 - v)),
+            child: child,
+          ),
+        );
+      },
+      child: widget.child,
+    );
+  }
+}
+
+/// Second beat of the prepared-desk entrance (D-13): the letter glyph fades
+/// up over `durBase` (220ms) AFTER the card settles (`durSlow`).
+///
+/// One-shot per arrival (same State-persistence reasoning as
+/// [_PreparedDeskEntrance] — the layout keeps this widget at a stable tree
+/// position across loading/data/all-mastered rebuilds). Reduced motion
+/// renders fully settled immediately.
+class _GlyphEntranceFade extends StatefulWidget {
+  const _GlyphEntranceFade({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_GlyphEntranceFade> createState() => _GlyphEntranceFadeState();
+}
+
+class _GlyphEntranceFadeState extends State<_GlyphEntranceFade>
+    with SingleTickerProviderStateMixin {
+  /// Card-settle delay + the glyph fade itself (tokens only).
+  static final Duration _total = QalamMotion.durSlow + QalamMotion.durBase;
+
+  AnimationController? _controller;
+  Animation<double>? _opacity;
+  bool _played = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_played) return;
+    _played = true;
+    if (MediaQuery.of(context).disableAnimations) return;
+    final controller = AnimationController(vsync: this, duration: _total);
+    _controller = controller;
+    _opacity = CurvedAnimation(
+      parent: controller,
+      // Hold at 0 while the card settles (durSlow), then fade over durBase.
+      curve: Interval(
+        QalamMotion.durSlow.inMilliseconds / _total.inMilliseconds,
+        1.0,
+        curve: QalamMotion.easeOutQuart,
+      ),
+    );
+    controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final opacity = _opacity;
+    if (opacity == null) return widget.child; // reduced motion: settled
+    return AnimatedBuilder(
+      animation: opacity,
+      builder: (BuildContext context, Widget? child) => Opacity(
+        key: const Key('todayCardGlyphFade'),
+        opacity: opacity.value,
+        child: child,
+      ),
+      child: widget.child,
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Today's lesson card (live — Plan 06-05)
 // ---------------------------------------------------------------------------
 
@@ -638,6 +782,9 @@ class _TodayCardLayout extends StatelessWidget {
         child: ExcludeSemantics(child: glyph),
       );
     }
+    // Outermost wrap: keeps the fade's State at a stable tree position across
+    // loading/data/all-mastered rebuilds, so the entrance never replays (D-13).
+    glyph = _GlyphEntranceFade(child: glyph);
 
     return GestureDetector(
       key: const Key('todaysLessonCard'),
