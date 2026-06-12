@@ -5,7 +5,7 @@ milestone_name: milestone
 status: executing
 stopped_at: "MERGED Phase 04 (from main) into the Phase 05 branch. Phase 04: plans 01-05 complete (scoreLetter spine, ML Kit advisory gate, UI wiring, calibration harness); 04-06 DEFERRED (human-gated — needs owner's mother + Android tablet + real children to author/tune/sign-off baa-family; DRAFT strokes for all 28 letters, signedOff:false except alif). Phase 05: all 4 plans complete (child-profile data layer, onboarding screen + first-launch gate, home greeting integration); verification = human_needed (device UAT). Device boot crash fixed (sqlite3_flutter_libs 0.6.0+eol → ^0.5.41)."
 last_updated: "2026-06-08T18:10:00.000Z"
-last_activity: 2026-06-08 -- merged Phase 04 from main into phase-05-profiles-onboarding branch
+last_activity: 2026-06-12 -- Completed quick task 260612-pmt: renamed Android package to com.technion.qalam
 progress:
   total_phases: 13
   completed_phases: 6
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 Phase: 04 (scoring-quality-calibration) — 5/6 plans complete, 04-06 DEFERRED (human-gated)
 Phase: 05 (profiles-onboarding) — 4/4 plans complete, verification human_needed (device UAT)
 Status: Phase 04 (from main) merged into the Phase 05 branch; ready to PR into main
-Last activity: 2026-06-08 -- merged Phase 04 from main into phase-05-profiles-onboarding branch
+Last activity: 2026-06-12 -- Completed quick task 260612-pmt: renamed Android package to com.technion.qalam
 
 Progress: [██░░░░░░░░] 20% (2 of 10 phases complete)
 
@@ -132,6 +132,7 @@ None yet.
 | 260602-00f | Rebuild demo Home faithful to home.png (owner override: gamification) | 2026-06-02 | 586b195 | [260602-00f-rebuild-demo-home-faithful-to-home-png-d](./quick/260602-00f-rebuild-demo-home-faithful-to-home-png-d/) |
 | 260602-bw1 | Rebuild Watch/Trace/Feedback/Celebration faithful to mockups; demo loop → Baa (owner override: gamification) | 2026-06-02 | 326c221 | [260602-bw1-rebuild-demo-walkthrough-baa](./quick/260602-bw1-rebuild-demo-walkthrough-baa/) |
 | 260607-pr1 | Practice screen three-zone Trace/ShowFix/ShowPraise tutor redesign + Hear-the-letter (UI-only; scorer/state-machine/persistence untouched) | 2026-06-07 | 8f8eb56 | [practice-redesign spec](../docs/design/practice-redesign/) |
+| 260612-pmt | Rename Android package com.example.qalam → com.technion.qalam (Sprint 1 submission requirement) | 2026-06-12 | 95efd4b | [260612-pmt-rename-android-package-from-com-example-](./quick/260612-pmt-rename-android-package-from-com-example-/) |
 
 ## Deferred Items
 
