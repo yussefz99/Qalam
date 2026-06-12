@@ -1,3 +1,5 @@
+// ignore_for_file: scoped_providers_should_specify_dependencies
+
 // home_screen_test.dart — Plans 03-05 / 05 / 06-05
 //
 // Widget tests for HomeScreen: the LIVE today-card (todayLessonProvider →
@@ -10,8 +12,6 @@
 // with a fake (no database), curriculumRepositoryProvider with the SHIPPED
 // curriculum (real 28-lesson catalog), and childProfileProvider (which would
 // otherwise hang in headless test envs — Phase 5 pattern).
-
-// ignore_for_file: scoped_providers_should_specify_dependencies
 
 import 'dart:async';
 import 'dart:io';
@@ -47,22 +47,18 @@ CurriculumRepository _shippedCurriculum() {
 /// Modes:
 ///  - [hang]: the mastered stream never emits → today-card stays loading.
 ///  - [masteredError]: the mastered stream errors → today-card error path.
-///  - [repsController]: when set, watchCleanReps returns this stream for every
-///    letter so a test can push live rep updates (provider-triggered rebuilds).
 class _FakeProgressRepository implements ProgressRepository {
   _FakeProgressRepository({
     this.mastered = const <String>{},
     this.reps = const <String, int>{},
     this.hang = false,
     this.masteredError = false,
-    this.repsController,
   });
 
   final Set<String> mastered;
   final Map<String, int> reps;
   final bool hang;
   final bool masteredError;
-  final StreamController<int>? repsController;
 
   // Held open so the "hang" stream never emits and never closes.
   final StreamController<Set<String>> _never =
@@ -97,11 +93,8 @@ class _FakeProgressRepository implements ProgressRepository {
   }
 
   @override
-  Stream<int> watchCleanReps(String letterId) {
-    final controller = repsController;
-    if (controller != null) return controller.stream;
-    return Stream<int>.value(reps[letterId] ?? 0);
-  }
+  Stream<int> watchCleanReps(String letterId) =>
+      Stream<int>.value(reps[letterId] ?? 0);
 }
 
 /// A fixed-set profile fixture — nickname `nick_star`, avatar `avatar_1`.
