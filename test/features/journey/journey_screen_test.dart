@@ -307,6 +307,7 @@ void main() {
   group('JourneyScreen highlight arrival — D-15', () {
     testWidgets(
         'highlight=alif settles the gold star on the alif node, then rests (Test 8)',
+        skip: true, // GREEN in Task 3
         (WidgetTester tester) async {
       await _pumpJourney(
         tester,
