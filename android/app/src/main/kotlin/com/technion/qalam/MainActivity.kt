@@ -1,4 +1,4 @@
-package com.example.qalam
+package com.technion.qalam
 
 import io.flutter.embedding.android.FlutterActivity
 
