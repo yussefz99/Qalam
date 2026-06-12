@@ -1,13 +1,20 @@
-// home_screen_test.dart — Plan 03-05
+// home_screen_test.dart — Plans 03-05 / 05 / 06-05
 //
-// Widget tests for HomeScreen: verifies the warm demo home renders correctly,
-// lesson-card navigation fires, PLAT-03 anti-gamification invariants hold, and
-// Journey/Parent nav entries are visibly locked with no navigation.
+// Widget tests for HomeScreen: the LIVE today-card (todayLessonProvider →
+// real letter glyph + title, D-08), ink-fill progress (D-09), the all-mastered
+// end state (D-11), loading/error degradation (UI-SPEC error contract), the
+// PLAT-03 anti-gamification invariants, and the reconciled nav-rail contract
+// (Journey navigates — live since Phase 03.1; Parent stays "Coming soon").
 //
-// Navigation tests use a real GoRouter with a /practice stub so context.go
-// can be observed via the router's current location.
+// Provider strategy (06-03 repository seam): override progressRepositoryProvider
+// with a fake (no database), curriculumRepositoryProvider with the SHIPPED
+// curriculum (real 28-lesson catalog), and childProfileProvider (which would
+// otherwise hang in headless test envs — Phase 5 pattern).
 
 // ignore_for_file: scoped_providers_should_specify_dependencies
+
+import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,58 +22,153 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:qalam/data/app_database.dart';
+import 'package:qalam/data/curriculum_repository.dart';
+import 'package:qalam/data/drift_progress_repository.dart';
+import 'package:qalam/data/progress_repository.dart';
 import 'package:qalam/l10n/app_localizations.dart';
 import 'package:qalam/providers/profile_providers.dart';
 import 'package:qalam/screens/home_screen.dart';
 import 'package:qalam/widgets/arabic_text.dart';
 
 // ---------------------------------------------------------------------------
-// Helpers
+// Fakes + fixtures
 // ---------------------------------------------------------------------------
 
-/// Builds HomeScreen inside a GoRouter so context.go works.
-/// The /practice stub page is a simple scaffold that can be found by finder.
-///
-/// [profile] overrides childProfileProvider so the greeting reads the chosen
-/// fixed-set nickname (S1-03). When null the provider resolves to no profile.
-Widget _buildWithRouter({GoRouter? router, ChildProfile? profile}) {
-  final goRouter = router ??
-      GoRouter(
-        initialLocation: '/',
-        routes: <RouteBase>[
-          GoRoute(
-            path: '/',
-            builder: (context, state) => const HomeScreen(),
-          ),
-          GoRoute(
-            path: '/practice',
-            builder: (context, state) =>
-                const Scaffold(body: Text('Practice Screen')),
-          ),
-        ],
-      );
+/// The real shipped curriculum (28 lessons, canonical letter ids) — same idiom
+/// as progression_providers_test.dart.
+CurriculumRepository _shippedCurriculum() {
+  final lettersJson = File('assets/curriculum/letters.json').readAsStringSync();
+  final lessonsJson = File('assets/curriculum/lessons.json').readAsStringSync();
+  return CurriculumRepository.fromStrings(lettersJson, lessonsJson);
+}
 
-  return ProviderScope(
-    overrides: [
-      childProfileProvider.overrideWith((ref) async => profile),
-    ],
-    child: MaterialApp.router(
-      routerConfig: goRouter,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-    ),
-  );
+/// Fake ProgressRepository over in-memory data — no database (06-03 seam).
+///
+/// Modes:
+///  - [hang]: the mastered stream never emits → today-card stays loading.
+///  - [masteredError]: the mastered stream errors → today-card error path.
+///  - [repsController]: when set, watchCleanReps returns this stream for every
+///    letter so a test can push live rep updates (provider-triggered rebuilds).
+class _FakeProgressRepository implements ProgressRepository {
+  _FakeProgressRepository({
+    this.mastered = const <String>{},
+    this.reps = const <String, int>{},
+    this.hang = false,
+    this.masteredError = false,
+    this.repsController,
+  });
+
+  final Set<String> mastered;
+  final Map<String, int> reps;
+  final bool hang;
+  final bool masteredError;
+  final StreamController<int>? repsController;
+
+  // Held open so the "hang" stream never emits and never closes.
+  final StreamController<Set<String>> _never =
+      StreamController<Set<String>>();
+
+  @override
+  Future<void> recordMastery({
+    required String letterId,
+    required int cleanReps,
+  }) async {}
+
+  @override
+  Future<bool> isMastered(String letterId) async =>
+      mastered.contains(letterId);
+
+  @override
+  Future<void> setCleanReps({
+    required String letterId,
+    required int cleanReps,
+  }) async {}
+
+  @override
+  Future<int> getCleanReps(String letterId) async => reps[letterId] ?? 0;
+
+  @override
+  Stream<Set<String>> watchMasteredLetterIds() {
+    if (hang) return _never.stream;
+    if (masteredError) {
+      return Stream<Set<String>>.error(StateError('boom'));
+    }
+    return Stream<Set<String>>.value(mastered);
+  }
+
+  @override
+  Stream<int> watchCleanReps(String letterId) {
+    final controller = repsController;
+    if (controller != null) return controller.stream;
+    return Stream<int>.value(reps[letterId] ?? 0);
+  }
 }
 
 /// A fixed-set profile fixture — nickname `nick_star`, avatar `avatar_1`.
-/// The greeting must resolve `nick_star` to its display label (no real name).
-ChildProfile _starProfile() => ChildProfile(
+ChildProfile _starProfile({String startingLessonId = 'lesson_01'}) =>
+    ChildProfile(
       id: 1,
       nicknameId: 'nick_star',
       avatarId: 'avatar_1',
       grade: 'kg',
-      startingLessonId: 'lesson_01',
+      startingLessonId: startingLessonId,
       createdAt: 0,
+    );
+
+/// Router with Home + /practice + /journey stubs so context.go is observable.
+GoRouter _makeRouter() => GoRouter(
+      initialLocation: '/',
+      routes: <RouteBase>[
+        GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
+        GoRoute(
+          path: '/practice',
+          builder: (context, state) =>
+              const Scaffold(body: Text('Practice Screen')),
+        ),
+        GoRoute(
+          path: '/journey',
+          builder: (context, state) =>
+              const Scaffold(body: Text('Journey Screen')),
+        ),
+      ],
+    );
+
+/// Builds HomeScreen with the full 06-05 override set.
+Widget _buildHome({
+  required GoRouter router,
+  ChildProfile? profile,
+  _FakeProgressRepository? progress,
+  bool disableAnimations = false,
+}) {
+  return ProviderScope(
+    overrides: [
+      childProfileProvider.overrideWith((ref) async => profile),
+      curriculumRepositoryProvider.overrideWithValue(_shippedCurriculum()),
+      progressRepositoryProvider
+          .overrideWithValue(progress ?? _FakeProgressRepository()),
+    ],
+    child: MaterialApp.router(
+      routerConfig: router,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context)
+            .copyWith(disableAnimations: disableAnimations),
+        child: child!,
+      ),
+    ),
+  );
+}
+
+String _location(GoRouter router) =>
+    router.routerDelegate.currentConfiguration.uri.toString();
+
+/// All Text widgets inside the today-card subtree.
+Iterable<Text> _cardTexts(WidgetTester tester) => tester.widgetList<Text>(
+      find.descendant(
+        of: find.byKey(const Key('todaysLessonCard')),
+        matching: find.byType(Text),
+      ),
     );
 
 // ---------------------------------------------------------------------------
@@ -76,81 +178,57 @@ ChildProfile _starProfile() => ChildProfile(
 void main() {
   group('HomeScreen', () {
     // -----------------------------------------------------------------------
-    // Test 1: Renders the demo home content
+    // Test 1: greeting + the LIVE default card (empty mastery → lesson_01)
     // -----------------------------------------------------------------------
     testWidgets(
-        'greeting renders the chosen nickname label and avatar, plus the alif glyph (Test 1)',
+        'greeting renders the chosen nickname label and avatar; the live card '
+        'shows alif as today with empty mastery (Test 1)',
         (WidgetTester tester) async {
-      // Override childProfileProvider with a fixed-set profile (S1-03): the
-      // greeting must show the resolved nickname LABEL, never a real name and
-      // never the old hardcoded 'Layla'.
-      await tester.pumpWidget(_buildWithRouter(profile: _starProfile()));
+      await tester.pumpWidget(
+        _buildHome(router: _makeRouter(), profile: _starProfile()),
+      );
       await tester.pumpAndSettle();
 
-      // The chosen nickname's display label (nick_star → 'نجمة' / Najma) renders
-      // through an ArabicText island. The old hardcoded greeting must be gone.
       expect(
         find.text('Welcome back, Layla.'),
         findsNothing,
-        reason: 'the hardcoded "Layla" greeting must be replaced by the profile nickname.',
+        reason: 'the hardcoded "Layla" greeting must be replaced by the '
+            'profile nickname.',
       );
       expect(
-        find.byWidgetPredicate(
-          (w) => w is ArabicText && w.text == 'نجمة',
-        ),
+        find.byWidgetPredicate((w) => w is ArabicText && w.text == 'نجمة'),
         findsOneWidget,
         reason: 'the resolved nickname label for nick_star ("نجمة") must render.',
       );
-
-      // The chosen avatar is rendered in the greeting header.
       expect(
         find.byKey(const Key('homeAvatar_avatar_1')),
         findsOneWidget,
-        reason: 'the chosen avatar (avatar_1) must render in the greeting header.',
+        reason: 'the chosen avatar (avatar_1) must render in the greeting.',
       );
 
-      // Lesson card title.
+      // Live card: empty mastery + starting lesson_01 → today is alif (D-08).
       expect(
         find.text('The Letter Alif'),
         findsOneWidget,
-        reason: 'Lesson card title "The Letter Alif" must be visible.',
+        reason: 'with empty mastery, today is lesson_01 → "The Letter Alif".',
       );
-
-      // The alif ArabicText RTL island.
       expect(
-        find.byWidgetPredicate(
-          (w) => w is ArabicText && w.text == 'ا',
-        ),
+        find.byWidgetPredicate((w) => w is ArabicText && w.text == 'ا'),
         findsOneWidget,
-        reason: 'ArabicText widget containing the alif glyph "ا" must exist.',
+        reason: 'the alif glyph "ا" must render on the live card.',
       );
     });
 
     // -----------------------------------------------------------------------
-    // Test 2: Lesson card tap navigates to /practice
+    // Test 2: card tap navigates with the lesson query param (S1-01)
     // -----------------------------------------------------------------------
     testWidgets(
-        'lesson card tap navigates to /practice (Test 2)',
+        'lesson card tap navigates to /practice?lesson=lesson_01 (Test 2)',
         (WidgetTester tester) async {
-      final router = GoRouter(
-        initialLocation: '/',
-        routes: <RouteBase>[
-          GoRoute(
-            path: '/',
-            builder: (context, state) => const HomeScreen(),
-          ),
-          GoRoute(
-            path: '/practice',
-            builder: (context, state) =>
-                const Scaffold(body: Text('Practice Screen')),
-          ),
-        ],
-      );
-
-      await tester.pumpWidget(_buildWithRouter(router: router));
+      final router = _makeRouter();
+      await tester.pumpWidget(_buildHome(router: router));
       await tester.pumpAndSettle();
 
-      // Tap the lesson card (keyed 'todaysLessonCard').
       final cardFinder = find.byKey(const Key('todaysLessonCard'));
       expect(cardFinder, findsOneWidget,
           reason: 'Lesson card must carry Key("todaysLessonCard").');
@@ -158,103 +236,284 @@ void main() {
       await tester.tap(cardFinder);
       await tester.pumpAndSettle();
 
-      // After tap, the practice screen stub should be visible.
+      expect(find.text('Practice Screen'), findsOneWidget,
+          reason: 'Tapping the lesson card must navigate to /practice.');
       expect(
-        find.text('Practice Screen'),
-        findsOneWidget,
-        reason: 'Tapping the lesson card must navigate to /practice.',
+        _location(router),
+        '/practice?lesson=lesson_01',
+        reason: 'the Start is always parameterized with today\'s lesson id.',
       );
     });
 
     // -----------------------------------------------------------------------
-    // Test 3: Anti-gamification invariants
+    // Test 3: anti-gamification invariants (PLAT-03)
     // -----------------------------------------------------------------------
     testWidgets(
-        'no gamification chrome: no THIS WEEK, no stars tally, no progress bar (Test 3)',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(_buildWithRouter());
+        'no gamification chrome: no THIS WEEK, no stars tally, no progress bar '
+        '(Test 3)', (WidgetTester tester) async {
+      await tester.pumpWidget(_buildHome(router: _makeRouter()));
       await tester.pumpAndSettle();
 
-      // "THIS WEEK" (case variants) must be absent.
       expect(find.textContaining('THIS WEEK'), findsNothing,
           reason: '"THIS WEEK" must be absent (PLAT-03).');
       expect(find.textContaining('this week'), findsNothing);
-
-      // "stars this week" tally must be absent.
       expect(find.textContaining('stars this week'), findsNothing,
           reason: '"stars this week" tally must be absent.');
-
-      // Running star totals / "+N" hype must be absent.
       expect(find.textContaining('total stars'), findsNothing);
       expect(find.textContaining('stars earned'), findsNothing);
-
-      // Weekly progress bar — no LinearProgressIndicator on this screen.
       expect(find.byType(LinearProgressIndicator), findsNothing,
           reason: 'No weekly progress bar on the home screen.');
-
-      // No star emoji gamification chrome.
       expect(find.textContaining('⭐'), findsNothing,
           reason: 'No star emoji on the home screen.');
     });
 
     // -----------------------------------------------------------------------
-    // Test 4: Journey and Parent are locked — labels present, no navigation
+    // Test 4 (RECONCILED): Journey navigates (live since 03.1); Parent is
+    // still locked with "Coming soon" and no navigation.
     // -----------------------------------------------------------------------
     testWidgets(
-        'Journey and Parent nav entries show Coming soon and do not navigate (Test 4)',
-        (WidgetTester tester) async {
-      final router = GoRouter(
-        initialLocation: '/',
-        routes: <RouteBase>[
-          GoRoute(
-            path: '/',
-            builder: (context, state) => const HomeScreen(),
-          ),
-          GoRoute(
-            path: '/practice',
-            builder: (context, state) =>
-                const Scaffold(body: Text('Practice Screen')),
-          ),
-        ],
-      );
-
-      await tester.pumpWidget(_buildWithRouter(router: router));
+        'Journey nav item navigates to /journey; Parent stays Coming soon '
+        'and does not navigate (Test 4)', (WidgetTester tester) async {
+      final router = _makeRouter();
+      await tester.pumpWidget(_buildHome(router: router));
       await tester.pumpAndSettle();
 
-      // Journey and Parent labels must be present.
       expect(find.text('Journey'), findsOneWidget,
           reason: '"Journey" nav label must be visible.');
       expect(find.text('Parent'), findsOneWidget,
           reason: '"Parent" nav label must be visible.');
 
-      // "Coming soon" must appear under each locked item.
+      // Exactly ONE "Coming soon" — under Parent only (Journey is live).
       expect(
         find.text('Coming soon'),
-        findsWidgets,
-        reason: '"Coming soon" sublabel must appear under locked nav items.',
+        findsOneWidget,
+        reason: 'only the Parent nav item is still locked (Phase 9).',
       );
 
-      // Capture initial router location.
-      final initialLocation =
-          router.routerDelegate.currentConfiguration.uri.toString();
-
-      // Tapping the Journey label must not change the route.
+      // Journey navigates (live since Phase 03.1).
       await tester.tap(find.text('Journey'));
       await tester.pumpAndSettle();
+      expect(_location(router), '/journey',
+          reason: 'Tapping Journey must navigate to /journey.');
+      expect(find.text('Journey Screen'), findsOneWidget);
 
-      final afterJourneyTap =
-          router.routerDelegate.currentConfiguration.uri.toString();
-      expect(afterJourneyTap, equals(initialLocation),
-          reason: 'Tapping Journey must not navigate (it is locked).');
-
-      // Tapping the Parent label must not change the route either.
-      await tester.tap(find.text('Parent'));
+      // Back to Home for the Parent assertion.
+      router.go('/');
       await tester.pumpAndSettle();
 
-      final afterParentTap =
-          router.routerDelegate.currentConfiguration.uri.toString();
-      expect(afterParentTap, equals(initialLocation),
-          reason: 'Tapping Parent must not navigate (it is locked).');
+      final beforeParentTap = _location(router);
+      await tester.tap(find.text('Parent'));
+      await tester.pumpAndSettle();
+      expect(_location(router), equals(beforeParentTap),
+          reason: 'Tapping Parent must not navigate (locked until Phase 9).');
+    });
+
+    // -----------------------------------------------------------------------
+    // Test 5: live card — mastered alif → today is baa's lesson (D-08)
+    // -----------------------------------------------------------------------
+    testWidgets(
+        'today = baa\'s lesson → card shows the ب glyph and "The Letter Baa"; '
+        'tap navigates to /practice?lesson=lesson_02 (Test 5)',
+        (WidgetTester tester) async {
+      final router = _makeRouter();
+      await tester.pumpWidget(
+        _buildHome(
+          router: router,
+          profile: _starProfile(),
+          progress: _FakeProgressRepository(mastered: const {'alif'}),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('The Letter Baa'), findsOneWidget,
+          reason: 'alif mastered → today is lesson_02 → "The Letter Baa".');
+      expect(
+        find.byWidgetPredicate((w) => w is ArabicText && w.text == 'ب'),
+        findsOneWidget,
+        reason: 'the baa glyph "ب" must render on the live card.',
+      );
+
+      await tester.tap(find.byKey(const Key('todaysLessonCard')));
+      await tester.pumpAndSettle();
+      expect(_location(router), '/practice?lesson=lesson_02',
+          reason: 'the card Start carries today\'s real lesson id.');
+    });
+
+    // -----------------------------------------------------------------------
+    // Test 6: ink-fill (D-09) — semantics label, no visible rep numerals
+    // -----------------------------------------------------------------------
+    testWidgets(
+        'ink-fill: 1 of 3 clean reps → Semantics label present, NO bare rep '
+        'numeral rendered as text, glyph at the 0.5 ink ramp (Test 6)',
+        (WidgetTester tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        _buildHome(
+          router: _makeRouter(),
+          profile: _starProfile(),
+          progress: _FakeProgressRepository(
+            mastered: const {'alif'},
+            reps: const {'baa': 1},
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // The ink IS the progress: a11y label only (D-09).
+      expect(
+        find.bySemanticsLabel('1 of 3 clean reps'),
+        findsOneWidget,
+        reason: 'the ink-fill must carry the homeInkFillSemantics label.',
+      );
+
+      // No Text widget on the card renders a digit (replaces rep-dots, D-09).
+      for (final text in _cardTexts(tester)) {
+        expect(
+          text.data ?? '',
+          isNot(matches(RegExp(r'[0-9]'))),
+          reason: 'no visible rep numerals on the today-card (PLAT-03/D-09).',
+        );
+      }
+
+      // Ink ramp: 0.25 + 0.75 × (1/3) = 0.5 deep-ink alpha (UI-SPEC).
+      final glyph = tester.widget<ArabicText>(
+        find.byWidgetPredicate((w) => w is ArabicText && w.text == 'ب'),
+      );
+      expect(glyph.style?.color?.a, closeTo(0.5, 0.01),
+          reason: 'glyph alpha follows the prescriptive ink-fill ramp.');
+
+      handle.dispose();
+    });
+
+    // -----------------------------------------------------------------------
+    // Test 7: all-mastered end state (D-11/D-12)
+    // -----------------------------------------------------------------------
+    testWidgets(
+        'all lessons passed → calm all-mastered card; tap goes to /journey '
+        '(Test 7)', (WidgetTester tester) async {
+      // Master every letter referenced by the shipped catalog.
+      final curriculum = _shippedCurriculum();
+      final lessons = await curriculum.getLessons();
+      final allLetters = <String>{
+        for (final lesson in lessons)
+          for (final item in lesson.items.where((i) => i.type == 'letter'))
+            item.ref,
+      };
+
+      final router = _makeRouter();
+      await tester.pumpWidget(
+        _buildHome(
+          router: router,
+          profile: _starProfile(),
+          progress: _FakeProgressRepository(mastered: allLetters),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('YOUR LETTERS'), findsOneWidget,
+          reason: 'all-mastered eyebrow (D-11).');
+      expect(find.text('You\'ve mastered all your letters.'), findsOneWidget,
+          reason: 'all-mastered title — factual, calm.');
+      expect(
+        find.text('Visit your journey to practice any letter again.'),
+        findsOneWidget,
+        reason: 'all-mastered body points to the journey (D-12).',
+      );
+
+      // Copy is factual — no totals, no hype.
+      for (final text in _cardTexts(tester)) {
+        expect(text.data ?? '', isNot(matches(RegExp(r'[0-9]'))),
+            reason: 'no totals on the all-mastered card (PLAT-03).');
+      }
+      expect(find.textContaining('!'), findsNothing,
+          reason: 'no hype punctuation on the all-mastered card (D-11).');
+
+      await tester.tap(find.byKey(const Key('todaysLessonCard')));
+      await tester.pumpAndSettle();
+      expect(_location(router), '/journey',
+          reason: 'the all-mastered card taps through to the Journey (D-11).');
+    });
+
+    // -----------------------------------------------------------------------
+    // Test 8: loading degradation — blank glyph + blank title, no spinner
+    // -----------------------------------------------------------------------
+    testWidgets(
+        'loading: blank glyph container + blank title, no spinner (Test 8)',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        _buildHome(
+          router: _makeRouter(),
+          profile: _starProfile(),
+          progress: _FakeProgressRepository(hang: true),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // The card shell is present but content degrades silently.
+      expect(find.byKey(const Key('todaysLessonCard')), findsOneWidget,
+          reason: 'the card shell renders while loading.');
+      expect(find.textContaining('The Letter'), findsNothing,
+          reason: 'title area is blank while loading.');
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('todaysLessonCard')),
+          matching: find.byType(ArabicText),
+        ),
+        findsNothing,
+        reason: 'glyph container is empty while loading.',
+      );
+      expect(find.byType(CircularProgressIndicator), findsNothing,
+          reason: 'no spinner chrome (UI-SPEC loading contract).');
+    });
+
+    // -----------------------------------------------------------------------
+    // Test 9: error degradation — the child always has a Start
+    // -----------------------------------------------------------------------
+    testWidgets(
+        'error: provider failure degrades to the startingLessonId lesson — '
+        'the card still renders a Start (Test 9)', (WidgetTester tester) async {
+      final router = _makeRouter();
+      await tester.pumpWidget(
+        _buildHome(
+          router: router,
+          profile: _starProfile(),
+          progress: _FakeProgressRepository(masteredError: true),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Degrades to the profile's startingLessonId (lesson_01 → alif). Never
+      // a raw error string to the child.
+      expect(find.text('The Letter Alif'), findsOneWidget,
+          reason: 'error degrades to the startingLessonId lesson (UI-SPEC).');
+      expect(find.textContaining('boom'), findsNothing,
+          reason: 'never show a raw error to the child (T-06-08).');
+      expect(find.textContaining('Error'), findsNothing);
+
+      await tester.tap(find.byKey(const Key('todaysLessonCard')));
+      await tester.pumpAndSettle();
+      expect(_location(router), '/practice?lesson=lesson_01',
+          reason: 'the child always has a working Start (T-06-08).');
+    });
+
+    // -----------------------------------------------------------------------
+    // Test 10: Home is single-purpose — exactly one Start (S1-01/D-12)
+    // -----------------------------------------------------------------------
+    testWidgets(
+        'exactly ONE today\'s-lesson card and no other practice CTA (Test 10)',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        _buildHome(router: _makeRouter(), profile: _starProfile()),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('todaysLessonCard')), findsOneWidget,
+          reason: 'exactly one today-card (D-12).');
+      expect(find.text('Open Practice'), findsNothing,
+          reason: 'no secondary practice CTA on Home (S1-01).');
+      expect(find.text('Start Tracing'), findsNothing);
+      expect(find.textContaining('UP NEXT'), findsNothing,
+          reason: 'Home never lists other lessons (D-12).');
     });
   });
 }
