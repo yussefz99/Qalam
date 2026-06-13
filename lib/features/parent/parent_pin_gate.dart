@@ -169,7 +169,18 @@ class _ParentPinGateState extends ConsumerState<ParentPinGate>
           break;
 
         case _GateMode.enter:
-          if (_cooldownSeconds > 0) return;
+          // WR-01: the in-memory _cooldownSeconds can be up to ~1 s stale (it is
+          // an integer-truncated tick of the persisted lockUntil), so re-read the
+          // persisted cooldown — the source of truth — before verifying. This
+          // closes the sub-second window where the input re-enables while
+          // lockUntil is still in the future.
+          final cooldown = await _pin.remainingCooldown(_db);
+          if (!mounted) return;
+          if (cooldown != null && cooldown.inMilliseconds > 0) {
+            setState(() => _cooldownSeconds = cooldown.inSeconds);
+            _tickCooldown();
+            return;
+          }
           final ok = await _pin.verify(_db, value);
           if (!mounted) return;
           if (ok) {
