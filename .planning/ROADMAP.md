@@ -361,7 +361,7 @@ Plans:
 
 **Wave 0**
 
-- [ ] 09-01-PLAN.md — Wave 0 (Nyquist RED): failing tests for PIN hash/verify, persisted cooldown, route gate, read-only dashboard + all Phase-9 ARB copy keys (S1-11)
+- [x] 09-01-PLAN.md — Wave 0 (Nyquist RED): failing tests for PIN hash/verify, persisted cooldown, route gate, read-only dashboard + all Phase-9 ARB copy keys (S1-11)
 
 **Wave 1** *(blocked on Wave 0)*
 

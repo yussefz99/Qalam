@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 9 planned (3 plans, 3 waves) — verification passed
-last_updated: "2026-06-13T20:40:16.217Z"
-last_activity: 2026-06-13
+stopped_at: Completed 09-01-PLAN.md (Wave-0 RED contract + ARB keys)
+last_updated: "2026-06-13T21:19:43Z"
+last_activity: 2026-06-13 -- Phase 09 plan 01 complete (RED contract)
 progress:
   total_phases: 13
   completed_phases: 8
   total_plans: 45
-  completed_plans: 41
-  percent: 62
+  completed_plans: 42
+  percent: 64
 ---
 
 # Project State
@@ -21,15 +21,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
-**Current focus:** Phase 06 — lesson-progression-home
+**Current focus:** Phase 09 — parent-dashboard
 
 ## Current Position
 
-Phase: 06 (lesson-progression-home) — EXECUTING
-Plan: 3 of 8
+Phase: 09 (parent-dashboard) — EXECUTING
+Plan: 2 of 3 (09-01 complete)
 Phase: 05 (profiles-onboarding) — 4/4 plans complete, verification human_needed (device UAT)
-Status: Ready to execute
-Last activity: 2026-06-13
+Status: Executing Phase 09
+Last activity: 2026-06-13 -- Phase 09 plan 01 complete (RED contract)
 
 Progress: [█████░░░░░] 54% (7 of 13 tracked phases complete)
 <!-- reconciled 2026-06-11: 13 tracked phases (integer 1-10 + inserted 02.1/02.1.1/03.1). Complete: 1, 2, 02.1, 02.1.1, 3, 03.1, 5. Phase 4 in progress (5/6, 04-06 deferred). Evidence: every plan in those phases has a SUMMARY file; scorer + curriculum repo + models exist in lib/. -->
@@ -73,6 +73,7 @@ Progress: [█████░░░░░] 54% (7 of 13 tracked phases complete)
 | Phase 05 P04 | ~12min | 1 task | 3 files |
 | Phase 06 P07 | ~50min | 2 tasks | 6 files |
 | Phase 06 P08 | ~12min | 2 tasks | 8 files |
+| Phase 09 P01 | ~3min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -124,6 +125,8 @@ Recent decisions affecting current work:
 - [Phase ?]: [Phase 06-08]: Combined-bbox stroke normalization extracted to lib/core/strokes/stroke_normalization.dart (single home; authoring_export delegates, Pitfall 2 preserved).
 - [Phase ?]: [Phase 06-08]: StrokeOrderAnimation parameterized with optional duration/color (default-preserving: durWrite + inkStroke when omitted); ghost comparison reuses it at durWrite*2 + warnSoft.
 - [Phase ?]: [Phase 06-08]: D-21 ghost comparison shipped — child failing strokes held in _TraceWorkspace State only, cleared on retry/pass/continue/dispose (T-03-01); 'Watch the Difference' shown only when strokes held.
+- [Phase 09]: [09-01]: Wave-0 RED contract authored — every S1-11 PIN/cooldown/route-gate/read-only-dashboard behavior has an executable failing assertion before implementation (Nyquist, mirrors 05-01). The persisted-cooldown test re-opens a SECOND AppDatabase over the same shared in-memory executor (D-09 shape) to prove a force-quit cannot reset the throttle (T-09-02). RED-by-missing-symbol expected for: PinService, parentGateProvider/ParentGate, ParentDashboardScreen, parentProgressProvider/ParentProgress/ParentLetterRow, allMastered()/allInProgress().
+- [Phase 09]: [09-01]: Drift in-progress row class is `LetterRep` (NOT the research-draft `LetterRepData`); mastered rows are `LetterMasteryData` — verified against app_database.g.dart. 17 Phase-9 ARB keys added (parentSummary uses {mastered}/{total} int placeholders — denominator never hardcoded to 28, Pitfall 5); generated app_localizations.dart is gitignored, only app_en.arb tracked. crypto package + its legitimacy checkpoint live in 09-02 (no install in this plan).
 
 ### Pending Todos
 
@@ -157,6 +160,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-13T20:40:16.209Z
-Stopped at: Phase 9 planned (3 plans, 3 waves) — verification passed
-Resume files: .planning/phases/05-profiles-onboarding/05-04-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
+Last session: 2026-06-13T21:19:43Z
+Stopped at: Completed 09-01-PLAN.md (Wave-0 RED contract + ARB keys)
+Resume files: .planning/phases/09-parent-dashboard/09-01-SUMMARY.md, .planning/phases/09-parent-dashboard/09-02-PLAN.md (next)
