@@ -26,6 +26,7 @@ import 'package:qalam/data/progress_repository.dart';
 import 'package:qalam/features/practice/practice_screen.dart';
 import 'package:qalam/features/practice/widgets/stroke_canvas.dart';
 import 'package:qalam/l10n/app_localizations.dart';
+import 'package:qalam/providers/profile_providers.dart';
 import 'package:qalam/services/model_download_service.dart';
 
 class _MockModelManager extends Mock
@@ -111,6 +112,12 @@ Widget _buildScreen(DigitalInkRecognizerModelManager manager) {
       progressRepositoryProvider.overrideWithValue(_FakeProgressRepository()),
       // Model manager reports NOT downloaded → service stays not-ready.
       inkModelManagerProvider.overrideWithValue(manager),
+      // PracticeScreen resolves today's lesson via todayLessonProvider →
+      // progressionProvider, which reads childProfileProvider. Without an
+      // override that read hangs until the 3s bounded timeout, blocking the
+      // watch phase past these fixed 50ms pumps. A null profile resolves
+      // immediately → today = first lesson (alif), matching this curriculum.
+      childProfileProvider.overrideWith((ref) async => null),
     ],
     child: MaterialApp(
       localizationsDelegates: AppLocalizations.localizationsDelegates,
