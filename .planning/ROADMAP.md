@@ -299,7 +299,7 @@ Plans:
   2. Locked lessons are visibly unavailable until their prerequisite is passed.
   3. Passing a lesson (meeting its clean-reps-to-advance rule) immediately unlocks the next lesson, which then appears as today's lesson.
 
-**Plans:** 6/8 plans executed
+**Plans:** 7/8 plans executed
 
 Plans:
 
@@ -309,7 +309,7 @@ Plans:
 - [x] 06-04-PLAN.md — Tolerance ramp + persisted-rep write-through (D-18/D-19/D-20)
 - [x] 06-05-PLAN.md — Home today-card live: ink-fill, prepared desk, all-mastered state (S1-01)
 - [x] 06-06-PLAN.md — Journey live data, canonical IDs, skipped taps, highlight arrival (D-07/D-15)
-- [ ] 06-07-PLAN.md — Celebration: Next Lesson, last-lesson variant, tutor line (D-14/D-16/D-17)
+- [x] 06-07-PLAN.md — Celebration: Next Lesson, last-lesson variant, tutor line (D-14/D-16/D-17)
 - [ ] 06-08-PLAN.md — Slow-motion ghost comparison (D-21)
 
 **UI hint**: yes
@@ -394,7 +394,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 03.1 Journey Map Screen (INSERTED) | 3/3 | Complete | - |
 | 4. Scoring Quality & Calibration | 5/6 | In Progress (04-06 deferred, human-gated) | - |
 | 5. Profiles & Onboarding | 4/4 | Complete | - |
-| 6. Lesson Progression & Home | 6/8 | In Progress|  |
+| 6. Lesson Progression & Home | 7/8 | In Progress|  |
 | 7. Full Curriculum & Pronunciation Audio | 0/TBD | Not started | - |
 | 8. Sentence-Building & Grammar Exercises | 0/TBD | Not started | - |
 | 9. Parent Dashboard | 0/TBD | Not started | - |

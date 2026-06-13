@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 6 UI-SPEC approved
-last_updated: "2026-06-11T18:37:21.788Z"
-last_activity: 2026-06-11 -- Phase 06 execution started
+stopped_at: Completed 06-07-PLAN.md
+last_updated: "2026-06-13T17:07:44.193Z"
+last_activity: 2026-06-13
 progress:
   total_phases: 13
   completed_phases: 7
   total_plans: 42
-  completed_plans: 33
+  completed_plans: 40
   percent: 54
 ---
 
@@ -26,10 +26,10 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 06 (lesson-progression-home) — EXECUTING
-Plan: 1 of 8
+Plan: 2 of 8
 Phase: 05 (profiles-onboarding) — 4/4 plans complete, verification human_needed (device UAT)
-Status: Executing Phase 06
-Last activity: 2026-06-11 -- Phase 06 execution started
+Status: Ready to execute
+Last activity: 2026-06-13
 
 Progress: [█████░░░░░] 54% (7 of 13 tracked phases complete)
 <!-- reconciled 2026-06-11: 13 tracked phases (integer 1-10 + inserted 02.1/02.1.1/03.1). Complete: 1, 2, 02.1, 02.1.1, 3, 03.1, 5. Phase 4 in progress (5/6, 04-06 deferred). Evidence: every plan in those phases has a SUMMARY file; scorer + curriculum repo + models exist in lib/. -->
@@ -71,6 +71,7 @@ Progress: [█████░░░░░] 54% (7 of 13 tracked phases complete)
 | Phase 05 P02 | ~20min | 2 tasks | 7 files |
 | Phase 05 P03 | ~11min | 2 tasks | 8 files |
 | Phase 05 P04 | ~12min | 1 task | 3 files |
+| Phase 06 P07 | ~50min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -116,6 +117,9 @@ Recent decisions affecting current work:
 - [Phase 05]: 05-04 turned the last Phase-5 RED test GREEN — Home greeting now reads childProfileProvider and renders the chosen fixed-set nickname LABEL (via ArabicText island) + chosen avatar circle (keyed homeAvatar_<id>), replacing hardcoded 'Welcome back, Layla.'. Scope-aware split (_GreetingHeader/_GreetingHeaderReader/_GreetingLayout) degrades to static greeting on no-scope/loading/error/null (T-05-07); resolveNicknameLabel(id) added to onboarding_data (ID->label in code); homeGreeting ARB is a {nickname} String template. PLAT-03 held. S1-03 "shown on home" closed end-to-end.
 - [Phase 05]: home_screen_test Test 4 (Journey nav must not navigate) stays deferred (deferred-items item 2) — stale vs commit 4d03e63 which intentionally unlocked Journey nav; not this plan's surface.
 - [Phase 05]: Device boot crash fixed — sqlite3_flutter_libs ^0.6.0 resolved to the empty 0.6.0+eol tombstone (no native lib; for the package:sqlite3 3.x migration). Our stack is drift 2.31 + sqlite3 2.9.4 (2.x); repinned ^0.5.41 so libsqlite3.so ships in the APK. Corrected 01-RESEARCH.md.
+- [Phase 06]: [Phase 06-07]: MasteryCelebration parameterized on the mastered letter (Pitfall 6 closed); D-14 Next Lesson primary -> /practice?lesson=<next>, D-16 last-lesson See Journey variant, D-17 tutor line.
+- [Phase 06]: [Phase 06-07]: Rule-1 fix — PracticeScreen now teaches the lesson's resolved letter (dropped hardcoded getLetter('alif')); Watch heading + per-rep praise templated. Per-letter coaching wording deferred to Phase 7.
+- [Phase 06]: [Phase 06-07]: mastery_celebration golden deliberately re-baked ONCE for the D-14/D-17 layout (sanctioned); carries the known local-font-drift caveat; glyph_audit golden untouched.
 
 ### Pending Todos
 
@@ -149,6 +153,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-11T15:47:11.859Z
-Stopped at: Phase 6 UI-SPEC approved
+Last session: 2026-06-13T17:07:44.187Z
+Stopped at: Completed 06-07-PLAN.md
 Resume files: .planning/phases/05-profiles-onboarding/05-04-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
