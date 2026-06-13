@@ -31,7 +31,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 03.1: Journey Map Screen** (INSERTED) - Winding-path progress view showing all 28 letters as nodes; mocked progress data; pulse animation on current letter; tap to practice; unlocked from Home nav.
 - [ ] **Phase 4: Scoring Quality & Calibration** - The scorer rejects wrong-order/sloppy work and accepts good-faith child attempts, with per-letter tolerances calibrated against real child samples with the owner's mother.
 - [ ] **Phase 5: Profiles & Onboarding** - A parent creates a local child profile (name + grade), and the child picks an avatar and nickname on first open.
-- [ ] **Phase 6: Lesson Progression & Home** - On open the child sees today's prepared lesson with one Start; the next lesson unlocks only after passing the current one.
+- [x] **Phase 6: Lesson Progression & Home** - On open the child sees today's prepared lesson with one Start; the next lesson unlocks only after passing the current one. (completed 2026-06-13)
 - [ ] **Phase 7: Full Curriculum & Pronunciation Audio** - The complete 28-letter + words curriculum is authored and signed off, and the child can hear bundled pronunciation for each letter and word.
 - [ ] **Phase 8: Sentence-Building & Grammar Exercises** - The child completes handwriting-first sentence-building and level-appropriate grammar exercises drawn from the curriculum.
 - [ ] **Phase 9: Parent Dashboard** - A parent enters a PIN and sees a read-only view of the child's completed lessons and scores.
@@ -299,7 +299,7 @@ Plans:
   2. Locked lessons are visibly unavailable until their prerequisite is passed.
   3. Passing a lesson (meeting its clean-reps-to-advance rule) immediately unlocks the next lesson, which then appears as today's lesson.
 
-**Plans:** 7/8 plans executed
+**Plans:** 8/8 plans complete
 
 Plans:
 
@@ -310,7 +310,7 @@ Plans:
 - [x] 06-05-PLAN.md — Home today-card live: ink-fill, prepared desk, all-mastered state (S1-01)
 - [x] 06-06-PLAN.md — Journey live data, canonical IDs, skipped taps, highlight arrival (D-07/D-15)
 - [x] 06-07-PLAN.md — Celebration: Next Lesson, last-lesson variant, tutor line (D-14/D-16/D-17)
-- [ ] 06-08-PLAN.md — Slow-motion ghost comparison (D-21)
+- [x] 06-08-PLAN.md — Slow-motion ghost comparison (D-21)
 
 **UI hint**: yes
 
@@ -394,7 +394,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 03.1 Journey Map Screen (INSERTED) | 3/3 | Complete | - |
 | 4. Scoring Quality & Calibration | 5/6 | In Progress (04-06 deferred, human-gated) | - |
 | 5. Profiles & Onboarding | 4/4 | Complete | - |
-| 6. Lesson Progression & Home | 7/8 | In Progress|  |
+| 6. Lesson Progression & Home | 8/8 | Complete   | 2026-06-13 |
 | 7. Full Curriculum & Pronunciation Audio | 0/TBD | Not started | - |
 | 8. Sentence-Building & Grammar Exercises | 0/TBD | Not started | - |
 | 9. Parent Dashboard | 0/TBD | Not started | - |
