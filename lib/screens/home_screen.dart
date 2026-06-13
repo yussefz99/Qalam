@@ -1,7 +1,7 @@
 // Home screen — warm demo home (Phase 03-05).
 //
 // Shows:
-//   - Left NavigationRail: Home (active), Journey (locked), Parent (locked).
+//   - Left NavigationRail: Home (active), Journey (unlocked), Parent (unlocked).
 //   - Qalam mascot (assets/mascot/qalam-idle.svg) with graceful fallback.
 //   - Static greeting "Welcome back, Layla." (no profile system — Phase 5).
 //   - "Today's lesson" card for alif → navigates to /practice on tap.
@@ -10,7 +10,8 @@
 // Anti-gamification invariants (PLAT-03 / D-13):
 //   - NO reward-gold token on this screen (gold = mastery rewards only).
 //   - NO ⭐ counter, no "THIS WEEK" tally, no streak, no score, no badge.
-//   - Parent is inert — no onTap, visibly labelled "Coming soon" (Phase 9).
+//   - Parent nav item unlocked in Phase 9: context.go('/parent') wired (the
+//     PIN gate is the access boundary; the child cannot bypass it).
 //   - Journey nav item unlocked in Phase 03.1: context.go('/journey') wired.
 //
 // Null-safe l10n reads throughout:  l10n?.getter ?? 'fallback'  (D-05 compat).
@@ -48,7 +49,7 @@ class HomeScreen extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            // Left nav-rail: Home (active), Journey (locked), Parent (locked).
+            // Left nav-rail: Home (active), Journey + Parent (both unlocked).
             _HomeNavRail(l10n: l10n),
             // Main content area.
             Expanded(
@@ -125,14 +126,14 @@ class _HomeNavRail extends StatelessWidget {
             onTap: () => context.go('/journey'),
           ),
           const SizedBox(height: QalamSpace.space4),
-          // Parent — locked, Phase 9.
+          // Parent — unlocked in Phase 9: routes to the PIN-gated /parent area.
+          // A non-lock glyph (A-02: lock.svg is never shipped for this item).
           _NavItem(
-            iconAsset: 'assets/icons/lock.svg',
+            iconAsset: 'assets/icons/ink-drop.svg',
             label: l10n?.navParent ?? 'Parent',
             isActive: false,
-            isLocked: true,
-            sublabel: l10n?.comingSoon ?? 'Coming soon',
-            onTap: null, // Inert — no route.
+            isLocked: false,
+            onTap: () => context.go('/parent'),
           ),
         ],
       ),
@@ -146,7 +147,6 @@ class _NavItem extends StatelessWidget {
     required this.label,
     required this.isActive,
     required this.isLocked,
-    this.sublabel,
     this.onTap,
   });
 
@@ -154,7 +154,6 @@ class _NavItem extends StatelessWidget {
   final String label;
   final bool isActive;
   final bool isLocked;
-  final String? sublabel;
   final VoidCallback? onTap;
 
   @override
@@ -187,17 +186,6 @@ class _NavItem extends StatelessWidget {
                 style: QalamTextStyles.label.copyWith(color: labelColor),
                 textAlign: TextAlign.center,
               ),
-              if (sublabel != null) ...<Widget>[
-                const SizedBox(height: QalamSpace.space1),
-                Text(
-                  sublabel!,
-                  style: QalamTextStyles.label.copyWith(
-                    color: QalamColors.fgMuted,
-                    fontSize: QalamFontSizes.fz12,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
             ],
           ),
         ),

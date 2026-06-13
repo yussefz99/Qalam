@@ -12,8 +12,10 @@ import '../dev/authoring_screen.dart';
 import '../dev/glyph_audit_screen.dart';
 import '../features/journey/journey_screen.dart';
 import '../features/onboarding/onboarding_screen.dart';
+import '../providers/parent_providers.dart';
 import '../providers/profile_providers.dart';
 import '../screens/home_screen.dart';
+import '../screens/parent_dashboard_screen.dart';
 import '../features/practice/practice_screen.dart';
 import '../screens/settings_screen.dart';
 import 'demo_routes.dart';
@@ -34,11 +36,16 @@ GoRouter appRouter(Ref ref) {
   // Used both as the redirect source AND as refreshListenable so the redirect
   // re-runs the instant the gate flips (RESEARCH Pattern 3).
   final gate = ref.watch(onboardingGateProvider);
+  // The parent-area gate (D-07 per-entry). Merged into refreshListenable so the
+  // router re-runs the instant the gate flips lock↔unlock; the '/parent' widget
+  // itself is the access boundary (RESEARCH Pattern 3 — no redirect for it).
+  final parentGate = ref.watch(parentGateProvider);
 
   return GoRouter(
     initialLocation: kDemoMode ? '/demo/home' : '/',
-    // Re-run redirects when the gate flips (after the onboarding write).
-    refreshListenable: gate,
+    // Re-run redirects when either gate flips (onboarding write / parent
+    // lock-unlock). Merged listenable — no second redirect rule for /parent.
+    refreshListenable: Listenable.merge(<Listenable>[gate, parentGate]),
     // SYNCHRONOUS redirect — NEVER await Drift here (Pitfall 2). The gate flag is
     // read once at boot; both rules below are present to prevent a redirect loop
     // (Pitfall 1): no-profile pins /onboarding; has-profile bounces off it.
@@ -109,15 +116,17 @@ GoRouter appRouter(Ref ref) {
       // Screen plans (03/04/05) replace the placeholder builders with real
       // widgets; the path map + ordering stay fixed here. See demo_routes.dart.
       ...demoRoutes(),
-      // SEAM ONLY — /parent/* PIN-gated parent area lands in P9 (CONTEXT D-08).
-      // Do NOT build the PIN gate now. When it lands, add the route here and a
-      // redirect guard, e.g.:
-      //   redirect: (context, state) {
-      //     if (state.matchedLocation.startsWith('/parent') && !parentUnlocked) {
-      //       return '/parent/lock';
-      //     }
-      //     return null;
-      //   },
+      // The PIN-gated parent area (S1-11 / Plan 09-03, CONTEXT D-08). A SINGLE
+      // route whose widget is the access boundary: while parentGate is LOCKED it
+      // renders the PIN flow (create-first / enter-after); once UNLOCKED it
+      // renders the read-only dashboard. No redirect guard here — the merged
+      // refreshListenable above re-runs the router on every gate flip, and the
+      // widget chooses its own state (RESEARCH Pattern 3 — avoids the Pitfall 2
+      // "await Drift in redirect" trap and the Pitfall 1 redirect loop).
+      GoRoute(
+        path: '/parent',
+        builder: (context, state) => const ParentDashboardScreen(),
+      ),
     ],
   );
 }

@@ -131,6 +131,14 @@ GoRouter _makeRouter() => GoRouter(
           builder: (context, state) =>
               const Scaffold(body: Text('Journey Screen')),
         ),
+        // Parent area unlocked in Phase 9 (S1-11) — a stub stands in for the
+        // real PIN-gated ParentDashboardScreen so the nav-tap assertion below
+        // has a destination to land on.
+        GoRoute(
+          path: '/parent',
+          builder: (context, state) =>
+              const Scaffold(body: Text('Parent Screen')),
+        ),
       ],
     );
 
@@ -269,12 +277,13 @@ void main() {
     });
 
     // -----------------------------------------------------------------------
-    // Test 4 (RECONCILED): Journey navigates (live since 03.1); Parent is
-    // still locked with "Coming soon" and no navigation.
+    // Test 4 (RECONCILED, Phase 9): Journey navigates (live since 03.1); Parent
+    // is now UNLOCKED (S1-11) — it navigates to /parent and no longer shows
+    // "Coming soon" (the PIN gate is the access boundary, not the nav item).
     // -----------------------------------------------------------------------
     testWidgets(
-        'Journey nav item navigates to /journey; Parent stays Coming soon '
-        'and does not navigate (Test 4)', (WidgetTester tester) async {
+        'Journey navigates to /journey; Parent navigates to /parent and is no '
+        'longer Coming soon (Test 4)', (WidgetTester tester) async {
       final router = _makeRouter();
       await tester.pumpWidget(_buildHome(router: router));
       await tester.pumpAndSettle();
@@ -284,11 +293,11 @@ void main() {
       expect(find.text('Parent'), findsOneWidget,
           reason: '"Parent" nav label must be visible.');
 
-      // Exactly ONE "Coming soon" — under Parent only (Journey is live).
+      // No "Coming soon" anywhere — both Journey and Parent are now live.
       expect(
         find.text('Coming soon'),
-        findsOneWidget,
-        reason: 'only the Parent nav item is still locked (Phase 9).',
+        findsNothing,
+        reason: 'Parent is unlocked in Phase 9 — no nav item is "Coming soon".',
       );
 
       // Journey navigates (live since Phase 03.1).
@@ -302,11 +311,12 @@ void main() {
       router.go('/');
       await tester.pumpAndSettle();
 
-      final beforeParentTap = _location(router);
+      // Parent now navigates to /parent (the PIN gate guards it downstream).
       await tester.tap(find.text('Parent'));
       await tester.pumpAndSettle();
-      expect(_location(router), equals(beforeParentTap),
-          reason: 'Tapping Parent must not navigate (locked until Phase 9).');
+      expect(_location(router), '/parent',
+          reason: 'Tapping Parent must navigate to /parent (S1-11).');
+      expect(find.text('Parent Screen'), findsOneWidget);
     });
 
     // -----------------------------------------------------------------------
