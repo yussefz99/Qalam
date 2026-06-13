@@ -549,10 +549,17 @@ class _TraceWorkspaceState extends ConsumerState<_TraceWorkspace> {
 
   /// The child's most recent FAILING strokes, normalized to 0..1 via the shared
   /// combined-bbox core, held HERE IN WIDGET STATE ONLY (T-03-01 / T-06-04).
-  /// Set in [_handleLetterComplete] when the rep fails shape checks; cleared on
-  /// retry, on pass, and on dispose. They feed the D-21 ghost comparison and
-  /// are NEVER persisted, logged, or lifted to provider scope.
+  /// Committed in [didUpdateWidget] ONLY when the scored rep resolved to
+  /// showFix (a miss); cleared on retry, on pass/praise, and on dispose. They
+  /// feed the D-21 ghost comparison and are NEVER persisted, logged, or lifted
+  /// to provider scope.
   List<StrokeSpec>? _failingStrokes;
+
+  /// The just-traced strokes, staged during scoring before the rep's outcome is
+  /// known. Resolved in [didUpdateWidget] the moment the phase changes: kept as
+  /// [_failingStrokes] only for a miss (showFix), discarded on a pass — so a
+  /// clean rep never retains the child's points in State (T-03-01).
+  List<StrokeSpec>? _pendingCandidate;
 
   /// Whether the D-21 ghost-comparison overlay is currently shown. Only ever
   /// true in showFix with [_failingStrokes] held.
@@ -599,6 +606,7 @@ class _TraceWorkspaceState extends ConsumerState<_TraceWorkspace> {
     _cornerLoop?.cancel();
     // T-03-01: ensure no held stroke points outlive this State.
     _failingStrokes = null;
+    _pendingCandidate = null;
     super.dispose();
   }
 
@@ -640,15 +648,35 @@ class _TraceWorkspaceState extends ConsumerState<_TraceWorkspace> {
     await widget.onLetterComplete(strokes);
     if (!mounted) return;
 
-    // The parent rebuilds this workspace with the post-scoring phase. We stage
-    // the candidate now; build() exposes the ghost button only while the live
-    // phase is showFix (a pass clears it via _clear on continue). Staging only
-    // on a fresh miss avoids showing a stale stroke after the child retries.
+    // Stage the candidate PENDING the rep's outcome. The parent rebuilds this
+    // workspace with the post-scoring phase (showFix on a miss, showPraise on a
+    // pass); didUpdateWidget then commits these strokes to _failingStrokes ONLY
+    // for a miss and discards them on a pass — so a clean rep never retains the
+    // child's points in State (T-03-01).
     setState(() {
       _isScoring = false;
-      _failingStrokes = candidate;
+      _pendingCandidate = candidate;
       _showGhost = false; // child opts in via the button
     });
+  }
+
+  @override
+  void didUpdateWidget(_TraceWorkspace oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.state.phase == oldWidget.state.phase) return;
+    // The phase just changed — resolve any rep staged in _handleLetterComplete.
+    // Keep the child's strokes ONLY for a miss (showFix → D-21 ghost material);
+    // a pass/praise or any other transition must not retain them (T-03-01).
+    final bool isMiss = widget.state.phase == PracticePhase.showFix;
+    if (_pendingCandidate != null) {
+      _failingStrokes = isMiss ? _pendingCandidate : null;
+      _pendingCandidate = null;
+      _showGhost = false;
+    } else if (!isMiss) {
+      // Defensive: never let failing strokes outlive showFix.
+      _failingStrokes = null;
+      _showGhost = false;
+    }
   }
 
   /// Cast the stroke-order ghost overlay on the canvas. Ignored if already
