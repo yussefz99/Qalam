@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
+status: verifying
 stopped_at: Completed 09-02-PLAN.md (PinService + read-only accessors + ParentProgress; data-layer RED GREEN)
-last_updated: "2026-06-13T21:30:18Z"
-last_activity: 2026-06-13 -- Phase 09 plan 02 complete (PIN security core + read-only data accessors)
+last_updated: "2026-06-13T21:50:51.045Z"
+last_activity: 2026-06-13
 progress:
   total_phases: 13
-  completed_phases: 8
+  completed_phases: 9
   total_plans: 45
-  completed_plans: 42
-  percent: 64
+  completed_plans: 44
+  percent: 69
 ---
 
 # Project State
@@ -28,8 +28,8 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 Phase: 09 (parent-dashboard) — EXECUTING
 Plan: 3 of 3 (09-01, 09-02 complete)
 Phase: 05 (profiles-onboarding) — 4/4 plans complete, verification human_needed (device UAT)
-Status: Executing Phase 09
-Last activity: 2026-06-13 -- Phase 09 plan 02 complete (PIN security core + read-only data accessors)
+Status: Phase complete — ready for verification
+Last activity: 2026-06-13
 
 Progress: [█████░░░░░] 54% (7 of 13 tracked phases complete)
 <!-- reconciled 2026-06-11: 13 tracked phases (integer 1-10 + inserted 02.1/02.1.1/03.1). Complete: 1, 2, 02.1, 02.1.1, 3, 03.1, 5. Phase 4 in progress (5/6, 04-06 deferred). Evidence: every plan in those phases has a SUMMARY file; scorer + curriculum repo + models exist in lib/. -->
@@ -75,6 +75,7 @@ Progress: [█████░░░░░] 54% (7 of 13 tracked phases complete)
 | Phase 06 P08 | ~12min | 2 tasks | 8 files |
 | Phase 09 P01 | ~3min | 2 tasks | 5 files |
 | Phase 09 P02 | ~7min | 3 tasks | 7 files |
+| Phase 09 P03 | 30 min | 4 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -129,6 +130,8 @@ Recent decisions affecting current work:
 - [Phase 09]: [09-01]: Wave-0 RED contract authored — every S1-11 PIN/cooldown/route-gate/read-only-dashboard behavior has an executable failing assertion before implementation (Nyquist, mirrors 05-01). The persisted-cooldown test re-opens a SECOND AppDatabase over the same shared in-memory executor (D-09 shape) to prove a force-quit cannot reset the throttle (T-09-02). RED-by-missing-symbol expected for: PinService, parentGateProvider/ParentGate, ParentDashboardScreen, parentProgressProvider/ParentProgress/ParentLetterRow, allMastered()/allInProgress().
 - [Phase 09]: [09-01]: Drift in-progress row class is `LetterRep` (NOT the research-draft `LetterRepData`); mastered rows are `LetterMasteryData` — verified against app_database.g.dart. 17 Phase-9 ARB keys added (parentSummary uses {mastered}/{total} int placeholders — denominator never hardcoded to 28, Pitfall 5); generated app_localizations.dart is gitignored, only app_en.arb tracked. crypto package + its legitimacy checkpoint live in 09-02 (no install in this plan).
 - [Phase 09]: [09-02]: PIN security core GREEN. PinService = salted PBKDF2-HMAC-SHA256 (100k iters, Random.secure 16-byte salt) hash/verify with a CONSTANT-TIME XOR-accumulate compare (no early-out, T-09-06) + a Drift-PERSISTED brute-force cooldown (5 fails -> 30s lockUntil in AppSettings; SURVIVES a force-quit, T-09-02 — the phase's key security point). crypto ^3.0.7 added (dart.dev first-party; human-approved legitimacy gate); PBKDF2 hand-rolled over crypto's HMAC (crypto has no KDF). NO new Drift table, NO schemaVersion bump (still 4) — all PIN material in AppSettings keys. flutter_secure_storage deliberately NOT used (one-way hash needs no recovery, T-09-08). pinServiceProvider uses @Riverpod codegen (allowed — returns only bool/void/Duration). Read-only AppDatabase.allMastered()/allInProgress() accessors (no write/edit/delete path, T-09-09) + immutable ParentProgress/ParentLetterRow view model (status enum, named factories). 09-03 wires parent_providers + ParentDashboardScreen + /parent gate.
+- [Phase ?]: 09-03: Parent dashboard screen at lib/screens/ (test import is the binding contract) — parent_dashboard_test imports package:qalam/screens/parent_dashboard_screen.dart
+- [Phase ?]: 09-03: /parent widget is the access boundary (Pattern 3, synchronous redirect, merged refreshListenable); ink-drop nav glyph (A-02)
 
 ### Pending Todos
 
@@ -162,6 +165,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-13T21:30:18Z
+Last session: 2026-06-13T21:50:29.639Z
 Stopped at: Completed 09-02-PLAN.md (PinService + read-only accessors + ParentProgress; data-layer RED GREEN)
 Resume files: .planning/phases/09-parent-dashboard/09-02-SUMMARY.md, .planning/phases/09-parent-dashboard/09-03-PLAN.md (next)

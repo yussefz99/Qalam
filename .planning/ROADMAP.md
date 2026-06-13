@@ -34,7 +34,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 6: Lesson Progression & Home** - On open the child sees today's prepared lesson with one Start; the next lesson unlocks only after passing the current one. (completed 2026-06-13)
 - [ ] **Phase 7: Full Curriculum & Pronunciation Audio** - The complete 28-letter + words curriculum is authored and signed off, and the child can hear bundled pronunciation for each letter and word.
 - [ ] **Phase 8: Sentence-Building & Grammar Exercises** - The child completes handwriting-first sentence-building and level-appropriate grammar exercises drawn from the curriculum.
-- [ ] **Phase 9: Parent Dashboard** - A parent enters a PIN and sees a read-only view of the child's completed lessons and scores.
+- [x] **Phase 9: Parent Dashboard** - A parent enters a PIN and sees a read-only view of the child's completed lessons and scores. (completed 2026-06-13)
 - [ ] **Phase 10: Offline Hardening & Release** - Every flow works airplane-mode on a fresh install, the ML Kit model is fetched-once-and-cached, and child data stays minimal and private.
 
 ## Phase Details
@@ -369,7 +369,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1)*
 
-- [ ] 09-03-PLAN.md — UI/wiring slice: ParentGate + parentProgressProvider, /parent route gate, PIN create/enter screen, read-only dashboard, Home nav unlock, boot seed; end-of-phase device UAT (S1-11)
+- [x] 09-03-PLAN.md — UI/wiring slice: ParentGate + parentProgressProvider, /parent route gate, PIN create/enter screen, read-only dashboard, Home nav unlock, boot seed; end-of-phase device UAT (S1-11)
 
 **UI hint**: yes
 
@@ -411,7 +411,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 6. Lesson Progression & Home | 8/8 | Complete   | 2026-06-13 |
 | 7. Full Curriculum & Pronunciation Audio | 0/TBD | Not started | - |
 | 8. Sentence-Building & Grammar Exercises | 0/TBD | Not started | - |
-| 9. Parent Dashboard | 2/3 | In Progress|  |
+| 9. Parent Dashboard | 3/3 | Complete   | 2026-06-13 |
 | 10. Offline Hardening & Release | 0/TBD | Not started | - |
 
 **Totals:** 7 of 13 tracked phases complete (54%); 33 of 34 plans complete (only 04-06 deferred).
