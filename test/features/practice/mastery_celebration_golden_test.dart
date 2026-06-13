@@ -141,7 +141,10 @@ void main() {
       await tester.pumpWidget(_buildCelebration(masteredLetterId: 'baa'));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('See journey'));
+      final link = find.text('See journey');
+      await tester.ensureVisible(link);
+      await tester.pumpAndSettle();
+      await tester.tap(link);
       await tester.pumpAndSettle();
 
       expect(find.text('JOURNEY'), findsOneWidget,

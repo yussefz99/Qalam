@@ -1,20 +1,32 @@
-// MasteryCelebration — Phase-3 dignified mastery moment (plan 03-04).
+// MasteryCelebration — dignified mastery moment (plan 03-04, parameterized 06-07).
 //
-// A calm full-screen celebration: the mascot, the mastered alif glyph,
-// exactly ONE settling gold star, a warm line, and Back Home.
+// A calm full-screen celebration: the mascot, the MASTERED letter's glyph,
+// exactly ONE settling gold star, a warm line naming the letter, the decided
+// CTA set, and one warm tutor line.
+//
+// PHASE 6 (06-07) — D-14 / D-16 / D-17, Pitfall 6:
+//   - The widget is PARAMETERIZED on the mastered letter ([glyph]/[letterName]):
+//     it speaks the actual letter (ب / "You learned baa.") — never a hardcoded
+//     'alif'/'ا' after another letter is mastered (Pitfall 6).
+//   - D-14: a primary filled-teal "Next Lesson" CTA goes straight into the
+//     newly unlocked letter ([onNextLesson]); "Back Home" is demoted to a ghost.
+//   - D-16: on the last lesson ([isLastLesson]) the primary slot becomes
+//     "See Journey" and Next Lesson is absent (no capstone screen).
+//   - D-17: one warm tutor line — "Go show your {letterName} to someone at home."
+//   - "See journey" ghost link navigates /journey?highlight={masteredLetterId}
+//     (D-15 handoff).
 //
 // ANTI-GAMIFICATION INVARIANTS (D-03/D-08/PLAT-03 — enforced by tests):
 //   - Exactly ONE gold star — QalamColors.reward ONLY for this star.
 //   - NO running star counter, NO "+N today", NO "THIS WEEK" stat.
 //   - NO three-star rating, NO streak, NO badge hype.
-//   - 'See journey' button — wired in Phase 03.1 to /journey.
 //   - NO confetti, NO sound blast.
-//   - The star earning is information ("you mastered alif"), not a score.
+//   - The star earning is information ("you mastered baa"), not a score.
 //
 // Mascot: SvgPicture.asset('assets/mascot/qalam-cheer.svg') with a graceful
 // SizedBox fallback if the asset is missing — never crash.
 //
-// The alif glyph uses ArabicText (Cairo display, 96px) — RTL island.
+// The letter glyph uses ArabicText (Cairo display, 96px) — RTL island.
 // "أحسنت" uses ArabicText (Noto Naskh body) — RTL island paired with English.
 
 import 'dart:math' as math;
@@ -29,17 +41,41 @@ import '../../../theme/dimens.dart';
 import '../../../theme/text_styles.dart';
 import '../../../widgets/arabic_text.dart';
 
-/// Full-screen mastery celebration shown after 3 clean reps (D-07/D-08).
-///
-/// [onBackHome] is invoked when the child taps "Back Home".
+/// Full-screen mastery celebration shown after the required clean reps
+/// (D-07/D-08), parameterized on the mastered letter (06-07).
 class MasteryCelebration extends StatefulWidget {
   const MasteryCelebration({
     super.key,
+    required this.glyph,
+    required this.letterName,
+    required this.masteredLetterId,
     required this.onBackHome,
+    this.onNextLesson,
+    this.isLastLesson = false,
   });
 
-  /// Called when the child taps the "Back Home" primary CTA.
+  /// The mastered letter's Arabic glyph (e.g. 'ب') — rendered via [ArabicText]
+  /// at display scale. Never hardcoded (Pitfall 6).
+  final String glyph;
+
+  /// The mastered letter's romanized display name (e.g. 'baa') — woven into the
+  /// celebration line and the D-17 tutor line.
+  final String letterName;
+
+  /// The mastered letter's canonical id — fed to /journey?highlight= (D-15).
+  final String masteredLetterId;
+
+  /// Called when the child taps the demoted "Back Home" ghost CTA.
   final VoidCallback onBackHome;
+
+  /// Called when the child taps the primary "Next Lesson" CTA (D-14) — goes
+  /// straight into the newly unlocked letter's practice. Null only on the last
+  /// lesson (D-16), where the primary slot becomes "See Journey".
+  final VoidCallback? onNextLesson;
+
+  /// D-16: when true there is no next lesson — the primary slot becomes
+  /// "See Journey" and "Next Lesson" is absent (no special capstone screen).
+  final bool isLastLesson;
 
   @override
   State<MasteryCelebration> createState() => _MasteryCelebrationState();
@@ -88,10 +124,16 @@ class _MasteryCelebrationState extends State<MasteryCelebration>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final celebLine = l10n?.practiceCelebrationLine ?? 'You learned alif.';
+    final celebLine = l10n?.practiceCelebrationLineFor(widget.letterName) ??
+        'You learned ${widget.letterName}.';
     final arabicPraise = l10n?.practiceCelebrationArabic ?? 'أحسنت';
     final masteredLabel = l10n?.practiceMasteredEyebrow ?? 'MASTERED';
     final backHomeLabel = l10n?.practiceBackHomeButton ?? 'Back Home';
+    final nextLessonLabel = l10n?.celebrationNextLesson ?? 'Next Lesson';
+    final seeJourneyButtonLabel =
+        l10n?.celebrationSeeJourneyButton ?? 'See Journey';
+    final tutorLine = l10n?.celebrationShowSomeone(widget.letterName) ??
+        'Go show your ${widget.letterName} to someone at home.';
 
     return Scaffold(
       backgroundColor: QalamColors.bg, // parchment — never white
@@ -115,9 +157,10 @@ class _MasteryCelebrationState extends State<MasteryCelebration>
                   const _MascotCheer(),
                   const SizedBox(height: QalamSpace.space6),
 
-                  // The mastered alif glyph — Arabic display (96px Cairo).
-                  // QalamColors.reward glow behind the glyph.
-                  const _MasteredGlyph(),
+                  // The mastered letter's glyph — Arabic display (96px Cairo).
+                  // QalamColors.reward glow behind the glyph. Parameterized
+                  // (Pitfall 6) — never a hardcoded 'ا'.
+                  _MasteredGlyph(glyph: widget.glyph),
                   const SizedBox(height: QalamSpace.space8),
 
                   // Exactly ONE settling gold star (D-07/D-08).
@@ -143,24 +186,55 @@ class _MasteryCelebrationState extends State<MasteryCelebration>
                     ),
                     textAlign: TextAlign.center,
                   ),
+                  const SizedBox(height: QalamSpace.space4),
+
+                  // D-17 tutor line — exactly one warm, specific, family line,
+                  // Body scale, under the Arabic praise. The tutor's voice.
+                  Text(
+                    tutorLine,
+                    style: QalamTextStyles.body.copyWith(
+                      color: QalamColors.fgMuted,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                   const SizedBox(height: QalamSpace.space12),
 
-                  // Back Home — primary CTA, comfy touch target.
-                  _BackHomeButton(
+                  // PRIMARY CTA — exactly ONE filled-teal primary per screen.
+                  //   Default variant (D-14): "Next Lesson" → newly unlocked letter.
+                  //   Last lesson (D-16): "See Journey" → the journey map.
+                  _PrimaryCelebrationButton(
+                    label: widget.isLastLesson
+                        ? seeJourneyButtonLabel
+                        : nextLessonLabel,
+                    onPressed: widget.isLastLesson
+                        ? () => context.go(
+                              '/journey?highlight=${widget.masteredLetterId}',
+                            )
+                        // onNextLesson is provided in the default variant; fall
+                        // back to a no-op rather than crash if absent.
+                        : (widget.onNextLesson ?? () {}),
+                  ),
+                  const SizedBox(height: QalamSpace.space4),
+
+                  // "Back Home" — DEMOTED to a ghost/outlined secondary (D-14:
+                  // one primary per screen).
+                  _GhostCelebrationButton(
                     label: backHomeLabel,
                     onPressed: widget.onBackHome,
                   ),
                   const SizedBox(height: QalamSpace.space4),
 
-                  // "See journey" ghost link — navigation affordance only.
-                  // No star count, no "+N" copy, no score (D-23/D-24).
-                  // Wired in Phase 03.1 to /journey.
+                  // "See journey" tertiary ghost LINK — navigates
+                  // /journey?highlight={masteredLetterId} (D-15 handoff).
+                  // No star count, no "+N" copy, no score (PLAT-03).
                   ConstrainedBox(
                     constraints: const BoxConstraints(
                       minHeight: QalamTargets.targetMin,
                     ),
                     child: TextButton(
-                      onPressed: () => context.go('/journey'),
+                      onPressed: () => context.go(
+                        '/journey?highlight=${widget.masteredLetterId}',
+                      ),
                       style: TextButton.styleFrom(
                         foregroundColor: QalamColors.fgMuted,
                         backgroundColor: Colors.transparent,
@@ -244,9 +318,12 @@ class _MascotCheer extends StatelessWidget {
   }
 }
 
-/// The mastered alif glyph at display scale with a soft gold glow behind it.
+/// The mastered letter's glyph at display scale with a soft gold glow behind
+/// it. Parameterized on [glyph] (Pitfall 6) — never a hardcoded 'ا'.
 class _MasteredGlyph extends StatelessWidget {
-  const _MasteredGlyph();
+  const _MasteredGlyph({required this.glyph});
+
+  final String glyph;
 
   @override
   Widget build(BuildContext context) {
@@ -262,11 +339,11 @@ class _MasteredGlyph extends StatelessWidget {
             color: QalamColors.rewardTint,
           ),
         ),
-        // The alif glyph — ArabicText RTL island, Cairo display 96px.
-        const ArabicText(
-          'ا',
+        // The mastered letter glyph — ArabicText RTL island, Cairo display 96px.
+        ArabicText(
+          glyph,
           display: true,
-          style: TextStyle(
+          style: const TextStyle(
             fontFamily: QalamFonts.arabicDisplay,
             fontWeight: FontWeight.w500,
             fontSize: QalamFontSizes.arDisplay,
@@ -351,9 +428,11 @@ class _StarPainter extends CustomPainter {
   bool shouldRepaint(_StarPainter oldDelegate) => oldDelegate.color != color;
 }
 
-/// "Back Home" primary CTA — full-width comfy touch target.
-class _BackHomeButton extends StatelessWidget {
-  const _BackHomeButton({
+/// The ONE filled-teal primary CTA (D-14/D-16) — full-width comfy touch target
+/// with sticker shadow. Exactly one of these is rendered per variant:
+/// "Next Lesson" (default) or "See Journey" (last lesson).
+class _PrimaryCelebrationButton extends StatelessWidget {
+  const _PrimaryCelebrationButton({
     required this.label,
     required this.onPressed,
   });
@@ -390,6 +469,47 @@ class _BackHomeButton extends StatelessWidget {
                 color: QalamColors.fgOnPrimary,
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// "Back Home" — DEMOTED secondary, ghost/outlined on parchment (D-14: one
+/// primary per screen). No fill, no sticker shadow — clearly subordinate to
+/// the teal primary above it.
+class _GhostCelebrationButton extends StatelessWidget {
+  const _GhostCelebrationButton({
+    required this.label,
+    required this.onPressed,
+  });
+
+  final String label;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: QalamColors.primary,
+          side: const BorderSide(color: QalamColors.primary, width: 2),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(QalamRadii.lg),
+          ),
+          minimumSize: const Size.fromHeight(QalamTargets.targetComfy),
+          padding: const EdgeInsets.symmetric(
+            horizontal: QalamSpace.space12,
+            vertical: QalamSpace.space4,
+          ),
+        ),
+        onPressed: onPressed,
+        child: Text(
+          label,
+          style: QalamTextStyles.button.copyWith(
+            color: QalamColors.primary,
           ),
         ),
       ),

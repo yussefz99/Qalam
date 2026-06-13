@@ -36,6 +36,7 @@ import '../../core/scoring/scoring_models.dart';
 import '../../core/scoring/tolerances.dart';
 import '../../data/curriculum_repository.dart';
 import '../../l10n/app_localizations.dart';
+import '../../models/lesson.dart';
 import '../../models/letter.dart';
 import '../../providers/audio_providers.dart';
 import '../../providers/practice_providers.dart';
@@ -82,6 +83,11 @@ class _PracticeScreenState extends ConsumerState<PracticeScreen> {
   /// today's lesson → 'lesson_01'. Null while resolving (loading treatment).
   String? _resolvedLessonId;
 
+  /// The letter taught by [_resolvedLessonId], resolved alongside the lesson so
+  /// the celebration can speak the actual mastered letter (Pitfall 6). Null
+  /// while resolving or when the lesson has no letter item.
+  Letter? _lessonLetter;
+
   @override
   void initState() {
     super.initState();
@@ -91,17 +97,32 @@ class _PracticeScreenState extends ConsumerState<PracticeScreen> {
   Future<void> _resolveLessonId() async {
     String? resolved;
     final requested = widget.lessonId;
+    final repo = ref.read(curriculumRepositoryProvider);
     if (requested != null) {
       // Catalog allowlist — a junk `?lesson=` value falls through to today.
-      final lesson =
-          await ref.read(curriculumRepositoryProvider).getLesson(requested);
+      final lesson = await repo.getLesson(requested);
       if (lesson != null) resolved = requested;
     }
     if (resolved == null) {
       final today = await ref.read(todayLessonProvider.future);
       resolved = today?.id ?? 'lesson_01';
     }
-    if (mounted) setState(() => _resolvedLessonId = resolved);
+    // Resolve the letter this lesson teaches (its first letter item) so the
+    // celebration speaks the mastered letter. Defensive: no letter item → null.
+    Letter? letter;
+    final lesson = await repo.getLesson(resolved);
+    final letterItems =
+        lesson?.items.where((LessonItem i) => i.type == 'letter').toList() ??
+            const <LessonItem>[];
+    if (letterItems.isNotEmpty) {
+      letter = await repo.getLetter(letterItems.first.ref);
+    }
+    if (mounted) {
+      setState(() {
+        _resolvedLessonId = resolved;
+        _lessonLetter = letter;
+      });
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -182,7 +203,8 @@ class _PracticeScreenState extends ConsumerState<PracticeScreen> {
 
     // Celebrate phase is full-screen — bypass the Scaffold shell.
     if (state.phase == PracticePhase.celebrate) {
-      return MasteryCelebration(
+      return _CelebrateView(
+        masteredLetter: _lessonLetter,
         onBackHome: () => context.go('/'),
       );
     }
@@ -235,6 +257,62 @@ class _PracticeScreenState extends ConsumerState<PracticeScreen> {
       case PracticePhase.celebrate:
         return l10n?.practiceMasteredEyebrow ?? 'MASTERED';
     }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// _CelebrateView — full-screen mastery moment wiring (D-14 / D-16 / D-17)
+// ---------------------------------------------------------------------------
+
+/// Wires [MasteryCelebration] to the live progression (S1-09): post-mastery the
+/// mastery stream has already recomputed, so [todayLessonProvider] now resolves
+/// to the newly unlocked lesson — that becomes the "Next Lesson" target. When
+/// today resolves null, every lesson is mastered → the D-16 last-lesson variant
+/// (See Journey primary, no Next Lesson).
+///
+/// While the next-lesson provider momentarily resolves we follow the loading
+/// degradation contract (UI-SPEC): render the celebration with Next Lesson
+/// absent rather than show a spinner or a raw error to the child.
+class _CelebrateView extends ConsumerWidget {
+  const _CelebrateView({
+    required this.masteredLetter,
+    required this.onBackHome,
+  });
+
+  /// The letter the child just mastered (this lesson's letter). May be null if
+  /// the lesson is still resolving or carries no letter item.
+  final Letter? masteredLetter;
+  final VoidCallback onBackHome;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final Letter? letter = masteredLetter;
+    // Defensive: if the mastered letter has not resolved, fall back to alif so
+    // the child always sees a coherent celebration (never a crash/blank).
+    final String glyph = letter?.char ?? 'ا';
+    final String letterName = letter?.name.display ?? 'alif';
+    final String masteredLetterId = letter?.id ?? 'alif';
+
+    // Post-mastery, today's lesson IS the newly unlocked lesson (the stream
+    // already advanced). Null today → all mastered → last-lesson variant (D-16).
+    final today = ref.watch(todayLessonProvider);
+    final Lesson? nextLesson = today.asData?.value;
+    // Last lesson ONLY when the provider has resolved AND today is null.
+    final bool isLastLesson = today.hasValue && nextLesson == null;
+    // Next Lesson is offered only once we have a concrete target; while loading
+    // we leave it absent (degradation) rather than route to a stale lesson.
+    final VoidCallback? onNextLesson = (!isLastLesson && nextLesson != null)
+        ? () => context.go('/practice?lesson=${nextLesson.id}')
+        : null;
+
+    return MasteryCelebration(
+      glyph: glyph,
+      letterName: letterName,
+      masteredLetterId: masteredLetterId,
+      isLastLesson: isLastLesson,
+      onNextLesson: onNextLesson,
+      onBackHome: onBackHome,
+    );
   }
 }
 
