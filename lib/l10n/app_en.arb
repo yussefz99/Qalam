@@ -254,17 +254,22 @@
 
   "practiceWatchHeading": "Watch me write alif.",
   "@practiceWatchHeading": {
-    "description": "Watch phase heading — the mascot Qalam speaks in first person. Display scale (42px Fredoka)."
+    "description": "Watch phase heading — the mascot Qalam speaks in first person. Display scale (42px Fredoka). DEPRECATED for child-facing use in Phase 6 — see practiceWatchHeadingFor (templated)."
+  },
+
+  "practiceWatchHeadingFor": "Watch me write {letterName}.",
+  "@practiceWatchHeadingFor": {
+    "description": "Watch phase heading, templated on the letter (Pitfall 6 — Phase 6 makes baa+ reachable, so this must never say 'alif' for another letter). The mascot Qalam speaks in first person. Display scale (42px Fredoka). {letterName} is the romanized letter name.",
+    "placeholders": {
+      "letterName": {
+        "type": "String"
+      }
+    }
   },
 
   "practiceTraceHeading": "Now you trace alif.",
   "@practiceTraceHeading": {
     "description": "Trace phase heading — hands the pen to the child. Display scale (42px Fredoka)."
-  },
-
-  "practiceMasteredHeading": "You learned alif.",
-  "@practiceMasteredHeading": {
-    "description": "Mastery celebration heading. Display scale (42px Fredoka). Calm, not hype."
   },
 
   "practiceTipLabel": "Tip",
@@ -407,11 +412,6 @@
   "practiceKeepGoingButton": "Keep going",
   "@practiceKeepGoingButton": {
     "description": "Primary button on the per-rep praise panel — advances to trace the next rep."
-  },
-
-  "practiceCelebrationLine": "You learned alif.",
-  "@practiceCelebrationLine": {
-    "description": "Mastery celebration warm line — the learning moment stated calmly. Paired with the Arabic praise island."
   },
 
   "practiceCelebrationArabic": "أحسنت",

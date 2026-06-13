@@ -228,6 +228,7 @@ class _PracticeScreenState extends ConsumerState<PracticeScreen> {
       body: SafeArea(
         child: _PracticeBody(
           lessonId: lessonId,
+          letter: _lessonLetter,
           state: state,
           animKey: _animKey,
           onLetterComplete: _onLetterComplete,
@@ -320,11 +321,12 @@ class _CelebrateView extends ConsumerWidget {
 // _PracticeBody — switches between Watch / Trace+ShowFix+ShowPraise phases
 // ---------------------------------------------------------------------------
 
-/// The body of the practice screen. Loads the letter via curriculum repo and
-/// renders the correct phase view.
+/// The body of the practice screen. Renders the correct phase view for the
+/// lesson's resolved [letter].
 class _PracticeBody extends ConsumerWidget {
   const _PracticeBody({
     required this.lessonId,
+    required this.letter,
     required this.state,
     required this.animKey,
     required this.onLetterComplete,
@@ -334,6 +336,11 @@ class _PracticeBody extends ConsumerWidget {
   });
 
   final String lessonId;
+
+  /// The letter this lesson teaches, resolved by the parent from the lesson's
+  /// first letter item (Pitfall 6 — never the hardcoded 'alif'). Null while
+  /// resolving → neutral loading.
+  final Letter? letter;
   final PracticeState state;
   final GlobalKey<StrokeOrderAnimationState> animKey;
   final Future<void> Function(List<List<Offset>> strokes, Letter letter)
@@ -344,69 +351,62 @@ class _PracticeBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Load the letter from the curriculum.
-    final curriculumRepo = ref.watch(curriculumRepositoryProvider);
-    return FutureBuilder<Letter?>(
-      future: curriculumRepo.getLetter('alif'),
-      builder: (BuildContext context, AsyncSnapshot<Letter?> snapshot) {
-        final letter = snapshot.data;
-        if (letter == null) {
-          // Loading or not found — show a neutral loading indicator.
-          return const Center(
-            child: CircularProgressIndicator.adaptive(),
-          );
-        }
+    final Letter? letter = this.letter;
+    if (letter == null) {
+      // Still resolving the lesson's letter — neutral loading, never an error.
+      return const Center(
+        child: CircularProgressIndicator.adaptive(),
+      );
+    }
 
-        // GETTING-READY (D-05): while the ML Kit model is still downloading,
-        // show a calm getting-ready banner over the practice surface — NEVER an
-        // error and NEVER a hard block. The geometric scorer already works; only
-        // the advisory ML Kit gate abstains until the model is ready.
-        final bool modelReady = ref.watch(modelDownloadServiceProvider).isReady;
+    // GETTING-READY (D-05): while the ML Kit model is still downloading,
+    // show a calm getting-ready banner over the practice surface — NEVER an
+    // error and NEVER a hard block. The geometric scorer already works; only
+    // the advisory ML Kit gate abstains until the model is ready.
+    final bool modelReady = ref.watch(modelDownloadServiceProvider).isReady;
 
-        final Widget phaseView = switch (state.phase) {
-          PracticePhase.watch => _WatchPhase(
-              letter: letter,
-              animKey: animKey,
-              onAdvanceToTrace: onAdvanceToTrace,
-            ),
-          // trace, showFix, showPraise all share one landscape workspace.
-          PracticePhase.trace ||
-          PracticePhase.showFix ||
-          PracticePhase.showPraise =>
-            _TraceWorkspace(
-              letter: letter,
-              state: state,
-              // Empty-stroke-safe: placeholder letters (no referenceStrokes)
-              // never reach the scorer. The whole accumulated letter is scored
-              // once via scoreLetter (Plan 04-04), not stroke-by-stroke.
-              onLetterComplete: (List<List<Offset>> strokes) =>
-                  letter.referenceStrokes.isEmpty
-                      ? Future<void>.value()
-                      : onLetterComplete(strokes, letter),
-              onContinueAfterPraise: onContinueAfterPraise,
-              onRetry: onRetry,
-            ),
-          PracticePhase.celebrate => const SizedBox.shrink(),
-        };
+    final Widget phaseView = switch (state.phase) {
+      PracticePhase.watch => _WatchPhase(
+          letter: letter,
+          animKey: animKey,
+          onAdvanceToTrace: onAdvanceToTrace,
+        ),
+      // trace, showFix, showPraise all share one landscape workspace.
+      PracticePhase.trace ||
+      PracticePhase.showFix ||
+      PracticePhase.showPraise =>
+        _TraceWorkspace(
+          letter: letter,
+          state: state,
+          // Empty-stroke-safe: placeholder letters (no referenceStrokes)
+          // never reach the scorer. The whole accumulated letter is scored
+          // once via scoreLetter (Plan 04-04), not stroke-by-stroke.
+          onLetterComplete: (List<List<Offset>> strokes) =>
+              letter.referenceStrokes.isEmpty
+                  ? Future<void>.value()
+                  : onLetterComplete(strokes, letter),
+          onContinueAfterPraise: onContinueAfterPraise,
+          onRetry: onRetry,
+        ),
+      PracticePhase.celebrate => const SizedBox.shrink(),
+    };
 
-        // Overlay the calm getting-ready banner while the model downloads (D-05).
-        // The lesson runs underneath — this is a quiet wait, never a block.
-        if (!modelReady && state.phase != PracticePhase.celebrate) {
-          return Stack(
-            children: <Widget>[
-              phaseView,
-              const Positioned(
-                left: QalamSpace.space4,
-                right: QalamSpace.space4,
-                top: QalamSpace.space4,
-                child: _GettingReadyBanner(),
-              ),
-            ],
-          );
-        }
-        return phaseView;
-      },
-    );
+    // Overlay the calm getting-ready banner while the model downloads (D-05).
+    // The lesson runs underneath — this is a quiet wait, never a block.
+    if (!modelReady && state.phase != PracticePhase.celebrate) {
+      return Stack(
+        children: <Widget>[
+          phaseView,
+          const Positioned(
+            left: QalamSpace.space4,
+            right: QalamSpace.space4,
+            top: QalamSpace.space4,
+            child: _GettingReadyBanner(),
+          ),
+        ],
+      );
+    }
+    return phaseView;
   }
 }
 
@@ -428,7 +428,9 @@ class _WatchPhase extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final heading = l10n?.practiceWatchHeading ?? 'Watch me write alif.';
+    // Templated on the letter (Pitfall 6) — never 'alif' for another letter.
+    final heading = l10n?.practiceWatchHeadingFor(letter.name.display) ??
+        'Watch me write ${letter.name.display}.';
     final tipLabel = l10n?.practiceTipLabel ?? 'Tip';
     final tipBody = l10n?.practiceTipBody ??
         'Start at the gold dot. Follow the line down.';
@@ -685,6 +687,7 @@ class _TraceWorkspaceState extends ConsumerState<_TraceWorkspace> {
           bubbleText: null,
           bubbleChild: _PraiseContent(
             l10n: l10n,
+            letterName: widget.letter.name.display,
             repsRemaining: repsRemaining,
           ),
         );
@@ -1144,15 +1147,22 @@ class _ActionRow extends StatelessWidget {
 /// Renders the praise content inline in the TutorPanel bubble so it reuses
 /// the authored PraisePanel strings without mounting PraisePanel as a widget.
 class _PraiseContent extends StatelessWidget {
-  const _PraiseContent({required this.l10n, required this.repsRemaining});
+  const _PraiseContent({
+    required this.l10n,
+    required this.letterName,
+    required this.repsRemaining,
+  });
 
   final AppLocalizations? l10n;
+  final String letterName;
   final int repsRemaining;
 
   @override
   Widget build(BuildContext context) {
     final arabic = l10n?.practicePraiseArabic ?? 'أحسنت';
-    final line = l10n?.practicePraiseLine ?? "That's a clean alif. Nicely done.";
+    // Templated on the letter (Pitfall 6) — never 'alif' for another letter.
+    final line = l10n?.practicePraiseLineFor(letterName) ??
+        "That's a clean $letterName. Nicely done.";
     final remaining = l10n?.practicePraiseRemaining(repsRemaining) ??
         '$repsRemaining more in a row to master it.';
 
