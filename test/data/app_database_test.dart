@@ -255,4 +255,67 @@ void main() {
       await db.close();
     },
   );
+
+  // ---------------------------------------------------------------------------
+  // Plan 09-01 (Wave 0) — read-only aggregate accessors for the Parent
+  // Dashboard (S1-11, RESEARCH Pattern 4).
+  //
+  // INTENTIONALLY RED at Wave 0: references the not-yet-built allMastered() /
+  // allInProgress() accessors. Plan 09-02 adds them to AppDatabase (mirroring
+  // the existing recordMastery/setCleanReps style) and turns these green. Do
+  // NOT add a lib/ stub here.
+  //
+  // Data-class names verified against app_database.g.dart:
+  //   * letter_mastery rows  → LetterMasteryData
+  //   * letter_reps rows     → LetterRep
+  // ---------------------------------------------------------------------------
+
+  test(
+    'allMastered() returns the seeded LetterMastery rows ordered by masteredAt '
+    '(read-only, S1-11)',
+    () async {
+      final shared = DatabaseConnection(NativeDatabase.memory());
+      final db = AppDatabase(shared.executor);
+
+      // Seed in a deliberately non-chronological insert order; allMastered()
+      // must return them ordered by masteredAt (oldest → newest).
+      await db.recordMastery(letterId: 'alif', cleanReps: 3);
+      await db.recordMastery(letterId: 'baa', cleanReps: 5);
+
+      final List<LetterMasteryData> mastered = await db.allMastered();
+      expect(mastered.length, 2,
+          reason: 'both mastered letters must be returned');
+      expect(
+        mastered.first.masteredAt.isBefore(mastered.last.masteredAt) ||
+            mastered.first.masteredAt.isAtSameMomentAs(mastered.last.masteredAt),
+        isTrue,
+        reason: 'rows must be ordered by masteredAt (RESEARCH Pattern 4)',
+      );
+      // Each row carries cleanReps + masteredAt the dashboard renders.
+      final alif = mastered.firstWhere((r) => r.letterId == 'alif');
+      expect(alif.cleanReps, 3);
+      await db.close();
+    },
+  );
+
+  test(
+    'allInProgress() returns only LetterReps rows with cleanReps > 0 '
+    '(read-only, S1-11)',
+    () async {
+      final shared = DatabaseConnection(NativeDatabase.memory());
+      final db = AppDatabase(shared.executor);
+
+      await db.setCleanReps(letterId: 'baa', cleanReps: 2); // in progress
+      await db.setCleanReps(letterId: 'taa', cleanReps: 0); // not started
+
+      final List<LetterRep> inProgress = await db.allInProgress();
+      expect(inProgress.map((r) => r.letterId), contains('baa'),
+          reason: 'letters with cleanReps > 0 are in progress');
+      expect(inProgress.map((r) => r.letterId), isNot(contains('taa')),
+          reason: 'a 0 clean-rep letter is NOT in progress');
+      final baa = inProgress.firstWhere((r) => r.letterId == 'baa');
+      expect(baa.cleanReps, 2);
+      await db.close();
+    },
+  );
 }
