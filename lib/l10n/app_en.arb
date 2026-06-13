@@ -686,5 +686,25 @@
         "type": "String"
       }
     }
+  },
+
+  "ghostCompareButton": "Watch the Difference",
+  "@ghostCompareButton": {
+    "description": "ShowFix-zone ghost button (D-21): opens the slow-motion side-by-side replay of the child's stroke beside Qalam's reference. Title Case, ghost treatment beside the existing 'Show Me Again'. A teaching moment, never error-shaming."
+  },
+
+  "ghostCompareTitle": "Watch the difference.",
+  "@ghostCompareTitle": {
+    "description": "Title of the ghost-comparison panel (D-21), Title/24px role. Calm and specific — never 'wrong vs right' framing."
+  },
+
+  "ghostCompareYours": "Yours",
+  "@ghostCompareYours": {
+    "description": "Label for the child's own stroke panel in the ghost comparison (D-21), Label scale. The child's stroke renders in coral (warnSoft) — never shamed as wrong."
+  },
+
+  "ghostCompareQalams": "Qalam's",
+  "@ghostCompareQalams": {
+    "description": "Label for the reference-stroke panel in the ghost comparison (D-21), Label scale. Qalam's stroke renders in deep-ink (inkStroke)."
   }
 }
