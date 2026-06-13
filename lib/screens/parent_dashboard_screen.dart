@@ -26,11 +26,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
-import '../data/curriculum_repository.dart';
 import '../features/parent/parent_pin_gate.dart';
 import '../features/parent/parent_progress.dart';
 import '../l10n/app_localizations.dart';
-import '../models/letter.dart';
 import '../providers/parent_providers.dart';
 import '../theme/colors.dart';
 import '../theme/dimens.dart';
@@ -131,7 +129,6 @@ class _DashboardContentState extends ConsumerState<_DashboardContent> {
   Widget build(BuildContext context) {
     final l10n = widget.l10n;
     final progress = widget.progress;
-    final letters = ref.watch(_lettersByIdProvider);
 
     return Padding(
       padding: const EdgeInsets.all(QalamSpace.space8),
@@ -150,16 +147,7 @@ class _DashboardContentState extends ConsumerState<_DashboardContent> {
                 : ListView.builder(
                     itemCount: progress.rows.length,
                     itemBuilder: (context, i) {
-                      final row = progress.rows[i];
-                      final letterChar = letters.maybeWhen(
-                        data: (map) => map[row.letterId]?.char,
-                        orElse: () => null,
-                      );
-                      return _LetterRow(
-                        l10n: l10n,
-                        row: row,
-                        glyph: letterChar,
-                      );
+                      return _LetterRow(l10n: l10n, row: progress.rows[i]);
                     },
                   ),
           ),
@@ -188,23 +176,22 @@ class _DashboardContentState extends ConsumerState<_DashboardContent> {
 /// One read-only progress row on a soft-aqua surface (reuses the settings_screen
 /// _PlaceholderRow shape). No edit/delete affordance, no gold.
 class _LetterRow extends StatelessWidget {
-  const _LetterRow({
-    required this.l10n,
-    required this.row,
-    required this.glyph,
-  });
+  const _LetterRow({required this.l10n, required this.row});
 
   final AppLocalizations l10n;
   final ParentLetterRow row;
-  final String? glyph;
 
   @override
   Widget build(BuildContext context) {
+    // WR-03: the glyph travels with the row (assembled from the provider's
+    // single getLetters() parse) — no second curriculum lookup here.
+    final String? glyph = row.glyph;
     final String statusLine = row.mastered
         ? l10n.parentRowMastered(row.cleanReps, row.masteredAtLabel ?? '')
         : l10n.parentRowInProgress(row.cleanReps);
-    final Color statusColor =
-        row.mastered ? QalamColors.success : QalamColors.fgMuted;
+    final Color statusColor = row.mastered
+        ? QalamColors.success
+        : QalamColors.fgMuted;
 
     return Container(
       width: double.infinity,
@@ -221,11 +208,7 @@ class _LetterRow extends StatelessWidget {
       child: Row(
         children: <Widget>[
           // The ONLY RTL island — the Arabic glyph.
-          if (glyph != null)
-            ArabicText(
-              glyph!,
-              style: QalamTextStyles.heading,
-            ),
+          if (glyph != null) ArabicText(glyph, style: QalamTextStyles.heading),
           if (glyph != null) const SizedBox(width: QalamSpace.space4),
           Expanded(
             child: Column(
@@ -246,8 +229,10 @@ class _LetterRow extends StatelessWidget {
               'assets/icons/check-complete.svg',
               width: QalamSpace.space6,
               height: QalamSpace.space6,
-              colorFilter:
-                  const ColorFilter.mode(QalamColors.success, BlendMode.srcIn),
+              colorFilter: const ColorFilter.mode(
+                QalamColors.success,
+                BlendMode.srcIn,
+              ),
               placeholderBuilder: (_) => const SizedBox(
                 width: QalamSpace.space6,
                 height: QalamSpace.space6,
@@ -290,11 +275,3 @@ class _EmptyState extends StatelessWidget {
     );
   }
 }
-
-/// A by-id curriculum letter lookup so each row can source its glyph. Resolves
-/// to an empty map on any failure — a missing glyph degrades to a glyph-free row
-/// (never an error surface).
-final _lettersByIdProvider = FutureProvider<Map<String, Letter>>((ref) async {
-  final letters = await ref.watch(curriculumRepositoryProvider).getLetters();
-  return {for (final l in letters) l.id: l};
-});

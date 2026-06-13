@@ -120,20 +120,26 @@ final parentProgressProvider = FutureProvider<ParentProgress>((ref) async {
   for (final letter in letters) {
     final masteryRow = mastered[letter.id];
     if (masteryRow != null) {
-      rows.add(ParentLetterRow(
-        letterId: letter.id,
-        displayName: letter.name.display,
-        mastered: true,
-        cleanReps: masteryRow.cleanReps,
-        masteredAtLabel: _formatShortDate(masteryRow.masteredAt),
-      ));
+      rows.add(
+        ParentLetterRow(
+          letterId: letter.id,
+          displayName: letter.name.display,
+          glyph: letter.char, // WR-03: carry the glyph from this same parse.
+          mastered: true,
+          cleanReps: masteryRow.cleanReps,
+          masteredAtLabel: _formatShortDate(masteryRow.masteredAt),
+        ),
+      );
     } else if (inProgress.containsKey(letter.id)) {
-      rows.add(ParentLetterRow(
-        letterId: letter.id,
-        displayName: letter.name.display,
-        mastered: false,
-        cleanReps: inProgress[letter.id]!,
-      ));
+      rows.add(
+        ParentLetterRow(
+          letterId: letter.id,
+          displayName: letter.name.display,
+          glyph: letter.char, // WR-03: carry the glyph from this same parse.
+          mastered: false,
+          cleanReps: inProgress[letter.id]!,
+        ),
+      );
     }
     // else: untouched — not shown.
   }
@@ -149,8 +155,18 @@ final parentProgressProvider = FutureProvider<ParentProgress>((ref) async {
 /// Kept dependency-free (no intl) — a compact month-abbreviation + day.
 String _formatShortDate(DateTime date) {
   const months = <String>[
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
   return '${months[date.month - 1]} ${date.day}';
 }

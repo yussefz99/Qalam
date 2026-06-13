@@ -35,12 +35,21 @@ class ParentLetterRow {
   /// not in this value type, so this stays widget/locale-free.
   final String? masteredAtLabel;
 
+  /// The Arabic glyph (`Letter.char`) for this row — the dashboard's sole RTL
+  /// island. Sourced at the assembly site (the provider) from the same
+  /// `getLetters()` call that builds the row, so glyph and displayName can never
+  /// disagree. Null when curriculum data is unavailable (degrades to a
+  /// glyph-free row, never an error). (WR-03: replaces the redundant second
+  /// getLetters() parse the dashboard used to issue.)
+  final String? glyph;
+
   const ParentLetterRow({
     required this.letterId,
     required this.displayName,
     required this.mastered,
     required this.cleanReps,
     this.masteredAtLabel,
+    this.glyph,
   });
 }
 
