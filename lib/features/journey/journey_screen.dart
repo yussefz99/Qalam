@@ -80,16 +80,83 @@ Offset _nodePosition(int index) {
 /// No vertical scrolling (D-09). Live data from [progressionProvider] +
 /// [journeyLettersProvider] (plan 06-06).
 /// Anti-gamification: no star counters, no streaks, no "+N" copy (D-23/D-24).
-class JourneyScreen extends ConsumerWidget {
+class JourneyScreen extends ConsumerStatefulWidget {
   const JourneyScreen({super.key, this.highlightId});
 
   /// The just-mastered letter id from the route's `?highlight=` query param
-  /// (D-15). Stored but intentionally UNUSED until Task 3 of plan 06-06 wires
-  /// the settling-star arrival — do not consume it before then.
+  /// (D-15). When it matches a complete node, that node's gold star badge
+  /// plays the settling recipe once on arrival (same recipe as the
+  /// celebration star). Unknown/null → silent no-op (T-06-03 allowlist:
+  /// the id must match a rendered node to have any effect).
   final String? highlightId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<JourneyScreen> createState() => _JourneyScreenState();
+}
+
+class _JourneyScreenState extends ConsumerState<JourneyScreen>
+    with SingleTickerProviderStateMixin {
+  // D-15 settling star — the celebration star's recipe (mastery_celebration):
+  // scale 0→1 with easeSoftBack over durCheer (700ms), opacity easing in over
+  // the first 40%. One-shot per arrival; no sound; gold stays confined to the
+  // star badge itself (reward-exclusive color).
+  late final AnimationController _settleController;
+  late final Animation<double> _settleScale;
+  late final Animation<double> _settleOpacity;
+  bool _settleStarted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _settleController = AnimationController(
+      vsync: this,
+      duration: QalamMotion.durCheer, // 700ms — dignified, never slapstick
+    );
+    _settleScale = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _settleController,
+        curve: QalamMotion.easeSoftBack, // gentle overshoot
+      ),
+    );
+    _settleOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _settleController,
+        // Fade in over the first 40% of the settle.
+        curve: const Interval(0.0, 0.4, curve: Curves.easeIn),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _settleController.dispose();
+    super.dispose();
+  }
+
+  /// Starts the one-shot settle the first time the highlighted node renders
+  /// as complete. Unknown ids never start it (silent no-op). With
+  /// MediaQuery.disableAnimations the star renders settled immediately.
+  void _maybeStartSettle(
+    BuildContext context,
+    List<Letter> letters,
+    ProgressionSnapshot snapshot,
+  ) {
+    if (_settleStarted) return;
+    final id = widget.highlightId;
+    if (id == null || id.isEmpty) return;
+    final matchesCompleteNode = snapshot.masteredLetterIds.contains(id) &&
+        letters.any((letter) => letter.id == id);
+    if (!matchesCompleteNode) return;
+    _settleStarted = true;
+    if (MediaQuery.of(context).disableAnimations) {
+      _settleController.value = 1.0;
+    } else {
+      _settleController.forward();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     // Riverpod 3: `.value` returns the latest data, or null while loading /
     // on error — no throw.
     final letters = ref.watch(journeyLettersProvider).value;
@@ -115,6 +182,9 @@ class JourneyScreen extends ConsumerWidget {
     final masteredCount = snapshot.masteredLetterIds.length;
     // Defensive: the canvas has exactly 28 positions (D-09).
     final nodes = letters.take(28).toList();
+
+    // D-15: the just-mastered node's star settles in on arrival (one-shot).
+    _maybeStartSettle(context, letters, snapshot);
 
     return Scaffold(
       backgroundColor: QalamColors.bg,
@@ -328,6 +398,9 @@ class JourneyScreen extends ConsumerWidget {
         (state == JourneyNodeState.complete ||
             state == JourneyNodeState.current ||
             (state == JourneyNodeState.future && unlocked));
+    // D-15: only the highlighted node's badge gets the settle animation —
+    // and only when it actually started (complete-node allowlist).
+    final settling = _settleStarted && letter.id == widget.highlightId;
     return Positioned(
       left: pos.dx - 34, // 34 = half of 68px node diameter
       top: pos.dy - 34,
@@ -335,6 +408,8 @@ class JourneyScreen extends ConsumerWidget {
         glyph: letter.char,
         name: letter.name.display,
         state: state,
+        starSettleScale: settling ? _settleScale : null,
+        starSettleOpacity: settling ? _settleOpacity : null,
         onTap: tappable
             ? () => context.go('/practice?lesson=$lessonId')
             : null,

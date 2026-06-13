@@ -307,7 +307,6 @@ void main() {
   group('JourneyScreen highlight arrival — D-15', () {
     testWidgets(
         'highlight=alif settles the gold star on the alif node, then rests (Test 8)',
-        skip: true, // GREEN in Task 3
         (WidgetTester tester) async {
       await _pumpJourney(
         tester,
@@ -335,6 +334,45 @@ void main() {
       expect(scaleTransition.scale.value, closeTo(1.0, 0.01),
           reason: 'the star settles to rest after durCheer (700ms) — '
               'dignified, one-shot, no looping hype.');
+    });
+
+    testWidgets(
+        'unknown highlight id is a silent no-op — V5 degradation (Test 9)',
+        (WidgetTester tester) async {
+      // '?highlight=' is externally influenceable (T-06-03): an id that
+      // matches no rendered node must change nothing — no settle, no crash.
+      await _pumpJourney(
+        tester,
+        _build(
+          snapshot: _snapshot('lesson_01', {'alif'}),
+          highlight: 'not_a_letter',
+        ),
+      );
+
+      expect(find.byKey(const Key('journeyHighlightSettle')), findsNothing,
+          reason: 'unknown highlight ids must not start the settle (catalog '
+              'allowlist — T-06-03).');
+      // The map still renders normally.
+      expect(_nodeWidget(tester, 'ا').state, JourneyNodeState.complete);
+      expect(find.text('1 of 28 mastered'), findsOneWidget);
+    });
+
+    testWidgets(
+        'highlight on a NON-complete node is also a no-op (Test 10)',
+        (WidgetTester tester) async {
+      // baa is current (not mastered) — highlighting it must not conjure a
+      // gold star: the badge is mastery information only.
+      await _pumpJourney(
+        tester,
+        _build(
+          snapshot: _snapshot('lesson_01', {'alif'}),
+          highlight: 'baa',
+        ),
+      );
+
+      expect(find.byKey(const Key('journeyHighlightSettle')), findsNothing,
+          reason: 'only a COMPLETE node can settle its star (gold = real '
+              'mastery, never speculative).');
     });
   });
 }

@@ -32,6 +32,8 @@ class JourneyNodeWidget extends StatefulWidget {
     required this.name,
     required this.state,
     required this.onTap,
+    this.starSettleScale,
+    this.starSettleOpacity,
   });
 
   final String glyph;
@@ -40,6 +42,15 @@ class JourneyNodeWidget extends StatefulWidget {
 
   /// Callback for tap events. Pass null for future/locked nodes to disable.
   final VoidCallback? onTap;
+
+  /// D-15 highlight arrival (plan 06-06): when provided (and the node is
+  /// complete), the gold ★★★ badge renders inside Scale/Fade transitions
+  /// driven by these animations — the "settling star" moment for the
+  /// just-mastered node. The ANIMATION (controller, durCheer, easeSoftBack)
+  /// is owned by JourneyScreen; this widget is render-only. Null = static
+  /// badge (every node except the highlighted one).
+  final Animation<double>? starSettleScale;
+  final Animation<double>? starSettleOpacity;
 
   @override
   State<JourneyNodeWidget> createState() => _JourneyNodeWidgetState();
@@ -211,11 +222,23 @@ class _JourneyNodeWidgetState extends State<JourneyNodeWidget>
                 child: glyphChild,
               ),
               // Gold ★★★ badge — complete nodes ONLY (D-13, REWARDS ONLY).
+              // With a settle animation (D-15 highlight arrival) the badge
+              // scales/fades in once; otherwise it renders statically.
               if (widget.state == JourneyNodeState.complete)
-                const Positioned(
+                Positioned(
                   top: -4,
                   right: -5,
-                  child: _StarBadge(),
+                  child: widget.starSettleScale != null
+                      ? FadeTransition(
+                          key: const Key('journeyHighlightSettle'),
+                          opacity: widget.starSettleOpacity ??
+                              kAlwaysCompleteAnimation,
+                          child: ScaleTransition(
+                            scale: widget.starSettleScale!,
+                            child: const _StarBadge(),
+                          ),
+                        )
+                      : const _StarBadge(),
                 ),
             ],
           ),
