@@ -365,7 +365,7 @@ Plans:
 
 **Wave 1** *(blocked on Wave 0)*
 
-- [ ] 09-02-PLAN.md — Security/data slice: PinService (salted PBKDF2 + constant-time verify), persisted brute-force cooldown, read-only aggregate accessors, ParentProgress model (S1-11)
+- [x] 09-02-PLAN.md — Security/data slice: PinService (salted PBKDF2 + constant-time verify), persisted brute-force cooldown, read-only aggregate accessors, ParentProgress model (S1-11)
 
 **Wave 2** *(blocked on Wave 1)*
 
@@ -411,7 +411,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 6. Lesson Progression & Home | 8/8 | Complete   | 2026-06-13 |
 | 7. Full Curriculum & Pronunciation Audio | 0/TBD | Not started | - |
 | 8. Sentence-Building & Grammar Exercises | 0/TBD | Not started | - |
-| 9. Parent Dashboard | 0/TBD | Not started | - |
+| 9. Parent Dashboard | 2/3 | In Progress|  |
 | 10. Offline Hardening & Release | 0/TBD | Not started | - |
 
 **Totals:** 7 of 13 tracked phases complete (54%); 33 of 34 plans complete (only 04-06 deferred).
