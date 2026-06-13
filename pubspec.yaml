@@ -54,6 +54,7 @@ dependencies:
   flutter_localizations:          # i18n seam (D-07) — English-only in v1
     sdk: flutter
   google_mlkit_digital_ink_recognition: ^0.14.2
+  crypto: ^3.0.7
 
 dev_dependencies:
   flutter_test:
