@@ -388,20 +388,23 @@ final parentProgressProvider = FutureProvider<ParentProgress>((ref) async {
 | A3 | No schema-version bump is needed (PIN lives in existing `AppSettings`). | Runtime State Inventory | If the planner prefers dedicated typed columns over k/v, a v4→v5 migration would be needed. Reusing `AppSettings` avoids it; recommended. |
 | A4 | 100k PBKDF2 iterations is acceptable latency on the target tablet (sub-100ms typical for SHA-256-HMAC). | Pattern 1 | If too slow on the low-end target device, tune iterations down (still ≥10k) — the cooldown is the primary brute-force defense anyway. Verify on device. |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **"N of 28" denominator semantics**
    - What we know: `getLetters()` returns the full curriculum letter list (28 intended), but only ~1 (alif) is `signedOff:true` today; Phase 7 authors the rest.
    - What's unclear: Should the summary count against all 28 curriculum letters (likely yes — the journey already shows all 28 nodes) or only signed-off/available ones?
    - Recommendation: Use the full curriculum letter count (28) as the denominator for parent-facing consistency with the journey map; confirm with owner during planning.
+   - **RESOLVED:** Use `curriculumRepository.getLetters().length` as the denominator (NOT hardcoded 28) — consistent with the journey map showing all curriculum nodes (planner assumption A-01).
 
 2. **PIN-creation copy wording (D-02 honesty)**
    - What we know: forgetting the PIN means clearing app data (wipes child progress); must be stated honestly.
    - What's unclear: exact child-safe, non-alarming wording in the tutor/brand voice.
    - Recommendation: Draft 1–2 ARB strings for the owner to approve (brand-voice owned by owner per CLAUDE.md); plain, calm, no jargon.
+   - **RESOLVED:** UI-SPEC §Copywriting + plan 09-01 ship working ARB drafts (`parentPinNoRecovery` et al.); final wording stays owner-owned (planner assumption A-04).
 
 3. **PIN entry widget: plain field vs `pinput`**
    - Recommendation: Default to a plain obscured numeric field (no new dep) for MVP; offer `pinput` as an optional polish task if the owner wants the 4-box look. Planner's call.
+   - **RESOLVED:** Plain obscured numeric field is the MVP implementation (no new UI dependency); `pinput` is optional future polish (planner assumption A-03).
 
 ## Environment Availability
 
@@ -417,6 +420,13 @@ final parentProgressProvider = FutureProvider<ParentProgress>((ref) async {
 **Missing dependencies with fallback:** `crypto` ↔ `cryptography` are interchangeable for the KDF.
 
 ## Validation Architecture
+
+> **NOTE (supersedes):** The test file *paths* below were an early draft. The authoritative
+> Wave-0 contract is **09-VALIDATION.md**, which places the tests at `test/services/pin_service_test.dart`
+> (persisted-cooldown folded in as a sub-case), `test/router/parent_gate_test.dart`,
+> `test/screens/parent_dashboard_test.dart`, and extends `test/data/app_database_test.dart`.
+> The plans follow VALIDATION.md. The persisted-cooldown-across-restart assertion (the single most
+> important security correctness point) is covered inside `pin_service_test.dart`, not a separate file.
 
 ### Test Framework
 | Property | Value |
