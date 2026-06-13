@@ -56,6 +56,13 @@ class _ParentPinGateState extends ConsumerState<ParentPinGate>
   /// Remaining cooldown seconds (>0 disables input). Ticked once per second.
   int _cooldownSeconds = 0;
 
+  /// In-flight guard (CR-02): true while a `_submit()` call is mid-flight (during
+  /// the ~100 ms PBKDF2 derivation or the Drift writes). Both `onTap` and
+  /// `onSubmitted` route here, so without this guard a rapid double-tap could
+  /// launch two concurrent submits — double-incrementing the fail counter or
+  /// racing two `setPin` writes. Reset in a `finally` so it clears even on throw.
+  bool _submitting = false;
+
   /// One-shot gentle wiggle on a wrong PIN (≤8px), skipped under reduced motion.
   late final AnimationController _wiggle = AnimationController(
     vsync: this,
@@ -114,67 +121,79 @@ class _ParentPinGateState extends ConsumerState<ParentPinGate>
   }
 
   void _wiggleOnce() {
-    final reduceMotion = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    final reduceMotion =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
     if (reduceMotion) return;
     _wiggle.forward(from: 0).then((_) => _wiggle.reverse());
   }
 
   Future<void> _submit() async {
+    // CR-02: drop any concurrent re-entry while a submit is mid-flight. Both
+    // onTap and onSubmitted call _submit; a rapid double-fire during the PBKDF2
+    // derivation / Drift writes would otherwise corrupt the fail counter or race
+    // two setPin writes. The try/finally below guarantees the guard is released
+    // even if a call throws.
+    if (_submitting) return;
     final value = _controller.text;
     if (value.length != 4) return;
 
-    switch (_mode) {
-      case _GateMode.create:
-        setState(() {
-          _firstEntry = value;
-          _error = null;
-          _mode = _GateMode.confirm;
-        });
-        _clearField();
-        _focus.requestFocus();
-        break;
-
-      case _GateMode.confirm:
-        if (value == _firstEntry) {
-          await _pin.setPin(_db, value);
-          if (!mounted) return;
-          ref.read(parentGateProvider).unlock();
-        } else {
-          final l10n = AppLocalizations.of(context)!;
+    _submitting = true;
+    try {
+      switch (_mode) {
+        case _GateMode.create:
           setState(() {
-            _error = l10n.parentPinMismatch;
-            _firstEntry = '';
-            _mode = _GateMode.create;
+            _firstEntry = value;
+            _error = null;
+            _mode = _GateMode.confirm;
           });
           _clearField();
-          _wiggleOnce();
           _focus.requestFocus();
-        }
-        break;
+          break;
 
-      case _GateMode.enter:
-        if (_cooldownSeconds > 0) return;
-        final ok = await _pin.verify(_db, value);
-        if (!mounted) return;
-        if (ok) {
-          await _pin.registerSuccess(_db);
-          if (!mounted) return;
-          ref.read(parentGateProvider).unlock();
-        } else {
-          await _pin.registerFailure(_db);
-          if (!mounted) return;
-          final l10n = AppLocalizations.of(context)!;
-          setState(() => _error = l10n.parentPinWrong);
-          _clearField();
-          _wiggleOnce();
-          await _refreshCooldown();
-          if (!mounted) return;
-          _focus.requestFocus();
-        }
-        break;
+        case _GateMode.confirm:
+          if (value == _firstEntry) {
+            await _pin.setPin(_db, value);
+            if (!mounted) return;
+            ref.read(parentGateProvider).unlock();
+          } else {
+            final l10n = AppLocalizations.of(context)!;
+            setState(() {
+              _error = l10n.parentPinMismatch;
+              _firstEntry = '';
+              _mode = _GateMode.create;
+            });
+            _clearField();
+            _wiggleOnce();
+            _focus.requestFocus();
+          }
+          break;
 
-      case _GateMode.loading:
-        break;
+        case _GateMode.enter:
+          if (_cooldownSeconds > 0) return;
+          final ok = await _pin.verify(_db, value);
+          if (!mounted) return;
+          if (ok) {
+            await _pin.registerSuccess(_db);
+            if (!mounted) return;
+            ref.read(parentGateProvider).unlock();
+          } else {
+            await _pin.registerFailure(_db);
+            if (!mounted) return;
+            final l10n = AppLocalizations.of(context)!;
+            setState(() => _error = l10n.parentPinWrong);
+            _clearField();
+            _wiggleOnce();
+            await _refreshCooldown();
+            if (!mounted) return;
+            _focus.requestFocus();
+          }
+          break;
+
+        case _GateMode.loading:
+          break;
+      }
+    } finally {
+      _submitting = false;
     }
   }
 
@@ -266,7 +285,8 @@ class _ParentPinGateState extends ConsumerState<ParentPinGate>
             style: QalamTextStyles.body.copyWith(color: QalamColors.fgMuted),
           ),
         ],
-        if (_mode == _GateMode.create || _mode == _GateMode.confirm) ...<Widget>[
+        if (_mode == _GateMode.create ||
+            _mode == _GateMode.confirm) ...<Widget>[
           const SizedBox(height: QalamSpace.space5),
           Text(
             l10n.parentPinNoRecovery,
