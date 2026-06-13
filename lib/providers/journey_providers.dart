@@ -1,29 +1,28 @@
-// Journey progress Riverpod provider (Phase 03.1, plan 01).
+// Journey letter-list provider (Phase 06, plan 06).
 //
-// Provides mock journey progress data for Wave 2 (plan 03.1-02) to build the
-// Journey Map screen against. No real DB wiring until Phase 6 — this provider
-// returns a static snapshot baked at compile time.
+// Phase 03.1's static mock journey-progress provider lived here; plan 06-06
+// retired it.
+// The Journey screen now lights from the LIVE progression snapshot
+// (progressionProvider in progression_providers.dart) and derives its 28
+// node records from the curriculum itself — letters.json is the single
+// source of truth for letter ids, glyphs, and display names (RESEARCH
+// anti-pattern: no second hardcoded letter list anywhere).
 //
-// Mock state (D-06): first 3 letters mastered (alif, baa, taa), letter 4
-// (thaa) is current, letters 5-28 are future.
-//
-// Phase 6 swaps this provider for a live ProgressRepository integration;
-// the screen itself (journey_screen.dart) does not change — only this provider.
+// Hand-written provider (not @riverpod codegen) — same file-consistency
+// policy as progression_providers.dart.
 
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../models/journey_progress.dart';
+import '../data/curriculum_repository.dart';
+import '../models/letter.dart';
 
-part 'journey_providers.g.dart';
-
-/// Static mock journey progress provider.
+/// The 28 curriculum letters in introOrder — the Journey map's node list,
+/// loaded from assets/curriculum/letters.json via [CurriculumRepository]
+/// (cached for the app lifetime by the kept-alive repository provider).
 ///
-/// Returns the Phase 03.1 demo state: alif, baa, taa mastered; thaa current.
-/// keepAlive: true — held for the app lifetime (same pattern as curriculumRepository).
-@Riverpod(keepAlive: true)
-JourneyProgress mockJourneyProgress(Ref ref) {
-  return const JourneyProgress(
-    masteredIds: {'alif', 'baa', 'taa'},
-    currentId: 'thaa',
-  );
-}
+/// Every Journey node id equals a letters.json id BY CONSTRUCTION, which is
+/// what makes live mastery lighting correct (the 03.1 hardcoded list drifted
+/// from canonical ids in 19 of 28 cases and silently never lit).
+final journeyLettersProvider = FutureProvider<List<Letter>>(
+  (ref) => ref.watch(curriculumRepositoryProvider).getLetters(),
+);

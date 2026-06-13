@@ -1,7 +1,6 @@
-// JourneyScreen — full winding-path Journey Map (Phase 03.1, plan 02/03).
+// JourneyScreen — full winding-path Journey Map (Phase 03.1; live data 06-06).
 //
-// Replaces the plan 01 placeholder. Renders 28 Arabic letter nodes on a
-// fixed 1180×816 canvas with:
+// Renders 28 Arabic letter nodes on a fixed 1180×816 canvas with:
 //   - JourneyPathPainter (grey trail + green completed overlay)
 //   - 28 Positioned JourneyNodeWidget nodes with 4 visual states
 //     (complete/current/future/locked) and pulse glow animation on current
@@ -12,8 +11,17 @@
 //   - No running star counter, no streak, no "+N" copy anywhere.
 //   - No QalamColors.reward use outside of JourneyNodeWidget star badges.
 //   - Stars appear ONLY as ★★★ badge on complete nodes — mastery info, not score.
+//   - "N of 28 mastered" is quiet information, never gold, never celebrated.
 //
-// Data source: mockJourneyProgressProvider (mock, Phase 03.1 — real wiring in Phase 6).
+// Data sources (plan 06-06 — 03.1's D-08 amended only by this data fix):
+//   - journeyLettersProvider: the 28 letters from letters.json, canonical ids
+//     BY CONSTRUCTION (the 03.1 hardcoded list drifted in 19/28 cases and
+//     silently never lit — RESEARCH Pitfall 1).
+//   - progressionProvider: live mastery + unlock snapshot. Mastered letters
+//     light complete; today's letter pulses; skipped-but-unlocked letters
+//     keep the future visual but are tappable (D-05/D-07); genuinely locked
+//     letters stay inert and visibly unavailable (S1-09).
+//
 // Layout: NO vertical scrolling; all 28 nodes fit on one screen (D-09).
 
 import 'package:flutter/material.dart';
@@ -21,49 +29,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../models/journey_progress.dart';
+import '../../models/lesson_progression.dart';
+import '../../models/letter.dart';
 import '../../providers/journey_providers.dart';
+import '../../providers/progression_providers.dart';
 import '../../theme/colors.dart';
 import '../../theme/dimens.dart';
 import '../../theme/text_styles.dart';
 import 'widgets/journey_node_widget.dart';
 import 'widgets/journey_path_painter.dart';
-
-// ── Letter record type ───────────────────────────────────────────────────────
-
-typedef _LetterRecord = ({String id, String glyph, String name});
-
-// ── All 28 Arabic letters in curriculum order ────────────────────────────────
-
-const List<_LetterRecord> _kLetters = [
-  (id: 'alif', glyph: 'ا', name: 'Alif'),
-  (id: 'baa', glyph: 'ب', name: 'Baa'),
-  (id: 'taa', glyph: 'ت', name: 'Taa'),
-  (id: 'thaa', glyph: 'ث', name: 'Thaa'),
-  (id: 'jeem', glyph: 'ج', name: 'Jeem'),
-  (id: 'haa', glyph: 'ح', name: 'Haa'),
-  (id: 'khaa', glyph: 'خ', name: 'Khaa'),
-  (id: 'dal', glyph: 'د', name: 'Dal'),
-  (id: 'dhal', glyph: 'ذ', name: 'Dhal'),
-  (id: 'ra', glyph: 'ر', name: 'Ra'),
-  (id: 'zay', glyph: 'ز', name: 'Zay'),
-  (id: 'seen', glyph: 'س', name: 'Seen'),
-  (id: 'sheen', glyph: 'ش', name: 'Sheen'),
-  (id: 'saad', glyph: 'ص', name: 'Saad'),
-  (id: 'daad', glyph: 'ض', name: 'Daad'),
-  (id: 'tah', glyph: 'ط', name: 'Tah'),
-  (id: 'dhah', glyph: 'ظ', name: 'Dhah'),
-  (id: 'ain', glyph: 'ع', name: 'Ain'),
-  (id: 'ghain', glyph: 'غ', name: 'Ghain'),
-  (id: 'fa', glyph: 'ف', name: 'Fa'),
-  (id: 'qaf', glyph: 'ق', name: 'Qaf'),
-  (id: 'kaf', glyph: 'ك', name: 'Kaf'),
-  (id: 'lam', glyph: 'ل', name: 'Lam'),
-  (id: 'meem', glyph: 'م', name: 'Meem'),
-  (id: 'noon', glyph: 'ن', name: 'Noon'),
-  (id: 'ha', glyph: 'ه', name: 'Ha'),
-  (id: 'waw', glyph: 'و', name: 'Waw'),
-  (id: 'ya', glyph: 'ي', name: 'Ya'),
-];
 
 // ── Layout constants ─────────────────────────────────────────────────────────
 
@@ -103,19 +77,114 @@ Offset _nodePosition(int index) {
 
 /// The Journey Map screen — the winding-path progress view for all 28 letters.
 ///
-/// No vertical scrolling (D-09). Data from [mockJourneyProgressProvider] (D-05/D-06).
+/// No vertical scrolling (D-09). Live data from [progressionProvider] +
+/// [journeyLettersProvider] (plan 06-06).
 /// Anti-gamification: no star counters, no streaks, no "+N" copy (D-23/D-24).
-class JourneyScreen extends ConsumerWidget {
+class JourneyScreen extends ConsumerStatefulWidget {
   const JourneyScreen({super.key, this.highlightId});
 
   /// The just-mastered letter id from the route's `?highlight=` query param
-  /// (D-15). Stored but intentionally UNUSED until plan 06-06 wires the
-  /// highlight star into the live journey map — do not consume it before then.
+  /// (D-15). When it matches a complete node, that node's gold star badge
+  /// plays the settling recipe once on arrival (same recipe as the
+  /// celebration star). Unknown/null → silent no-op (T-06-03 allowlist:
+  /// the id must match a rendered node to have any effect).
   final String? highlightId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final progress = ref.watch(mockJourneyProgressProvider);
+  ConsumerState<JourneyScreen> createState() => _JourneyScreenState();
+}
+
+class _JourneyScreenState extends ConsumerState<JourneyScreen>
+    with SingleTickerProviderStateMixin {
+  // D-15 settling star — the celebration star's recipe (mastery_celebration):
+  // scale 0→1 with easeSoftBack over durCheer (700ms), opacity easing in over
+  // the first 40%. One-shot per arrival; no sound; gold stays confined to the
+  // star badge itself (reward-exclusive color).
+  late final AnimationController _settleController;
+  late final Animation<double> _settleScale;
+  late final Animation<double> _settleOpacity;
+  bool _settleStarted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _settleController = AnimationController(
+      vsync: this,
+      duration: QalamMotion.durCheer, // 700ms — dignified, never slapstick
+    );
+    _settleScale = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _settleController,
+        curve: QalamMotion.easeSoftBack, // gentle overshoot
+      ),
+    );
+    _settleOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _settleController,
+        // Fade in over the first 40% of the settle.
+        curve: const Interval(0.0, 0.4, curve: Curves.easeIn),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _settleController.dispose();
+    super.dispose();
+  }
+
+  /// Starts the one-shot settle the first time the highlighted node renders
+  /// as complete. Unknown ids never start it (silent no-op). With
+  /// MediaQuery.disableAnimations the star renders settled immediately.
+  void _maybeStartSettle(
+    BuildContext context,
+    List<Letter> letters,
+    ProgressionSnapshot snapshot,
+  ) {
+    if (_settleStarted) return;
+    final id = widget.highlightId;
+    if (id == null || id.isEmpty) return;
+    final matchesCompleteNode = snapshot.masteredLetterIds.contains(id) &&
+        letters.any((letter) => letter.id == id);
+    if (!matchesCompleteNode) return;
+    _settleStarted = true;
+    if (MediaQuery.of(context).disableAnimations) {
+      _settleController.value = 1.0;
+    } else {
+      _settleController.forward();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Riverpod 3: `.value` returns the latest data, or null while loading /
+    // on error — no throw.
+    final letters = ref.watch(journeyLettersProvider).value;
+    final snapshot = ref.watch(progressionProvider).value;
+
+    // Quiet loading/degradation: parchment, no spinner, no error surface to
+    // the child (V5 degradation — the providers self-heal when data lands).
+    if (letters == null || snapshot == null) {
+      return const Scaffold(
+        backgroundColor: QalamColors.bg,
+        body: SizedBox.shrink(),
+      );
+    }
+
+    // Today's letter = the first letter item of today's lesson; '' when all
+    // mastered (D-11) so no node renders as current.
+    final currentLetterId = snapshot.today?.items
+            .where((item) => item.type == 'letter')
+            .map((item) => item.ref)
+            .firstOrNull ??
+        '';
+
+    final masteredCount = snapshot.masteredLetterIds.length;
+    // Defensive: the canvas has exactly 28 positions (D-09).
+    final nodes = letters.take(28).toList();
+
+    // D-15: the just-mastered node's star settles in on arrival (one-shot).
+    _maybeStartSettle(context, letters, snapshot);
 
     return Scaffold(
       backgroundColor: QalamColors.bg,
@@ -165,8 +234,10 @@ class JourneyScreen extends ConsumerWidget {
                         color: QalamColors.border,
                         margin: const EdgeInsets.symmetric(horizontal: 10),
                       ),
+                      // Live mastered count — quiet information, never gold,
+                      // never celebrated (T-06-09 / PLAT-03).
                       Text(
-                        '${progress.masteredIds.length} of 28 mastered',
+                        '$masteredCount of 28 mastered',
                         style: QalamTextStyles.body.copyWith(
                           color: QalamColors.fgMuted,
                           fontSize: 15,
@@ -182,14 +253,14 @@ class JourneyScreen extends ConsumerWidget {
             Positioned.fill(
               child: CustomPaint(
                 painter: JourneyPathPainter(
-                  completedCount: progress.masteredIds.length,
+                  completedCount: masteredCount,
                 ),
               ),
             ),
 
             // ── 28 letter nodes ─────────────────────────────────────────────
-            for (var i = 0; i < _kLetters.length; i++) ...[
-              _buildNode(context, i, _kLetters[i], progress),
+            for (var i = 0; i < nodes.length; i++) ...[
+              _buildNode(context, i, nodes[i], snapshot, currentLetterId),
             ],
 
             // ── Level 1 Quiz checkpoint (D-19) ──────────────────────────────
@@ -298,29 +369,49 @@ class JourneyScreen extends ConsumerWidget {
     );
   }
 
-  /// Build a Positioned node widget for the letter at [index].
+  /// Build a Positioned node widget for [letter] at [index].
+  ///
+  /// Tap rules (D-07 / S1-09):
+  ///   - complete + current nodes → `/practice?lesson=<owning lesson>`
+  ///   - skipped-but-unlocked nodes (future VISUAL, lesson in
+  ///     unlockedLessonIds) → also tappable, same destination — revisitable
+  ///     without any new visual state (D-05/D-07)
+  ///   - genuinely locked nodes (prerequisite unpassed) → inert (S1-09
+  ///     "locked lessons visibly unavailable")
   Widget _buildNode(
     BuildContext context,
     int index,
-    _LetterRecord letter,
-    JourneyProgress progress,
+    Letter letter,
+    ProgressionSnapshot snapshot,
+    String currentLetterId,
   ) {
     final pos = _nodePosition(index);
     final state = JourneyNodeState.compute(
       letter.id,
-      progress.masteredIds,
-      progress.currentId,
+      snapshot.masteredLetterIds,
+      currentLetterId,
     );
+    final lessonId = snapshot.lessonIdByLetterId[letter.id];
+    final unlocked =
+        lessonId != null && snapshot.unlockedLessonIds.contains(lessonId);
+    final tappable = lessonId != null &&
+        (state == JourneyNodeState.complete ||
+            state == JourneyNodeState.current ||
+            (state == JourneyNodeState.future && unlocked));
+    // D-15: only the highlighted node's badge gets the settle animation —
+    // and only when it actually started (complete-node allowlist).
+    final settling = _settleStarted && letter.id == widget.highlightId;
     return Positioned(
       left: pos.dx - 34, // 34 = half of 68px node diameter
       top: pos.dy - 34,
       child: JourneyNodeWidget(
-        glyph: letter.glyph,
-        name: letter.name,
+        glyph: letter.char,
+        name: letter.name.display,
         state: state,
-        onTap: (state == JourneyNodeState.complete ||
-                state == JourneyNodeState.current)
-            ? () => context.go('/practice')
+        starSettleScale: settling ? _settleScale : null,
+        starSettleOpacity: settling ? _settleOpacity : null,
+        onTap: tappable
+            ? () => context.go('/practice?lesson=$lessonId')
             : null,
       ),
     );
@@ -366,4 +457,3 @@ class _CheckpointBox extends StatelessWidget {
     );
   }
 }
-
