@@ -84,20 +84,53 @@ class _ParentDashboardBody extends ConsumerWidget {
   }
 }
 
-class _DashboardContent extends ConsumerWidget {
+class _DashboardContent extends ConsumerStatefulWidget {
   const _DashboardContent({required this.l10n, required this.progress});
 
   final AppLocalizations l10n;
   final ParentProgress progress;
 
-  void _done(WidgetRef ref, BuildContext context) {
+  @override
+  ConsumerState<_DashboardContent> createState() => _DashboardContentState();
+}
+
+class _DashboardContentState extends ConsumerState<_DashboardContent> {
+  // CR-01 / D-07: cache the gate while the State is alive so we can relock in
+  // dispose() WITHOUT reading `ref` after it has been disposed (the Ref is
+  // already torn down by the time State.dispose runs). The ParentGate is a
+  // keepAlive ChangeNotifier held for the app lifetime, so this reference stays
+  // valid through dispose.
+  ParentGate? _gate;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _gate = ref.read(parentGateProvider);
+  }
+
+  @override
+  void dispose() {
+    // Relock the gate whenever the dashboard unmounts — not only on "Done".
+    // This catches EVERY exit path (Android system back, predictive back,
+    // programmatic nav, deep-link clobber), so the gate can never be left
+    // unlocked for a second entry to bypass the PIN. lock() is idempotent, so
+    // the explicit lock() in _done() followed by this dispose() lock() is
+    // harmless.
+    _gate?.lock();
+    super.dispose();
+  }
+
+  void _done(BuildContext context) {
     // D-07: relock BEFORE navigating so a second entry re-prompts the PIN.
+    // (dispose() also relocks; lock() is idempotent.)
     ref.read(parentGateProvider).lock();
     context.go('/');
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    final l10n = widget.l10n;
+    final progress = widget.progress;
     final letters = ref.watch(_lettersByIdProvider);
 
     return Padding(
@@ -135,7 +168,7 @@ class _DashboardContent extends ConsumerWidget {
             width: double.infinity,
             height: QalamTargets.targetComfy,
             child: TextButton(
-              onPressed: () => _done(ref, context),
+              onPressed: () => _done(context),
               style: TextButton.styleFrom(
                 backgroundColor: QalamColors.primary,
                 foregroundColor: QalamColors.fgOnPrimary,
