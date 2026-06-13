@@ -37,10 +37,25 @@ class StrokeOrderAnimation extends StatefulWidget {
   const StrokeOrderAnimation({
     super.key,
     required this.referenceStrokes,
+    this.duration,
+    this.color,
   });
 
   /// The letter's authored strokes — consumed via ReferencePath.resolve.
   final List<StrokeSpec> referenceStrokes;
+
+  /// How long the pen-tip takes to traverse the whole path. Defaults to
+  /// [QalamMotion.durWrite] (1400ms) — the established Watch-phase pacing.
+  /// The ghost comparison (D-21) passes `durWrite * 2` for the half-speed
+  /// side-by-side replay. Null preserves the original behavior exactly.
+  final Duration? duration;
+
+  /// The revealed-ink color. Defaults to [QalamColors.inkStroke] (deep-ink) —
+  /// the reference stroke color. The ghost comparison renders the child's
+  /// wobbly stroke in [QalamColors.warnSoft] (coral, never red) via this param.
+  /// Null preserves the original behavior exactly. The gold start-dot and
+  /// pen-tip stay reward-gold regardless (they are not the ink).
+  final Color? color;
 
   @override
   State<StrokeOrderAnimation> createState() => StrokeOrderAnimationState();
@@ -57,7 +72,9 @@ class StrokeOrderAnimationState extends State<StrokeOrderAnimation>
 
     _controller = AnimationController(
       vsync: this,
-      duration: QalamMotion.durWrite, // 1400ms — slow enough for a child to follow
+      // 1400ms default — slow enough for a child to follow; the ghost
+      // comparison overrides with durWrite * 2 for half-speed replay.
+      duration: widget.duration ?? QalamMotion.durWrite,
     );
 
     // Linear curve = even pen speed. easeOutQuart sprinted then crawled at the
@@ -91,6 +108,7 @@ class StrokeOrderAnimationState extends State<StrokeOrderAnimation>
           painter: _AnimationPainter(
             referenceStrokes: widget.referenceStrokes,
             progress: _animation.value,
+            inkColor: widget.color ?? QalamColors.inkStroke,
           ),
           child: const SizedBox.expand(),
         );
@@ -107,12 +125,17 @@ class _AnimationPainter extends CustomPainter {
   _AnimationPainter({
     required this.referenceStrokes,
     required this.progress,
+    required this.inkColor,
   });
 
   final List<StrokeSpec> referenceStrokes;
 
   /// Animation progress in [0, 1].
   final double progress;
+
+  /// The revealed-ink color (deep-ink by default; coral for the child's stroke
+  /// in the ghost comparison). The gold start-dot/pen-tip are unaffected.
+  final Color inkColor;
 
   static const double _penTipRadius = 8.0;
   static const double _startDotRadius = 10.0;
@@ -143,7 +166,7 @@ class _AnimationPainter extends CustomPainter {
 
     // Paint ink: revealed portion of the path up to targetLength.
     final Paint inkPaint = Paint()
-      ..color = QalamColors.inkStroke
+      ..color = inkColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = QalamInk.strokeWidth
       ..strokeCap = StrokeCap.round
@@ -230,5 +253,6 @@ class _AnimationPainter extends CustomPainter {
   @override
   bool shouldRepaint(_AnimationPainter oldDelegate) =>
       oldDelegate.referenceStrokes != referenceStrokes ||
-      oldDelegate.progress != progress;
+      oldDelegate.progress != progress ||
+      oldDelegate.inkColor != inkColor;
 }

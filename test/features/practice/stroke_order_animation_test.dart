@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qalam/features/practice/widgets/stroke_order_animation.dart';
 import 'package:qalam/models/letter.dart';
+import 'package:qalam/theme/colors.dart';
 
 // ---------------------------------------------------------------------------
 // Alif fixture — identical to the stroke_canvas_test fixture.
@@ -133,6 +134,86 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.hasRunningAnimations, isFalse,
           reason: 'Animation should complete after replay');
+    });
+
+    testWidgets(
+        '4. custom duration is applied to the animation controller',
+        (WidgetTester tester) async {
+      const Duration custom = Duration(milliseconds: 2800);
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 400,
+              height: 400,
+              child: StrokeOrderAnimation(
+                referenceStrokes: _alifStrokes,
+                duration: custom,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // The widget builds and accepts the custom duration without error.
+      expect(tester.takeException(), isNull);
+      final StrokeOrderAnimation widget =
+          tester.widget(find.byType(StrokeOrderAnimation));
+      expect(widget.duration, custom);
+
+      // Mid-flight (1400ms into a 2800ms run) the animation is still running —
+      // proving the controller honors the longer custom duration rather than
+      // the 1400ms default (which would already be done).
+      await tester.pump(); // start the auto-play
+      await tester.pump(const Duration(milliseconds: 1400));
+      expect(tester.hasRunningAnimations, isTrue,
+          reason: 'A 2800ms run must still be animating at 1400ms');
+      await tester.pumpAndSettle();
+      expect(tester.hasRunningAnimations, isFalse);
+    });
+
+    testWidgets(
+        '5. custom color is accepted (default-preserving when omitted)',
+        (WidgetTester tester) async {
+      // Custom color (coral — the ghost-comparison child stroke).
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 400,
+              height: 400,
+              child: StrokeOrderAnimation(
+                referenceStrokes: _alifStrokes,
+                color: QalamColors.warnSoft,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      final StrokeOrderAnimation custom =
+          tester.widget(find.byType(StrokeOrderAnimation));
+      expect(custom.color, QalamColors.warnSoft);
+
+      // Default construction leaves color/duration null (deep-ink + durWrite
+      // resolved internally) — behavior preserved for existing callers.
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 400,
+              height: 400,
+              child: StrokeOrderAnimation(referenceStrokes: _alifStrokes),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final StrokeOrderAnimation def =
+          tester.widget(find.byType(StrokeOrderAnimation));
+      expect(def.color, isNull);
+      expect(def.duration, isNull);
     });
   });
 }
