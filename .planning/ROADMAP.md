@@ -356,7 +356,21 @@ Plans:
   2. The parent sees a read-only list of completed lessons and their scores for the child, sourced from local storage.
   3. No cloud, account, or network is involved, and the PIN is stored hashed locally (not an account).
 
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+
+**Wave 0**
+
+- [ ] 09-01-PLAN.md — Wave 0 (Nyquist RED): failing tests for PIN hash/verify, persisted cooldown, route gate, read-only dashboard + all Phase-9 ARB copy keys (S1-11)
+
+**Wave 1** *(blocked on Wave 0)*
+
+- [ ] 09-02-PLAN.md — Security/data slice: PinService (salted PBKDF2 + constant-time verify), persisted brute-force cooldown, read-only aggregate accessors, ParentProgress model (S1-11)
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [ ] 09-03-PLAN.md — UI/wiring slice: ParentGate + parentProgressProvider, /parent route gate, PIN create/enter screen, read-only dashboard, Home nav unlock, boot seed; end-of-phase device UAT (S1-11)
+
 **UI hint**: yes
 
 ### Phase 10: Offline Hardening & Release
