@@ -646,5 +646,45 @@
         "type": "int"
       }
     }
+  },
+
+  "celebrationNextLesson": "Next Lesson",
+  "@celebrationNextLesson": {
+    "description": "Mastery celebration primary CTA (D-14) — goes straight into the newly unlocked letter's practice. Filled teal, Title Case, targetComfy. S1-09: unlock is immediate on pass."
+  },
+
+  "celebrationSeeJourneyButton": "See Journey",
+  "@celebrationSeeJourneyButton": {
+    "description": "Mastery celebration last-lesson primary CTA (D-16) — when every lesson is mastered there is no Next Lesson, the primary slot becomes 'See Journey'. Title Case button label (distinct from the 'See journey' ghost link)."
+  },
+
+  "celebrationShowSomeone": "Go show your {letterName} to someone at home.",
+  "@celebrationShowSomeone": {
+    "description": "Mastery celebration tutor line (D-17). Warm, specific, family-oriented — exactly one line at Body scale under the Arabic praise. The tutor's voice, never chatbot-cheerful. {letterName} is the romanized mastered letter name (e.g. 'baa').",
+    "placeholders": {
+      "letterName": {
+        "type": "String"
+      }
+    }
+  },
+
+  "practiceCelebrationLineFor": "You learned {letterName}.",
+  "@practiceCelebrationLineFor": {
+    "description": "Mastery celebration warm line, templated on the mastered letter (Pitfall 6 — Phase 6 makes baa+ reachable, so this must never say 'alif' after mastering baa). Display scale, paired with the Arabic praise island. {letterName} is the romanized letter name.",
+    "placeholders": {
+      "letterName": {
+        "type": "String"
+      }
+    }
+  },
+
+  "practicePraiseLineFor": "That's a clean {letterName}. Nicely done.",
+  "@practicePraiseLineFor": {
+    "description": "Warm, specific per-rep praise after a clean trace, templated on the letter (generic phrasing; per-letter coaching wording is Phase-7 content, the owner's mother's domain). Tutor's voice — calm, never hype. {letterName} is the romanized letter name.",
+    "placeholders": {
+      "letterName": {
+        "type": "String"
+      }
+    }
   }
 }
