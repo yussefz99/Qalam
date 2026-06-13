@@ -34,6 +34,7 @@ import '../../core/recognition/ml_kit_recognizer.dart';
 import '../../core/scoring/letter_scorer.dart';
 import '../../core/scoring/scoring_models.dart';
 import '../../core/scoring/tolerances.dart';
+import '../../core/strokes/stroke_normalization.dart';
 import '../../data/curriculum_repository.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/lesson.dart';
@@ -48,6 +49,7 @@ import '../../theme/dimens.dart';
 import '../../theme/text_styles.dart';
 import '../../widgets/arabic_text.dart';
 import '../../widgets/qalam_mascot.dart';
+import 'widgets/ghost_comparison.dart';
 import 'widgets/mastery_celebration.dart';
 import 'widgets/stroke_canvas.dart';
 import 'widgets/stroke_order_animation.dart';
@@ -545,6 +547,17 @@ class _TraceWorkspaceState extends ConsumerState<_TraceWorkspace> {
   bool _isScoring = false;
   bool _isCasting = false;
 
+  /// The child's most recent FAILING strokes, normalized to 0..1 via the shared
+  /// combined-bbox core, held HERE IN WIDGET STATE ONLY (T-03-01 / T-06-04).
+  /// Set in [_handleLetterComplete] when the rep fails shape checks; cleared on
+  /// retry, on pass, and on dispose. They feed the D-21 ghost comparison and
+  /// are NEVER persisted, logged, or lifted to provider scope.
+  List<StrokeSpec>? _failingStrokes;
+
+  /// Whether the D-21 ghost-comparison overlay is currently shown. Only ever
+  /// true in showFix with [_failingStrokes] held.
+  bool _showGhost = false;
+
   /// Bumping this key gives StrokeCanvas a fresh instance (clears ink).
   int _canvasEpoch = 0;
 
@@ -584,6 +597,8 @@ class _TraceWorkspaceState extends ConsumerState<_TraceWorkspace> {
   @override
   void dispose() {
     _cornerLoop?.cancel();
+    // T-03-01: ensure no held stroke points outlive this State.
+    _failingStrokes = null;
     super.dispose();
   }
 
@@ -596,11 +611,44 @@ class _TraceWorkspaceState extends ConsumerState<_TraceWorkspace> {
   /// accumulated the whole multi-stroke letter (Plan 04-04).
   Future<void> _handleLetterComplete(List<List<Offset>> strokes) async {
     if (widget.letter.referenceStrokes.isEmpty) return; // placeholder: no crash
+
+    // Normalize the child's just-traced strokes to 0..1 via the shared
+    // combined-bbox core (Pitfall 2) and stage them in WIDGET STATE ONLY
+    // (T-03-01 / T-06-04). These become the D-21 ghost-comparison material if —
+    // and only if — this rep ends in showFix. They are never persisted, never
+    // lifted to provider scope.
+    final List<List<List<double>>> raw = strokes
+        .map((List<Offset> s) =>
+            s.map((Offset o) => <double>[o.dx, o.dy]).toList())
+        .toList();
+    final List<List<List<double>>> normalized =
+        normalizeStrokesToUnitBox(raw);
+    final List<StrokeSpec> candidate = <StrokeSpec>[
+      for (var i = 0; i < normalized.length; i++)
+        StrokeSpec(
+          order: i + 1,
+          label: 'child',
+          type: 'line',
+          direction: 'topToBottom',
+          points: normalized[i],
+        ),
+    ];
+
     setState(() => _isScoring = true);
     await Future<void>.delayed(_kThinkBeat);
     if (!mounted) return;
     await widget.onLetterComplete(strokes);
-    if (mounted) setState(() => _isScoring = false);
+    if (!mounted) return;
+
+    // The parent rebuilds this workspace with the post-scoring phase. We stage
+    // the candidate now; build() exposes the ghost button only while the live
+    // phase is showFix (a pass clears it via _clear on continue). Staging only
+    // on a fresh miss avoids showing a stale stroke after the child retries.
+    setState(() {
+      _isScoring = false;
+      _failingStrokes = candidate;
+      _showGhost = false; // child opts in via the button
+    });
   }
 
   /// Cast the stroke-order ghost overlay on the canvas. Ignored if already
@@ -616,8 +664,21 @@ class _TraceWorkspaceState extends ConsumerState<_TraceWorkspace> {
     });
   }
 
-  /// Clear the canvas by giving StrokeCanvas a fresh key.
-  void _clear() => setState(() => _canvasEpoch++);
+  /// Clear the canvas by giving StrokeCanvas a fresh key. Also drops any held
+  /// failing strokes and closes the ghost comparison (T-03-01: the child's
+  /// stroke points do not outlive the rep — cleared on retry/pass/continue).
+  void _clear() => setState(() {
+        _canvasEpoch++;
+        _failingStrokes = null;
+        _showGhost = false;
+      });
+
+  /// Open the D-21 ghost comparison (only meaningful when failing strokes are
+  /// held and the phase is showFix).
+  void _openGhost() => setState(() => _showGhost = true);
+
+  /// Close the ghost comparison without clearing the canvas.
+  void _closeGhost() => setState(() => _showGhost = false);
 
   // ---------------------------------------------------------------------------
   // Build helpers
@@ -861,6 +922,35 @@ class _TraceWorkspaceState extends ConsumerState<_TraceWorkspace> {
                                 ),
                               ),
 
+                            // D-21 ghost comparison — fills the canvas card
+                            // when the child opts in from the ShowFix zone.
+                            // Fed ONLY from widget State (_failingStrokes).
+                            if (_showGhost && _failingStrokes != null)
+                              Positioned.fill(
+                                child: ColoredBox(
+                                  color: QalamColors.bg,
+                                  child: Stack(
+                                    children: <Widget>[
+                                      GhostComparison(
+                                        childStrokes: _failingStrokes!,
+                                        referenceStrokes:
+                                            widget.letter.referenceStrokes,
+                                      ),
+                                      // Close affordance — top-left.
+                                      Positioned(
+                                        left: QalamSpace.space2,
+                                        top: QalamSpace.space2,
+                                        child: IconButton(
+                                          onPressed: _closeGhost,
+                                          color: QalamColors.fgMuted,
+                                          icon: const Icon(Icons.close),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+
                             // Watch Me corner card — top-right.
                             Positioned(
                               top: QalamSpace.space4,
@@ -896,6 +986,10 @@ class _TraceWorkspaceState extends ConsumerState<_TraceWorkspace> {
                   isScoring: _isScoring,
                   l10n: l10n,
                   onCast: _cast,
+                  // D-21: offer "Watch the Difference" only when failing
+                  // strokes are held in State (and not already open).
+                  onWatchDifference:
+                      (_failingStrokes != null && !_showGhost) ? _openGhost : null,
                   onRetry: () {
                     _clear();
                     widget.onRetry();
@@ -1052,6 +1146,7 @@ class _ActionRow extends StatelessWidget {
     required this.isScoring,
     required this.l10n,
     required this.onCast,
+    required this.onWatchDifference,
     required this.onRetry,
     required this.onContinueAfterPraise,
   });
@@ -1060,6 +1155,11 @@ class _ActionRow extends StatelessWidget {
   final bool isScoring;
   final AppLocalizations? l10n;
   final VoidCallback onCast;
+
+  /// D-21 "Watch the Difference" trigger — null when no failing strokes are
+  /// held (the button is then omitted). Non-null only in showFix with a
+  /// retained child stroke in widget State.
+  final VoidCallback? onWatchDifference;
   final VoidCallback onRetry;
   final VoidCallback onContinueAfterPraise;
 
@@ -1070,6 +1170,7 @@ class _ActionRow extends StatelessWidget {
     final showMeAgain = l10n?.practiceShowMeAgainButton ?? 'Show Me Again';
     final tryAgain = l10n?.practiceTryAgainButton ?? 'Try Again';
     final keepGoing = l10n?.practiceKeepGoingButton ?? 'Keep going';
+    final watchDifference = l10n?.ghostCompareButton ?? 'Watch the Difference';
 
     switch (phase) {
       case PracticePhase.trace:
@@ -1101,7 +1202,10 @@ class _ActionRow extends StatelessWidget {
         );
 
       case PracticePhase.showFix:
-        // showFix: Show Me Again (ghost) + Try Again (primary), right-aligned.
+        // showFix: [Watch the Difference] (ghost, D-21) + Show Me Again (ghost)
+        // + Try Again (primary), right-aligned. The D-21 button appears only
+        // when failing strokes are held (onWatchDifference != null). >= 16px gap
+        // between targets (QalamSpace.space4).
         return Container(
           constraints:
               const BoxConstraints(minHeight: QalamTargets.targetMin),
@@ -1109,6 +1213,13 @@ class _ActionRow extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
+              if (onWatchDifference != null) ...<Widget>[
+                _GhostButton(
+                  label: watchDifference,
+                  onPressed: onWatchDifference,
+                ),
+                const SizedBox(width: QalamSpace.space4),
+              ],
               _GhostButton(
                 label: showMeAgain,
                 onPressed: onCast,
