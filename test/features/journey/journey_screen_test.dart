@@ -116,10 +116,20 @@ Future<void> _pumpJourney(WidgetTester tester, Widget widget) async {
   addTearDown(tester.view.resetDevicePixelRatio);
 
   await tester.pumpWidget(widget);
-  // Two pumps: resolve the overridden FutureProviders, then render the map.
-  await tester.pump();
-  await tester.pump(const Duration(milliseconds: 50));
+  // Pump until the overridden async FutureProviders resolve and the map
+  // renders. A fixed pump count races full-suite CPU contention (the
+  // `(ref) async => snapshot` override completes on a microtask whose rebuild
+  // can slip frames under parallel test load), so pump in a bounded loop until
+  // a node appears. NEVER pumpAndSettle — the current node's pulse glow repeats
+  // forever, so settle never returns.
+  for (var i = 0; i < 60 && _noNodesYet(tester); i++) {
+    await tester.pump(const Duration(milliseconds: 16));
+  }
 }
+
+/// True until the first [JourneyNodeWidget] has rendered.
+bool _noNodesYet(WidgetTester tester) =>
+    tester.widgetList(find.byType(JourneyNodeWidget)).isEmpty;
 
 /// Finder for the node showing [glyph] — glyphs are unique per letter (unlike
 /// display names: both haa_c and haa_f display as 'Haa').
