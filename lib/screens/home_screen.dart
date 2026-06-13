@@ -8,7 +8,7 @@
 //   - _PersistenceProof (round-tripped Drift value, visible seam).
 //
 // Anti-gamification invariants (PLAT-03 / D-13):
-//   - NO QalamColors.reward (gold) on this screen.
+//   - NO reward-gold token on this screen (gold = mastery rewards only).
 //   - NO ⭐ counter, no "THIS WEEK" tally, no streak, no score, no badge.
 //   - Parent is inert — no onTap, visibly labelled "Coming soon" (Phase 9).
 //   - Journey nav item unlocked in Phase 03.1: context.go('/journey') wired.
@@ -23,9 +23,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../data/app_database.dart';
+import '../data/curriculum_repository.dart';
 import '../features/onboarding/onboarding_data.dart';
 import '../l10n/app_localizations.dart';
+import '../models/lesson.dart';
+import '../models/letter.dart';
 import '../providers/profile_providers.dart';
+import '../providers/progression_providers.dart';
 import '../theme/brand_theme_ext.dart';
 import '../theme/colors.dart';
 import '../theme/dimens.dart';
@@ -61,8 +65,11 @@ class HomeScreen extends StatelessWidget {
                       // Mascot + greeting header.
                       _GreetingHeader(l10n: l10n),
                       const SizedBox(height: QalamSpace.space8),
-                      // Today's lesson card.
-                      _TodaysLessonCard(l10n: l10n),
+                      // Today's lesson card — settles in like a prepared
+                      // worksheet, once per arrival (D-13).
+                      _PreparedDeskEntrance(
+                        child: _TodaysLessonCard(l10n: l10n),
+                      ),
                       const SizedBox(height: QalamSpace.space6),
                       // Persistence seam (round-tripped Drift value).
                       const _PersistenceProof(),
@@ -315,7 +322,7 @@ class _GreetingLayout extends StatelessWidget {
   final String? nicknameLabel;
 
   /// Placeholder palette mirrors AvatarGrid so the home avatar matches the one
-  /// picked at onboarding (D-3 — ID→tint in code; NOT QalamColors.reward).
+  /// picked at onboarding (D-3 — ID→tint in code; never the reward gold).
   static const List<Color> _placeholderTints = <Color>[
     QalamColors.primaryTint,
     QalamColors.successTint,
@@ -414,9 +421,202 @@ class _GreetingLayout extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Today's lesson card
+// Prepared-desk entrance (D-13)
 // ---------------------------------------------------------------------------
 
+/// First beat of the prepared-desk entrance (D-13): the today-card slides up
+/// ~24px while fading in — `easeOutQuart` over `durSlow` (420ms) — like a
+/// teacher laying out a worksheet.
+///
+/// Plays ONCE per arrival at Home: the one-shot decision lives in this State,
+/// which provider rebuilds below (inside the card's reader) never recreate.
+/// Reduced motion (`MediaQuery.disableAnimations`) skips the controller and
+/// renders fully settled immediately.
+class _PreparedDeskEntrance extends StatefulWidget {
+  const _PreparedDeskEntrance({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_PreparedDeskEntrance> createState() => _PreparedDeskEntranceState();
+}
+
+class _PreparedDeskEntranceState extends State<_PreparedDeskEntrance>
+    with SingleTickerProviderStateMixin {
+  AnimationController? _controller;
+  Animation<double>? _progress;
+  bool _played = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_played) return; // once per arrival — data refreshes never replay it
+    _played = true;
+    if (MediaQuery.of(context).disableAnimations) return; // settled at once
+    final controller = AnimationController(
+      vsync: this,
+      duration: QalamMotion.durSlow,
+    );
+    _controller = controller;
+    _progress = CurvedAnimation(
+      parent: controller,
+      curve: QalamMotion.easeOutQuart,
+    );
+    controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = _progress;
+    if (progress == null) return widget.child; // reduced motion: settled
+    return AnimatedBuilder(
+      animation: progress,
+      builder: (BuildContext context, Widget? child) {
+        final double v = progress.value;
+        return Opacity(
+          key: const Key('todayCardEntranceFade'),
+          opacity: v,
+          child: Transform.translate(
+            // Slide up ~24px (QalamSpace.space6) as the card settles.
+            offset: Offset(0, QalamSpace.space6 * (1 - v)),
+            child: child,
+          ),
+        );
+      },
+      child: widget.child,
+    );
+  }
+}
+
+/// Second beat of the prepared-desk entrance (D-13): the letter glyph fades
+/// up over `durBase` (220ms) AFTER the card settles (`durSlow`).
+///
+/// One-shot per arrival (same State-persistence reasoning as
+/// [_PreparedDeskEntrance] — the layout keeps this widget at a stable tree
+/// position across loading/data/all-mastered rebuilds). Reduced motion
+/// renders fully settled immediately.
+class _GlyphEntranceFade extends StatefulWidget {
+  const _GlyphEntranceFade({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_GlyphEntranceFade> createState() => _GlyphEntranceFadeState();
+}
+
+class _GlyphEntranceFadeState extends State<_GlyphEntranceFade>
+    with SingleTickerProviderStateMixin {
+  /// Card-settle delay + the glyph fade itself (tokens only).
+  static final Duration _total = QalamMotion.durSlow + QalamMotion.durBase;
+
+  AnimationController? _controller;
+  Animation<double>? _opacity;
+  bool _played = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_played) return;
+    _played = true;
+    if (MediaQuery.of(context).disableAnimations) return;
+    final controller = AnimationController(vsync: this, duration: _total);
+    _controller = controller;
+    _opacity = CurvedAnimation(
+      parent: controller,
+      // Hold at 0 while the card settles (durSlow), then fade over durBase.
+      curve: Interval(
+        QalamMotion.durSlow.inMilliseconds / _total.inMilliseconds,
+        1.0,
+        curve: QalamMotion.easeOutQuart,
+      ),
+    );
+    controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final opacity = _opacity;
+    if (opacity == null) return widget.child; // reduced motion: settled
+    return AnimatedBuilder(
+      animation: opacity,
+      builder: (BuildContext context, Widget? child) => Opacity(
+        key: const Key('todayCardGlyphFade'),
+        opacity: opacity.value,
+        child: child,
+      ),
+      child: widget.child,
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Today's lesson card (live — Plan 06-05)
+// ---------------------------------------------------------------------------
+
+/// The resolved data the today-card renders: today's lesson id plus its
+/// letter (glyph char, romanized name, clean-rep target). `null` from the
+/// provider below means every available lesson is passed (D-11 all-mastered).
+class _TodayCardData {
+  const _TodayCardData({required this.lessonId, required this.letter});
+
+  final String lessonId;
+  final Letter letter;
+}
+
+/// Composes todayLessonProvider (06-03) with the curriculum letter lookup.
+///
+/// Error degradation (T-06-08 / UI-SPEC error contract): any failure in the
+/// progression chain degrades to the profile's `startingLessonId` lesson so
+/// the child always has a Start. If even that fails, the reader's
+/// `.when(error:)` branch renders the static alif fallback — a raw error is
+/// never shown to the child.
+final _todayCardDataProvider = FutureProvider<_TodayCardData?>((ref) async {
+  Future<_TodayCardData> resolve(Lesson lesson) async {
+    final item = lesson.items.firstWhere((i) => i.type == 'letter');
+    final letter =
+        await ref.watch(curriculumRepositoryProvider).getLetter(item.ref);
+    if (letter == null) {
+      throw StateError('unknown letter "${item.ref}" in ${lesson.id}');
+    }
+    return _TodayCardData(lessonId: lesson.id, letter: letter);
+  }
+
+  try {
+    final today = await ref.watch(todayLessonProvider.future);
+    if (today == null) return null; // all mastered (D-11)
+    return await resolve(today);
+  } catch (_) {
+    // Bounded profile await mirrors progressionProvider's own degradation
+    // (06-03): the unoverridden profile read can hang in headless envs.
+    final profile = await ref
+        .watch(childProfileProvider.future)
+        .timeout(const Duration(seconds: 3));
+    final lessonId = profile?.startingLessonId ?? 'lesson_01';
+    final lesson =
+        await ref.watch(curriculumRepositoryProvider).getLesson(lessonId);
+    if (lesson == null) throw StateError('unknown lesson "$lessonId"');
+    return await resolve(lesson);
+  }
+});
+
+/// Today's lesson card — scope-aware (mirrors `_GreetingHeader`).
+///
+/// The bare D-05 direction test pumps HomeScreen without a ProviderScope; in
+/// that harness the card degrades to the static alif layout instead of
+/// throwing "No ProviderScope found". With a scope it defers to
+/// [_TodaysLessonCardReader], which drives the live card (D-08).
 class _TodaysLessonCard extends StatelessWidget {
   const _TodaysLessonCard({required this.l10n});
 
@@ -424,11 +624,171 @@ class _TodaysLessonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool hasScope =
+        context.findAncestorWidgetOfExactType<UncontrolledProviderScope>() !=
+            null;
+    if (!hasScope) {
+      // No-scope fallback (bare harness): static alif card.
+      return _TodayCardLayout(
+        eyebrowText: l10n?.homeLessonEyebrow ?? 'TODAY\'S LESSON',
+        titleText: l10n?.homeLessonTitle ?? 'The Letter Alif',
+        subtitleText: l10n?.homeLessonSubtitle ?? 'Stroke order and tracing',
+        glyphChar: 'ا',
+        glyphAlpha: 1.0,
+        glyphSemantics: null,
+        route: '/practice?lesson=lesson_01',
+      );
+    }
+    return _TodaysLessonCardReader(l10n: l10n);
+  }
+}
+
+/// Reads the composed today-card data and renders the matching variant with
+/// full `.when` degradation — loading and error never surface to the child.
+class _TodaysLessonCardReader extends ConsumerWidget {
+  const _TodaysLessonCardReader({required this.l10n});
+
+  final AppLocalizations? l10n;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ref.watch(_todayCardDataProvider).when(
+          data: (_TodayCardData? data) {
+            if (data == null) {
+              // All-mastered end state (D-11): calm, factual, no totals.
+              // Tap goes to the Journey — replay lives there (D-12).
+              return _TodayCardLayout(
+                eyebrowText: l10n?.homeAllMasteredEyebrow ?? 'YOUR LETTERS',
+                titleText: l10n?.homeAllMasteredTitle ??
+                    'You\'ve mastered all your letters.',
+                subtitleText: l10n?.homeAllMasteredBody ??
+                    'Visit your journey to practice any letter again.',
+                glyphChar: null,
+                glyphAlpha: 1.0,
+                glyphSemantics: null,
+                route: '/journey',
+              );
+            }
+            // Ink-fill (D-09): the persisted clean-rep depth IS the progress.
+            // Reps loading/error degrade silently to 0 (a faint ink wash).
+            final int reps =
+                ref.watch(cleanRepsForLetterProvider(data.letter.id)).when(
+                      data: (int value) => value,
+                      loading: () => 0,
+                      error: (_, _) => 0,
+                    );
+            final int total = data.letter.cleanRepsToAdvance;
+            final double fraction =
+                total <= 0 ? 1.0 : (reps / total).clamp(0.0, 1.0);
+            return _TodayCardLayout(
+              eyebrowText: l10n?.homeLessonEyebrow ?? 'TODAY\'S LESSON',
+              titleText: l10n?.homeLessonTitleFor(data.letter.name.display) ??
+                  'The Letter ${data.letter.name.display}',
+              subtitleText:
+                  l10n?.homeLessonSubtitle ?? 'Stroke order and tracing',
+              glyphChar: data.letter.char,
+              // UI-SPEC prescriptive ramp: 0.25 + 0.75 × (reps / total).
+              glyphAlpha: 0.25 + 0.75 * fraction,
+              glyphSemantics: l10n?.homeInkFillSemantics(reps, total) ??
+                  '$reps of $total clean reps',
+              route: '/practice?lesson=${data.lessonId}',
+            );
+          },
+          // Loading: blank glyph + blank title, no spinner chrome (UI-SPEC —
+          // mirrors the _GreetingHeader degradation pattern).
+          loading: () => _TodayCardLayout(
+            eyebrowText: l10n?.homeLessonEyebrow ?? 'TODAY\'S LESSON',
+            titleText: null,
+            subtitleText: null,
+            glyphChar: null,
+            glyphAlpha: 1.0,
+            glyphSemantics: null,
+            route: null,
+          ),
+          // Final fallback (the degradation chain itself failed): the static
+          // alif Start — never a raw error to the child (T-06-08).
+          error: (_, _) => _TodayCardLayout(
+            eyebrowText: l10n?.homeLessonEyebrow ?? 'TODAY\'S LESSON',
+            titleText: l10n?.homeLessonTitle ?? 'The Letter Alif',
+            subtitleText:
+                l10n?.homeLessonSubtitle ?? 'Stroke order and tracing',
+            glyphChar: 'ا',
+            glyphAlpha: 1.0,
+            glyphSemantics: null,
+            route: '/practice?lesson=lesson_01',
+          ),
+        );
+  }
+}
+
+/// Pure presentation of the today-card. Keeps the existing structure (D-08):
+/// same Row, glyph container, chevron pill, and `Key('todaysLessonCard')`.
+///
+/// - [glyphChar] null → empty glyph container (loading / all-mastered).
+/// - [titleText] null → blank title area (loading).
+/// - [glyphAlpha] — the D-09 ink-fill opacity on deep-ink; NEVER gold.
+/// - [glyphSemantics] — a11y-only rep progress; no visible numerals.
+/// - [route] null → inert tap (loading); otherwise the single Start.
+class _TodayCardLayout extends StatelessWidget {
+  const _TodayCardLayout({
+    required this.eyebrowText,
+    required this.titleText,
+    required this.subtitleText,
+    required this.glyphChar,
+    required this.glyphAlpha,
+    required this.glyphSemantics,
+    required this.route,
+  });
+
+  final String eyebrowText;
+  final String? titleText;
+  final String? subtitleText;
+  final String? glyphChar;
+  final double glyphAlpha;
+  final String? glyphSemantics;
+  final String? route;
+
+  @override
+  Widget build(BuildContext context) {
     final qalam = Theme.of(context).extension<QalamTheme>() ?? QalamTheme.light;
+    final String? destination = route;
+
+    // The lesson glyph — deep-ink at the persisted rep depth (D-09). The ink
+    // is the progress: a11y label only, never a visible numeral.
+    Widget glyph = Container(
+      width: QalamSpace.space16,
+      height: QalamSpace.space16,
+      decoration: BoxDecoration(
+        color: QalamColors.primaryTint,
+        borderRadius: BorderRadius.circular(QalamRadii.lg),
+      ),
+      alignment: Alignment.center,
+      child: glyphChar == null
+          ? null
+          : ArabicText(
+              glyphChar!,
+              display: true,
+              style: QalamTextStyles.arDisplay.copyWith(
+                color: QalamColors.inkStroke.withValues(alpha: glyphAlpha),
+              ),
+            ),
+    );
+    if (glyphSemantics != null) {
+      glyph = Semantics(
+        label: glyphSemantics,
+        // Own node — without this the label would merge into the card's tap
+        // node instead of reading as "{n} of {N} clean reps".
+        container: true,
+        child: ExcludeSemantics(child: glyph),
+      );
+    }
+    // Outermost wrap: keeps the fade's State at a stable tree position across
+    // loading/data/all-mastered rebuilds, so the entrance never replays (D-13).
+    glyph = _GlyphEntranceFade(child: glyph);
 
     return GestureDetector(
       key: const Key('todaysLessonCard'),
-      onTap: () => context.go('/practice'),
+      onTap: destination == null ? null : () => context.go(destination),
       child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(QalamRadii.xl),
@@ -444,36 +804,30 @@ class _TodaysLessonCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              // Alif glyph — the RTL island for the lesson letter.
-              Container(
-                width: QalamSpace.space16,
-                height: QalamSpace.space16,
-                decoration: BoxDecoration(
-                  color: QalamColors.primaryTint,
-                  borderRadius: BorderRadius.circular(QalamRadii.lg),
-                ),
-                alignment: Alignment.center,
-                child: const ArabicText('ا', display: true),
-              ),
+              glyph,
               const SizedBox(width: QalamSpace.space6),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      l10n?.homeLessonEyebrow ?? 'TODAY\'S LESSON',
+                      eyebrowText,
                       style: QalamTextStyles.label,
                     ),
                     const SizedBox(height: QalamSpace.space2),
-                    Text(
-                      l10n?.homeLessonTitle ?? 'The Letter Alif',
-                      style: QalamTextStyles.heading,
-                    ),
+                    if (titleText != null)
+                      Text(
+                        titleText!,
+                        style: QalamTextStyles.heading,
+                      )
+                    else
+                      const SizedBox(height: QalamSpace.space8),
                     const SizedBox(height: QalamSpace.space2),
-                    Text(
-                      l10n?.homeLessonSubtitle ?? 'Stroke order and tracing',
-                      style: QalamTextStyles.body,
-                    ),
+                    if (subtitleText != null)
+                      Text(
+                        subtitleText!,
+                        style: QalamTextStyles.body,
+                      ),
                   ],
                 ),
               ),
