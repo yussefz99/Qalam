@@ -59,6 +59,12 @@ class Tolerances {
     ),
   };
 
+  /// Resolves a named ramp preset (D-18/D-19): `loose` / `normal` / `strict`.
+  /// An unknown or empty name falls back to [normal] — the same defensive
+  /// unknown→normal idiom as [Tolerances.fromJson] (never throws; the ramp is
+  /// hand-edited curriculum data).
+  static Tolerances preset(String name) => _presets[name] ?? normal;
+
   /// The behavior-preserving default used whenever a letter omits a tolerances
   /// block or names an unknown preset (pure value parsing — never throws).
   static const Tolerances normal = Tolerances(

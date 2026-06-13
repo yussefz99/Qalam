@@ -51,14 +51,22 @@ const int _kDotPointCeiling = 3;
 /// Returns [LetterResult.pass] when count, order, every body stroke's shape, and
 /// the dot predicate all hold (and the identity gate, if present, does not
 /// confidently disagree); otherwise the first failing [MistakeId].
+///
+/// [tolerances], when supplied, OVERRIDES the letter's own tolerances block —
+/// the seam through which the practice flow's per-rep ramp preset (D-18/D-19,
+/// Plan 06-04) reaches the scorer without moving scoring policy out of
+/// lib/core. Resolution order: override → letter.tolerances → normal. Omitting
+/// it preserves Phase-4 behavior byte-for-byte.
 Future<LetterResult> scoreLetter(
   List<List<List<double>>> childStrokes,
   Letter letter, {
   HandwritingRecognizer? recognizer,
+  Tolerances? tolerances,
 }) async {
   final reference = [...letter.referenceStrokes]
     ..sort((a, b) => a.order.compareTo(b.order));
-  final tolerances = letter.tolerances ?? Tolerances.normal;
+  final resolvedTolerances =
+      tolerances ?? letter.tolerances ?? Tolerances.normal;
 
   // ── 1. COUNT ───────────────────────────────────────────────────────────────
   // Firm regardless of how lenient the shape tolerance is (Pitfall 4): a baa is
@@ -85,7 +93,7 @@ Future<LetterResult> scoreLetter(
   // tolerances (SC#4). Dots are not shape-scored (a tap has no direction/curve).
   for (var i = 0; i < reference.length; i++) {
     if (reference[i].type == 'dot') continue;
-    final result = scoreStroke(childStrokes[i], reference[i], tolerances);
+    final result = scoreStroke(childStrokes[i], reference[i], resolvedTolerances);
     if (!result.passed) {
       return LetterResult.fail(result.mistakeId ?? MistakeId.fallback);
     }
