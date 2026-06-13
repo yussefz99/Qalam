@@ -75,21 +75,23 @@ class ParentGate extends ChangeNotifier {
 /// keepAlive — held for the app lifetime.
 ///
 /// PRODUCTION ALWAYS OVERRIDES THIS in main.dart with a fresh LOCKED
-/// `ParentGate()` (D-07: starts locked every launch, no boot DB read). The
-/// default value here is `unlocked: true` ON PURPOSE: it is the seam the
-/// read-only dashboard widget test (test/screens/parent_dashboard_test.dart)
-/// relies on — that test renders `ParentDashboardScreen` directly, overriding
-/// only `parentProgressProvider`, and expects the dashboard body (not the PIN
-/// flow). The route-gate test (test/router/parent_gate_test.dart) overrides this
-/// provider explicitly to drive lock/unlock. So every real entry point seeds the
-/// gate; the unlocked default is touched only by the body-only widget test.
+/// `ParentGate()` (D-07: starts locked every launch, no boot DB read).
+///
+/// WR-02: the default is `unlocked: false` (default-DENY). An access-control
+/// object must fail safe: any entry point or test that pumps the dashboard
+/// without explicitly seeding the gate gets the PIN flow, never the dashboard
+/// body. Tests that need the unlocked state opt in explicitly with
+/// `parentGateProvider.overrideWith((ref) => ParentGate(unlocked: true))` (see
+/// test/screens/parent_dashboard_test.dart). The route-gate test
+/// (test/router/parent_gate_test.dart) already overrides this provider
+/// explicitly to drive lock/unlock.
 ///
 /// `ParentGate` is a `ChangeNotifier` exposed as a provider value on purpose —
 /// the router's `refreshListenable` (Pattern 3). riverpod_lint's
 /// `unsupported_provider_value` flags any non-Future/Stream value; the
 /// Listenable-as-provider shape is intentional here (see file header).
 @Riverpod(keepAlive: true)
-ParentGate parentGate(Ref ref) => ParentGate(unlocked: true);
+ParentGate parentGate(Ref ref) => ParentGate(); // unlocked: false (default-deny)
 
 /// The read-only dashboard model: the "N of M" summary counts + the per-letter
 /// rows in curriculum intro order. Hand-written (not codegen) because the

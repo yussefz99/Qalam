@@ -30,6 +30,10 @@ import 'package:qalam/screens/parent_dashboard_screen.dart';
 Widget _buildDashboard(ParentProgress progress) {
   return ProviderScope(
     overrides: [
+      // WR-02: the gate now defaults to LOCKED (default-deny), so a body-only
+      // dashboard test must opt in to the unlocked state explicitly. Without
+      // this override the screen would render the PIN flow, not the dashboard.
+      parentGateProvider.overrideWith((ref) => ParentGate(unlocked: true)),
       parentProgressProvider.overrideWith((ref) async => progress),
     ],
     child: MaterialApp(
