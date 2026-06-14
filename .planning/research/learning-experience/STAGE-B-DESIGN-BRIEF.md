@@ -55,6 +55,31 @@ sitting beside them would. The tutor is **warm, calm, specific** — never a che
 
 ---
 
+## 2.5 Reuse map — MATCH what exists, design only what's new
+
+Qalam's core loop is **already built and working in Flutter**. The prototype must stay
+consistent with these — **do NOT redesign them.** Reference the real screens/screenshots and
+stitch the new flow around them.
+
+**ALREADY BUILT — match, don't reinvent:**
+- **Trace/practice surface** (ink over dotted guide; three-zone Trace / Show-fix / Show-praise; hear-the-letter) → `docs/design/practice-redesign/mockup.html`, `lib/features/practice/practice_screen.dart`.
+- **Stroke-order animation** (the Watch step) → screenshots `01-flow.png`…`05-flow.png`.
+- **Mastery celebration** (one quiet star) → `lib/features/practice/widgets/mastery_celebration.dart`, screenshots `*-celebration*.png`.
+- **Home** (today's lesson, mascot greeting) → `home.png`, `lib/screens/home_screen.dart`.
+- **Journey map** → `docs/design/kit/project/ui_kits/qalam_app/journey_preview.html`, `lib/features/journey/journey_screen.dart`.
+- **Mascot + tokens** → `assets/mascot/*.svg`, `docs/design/kit/project/colors_and_type.css`.
+
+**NEW — design these fresh, in the same visual language (no implementation exists yet):**
+- The **Letter Unit shell**: the 6-section container + R→L progress ribbon + section transitions.
+- **Meet the letter** as a section (all forms + sound).
+- **In-context forms** practice (initial / medial / final) — only the isolated form exists today.
+- **Words / vocab** section.
+- **Listen & write** exercises (dictation, write-from-sound).
+- The **8 exercise-type** screens.
+
+**Rule of thumb:** trace surface, stroke animation, celebration → **reuse the existing design**.
+Unit shell, forms, words, listen-&-write, exercise types → **design fresh, same visual language.**
+
 ## 3. What to build — Screen list
 
 ### A) The Letter Unit flow for baa (ب) — a guided linear path
@@ -94,6 +119,7 @@ For each, make clear **what the child writes** and that it's checked by writing,
 - Faithful to the **tokens** in `colors_and_type.css`, **RTL**, **landscape tablet**.
 - Use illustration/audio **placeholders** clearly marked (real assets come later).
 - Goal is to **validate the experience and how the sections fit together** — throwaway, not production.
+- **Design with reuse in mind:** the validated design will be implemented as a **Flutter `/demo` flow that wires the existing widgets** (trace surface, stroke animation, mastery celebration, mascot) into the new sections — the project's proven pattern (Phase 02.1.1 demo screens → became Phase 3's real UI). So the new surfaces must sit naturally next to the already-built ones, not replace them.
 
 ---
 
