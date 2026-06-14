@@ -300,19 +300,31 @@ Plans:
   3. Passing a lesson (meeting its clean-reps-to-advance rule) immediately unlocks the next lesson, which then appears as today's lesson.
 
 **Plans:** 8/8 plans complete + 2 device-UAT gap-closure plans (06-09, 06-10)
-
 Plans:
+**Wave 1**
 
 - [x] 06-01-PLAN.md — 28-lesson catalog + pure-Dart progression engine (D-01/D-02/D-06)
 - [x] 06-02-PLAN.md — Schema v4: LetterReps persistence, watch streams, startingLessonId namespace (D-10)
+- [ ] 06-09-PLAN.md — Fix A (gap): lower kClosedLoopEpsilon 0.30→0.10 so 9 curl letters load (owner sign-off gate)
+- [ ] 06-10-PLAN.md — Fix B (gap): render type==dot strokes as calm ink circles in Watch animation + Trace guide
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [x] 06-03-PLAN.md — Live progression providers + /practice?lesson= route parameterization (S1-09 immediacy)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
 - [x] 06-04-PLAN.md — Tolerance ramp + persisted-rep write-through (D-18/D-19/D-20)
 - [x] 06-05-PLAN.md — Home today-card live: ink-fill, prepared desk, all-mastered state (S1-01)
 - [x] 06-06-PLAN.md — Journey live data, canonical IDs, skipped taps, highlight arrival (D-07/D-15)
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
 - [x] 06-07-PLAN.md — Celebration: Next Lesson, last-lesson variant, tutor line (D-14/D-16/D-17)
+
+**Wave 5** *(blocked on Wave 4 completion)*
+
 - [x] 06-08-PLAN.md — Slow-motion ghost comparison (D-21)
-- [ ] 06-09-PLAN.md — Fix A (gap): lower kClosedLoopEpsilon 0.30→0.10 so 9 curl letters load (owner sign-off gate)
-- [ ] 06-10-PLAN.md — Fix B (gap): render type==dot strokes as calm ink circles in Watch animation + Trace guide
 
 **UI hint**: yes
 
