@@ -366,13 +366,13 @@ in a sibling spike folder (`../qalam_ink_spike`) with billing OFF. This phase us
   4. The app reads curriculum **live from Firestore** (one-shot `.get()` into the kept-alive cache); with Firestore offline persistence + a bundled-seed cold-start fallback, **every flow still works fully offline** (incl. airplane-mode cold install) and the practice/trace path never blocks on a network round-trip. A Python export refreshes the bundled snapshot.
   5. Firestore security rules require authentication to read curriculum and deny all client writes (content written only via the admin service account / console); the app authenticates **anonymously** (no accounts, no child PII), and rules leave a seam to tighten by custom-claim roles in v2.
 
-**Plans:** 5 plans
+**Plans:** 1/5 plans executed
 
 Plans:
 
 **Wave 1**
 
-- [ ] 06.1-01-PLAN.md — FlutterFire wiring + Gradle/minSdk + anonymous-auth boot + linkWithCredential seam (SC#1; D-09/09a/b/c/12/16/17)
+- [x] 06.1-01-PLAN.md — FlutterFire wiring + Gradle/minSdk + anonymous-auth boot + linkWithCredential seam (SC#1; D-09/09a/b/c/12/16/17)
 - [ ] 06.1-02-PLAN.md — Shared point codec ({x,y}⇄[x,y]) + Firestore⇄Letter/Lesson mapper, Dart + Python, round-trip parity tests (SC#2; D-06/08/13/15)
 
 **Wave 2** *(blocked on Wave 1)*
@@ -479,7 +479,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 4. Scoring Quality & Calibration | 5/6 | In Progress (04-06 deferred, human-gated) | - |
 | 5. Profiles & Onboarding | 4/4 | Complete | - |
 | 6. Lesson Progression & Home | 10/10 | Complete   | 2026-06-14 |
-| 06.1 Firebase Curriculum Backend (INSERTED) | 0/TBD | Not planned | - |
+| 06.1 Firebase Curriculum Backend (INSERTED) | 1/5 | In Progress|  |
 | 7. Full Curriculum & Pronunciation Audio | 0/TBD | Not started | - |
 | 8. Sentence-Building & Grammar Exercises | 0/TBD | Not started | - |
 | 9. Parent Dashboard | 3/3 | Complete    | 2026-06-13 |
