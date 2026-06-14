@@ -1,0 +1,10 @@
+# Python tooling deps for the Firestore curriculum seed/export (Plan 06.1-03).
+#
+# firebase-admin is the official Google Admin SDK (research §Package Legitimacy
+# Audit, threat T-06.1-SC). It pulls google-cloud-firestore transitively, which is
+# the Firestore client the seed/export use. Pinned to the floor that ships the
+# cp314 wheels we validated locally (firebase-admin 7.x installs cleanly on
+# Python 3.14).
+#
+# Install into a venv:  pip install -r requirements.txt
+firebase-admin>=6.5.0
