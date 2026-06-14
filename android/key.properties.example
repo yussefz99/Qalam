@@ -1,0 +1,20 @@
+# Release-signing template — Sprint 1 (Technion 236272).
+#
+# Copy this file to `android/key.properties` (which is GITIGNORED) and fill in
+# the real values for your upload keystore. NEVER commit the filled-in file or
+# the .jks keystore itself.
+#
+# 1. Generate the keystore (run once, keep it OUTSIDE the repo so it can never
+#    be committed; remember the passwords — losing the upload key means you can
+#    no longer update the same Play listing):
+#
+#    keytool -genkey -v -keystore "$HOME/qalam-upload-keystore.jks" \
+#      -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+#
+# 2. Fill the four values below and point storeFile at the .jks you generated.
+#    storeFile may be absolute (recommended) or relative to android/app/.
+
+storePassword=CHANGE_ME
+keyPassword=CHANGE_ME
+keyAlias=upload
+storeFile=C:/Users/yusse/qalam-upload-keystore.jks
