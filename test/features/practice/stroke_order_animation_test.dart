@@ -257,10 +257,13 @@ void main() {
       painter.paint(rec, const Size(400, 400));
 
       // The dot's scaled position: (0.5 * 400, 0.8 * 400) = (200, 320).
+      // NB: compare colors via toARGB32() — Color's `==` is unreliable across
+      // colorSpaces in current Flutter (two visually identical sRGB colors can
+      // compare unequal), so we match on the packed ARGB value.
       const Offset expectedDot = Offset(200, 320);
       final Iterable<_CircleCall> inkDots = rec.circles.where(
         (_CircleCall c) =>
-            c.color == QalamColors.inkStroke &&
+            c.color.toARGB32() == QalamColors.inkStroke.toARGB32() &&
             (c.center - expectedDot).distance < 1.0,
       );
       expect(
@@ -274,7 +277,7 @@ void main() {
       // stays reward-exclusive (start-dot + pen-tip only).
       final Iterable<_CircleCall> goldAtDot = rec.circles.where(
         (_CircleCall c) =>
-            c.color == QalamColors.reward &&
+            c.color.toARGB32() == QalamColors.reward.toARGB32() &&
             (c.center - expectedDot).distance < 1.0,
       );
       expect(

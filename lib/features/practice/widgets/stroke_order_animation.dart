@@ -1,10 +1,16 @@
 // StrokeOrderAnimation — Phase-3 "Watch me write" pen-tip animation (plan 03-03).
 //
-// Builds a dart:ui Path from ReferencePath.resolve(referenceStrokes) (S1-04 —
-// one source of truth) scaled to the canvas size, then drives an
-// AnimationController along that path using PathMetric:
+// Builds a dart:ui Path from the typed `referenceStrokes` (line/curve body
+// strokes only) scaled to the canvas size, then drives an AnimationController
+// along that path using PathMetric:
 //   - extractPath(0, length * t)  → progressively revealed ink
 //   - getTangentForOffset(length * t)?.position → animated pen-tip dot
+//
+// `type == "dot"` strokes (plan 06-10) are rendered separately as a calm filled
+// ink circle — they have no polyline length, so they are kept OUT of the
+// PathMetric length math and instead get a small fixed beat each, appearing
+// just after the body stroke they follow. The painter reads StrokeSpec.type
+// DIRECTLY (not ReferencePath.resolve, which deliberately discards `type`).
 //
 // Tokens: QalamMotion.durSlow (420ms) / QalamMotion.easeOutQuart for pacing;
 //         QalamColors.reward for the gold start-dot and moving pen-tip;
@@ -19,7 +25,6 @@ import 'dart:ui' show PathMetric;
 
 import 'package:flutter/material.dart';
 
-import '../../../core/scoring/reference_path.dart';
 import '../../../models/letter.dart';
 import '../../../theme/colors.dart';
 import '../../../theme/dimens.dart';
@@ -41,7 +46,9 @@ class StrokeOrderAnimation extends StatefulWidget {
     this.color,
   });
 
-  /// The letter's authored strokes — consumed via ReferencePath.resolve.
+  /// The letter's authored strokes — iterated directly so the painter can tell
+  /// a `type == "dot"` stroke (rendered as a filled ink circle) from a
+  /// line/curve body stroke (animated via PathMetric).
   final List<StrokeSpec> referenceStrokes;
 
   /// How long the pen-tip takes to traverse the whole path. Defaults to
@@ -141,30 +148,56 @@ class _AnimationPainter extends CustomPainter {
   static const double _startDotRadius = 10.0;
   static const double _startDotInnerRadius = 5.0;
 
+  /// Radius of a rendered `type == "dot"` ink circle — ~the ink stroke width so
+  /// it reads as a deliberate, calm dot (baa's dot, taa's two dots, etc.).
+  static const double _inkDotRadius = QalamInk.strokeWidth;
+
+  /// Fraction of the total animation budget allotted to each dot. A dot has no
+  /// polyline length, so instead of counting zero we give it a small fixed beat
+  /// — it calmly appears just after the body stroke it follows. No bounce.
+  static const double _dotBeat = 0.12;
+
   @override
   void paint(Canvas canvas, Size size) {
     if (size.isEmpty) return;
+    if (referenceStrokes.isEmpty) return;
 
-    // Resolve reference geometry — S1-04 one source of truth.
-    final List<List<List<double>>> resolved =
-        ReferencePath.resolve(referenceStrokes);
-    if (resolved.isEmpty) return;
+    // Iterate the TYPED strokes (not ReferencePath.resolve, which discards
+    // `type`) so we can tell a single-point dot from a 1-point line. Dots are
+    // rendered as filled ink circles and kept OUT of the polyline length math;
+    // a zero-length moveTo-only subpath would never be drawn by PathMetric.
+    final List<StrokeSpec> ordered = <StrokeSpec>[...referenceStrokes]
+      ..sort((StrokeSpec a, StrokeSpec b) => a.order.compareTo(b.order));
 
-    // Build a single dart:ui Path from all strokes, scaled to canvas.
-    final Path fullPath = _buildScaledPath(resolved, size);
+    final List<StrokeSpec> bodyStrokes = ordered
+        .where((StrokeSpec s) => s.type != 'dot' && s.points.isNotEmpty)
+        .toList(growable: false);
+    final List<StrokeSpec> dotStrokes = ordered
+        .where((StrokeSpec s) => s.type == 'dot' && s.points.isNotEmpty)
+        .toList(growable: false);
 
-    // Compute PathMetrics once.
+    // Build the body path (lines/curves only) scaled to canvas.
+    final Path fullPath = _buildScaledPath(bodyStrokes, size);
     final List<PathMetric> metrics = fullPath.computeMetrics().toList();
-    if (metrics.isEmpty) return;
 
-    // For simplicity, animate across the total combined length of all metrics.
-    final double totalLength =
+    final double bodyLength =
         metrics.fold(0.0, (double sum, PathMetric m) => sum + m.length);
-    if (totalLength <= 0) return;
 
-    final double targetLength = totalLength * progress;
+    // Split the [0,1] progress budget: body strokes share the polyline length;
+    // each dot gets a small fixed beat at the END (it follows its body stroke).
+    // Total "virtual length" = bodyLength + one beat-worth per dot.
+    final double beatLength =
+        bodyLength > 0 ? bodyLength * _dotBeat : 1.0; // fallback for dot-only
+    final double totalVirtual = bodyLength + beatLength * dotStrokes.length;
+    if (totalVirtual <= 0) {
+      // Nothing to draw (e.g. empty body and no dots) — still paint start-dot.
+      _paintStartFromStrokes(canvas, bodyStrokes, dotStrokes, size);
+      return;
+    }
 
-    // Paint ink: revealed portion of the path up to targetLength.
+    final double targetVirtual = totalVirtual * progress;
+
+    // Paint ink: revealed portion of the BODY path up to its share of progress.
     final Paint inkPaint = Paint()
       ..color = inkColor
       ..style = PaintingStyle.stroke
@@ -173,11 +206,12 @@ class _AnimationPainter extends CustomPainter {
       ..strokeJoin = StrokeJoin.round
       ..isAntiAlias = true;
 
+    final double bodyTarget = targetVirtual.clamp(0.0, bodyLength);
     double drawn = 0.0;
     Offset? penTipPos;
 
     for (final PathMetric metric in metrics) {
-      final double remaining = targetLength - drawn;
+      final double remaining = bodyTarget - drawn;
       if (remaining <= 0) break;
 
       final double segEnd = remaining.clamp(0.0, metric.length);
@@ -186,11 +220,9 @@ class _AnimationPainter extends CustomPainter {
       }
 
       if (remaining < metric.length) {
-        // The pen tip is within this segment.
         final tangent = metric.getTangentForOffset(segEnd);
         if (tangent != null) penTipPos = tangent.position;
       } else {
-        // Pen tip is past this segment — tentatively place it at its end.
         final tangent = metric.getTangentForOffset(metric.length);
         if (tangent != null) penTipPos = tangent.position;
       }
@@ -198,11 +230,40 @@ class _AnimationPainter extends CustomPainter {
       drawn += metric.length;
     }
 
-    // Gold start-dot (reward color — REWARDS ONLY; S1-04 / UI-SPEC Color).
-    _paintStartDot(canvas, resolved.first.first, size);
+    // Paint dots: each dot's beat begins once the body is fully revealed and
+    // its turn (in `order`) arrives. A dot calmly appears — filled ink circle,
+    // NOT gold, no scale/bounce (anti-gamification).
+    final Paint inkDotPaint = Paint()
+      ..color = inkColor
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
 
-    // Animated gold pen-tip dot.
-    if (penTipPos != null) {
+    final double beatsRevealed =
+        ((targetVirtual - bodyLength) / beatLength).clamp(
+      0.0,
+      dotStrokes.length.toDouble(),
+    );
+    for (int i = 0; i < dotStrokes.length; i++) {
+      // Dot i is revealed once we have passed its beat boundary.
+      if (beatsRevealed >= i + 1 - 1e-9) {
+        canvas.drawCircle(
+          _scale(dotStrokes[i].points.first, size),
+          _inkDotRadius,
+          inkDotPaint,
+        );
+      }
+    }
+
+    // Gold start-dot (reward color — REWARDS ONLY; S1-04 / UI-SPEC Color).
+    final List<double>? startPoint = bodyStrokes.isNotEmpty
+        ? bodyStrokes.first.points.first
+        : (dotStrokes.isNotEmpty ? dotStrokes.first.points.first : null);
+    if (startPoint != null) {
+      _paintStartDot(canvas, startPoint, size);
+    }
+
+    // Animated gold pen-tip dot (only while a body stroke is being revealed).
+    if (penTipPos != null && bodyTarget < bodyLength) {
       canvas.drawCircle(
         penTipPos,
         _penTipRadius,
@@ -213,15 +274,30 @@ class _AnimationPainter extends CustomPainter {
     }
   }
 
-  // Build a dart:ui Path from normalized 0..1 coords scaled to [size].
-  Path _buildScaledPath(List<List<List<double>>> resolved, Size size) {
+  // Paint just the gold start-dot for a degenerate (no length) letter.
+  void _paintStartFromStrokes(
+    Canvas canvas,
+    List<StrokeSpec> bodyStrokes,
+    List<StrokeSpec> dotStrokes,
+    Size size,
+  ) {
+    final List<double>? startPoint = bodyStrokes.isNotEmpty
+        ? bodyStrokes.first.points.first
+        : (dotStrokes.isNotEmpty ? dotStrokes.first.points.first : null);
+    if (startPoint != null) _paintStartDot(canvas, startPoint, size);
+  }
+
+  // Build a dart:ui Path from typed body strokes (dots excluded), scaled to
+  // [size]. Dot strokes are NEVER added here — a single-point dot would become
+  // a zero-length moveTo-only subpath that PathMetric never draws (root cause).
+  Path _buildScaledPath(List<StrokeSpec> bodyStrokes, Size size) {
     final Path path = Path();
-    for (final List<List<double>> stroke in resolved) {
-      if (stroke.isEmpty) continue;
-      final Offset start = _scale(stroke.first, size);
+    for (final StrokeSpec stroke in bodyStrokes) {
+      if (stroke.points.isEmpty) continue;
+      final Offset start = _scale(stroke.points.first, size);
       path.moveTo(start.dx, start.dy);
-      for (int i = 1; i < stroke.length; i++) {
-        final Offset pt = _scale(stroke[i], size);
+      for (int i = 1; i < stroke.points.length; i++) {
+        final Offset pt = _scale(stroke.points[i], size);
         path.lineTo(pt.dx, pt.dy);
       }
     }
