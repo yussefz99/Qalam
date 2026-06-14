@@ -2,14 +2,17 @@
 // belt-and-suspenders landscape lock — D-10; the manifest pins the platform
 // half), then run the Riverpod-rooted app. The real root widget lives in app.dart.
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app.dart';
 import 'data/app_database.dart';
+import 'firebase_options.dart';
 import 'providers/parent_providers.dart';
 import 'providers/profile_providers.dart';
+import 'services/auth_service.dart';
 
 /// The runtime half of the landscape lock (D-10), extracted so it is awaitable
 /// and testable. Pins the app to landscape (both rotations); never portrait.
@@ -23,6 +26,17 @@ Future<void> lockOrientation() {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await lockOrientation();
+
+  // Bring up Firebase, then sign in anonymously BEFORE the first curriculum read
+  // (Phase 06.1, D-09b). An anonymous identity must exist so Firestore rules can
+  // gate curriculum reads on `request.auth != null`. Zero PII; children never log
+  // in (no login UI — D-09b). ensureSignedIn() is idempotent, so a returning user
+  // keeps their existing anonymous identity. linkWithCredential (D-09c) upgrades
+  // this identity to a permanent account in v2 without losing it.
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await AuthService().ensureSignedIn();
 
   // One-time boot read of the onboarding gate flag (Pattern 3): construct the
   // production DB once, read hasProfile() synchronously-before-first-frame, then
