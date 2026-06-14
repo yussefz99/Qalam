@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:qalam/core/scoring/stroke_validation.dart';
+import 'package:qalam/data/firestore_curriculum_codec.dart';
 import 'package:qalam/models/letter.dart';
 import 'package:qalam/models/lesson.dart';
 
@@ -20,13 +22,33 @@ class CurriculumRepository {
   final String? _lettersJsonOverride;
   final String? _lessonsJsonOverride;
 
-  CurriculumRepository()
+  // Live curriculum source-of-truth (D-01). Held lazily: the default and
+  // .withFirestore paths resolve it on first read; .fromStrings never touches
+  // it (the JSON-override path wins), so bundle/JSON tests stay network-free AND
+  // Firebase-free (no FirebaseFirestore.instance is eagerly constructed). The
+  // getter resolves FirebaseFirestore.instance only when actually needed.
+  FirebaseFirestore? _firestoreOverride;
+  FirebaseFirestore get _firestore =>
+      _firestoreOverride ??= FirebaseFirestore.instance;
+
+  CurriculumRepository({FirebaseFirestore? firestore})
       : _lettersJsonOverride = null,
-        _lessonsJsonOverride = null;
+        _lessonsJsonOverride = null,
+        _firestoreOverride = firestore;
+
+  /// Test/seam constructor: inject a Firestore instance (e.g. a
+  /// `FakeFirebaseFirestore`) and run the live Firestore read path against it.
+  /// The JSON-override fields stay null so `_ensureLoaded()` takes the
+  /// Firestore-or-bundle branch, not the `.fromStrings` test path.
+  CurriculumRepository.withFirestore(FirebaseFirestore firestore)
+      : _lettersJsonOverride = null,
+        _lessonsJsonOverride = null,
+        _firestoreOverride = firestore;
 
   CurriculumRepository.fromStrings(String lettersJson, String lessonsJson)
       : _lettersJsonOverride = lettersJson,
-        _lessonsJsonOverride = lessonsJson;
+        _lessonsJsonOverride = lessonsJson,
+        _firestoreOverride = null;
 
   Future<void> _ensureLoaded() async {
     if (_letters != null) return; // already cached

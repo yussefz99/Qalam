@@ -74,5 +74,7 @@ docs/presentation/~$*
 # excluded. Python seed/export tooling references it via GOOGLE_APPLICATION_CREDENTIALS.
 tools/firebase/*serviceAccount*.json
 tools/firebase/*.key.json
+tools/firebase/*adminsdk*.json
 tools/curriculum/*serviceAccount*.json
 tools/curriculum/*.key.json
+tools/curriculum/*adminsdk*.json
