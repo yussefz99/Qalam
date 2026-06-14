@@ -28,6 +28,12 @@ import 'tolerances.dart';
 /// its path traces a long perimeter (see [kLoopLengthRatio]), the polyline is
 /// treated as a closed glyph outline rather than an open teaching centerline.
 ///
+/// SCOPE — this guard runs ONLY at LOAD TIME over AUTHORED reference strokes
+/// (the D-04 guard in curriculum_repository.dart, via validateReferenceStrokes
+/// → validateStroke). It does NOT touch the child's live trace during scoring;
+/// the live scorer only references this file in a doc-comment, never calls the
+/// guard. So this threshold's margin affects curriculum-data validation only.
+///
 /// CURL vs OUTLINE — do NOT re-loosen this without re-reading the distinction:
 ///   - A TRUE closed glyph outline returns to ≈0.0 from its start (it literally
 ///     ends where it began). alif's original Phase-2 outline bug ended 0.2234
@@ -39,14 +45,23 @@ import 'tolerances.dart';
 /// At 0.30 this guard FALSE-POSITIVED on 9 legitimate curl letters (D-04 /
 /// Fix A, 06-FIXES.md): jeem (0.289), haa_c (0.270), khaa (0.272), saad
 /// (0.193), daad (0.189), taa_h (0.121), ayn (0.268), ghayn (0.258), faa
-/// (0.265). Lowered to 0.10 so all 9 are admitted — the TIGHTEST curl, taa_h,
-/// ends 0.121 from its start, so 0.10 clears it with margin — while a genuine
-/// ≈0.0 closed outline is still rejected.
+/// (0.265).
 ///
-/// Documented alternative if 0.10 ever proves too blunt (NOT implemented now,
+/// SPLIT-THE-GAP — set to 0.06 (owner sign-off, 06-09). The threshold sits in
+/// the gap between a true ≈0.0 closed outline and the TIGHTEST real curl, taa_h
+/// at 0.121. Centering at ~0.06 keeps roughly EQUAL margin on both sides: it
+/// clears a ≈0.0 outline by 0.06 and clears taa_h by 0.061, rather than hugging
+/// the valid cases (0.10 would clear taa_h by only 0.021). This matters because
+/// the guard validates AUTHORED data and all 28 letters are about to be
+/// re-authored — taa_h's 0.121 is a property of the current rough draft and
+/// could drift tighter when redrawn; 0.06 absorbs that drift, 0.10 would not.
+/// All 9 curl letters above (≥0.121) remain admitted; a genuine ≈0.0 closed
+/// outline is still rejected.
+///
+/// Documented alternative if 0.06 ever proves too blunt (NOT implemented now,
 /// not needed per 06-FIXES.md): a smarter discriminator using enclosed area, or
 /// detecting two near-parallel passes that signal an outline tracing the edge.
-const double kClosedLoopEpsilon = 0.10;
+const double kClosedLoopEpsilon = 0.06;
 
 /// Path-length / bbox-diagonal ratio threshold. A correct open centerline has a
 /// total polyline length close to its bbox diagonal (ratio ≈ 1.0–1.5). An

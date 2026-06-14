@@ -310,11 +310,11 @@ void main() {
       );
     });
 
-    // Fix A (06-09): at the lowered kClosedLoopEpsilon = 0.10, the 9 legitimate
-    // curl letters — whose pen genuinely loops back near the start over a
-    // winding path (0.12–0.29 from start), NOT a ≈0.0 closed outline — must now
-    // load through the validator without throwing. This proves the D-04 guard
-    // no longer false-positives on them.
+    // Fix A (06-09): at the lowered kClosedLoopEpsilon = 0.06 (owner sign-off,
+    // split-the-gap margin), the 9 legitimate curl letters — whose pen genuinely
+    // loops back near the start over a winding path (0.12–0.29 from start), NOT a
+    // ≈0.0 closed outline — must now load through the validator without throwing.
+    // This proves the D-04 guard no longer false-positives on them.
     test('the 9 curl letters all load (Fix A — D-04 no longer false-positives)',
         () async {
       final shipped =
@@ -345,11 +345,15 @@ void main() {
     // The automated half of Fix A's confirm-before-shipping check: each of the
     // 9 curl letters must be a genuine OPEN centerline (pen-tip path down the
     // middle, looping back NEAR the start) — NOT a closed edge-trace around the
-    // letter's outline that the 0.10 threshold would merely mask. A real
-    // centerline ends ≥ 0.10 from its start; a return-to-start edge-trace ends
-    // ≈ 0.0. If any letter's first→last distance comes back < 0.10, the test
-    // fails LOUDLY: that letter is an edge-trace needing owner / owner's-mother
-    // re-authoring (OUT OF SCOPE here — surface it, do not patch the data).
+    // letter's outline that the threshold would merely mask. A real centerline
+    // sits well clear of a ≈0.0 return-to-start outline; every current curl ends
+    // ≥ 0.121 from its start. We assert each first→last distance ≥ 0.12 — far
+    // above the admission threshold (kClosedLoopEpsilon = 0.06, owner sign-off),
+    // proving these are genuine centerlines and not ≈0.0 edge-traces being
+    // admitted at the margin. If any letter's first→last distance comes back
+    // < 0.12 it fails LOUDLY: that letter is a suspected edge-trace needing
+    // owner / owner's-mother re-authoring (OUT OF SCOPE here — surface it, do
+    // not patch the data).
     //
     // Expected lower bound per letter from 06-FIXES.md (taa_h tightest, 0.121).
     const expectedFirstToLast = <String, double>{
@@ -378,7 +382,7 @@ void main() {
       final expectedMin = entry.value;
 
       test('$id first reference stroke is an open centerline '
-          '(first→last ≥ 0.10, not an edge-trace)', () {
+          '(first→last ≥ 0.12, not an edge-trace)', () {
         final letter = byId[id];
         expect(letter, isNotNull, reason: 'curl letter "$id" did not load');
 
@@ -391,10 +395,12 @@ void main() {
           math.pow(first[0] - last[0], 2) + math.pow(first[1] - last[1], 2),
         );
 
-        // ≥ 0.10: admitted by the lowered D-04 guard AND not a ≈0.0 outline.
-        expect(firstToLast, greaterThanOrEqualTo(0.10),
+        // ≥ 0.12: comfortably clear of the admission threshold
+        // (kClosedLoopEpsilon = 0.06) AND of a ≈0.0 outline — proves a genuine
+        // open centerline, not an edge-trace admitted at the margin.
+        expect(firstToLast, greaterThanOrEqualTo(0.12),
             reason: 'curl letter "$id" first→last distance '
-                '${firstToLast.toStringAsFixed(3)} < 0.10 — this looks like an '
+                '${firstToLast.toStringAsFixed(3)} < 0.12 — this looks like an '
                 'edge-trace (return-to-start outline), NOT an open centerline. '
                 'It must be RE-AUTHORED by the owner / owner\'s mother, not '
                 'masked by the threshold (OUT OF SCOPE for 06-09).');
