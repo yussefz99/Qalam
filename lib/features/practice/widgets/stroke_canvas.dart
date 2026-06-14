@@ -2,10 +2,13 @@
 //
 // Captures stylus (and, in debug, finger) strokes via a Listener widget —
 // NOT a GestureDetector (Pitfall 2 from research). Renders:
-//   1. A dotted guide path drawn from ReferencePath.resolve(referenceStrokes)
+//   1. A dotted guide path drawn from the typed referenceStrokes' BODY strokes
 //      using a CustomPainter + PathMetrics — NOT Text('ا') (Pitfall 5 / S1-04).
-//   2. A gold start-dot at the first reference point.
-//   3. Live smoothed ink over the guide, reusing the proven quadratic-midpoint
+//   2. A calm filled ink circle for each `type == "dot"` stroke (plan 06-10) so
+//      the child sees where the dot goes (dots have no length, so they are kept
+//      out of the dotted-path metric loop).
+//   3. A gold start-dot at the first reference point.
+//   4. Live smoothed ink over the guide, reusing the proven quadratic-midpoint
 //      painter from practice_screen.dart verbatim.
 //
 // Input filter (_accept): stylus always accepted; touch accepted only when
@@ -27,7 +30,6 @@ import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
 
 import '../../../config/debug_flags.dart';
-import '../../../core/scoring/reference_path.dart';
 import '../../../models/letter.dart';
 import '../../../theme/colors.dart';
 import '../../../theme/dimens.dart';
@@ -55,7 +57,9 @@ class StrokeCanvas extends StatefulWidget {
   });
 
   /// The letter's authored strokes (source: curriculum letters.json).
-  /// Resolved via ReferencePath.resolve at paint time — S1-04 one-source-of-truth.
+  /// The painter iterates these directly: body (line/curve) strokes draw the
+  /// dotted guide; `type == "dot"` strokes draw a calm ink circle (plan 06-10).
+  /// Still S1-04 one-source-of-truth — same authored data the scorer consumes.
   final List<StrokeSpec> referenceStrokes;
 
   /// Called on each pointer-up with the single completed stroke the child just
@@ -228,27 +232,60 @@ class _CanvasPainter extends CustomPainter {
   static const double _startDotRadius = 10.0;
   static const double _startDotInnerRadius = 5.0;
 
+  /// Radius of a rendered `type == "dot"` guide circle — ~the ink stroke width
+  /// so the child sees a deliberate, calm ink dot where the tap goes (plan
+  /// 06-10). Ink-colored, NOT gold (gold stays reward-exclusive).
+  static const double _inkDotRadius = QalamInk.strokeWidth;
+
   @override
   void paint(Canvas canvas, Size size) {
     if (size.isEmpty) return;
 
-    // 1. Resolve the reference geometry (S1-04 — one source of truth).
-    final List<List<List<double>>> resolved =
-        ReferencePath.resolve(referenceStrokes);
+    // 1. Split the TYPED reference strokes into body (line/curve) vs dot.
+    //    We read StrokeSpec.type DIRECTLY — ReferencePath.resolve deliberately
+    //    discards `type`, and a single-point dot would otherwise become a
+    //    zero-length subpath the dotted-path PathMetric loop never draws.
+    final List<StrokeSpec> ordered = <StrokeSpec>[...referenceStrokes]
+      ..sort((StrokeSpec a, StrokeSpec b) => a.order.compareTo(b.order));
+    final List<StrokeSpec> bodyStrokes = ordered
+        .where((StrokeSpec s) => s.type != 'dot' && s.points.isNotEmpty)
+        .toList(growable: false);
+    final List<StrokeSpec> dotStrokes = ordered
+        .where((StrokeSpec s) => s.type == 'dot' && s.points.isNotEmpty)
+        .toList(growable: false);
 
-    if (resolved.isNotEmpty) {
-      // 2. Build a single dart:ui Path scaled to this canvas size, joining
-      //    all strokes in draw order.
-      final Path guidePath = _buildScaledPath(resolved, size);
+    if (bodyStrokes.isNotEmpty) {
+      // 2. Build a single dart:ui Path (body strokes only) scaled to this
+      //    canvas size, joining all body strokes in draw order.
+      final Path guidePath = _buildScaledPath(bodyStrokes, size);
 
       // 3. Paint the dotted guide under the ink.
       _paintDottedPath(canvas, guidePath);
-
-      // 4. Gold start-dot at the very first reference point.
-      _paintStartDot(canvas, resolved.first.first, size);
     }
 
-    // 5. Paint completed and active ink strokes on top of the guide.
+    // 4. Paint each dot as a calm filled ink circle so the child sees where
+    //    the dot goes while tracing (e.g. baa below, taa's two dots above).
+    if (dotStrokes.isNotEmpty) {
+      final Paint inkDotPaint = Paint()
+        ..color = QalamColors.inkStroke
+        ..style = PaintingStyle.fill
+        ..isAntiAlias = true;
+      for (final StrokeSpec dot in dotStrokes) {
+        canvas.drawCircle(_scale(dot.points.first, size), _inkDotRadius,
+            inkDotPaint);
+      }
+    }
+
+    // 5. Gold start-dot at the very first reference point (body first, else
+    //    the first dot for a dot-only letter).
+    final List<double>? startPoint = bodyStrokes.isNotEmpty
+        ? bodyStrokes.first.points.first
+        : (dotStrokes.isNotEmpty ? dotStrokes.first.points.first : null);
+    if (startPoint != null) {
+      _paintStartDot(canvas, startPoint, size);
+    }
+
+    // 6. Paint completed and active ink strokes on top of the guide.
     final Paint inkPen = Paint()
       ..color = QalamColors.inkStroke
       ..style = PaintingStyle.stroke
@@ -266,22 +303,18 @@ class _CanvasPainter extends CustomPainter {
     }
   }
 
-  // Build a Path from normalized 0..1 reference coords scaled to [size].
-  Path _buildScaledPath(List<List<List<double>>> resolved, Size size) {
+  // Build a Path from typed BODY strokes (dots excluded) scaled to [size].
+  // Dot strokes are NEVER added here — a single-point dot would become a
+  // zero-length subpath the dotted-path metric loop never draws (plan 06-10).
+  Path _buildScaledPath(List<StrokeSpec> bodyStrokes, Size size) {
     final Path path = Path();
-    bool firstStroke = true;
-    for (final List<List<double>> stroke in resolved) {
-      if (stroke.isEmpty) continue;
-      final Offset start = _scale(stroke.first, size);
-      if (firstStroke) {
-        path.moveTo(start.dx, start.dy);
-        firstStroke = false;
-      } else {
-        // Lift pen between separate strokes (e.g. baa body + dot).
-        path.moveTo(start.dx, start.dy);
-      }
-      for (int i = 1; i < stroke.length; i++) {
-        final Offset pt = _scale(stroke[i], size);
+    for (final StrokeSpec stroke in bodyStrokes) {
+      if (stroke.points.isEmpty) continue;
+      // Lift pen between separate strokes (each body stroke starts with moveTo).
+      final Offset start = _scale(stroke.points.first, size);
+      path.moveTo(start.dx, start.dy);
+      for (int i = 1; i < stroke.points.length; i++) {
+        final Offset pt = _scale(stroke.points[i], size);
         path.lineTo(pt.dx, pt.dy);
       }
     }
