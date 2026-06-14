@@ -536,12 +536,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     },
     {
@@ -649,12 +649,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     },
     {
@@ -770,12 +770,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     },
     {
@@ -855,12 +855,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     },
     {
@@ -948,12 +948,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     },
     {
@@ -1037,12 +1037,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     },
     {
@@ -1130,12 +1130,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     },
     {
@@ -1247,12 +1247,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     },
     {
@@ -1404,12 +1404,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     },
     {
@@ -1517,12 +1517,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     },
     {
@@ -1638,12 +1638,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     },
     {
@@ -1783,12 +1783,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     },
     {
@@ -1892,12 +1892,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     },
     {
@@ -2009,12 +2009,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     },
     {
@@ -2142,12 +2142,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     },
     {
@@ -2271,12 +2271,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     },
     {
@@ -2380,12 +2380,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     },
     {
@@ -2513,12 +2513,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     },
     {
@@ -2590,12 +2590,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     },
     {
@@ -2687,12 +2687,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     },
     {
@@ -2776,12 +2776,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     },
     {
@@ -2853,12 +2853,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     },
     {
@@ -2938,12 +2938,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     },
     {
@@ -3043,12 +3043,12 @@
       ],
       "mistakesStatus": "authored",
       "signedOff": false,
+      "tolerances": {
+        "preset": "normal"
+      },
       "audio": {
         "letter": null,
         "examples": []
-      },
-      "tolerances": {
-        "preset": "normal"
       }
     }
   ]
