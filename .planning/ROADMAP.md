@@ -299,7 +299,7 @@ Plans:
   2. Locked lessons are visibly unavailable until their prerequisite is passed.
   3. Passing a lesson (meeting its clean-reps-to-advance rule) immediately unlocks the next lesson, which then appears as today's lesson.
 
-**Plans:** 8/8 plans complete
+**Plans:** 8/8 plans complete + 2 device-UAT gap-closure plans (06-09, 06-10)
 
 Plans:
 
@@ -311,6 +311,8 @@ Plans:
 - [x] 06-06-PLAN.md — Journey live data, canonical IDs, skipped taps, highlight arrival (D-07/D-15)
 - [x] 06-07-PLAN.md — Celebration: Next Lesson, last-lesson variant, tutor line (D-14/D-16/D-17)
 - [x] 06-08-PLAN.md — Slow-motion ghost comparison (D-21)
+- [ ] 06-09-PLAN.md — Fix A (gap): lower kClosedLoopEpsilon 0.30→0.10 so 9 curl letters load (owner sign-off gate)
+- [ ] 06-10-PLAN.md — Fix B (gap): render type==dot strokes as calm ink circles in Watch animation + Trace guide
 
 **UI hint**: yes
 
