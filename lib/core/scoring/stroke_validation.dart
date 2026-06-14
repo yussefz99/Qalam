@@ -23,13 +23,30 @@ import 'tolerances.dart';
 
 // --- Tuned thresholds (documented; this is the ONLY place they live) ----------
 
-/// Endpoint-coincidence epsilon. If a non-dot stroke's first and last points are
-/// closer than this in normalized space, the polyline returns to its start — the
-/// hallmark of an outline loop. alif's original outline had first→last = 0.2234,
-/// which sits comfortably below this. Chosen generously (0.30) because a closed
-/// font outline always returns *near* its start, while a legitimate open
-/// centerline (alif top→bottom) ends ~1.0 away.
-const double kClosedLoopEpsilon = 0.30;
+/// Endpoint-coincidence epsilon for the D-04 NOT-CLOSED guard. If a non-dot
+/// stroke's first and last points are closer than this in normalized space AND
+/// its path traces a long perimeter (see [kLoopLengthRatio]), the polyline is
+/// treated as a closed glyph outline rather than an open teaching centerline.
+///
+/// CURL vs OUTLINE — do NOT re-loosen this without re-reading the distinction:
+///   - A TRUE closed glyph outline returns to ≈0.0 from its start (it literally
+///     ends where it began). alif's original Phase-2 outline bug ended 0.2234
+///     from its start — caught when this epsilon was 0.30.
+///   - A LEGITIMATE curl letter is an OPEN centerline whose pen genuinely loops
+///     back NEAR (but not onto) the start over a winding path, ending
+///     0.12–0.29 away. These are correct strokes, not outlines.
+///
+/// At 0.30 this guard FALSE-POSITIVED on 9 legitimate curl letters (D-04 /
+/// Fix A, 06-FIXES.md): jeem (0.289), haa_c (0.270), khaa (0.272), saad
+/// (0.193), daad (0.189), taa_h (0.121), ayn (0.268), ghayn (0.258), faa
+/// (0.265). Lowered to 0.10 so all 9 are admitted — the TIGHTEST curl, taa_h,
+/// ends 0.121 from its start, so 0.10 clears it with margin — while a genuine
+/// ≈0.0 closed outline is still rejected.
+///
+/// Documented alternative if 0.10 ever proves too blunt (NOT implemented now,
+/// not needed per 06-FIXES.md): a smarter discriminator using enclosed area, or
+/// detecting two near-parallel passes that signal an outline tracing the edge.
+const double kClosedLoopEpsilon = 0.10;
 
 /// Path-length / bbox-diagonal ratio threshold. A correct open centerline has a
 /// total polyline length close to its bbox diagonal (ratio ≈ 1.0–1.5). An
