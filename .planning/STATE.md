@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: "Completed 06.1-04 (Firestore curriculum repository). CurriculumRepository reads Firestore-first with bundle fallback + validator + .withFirestore seam, API unchanged; 7 fake_cloud_firestore tests GREEN, offline-first preserved. Next: 06.1-05 (Firestore rules + device verify)."
-last_updated: "2026-06-14T19:30:00.000Z"
+status: 06.1-04 executed on main; 06.1-03 and 06.1-05 remain
+stopped_at: "Completed 06.1-04 (Firestore curriculum repository). Firestore-first read + bundle fallback + validator + .withFirestore seam GREEN; 7 fake_cloud_firestore tests pass, offline-first preserved, API unchanged. Next: 06.1-05 (Firestore rules + device verify); 06.1-03 (Python seed/export) also pending."
+last_updated: "2026-06-14T19:45:00.510Z"
 last_activity: 2026-06-14
 progress:
   total_phases: 14
-  completed_phases: 9
+  completed_phases: 10
   total_plans: 52
-  completed_plans: 49
-  percent: 65
+  completed_plans: 51
+  percent: 71
 ---
 
 # Project State
@@ -83,6 +83,7 @@ Progress: [█████░░░░░] 54% (7 of 13 tracked phases complete)
 | Phase 06.1 P01 | ~22min | 3 tasks | 11 files |
 | Phase 06.1 P02 | ~9min | 2 tasks | 3 files |
 | Phase 06.1 P04 | ~20min | 2 tasks | 5 files |
+| Phase 06.1 P05 | ~10min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -144,6 +145,7 @@ Recent decisions affecting current work:
 - [Phase 06.1]: [06.1-01]: Firebase auth foundation GREEN. FlutterFire wired to qalam-app-bd7d0 (firebase_core 4.10.0 / cloud_firestore 6.5.0 / firebase_auth 6.5.2 — added via `flutter pub add`, pub-resolved lockstep generation, NOT hand-pinned; D-12). `flutter build apk --debug` exits 0 → google-services Gradle plugin links + minSdk satisfies the Firebase floor of 23 (no bump needed, A2 confirmed). AuthService (lib/services/auth_service.dart) wraps an injectable FirebaseAuth (defaults to .instance): ensureSignedIn() mints an anonymous identity ONLY when currentUser==null (idempotent, zero PII — D-09b); linkToPermanent() delegates to currentUser.linkWithCredential, the v2 account-linking seam (defined/unused in v1 — D-09c). main.dart now runs Firebase.initializeApp(DefaultFirebaseOptions.currentPlatform) + AuthService().ensureSignedIn() BEFORE db.hasProfile() (Pattern 3). firebase_auth_mocks ^0.15.2 chosen for the anon boot test (A5 resolved — clean against firebase_auth 6.5.2); mocktail only verifies the link delegation. google-services.json + firebase_options.dart committed (not secrets, research Q2); admin-SDK service-account key path gitignored (T-06.1-02). No child login UI / PII (grep guard empty, T-06.1-01). RUNTIME PREREQ: enable Anonymous/Email-Password/Google providers in the console (Spark tier, no billing — D-16/D-17) before on-device sign-in works.
 - [Phase 06.1]: [06.1-04]: Firestore curriculum repository GREEN. CurriculumRepository now reads letters/lessons/ramp Firestore-first via a one-shot .get() (NOT .snapshots() — Pitfall 2), maps docs through the Plan-02 codec, and falls back to the bundled assets/curriculum/*.json on empty/throwing Firestore (cold-first-run floor, D-01/D-02). validateReferenceStrokes runs over WHICHEVER source won; a closed-loop stroke throws and is never cached, never reaches the scorer (D-05, T-06.1-10). New .withFirestore(FirebaseFirestore) test-injection seam (fake_cloud_firestore 4.1.1, resolved clean vs cloud_firestore 6.5.0); .fromStrings preserved unchanged with FirebaseFirestore.instance held LAZILY so bundle/JSON tests stay network-free AND Firebase-free. Ramp source order: meta/toleranceRamp doc -> bundle defaultToleranceRamp -> decided default, defensive never-throws (D-07/Pitfall 5). Read once-at-boot into the kept-alive cache; practice path never blocks (D-03/PLAT-01). All six getter signatures unchanged. 7 fake_cloud_firestore tests + 28 bundle tests GREEN; full suite 394 passed / 4 known pre-existing out-of-scope failures (alif-reference + mastery golden). Rule-2 fix: gitignore extended to *adminsdk*.json (admin-SDK key was unmatched by existing patterns). 06.1-03 (Python seed/export) + 06.1-05 (rules + device verify) remain.
 - [Phase ?]: [Phase 06.1]: [06.1-02]: Firestore curriculum codec GREEN. Shared point transform solves the nested-array landmine (D-06) once, mirrored in Dart (firestore_curriculum_codec.dart) and Python (point_codec.py) so seed/export/read agree. Dart codec is PURE (no cloud_firestore import, unit-testable without Firebase) and DEFERS to Letter.fromJson/Lesson.fromJson (re-shapes only points). Round-trip parity proven (D-08): alif deep-equals bundle; skeleton survives empty referenceStrokes plus signedOff false (Pitfall 6); defaultToleranceRamp survives the meta/toleranceRamp doc (collection meta, doc toleranceRamp, field ramp; D-07 resolves Research Q4, Pitfall 5). num to double / float on decode so a Firestore int round-trips. Python self-check asserts identity over all 28 letters. 6 Dart tests plus Python self-check GREEN; full suite 387 passed / 4 known pre-existing failures (no regressions).
+- [Phase ?]: [06.1-05]: Firestore security rules DEPLOYED to qalam-app-bd7d0. letters/lessons/meta read-requires-auth (request.auth != null, anonymous OK from Plan 01); ALL client writes denied (allow write: if false — content written only via Plan 03 admin SDK). Deny-by-default catch-all (match /{document=**}) is the child-safety backstop: NO child-data collection match exists (D-11, zero child PII surface in Firestore). Commented per-collection v2 custom-claim seam (request.auth.token.role == admin) keeps role-tightening a deliberate uncomment (D-10); App-Check-compatible by construction (D-10a). firebase.json firestore.rules target merged into flutterfire config (flutter block preserved); .firebaserc default = qalam-app-bd7d0. firebase deploy --only firestore:rules compiled + released clean. Rules Playground 5-check verification documented in test/firestore/rules.test.md as PENDING server-side human check (non-blocking; deploy is the autonomous deliverable).
 
 ### Pending Todos
 
@@ -177,6 +179,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-14T19:30:00.000Z
+Last session: 2026-06-14T19:43:44.744Z
 Stopped at: Completed 06.1-04 (Firestore curriculum repository). Firestore-first read + bundle fallback + validator + .withFirestore seam GREEN; 7 fake_cloud_firestore tests pass, offline-first preserved, API unchanged. Next: 06.1-05 (Firestore rules + device verify); 06.1-03 (Python seed/export) also pending.
 Resume files: .planning/phases/06.1-firebase-curriculum-backend/06.1-05-PLAN.md (next), .planning/phases/06.1-firebase-curriculum-backend/06.1-03-PLAN.md (pending), .planning/phases/06.1-firebase-curriculum-backend/06.1-04-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
