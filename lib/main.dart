@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app.dart';
 import 'data/app_database.dart';
+import 'providers/parent_providers.dart';
 import 'providers/profile_providers.dart';
 
 /// The runtime half of the landscape lock (D-10), extracted so it is awaitable
@@ -43,6 +44,10 @@ Future<void> main() async {
         // Seed the gate from the boot-time read; markProfileCreated() flips it
         // after onboarding (refreshListenable re-runs the router redirect).
         onboardingGateProvider.overrideWith((ref) => OnboardingGate(hasProfile)),
+        // Seed the parent gate LOCKED every launch (D-07 per-entry, no session
+        // unlock and no boot DB read). The /parent screen flips it after a
+        // correct PIN and relocks it on "Done"/dispose.
+        parentGateProvider.overrideWith((ref) => ParentGate()),
       ],
       child: const QalamApp(),
     ),

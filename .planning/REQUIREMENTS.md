@@ -47,7 +47,7 @@ CUR-/PLAT- IDs.
 
 ### Parent View
 
-- [ ] **S1-11**: A parent can see the child's completed lessons and scores
+- [x] **S1-11**: A parent can see the child's completed lessons and scores
   - *Accept:* PIN-gated parent area; read-only local progress (lessons completed, scores); no cloud, no account
 
 ### Curriculum Content & Platform (derived from research)
@@ -115,7 +115,7 @@ Which phase covers which requirement. Each v1 requirement maps to exactly one ph
 | S1-06 | Phase 7 — Full Curriculum & Pronunciation Audio | Pending |
 | S1-07 | Phase 8 — Sentence-Building & Grammar Exercises | Pending |
 | S1-08 | Phase 8 — Sentence-Building & Grammar Exercises | Pending |
-| S1-11 | Phase 9 — Parent Dashboard | Pending |
+| S1-11 | Phase 9 — Parent Dashboard | Complete |
 | PLAT-01 | Phase 10 — Offline Hardening & Release | Pending |
 
 **Notes:**

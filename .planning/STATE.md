@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 06-09-PLAN.md (kClosedLoopEpsilon -> 0.06, owner sign-off)
-last_updated: "2026-06-14T15:43:46.405Z"
+stopped_at: Merged phase-09 into main — Phase 9 complete (3/3), verification human_needed (device UAT). 06.1 (Firebase backend) next.
+last_updated: "2026-06-14T16:00:00.000Z"
 last_activity: 2026-06-14
 progress:
   total_phases: 14
-  completed_phases: 8
-  total_plans: 44
-  completed_plans: 43
-  percent: 57
+  completed_phases: 9
+  total_plans: 47
+  completed_plans: 46
+  percent: 64
 ---
 
 # Project State
@@ -21,14 +21,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
-**Current focus:** Phase 06 — lesson-progression-home
+**Current focus:** Phase 06.1 — firebase-curriculum-backend
 
 ## Current Position
 
-Phase: 06 (lesson-progression-home) — EXECUTING
-Plan: 5 of 8
+Phase: 06.1 (firebase-curriculum-backend) — STARTING (5 plans, 3 waves)
+Plan: Not started
+Phase: 09 (parent-dashboard) — 3/3 complete, verification human_needed (device UAT)
 Phase: 05 (profiles-onboarding) — 4/4 plans complete, verification human_needed (device UAT)
-Status: Ready to execute
+Status: phase-09 merged into main; ready to execute 06.1
 Last activity: 2026-06-14
 
 Progress: [█████░░░░░] 54% (7 of 13 tracked phases complete)
@@ -39,7 +40,7 @@ Progress: [█████░░░░░] 54% (7 of 13 tracked phases complete)
 
 **Velocity:**
 
-- Total plans completed: 33 of 34 (only 04-06 deferred/human-gated)
+- Total plans completed: 36 of 34 (only 04-06 deferred/human-gated)
 - Phases complete: 7 of 13 tracked (1, 2, 02.1, 02.1.1, 3, 03.1, 5); Phase 4 in progress (5/6)
 - Average duration: — min
 - Total execution time: 0.0 hours
@@ -52,6 +53,7 @@ Progress: [█████░░░░░] 54% (7 of 13 tracked phases complete)
 |-------|-------|-------|----------|
 | 02.1 | 4 | - | - |
 | 02.1.1 | 5 | - | - |
+| 09 | 3 | - | - |
 
 **Recent Trend:**
 
@@ -75,6 +77,9 @@ Progress: [█████░░░░░] 54% (7 of 13 tracked phases complete)
 | Phase 06 P08 | ~12min | 2 tasks | 8 files |
 | Phase 06 P10 | ~7min | 4 tasks | 5 files |
 | Phase 06 P09 | ~6min | 1 task | 2 files |
+| Phase 09 P01 | ~3min | 2 tasks | 5 files |
+| Phase 09 P02 | ~7min | 3 tasks | 7 files |
+| Phase 09 P03 | 30 min | 4 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -129,6 +134,10 @@ Recent decisions affecting current work:
 - [Phase 06]: [Phase 06-10]: Dotted-letter dots render as calm ink circles in BOTH Watch animation and Trace guide; painters read StrokeSpec.type directly (ReferencePath.resolve stays point-geometry identity, T-06-10-01).
 - [Phase 06]: [Phase 06-10]: Single-point dots excluded from PathMetric length math; each dot gets a small fixed beat and appears just after its body stroke — ink-colored, not gold, no bounce (anti-gamification).
 - [Phase 06]: [Phase 06-09]: kClosedLoopEpsilon set to 0.06 (owner-directed, not plan's 0.10) — split-the-gap margin between a ~=0.0 closed outline and taa_h's 0.121, absorbing re-author drift across all 28 letters; D-04 guard confirmed LOAD-TIME-only over authored reference data, never the child's live trace.
+- [Phase 09]: [09-01]: Wave-0 RED contract authored — every S1-11 PIN/cooldown/route-gate/read-only-dashboard behavior has an executable failing assertion before implementation (Nyquist, mirrors 05-01). The persisted-cooldown test re-opens a SECOND AppDatabase over the same shared in-memory executor (D-09 shape) to prove a force-quit cannot reset the throttle (T-09-02). RED-by-missing-symbol expected for: PinService, parentGateProvider/ParentGate, ParentDashboardScreen, parentProgressProvider/ParentProgress/ParentLetterRow, allMastered()/allInProgress().
+- [Phase 09]: [09-01]: Drift in-progress row class is `LetterRep` (NOT the research-draft `LetterRepData`); mastered rows are `LetterMasteryData` — verified against app_database.g.dart. 17 Phase-9 ARB keys added (parentSummary uses {mastered}/{total} int placeholders — denominator never hardcoded to 28, Pitfall 5); generated app_localizations.dart is gitignored, only app_en.arb tracked. crypto package + its legitimacy checkpoint live in 09-02 (no install in this plan).
+- [Phase 09]: [09-02]: PIN security core GREEN. PinService = salted PBKDF2-HMAC-SHA256 (100k iters, Random.secure 16-byte salt) hash/verify with a CONSTANT-TIME XOR-accumulate compare (no early-out, T-09-06) + a Drift-PERSISTED brute-force cooldown (5 fails -> 30s lockUntil in AppSettings; SURVIVES a force-quit, T-09-02 — the phase's key security point). crypto ^3.0.7 added (dart.dev first-party; human-approved legitimacy gate); PBKDF2 hand-rolled over crypto's HMAC (crypto has no KDF). NO new Drift table, NO schemaVersion bump (still 4) — all PIN material in AppSettings keys. flutter_secure_storage deliberately NOT used (one-way hash needs no recovery, T-09-08). pinServiceProvider uses @Riverpod codegen (allowed — returns only bool/void/Duration). Read-only AppDatabase.allMastered()/allInProgress() accessors (no write/edit/delete path, T-09-09) + immutable ParentProgress/ParentLetterRow view model (status enum, named factories). 09-03 wires parent_providers + ParentDashboardScreen + /parent gate.
+- [Phase 09]: [09-03]: Parent dashboard screen at lib/screens/ (test import is the binding contract) — parent_dashboard_test imports package:qalam/screens/parent_dashboard_screen.dart. /parent widget is the access boundary (Pattern 3, synchronous redirect, merged refreshListenable); ink-drop nav glyph (A-02). Device-UAT fix: boundary rebuilds on live unlock() via ListenableBuilder (ChangeNotifier-as-provider-value doesn't rebuild on notifyListeners under ref.watch).
 
 ### Pending Todos
 
@@ -162,6 +171,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-14T15:43:12.777Z
-Stopped at: Completed 06-09-PLAN.md (kClosedLoopEpsilon -> 0.06, owner sign-off)
-Resume files: .planning/phases/05-profiles-onboarding/05-04-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
+Last session: 2026-06-14T16:00:00.000Z
+Stopped at: Merged phase-09 into main (Phase 9 complete, 3/3). Starting Phase 06.1 (Firebase curriculum backend).
+Resume files: .planning/phases/06.1-firebase-curriculum-backend/06.1-01-PLAN.md (next), .planning/phases/09-parent-dashboard/09-03-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)

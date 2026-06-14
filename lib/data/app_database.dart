@@ -241,6 +241,25 @@ class AppDatabase extends _$AppDatabase {
       (select(letterReps)..where((t) => t.letterId.equals(letterId)))
           .watchSingleOrNull()
           .map((row) => row?.cleanReps ?? 0);
+
+  // ---------------------------------------------------------------------------
+  // Read-only aggregate accessors for the Parent Dashboard — Phase 9 (S1-11,
+  // Plan 09-02, RESEARCH Pattern 4). Read-only is a HARD constraint: there is
+  // deliberately NO edit/delete/reset accessor exposed to the parent surface
+  // (threat T-09-09). SECURITY: read-only; never logs values.
+  // ---------------------------------------------------------------------------
+
+  /// All mastered letters, ordered oldest → newest by masteredAt. Each row
+  /// carries the cleanReps + masteredAt the dashboard renders. READ-ONLY.
+  Future<List<LetterMasteryData>> allMastered() => (select(letterMastery)
+        ..orderBy([(t) => OrderingTerm(expression: t.masteredAt)]))
+      .get();
+
+  /// All in-progress letters (cleanReps > 0). A 0-rep row is "not started" and
+  /// is excluded. READ-ONLY.
+  Future<List<LetterRep>> allInProgress() =>
+      (select(letterReps)..where((t) => t.cleanReps.isBiggerThanValue(0)))
+          .get();
 }
 
 LazyDatabase _openConnection() {

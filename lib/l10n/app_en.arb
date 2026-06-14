@@ -706,5 +706,122 @@
   "ghostCompareQalams": "Qalam's",
   "@ghostCompareQalams": {
     "description": "Label for the reference-stroke panel in the ghost comparison (D-21), Label scale. Qalam's stroke renders in deep-ink (inkStroke)."
+  },
+
+  "parentTitle": "Parent Area",
+  "@parentTitle": {
+    "description": "Phase 9 Parent Area screen title (Heading/28px). Shown on the PIN-create, PIN-enter, and dashboard screens. Draft — owner owns final wording (Open Q2)."
+  },
+
+  "parentPinCreatePrompt": "Create a PIN",
+  "@parentPinCreatePrompt": {
+    "description": "Phase 9 PIN-create prompt (Heading/28px), shown on first access to the Parent Area (D-01/D-02)."
+  },
+
+  "parentPinCreateHelp": "Choose a 4-digit PIN to protect this area.",
+  "@parentPinCreateHelp": {
+    "description": "Phase 9 PIN-create step-1 helper (Body/18px). Explains why a PIN is being set."
+  },
+
+  "parentPinConfirmPrompt": "Re-enter your PIN to confirm.",
+  "@parentPinConfirmPrompt": {
+    "description": "Phase 9 PIN-create step-2 prompt (Body/18px). Asks the parent to confirm the chosen PIN."
+  },
+
+  "parentPinMismatch": "Those didn't match. Try once more.",
+  "@parentPinMismatch": {
+    "description": "Phase 9 PIN-create mismatch message (Body/18px, warnSoft). Calm, no blame — returns to step 1."
+  },
+
+  "parentPinNoRecovery": "There's no way to recover a forgotten PIN. The only reset is clearing the app's data — which also erases your child's progress.",
+  "@parentPinNoRecovery": {
+    "description": "Phase 9 honest no-recovery line (Body/18px, fgMuted) shown beneath the create field. Honest, plain, non-alarming (D-02). Draft — owner owns final wording (Open Q2)."
+  },
+
+  "parentPinConfirm": "Confirm",
+  "@parentPinConfirm": {
+    "description": "Phase 9 PIN-create step-2 primary CTA — enabled only at 4 digits."
+  },
+
+  "parentPinEnterPrompt": "Enter your PIN",
+  "@parentPinEnterPrompt": {
+    "description": "Phase 9 PIN-enter prompt (Heading/28px), shown on every subsequent entry to the Parent Area (D-07)."
+  },
+
+  "parentPinWrong": "Incorrect PIN. Try again.",
+  "@parentPinWrong": {
+    "description": "Phase 9 wrong-PIN message (Body/18px, warnSoft). Generic — never reveals which digit (V7). The 4-dot indicator clears."
+  },
+
+  "parentPinCooldown": "Too many tries. You can try again in {seconds}s.",
+  "@parentPinCooldown": {
+    "description": "Phase 9 brute-force cooldown message (Body/18px, fgMuted) after ~5 wrong attempts (D-08). Live countdown, calm — keypad disabled, no red, no lock-out language. Western numerals only.",
+    "placeholders": {
+      "seconds": {
+        "type": "int",
+        "example": "30"
+      }
+    }
+  },
+
+  "parentSummary": "{mastered} of {total} letters mastered",
+  "@parentSummary": {
+    "description": "Phase 9 dashboard summary line (Heading/28px). {total} = curriculumRepository.getLetters().length (Open Q1 — full 28). Plain INFORMATION, NOT a score treatment, never gold. The denominator is NEVER hardcoded (Pitfall 5). Western numerals only.",
+    "placeholders": {
+      "mastered": {
+        "type": "int",
+        "example": "3"
+      },
+      "total": {
+        "type": "int",
+        "example": "28"
+      }
+    }
+  },
+
+  "parentRowMastered": "Mastered · {reps} clean reps · {date}",
+  "@parentRowMastered": {
+    "description": "Phase 9 dashboard mastered-letter row. 'Mastered' is the Label (leaf); the rest is Body/fgMuted. {date} is a device-locale short date (Western numerals).",
+    "placeholders": {
+      "reps": {
+        "type": "int",
+        "example": "3"
+      },
+      "date": {
+        "type": "String",
+        "example": "Jun 1"
+      }
+    }
+  },
+
+  "parentRowInProgress": "In progress · {reps} clean reps",
+  "@parentRowInProgress": {
+    "description": "Phase 9 dashboard in-progress-letter row (Label fgMuted + Body fgMuted). No date. Western numerals only.",
+    "placeholders": {
+      "reps": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+
+  "parentEmptyTitle": "No lessons completed yet.",
+  "@parentEmptyTitle": {
+    "description": "Phase 9 dashboard empty-state heading (Heading/28px). Calm — never an error or an empty void (D-04)."
+  },
+
+  "parentEmptyBody": "When your child finishes a letter, it will appear here.",
+  "@parentEmptyBody": {
+    "description": "Phase 9 dashboard empty-state body (Body/18px, fgMuted)."
+  },
+
+  "commonContinue": "Continue",
+  "@commonContinue": {
+    "description": "Shared primary CTA label — 'Continue'. Used by the Phase 9 PIN-create step-1 (enabled only at 4 digits) and reusable elsewhere."
+  },
+
+  "commonDone": "Done",
+  "@commonDone": {
+    "description": "Shared exit/confirm CTA label — 'Done' (Button/24px). Phase 9 dashboard exit returns to child Home and RELOCKS the Parent Area (D-07)."
   }
 }
