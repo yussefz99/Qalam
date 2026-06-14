@@ -308,5 +308,35 @@ void main() {
         ),
       );
     });
+
+    // Fix A (06-09): at the lowered kClosedLoopEpsilon = 0.10, the 9 legitimate
+    // curl letters — whose pen genuinely loops back near the start over a
+    // winding path (0.12–0.29 from start), NOT a ≈0.0 closed outline — must now
+    // load through the validator without throwing. This proves the D-04 guard
+    // no longer false-positives on them.
+    test('the 9 curl letters all load (Fix A — D-04 no longer false-positives)',
+        () async {
+      final shipped =
+          File('assets/curriculum/letters.json').readAsStringSync();
+      final repo = CurriculumRepository.fromStrings(shipped, _lesson01Json);
+
+      final loadedIds = (await repo.getLetters()).map((l) => l.id).toSet();
+
+      const curlLetters = [
+        'jeem',
+        'haa_c',
+        'khaa',
+        'saad',
+        'daad',
+        'taa_h',
+        'ayn',
+        'ghayn',
+        'faa',
+      ];
+      for (final id in curlLetters) {
+        expect(loadedIds, contains(id),
+            reason: 'curl letter "$id" was rejected at load by the D-04 guard');
+      }
+    });
   });
 }
