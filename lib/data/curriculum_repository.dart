@@ -50,27 +50,47 @@ class CurriculumRepository {
         _lessonsJsonOverride = lessonsJson,
         _firestoreOverride = null;
 
+  /// The decided file-level tolerance ramp default — the last resort when
+  /// neither Firestore's meta doc nor the bundle's `defaultToleranceRamp`
+  /// supplies one (Pitfall 5; never throws).
+  static const List<String> _decidedRampDefault = ['loose', 'normal', 'strict'];
+
   Future<void> _ensureLoaded() async {
     if (_letters != null) return; // already cached
 
-    final lettersRaw = _lettersJsonOverride ??
-        await rootBundle.loadString('assets/curriculum/letters.json');
-    final lessonsRaw = _lessonsJsonOverride ??
-        await rootBundle.loadString('assets/curriculum/lessons.json');
+    // The read happens once here, at the first getter call, into the kept-alive
+    // cache; the practice/scoring path is cache-served thereafter and never
+    // blocks on a network round-trip (D-03 / PLAT-01).
+    final List<Letter> parsed;
+    final List<Lesson> lessons;
+    final List<String> ramp;
 
-    final lettersDecoded =
-        (json.decode(lettersRaw) as Map<String, dynamic>)['letters']
-            as List<dynamic>;
-    final parsed = (lettersDecoded
-            .map((e) => Letter.fromJson(e as Map<String, dynamic>))
-            .toList())
-      ..sort((a, b) => a.introOrder.compareTo(b.introOrder));
+    final lettersOverride = _lettersJsonOverride;
+    if (lettersOverride != null) {
+      // Test / JSON-override path — unchanged, network-free and Firebase-free.
+      // .fromStrings always sets both override fields together, so the lessons
+      // override is non-null on this branch.
+      parsed = _parseLettersJson(lettersOverride);
+      final lessonsMap =
+          json.decode(_lessonsJsonOverride!) as Map<String, dynamic>;
+      lessons = _parseLessons(lessonsMap['lessons'] as List<dynamic>);
+      ramp = _rampFromLessonsMap(lessonsMap);
+    } else {
+      // Live path — Firestore-first, bundle fallback (D-01/D-02/D-04).
+      parsed = await _loadLettersFromFirestoreOrBundle();
+      lessons = await _loadLessonsFromFirestoreOrBundle();
+      ramp = await _loadRampFromFirestoreOrBundle();
+    }
 
-    // Load-time D-04 guard (T-02.1-03): run the closed-loop/direction/dot/range/
-    // order validator over every letter's reference strokes. An outline (or any
+    parsed.sort((a, b) => a.introOrder.compareTo(b.introOrder));
+
+    // Load-time D-04/D-05 guard (T-02.1-03 / T-06.1-10): run the closed-loop/
+    // direction/dot/range/order validator over every letter's reference strokes
+    // — over WHICHEVER source won (Firestore OR bundle). An outline (or any
     // invalid stroke) must NEVER load silently — throw with the offending letter
-    // id + violation messages. Validate into a local first so a throw does not
-    // poison the cache (`_letters` stays null and a retry re-runs the guard).
+    // id + violation messages. Validate into locals first so a throw does not
+    // poison the cache (`_letters` stays null and a retry re-runs the guard;
+    // the invalid stroke never reaches the scorer).
     for (final letter in parsed) {
       final violations = validateReferenceStrokes(letter.referenceStrokes);
       if (violations.isNotEmpty) {
@@ -83,19 +103,90 @@ class CurriculumRepository {
 
     _letters = parsed;
     _lettersView = List.unmodifiable(_letters!);
+    _lessons = lessons;
+    _defaultToleranceRamp = ramp;
+  }
 
-    final lessonsMap = json.decode(lessonsRaw) as Map<String, dynamic>;
-    final lessonsDecoded = lessonsMap['lessons'] as List<dynamic>;
-    _lessons = lessonsDecoded
+  // --- JSON parse helpers (shared by the override path + the bundle fallback) -
+
+  List<Letter> _parseLettersJson(String raw) {
+    final decoded =
+        (json.decode(raw) as Map<String, dynamic>)['letters'] as List<dynamic>;
+    return decoded
+        .map((e) => Letter.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  List<Lesson> _parseLessons(List<dynamic> decoded) {
+    return decoded
         .map((e) => Lesson.fromJson(e as Map<String, dynamic>))
         .toList();
+  }
 
-    // D-19: file-level tolerance ramp — data the owner's mother can edit.
-    // Defensive parse: absent or malformed → the decided default, never throw.
+  /// D-19: file-level tolerance ramp from a parsed lessons map. Defensive parse:
+  /// absent or malformed → the decided default, never throw.
+  List<String> _rampFromLessonsMap(Map<String, dynamic> lessonsMap) {
     final rawRamp = lessonsMap['defaultToleranceRamp'];
-    _defaultToleranceRamp = rawRamp is List
+    return rawRamp is List
         ? List.unmodifiable(rawRamp.whereType<String>())
-        : const ['loose', 'normal', 'strict'];
+        : _decidedRampDefault;
+  }
+
+  // --- Firestore-first read with bundle fallback (D-01/D-02) ------------------
+
+  /// One-shot `.get()` of the `letters` collection (a single read, NOT a live
+  /// stream subscription — Pitfall 2, Riverpod-3 stream-pause). Non-empty → map
+  /// via the codec; empty or error (cold/no-network first run) → fall back to
+  /// the bundled JSON (D-02).
+  Future<List<Letter>> _loadLettersFromFirestoreOrBundle() async {
+    try {
+      final snap = await _firestore.collection('letters').get();
+      if (snap.docs.isNotEmpty) {
+        return snap.docs.map((d) => letterFromFirestore(d.data())).toList();
+      }
+    } catch (_) {
+      // network/permission/cold-first-run → fall through to the bundle.
+    }
+    final raw = await rootBundle.loadString('assets/curriculum/letters.json');
+    return _parseLettersJson(raw);
+  }
+
+  Future<List<Lesson>> _loadLessonsFromFirestoreOrBundle() async {
+    try {
+      final snap = await _firestore.collection('lessons').get();
+      if (snap.docs.isNotEmpty) {
+        return snap.docs.map((d) => lessonFromFirestore(d.data())).toList();
+      }
+    } catch (_) {
+      // fall through to the bundle.
+    }
+    final raw = await rootBundle.loadString('assets/curriculum/lessons.json');
+    final lessonsMap = json.decode(raw) as Map<String, dynamic>;
+    return _parseLessons(lessonsMap['lessons'] as List<dynamic>);
+  }
+
+  /// Ramp source order (D-07, Pitfall 5 — defensive, never throws):
+  /// 1. Firestore `meta/toleranceRamp` doc (field `ramp`) when present & non-empty;
+  /// 2. else the bundle's `defaultToleranceRamp`;
+  /// 3. else the decided `['loose','normal','strict']` default.
+  Future<List<String>> _loadRampFromFirestoreOrBundle() async {
+    try {
+      final doc =
+          await _firestore.collection('meta').doc('toleranceRamp').get();
+      final data = doc.data();
+      if (doc.exists && data != null) {
+        final ramp = metaToleranceRampFromFirestore(data);
+        if (ramp.isNotEmpty) return List.unmodifiable(ramp);
+      }
+    } catch (_) {
+      // fall through to the bundle ramp.
+    }
+    try {
+      final raw = await rootBundle.loadString('assets/curriculum/lessons.json');
+      return _rampFromLessonsMap(json.decode(raw) as Map<String, dynamic>);
+    } catch (_) {
+      return _decidedRampDefault;
+    }
   }
 
   Future<List<Letter>> getLetters() async {
