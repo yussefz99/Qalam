@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "718707208086",
+    "project_id": "qalam-app-bd7d0",
+    "storage_bucket": "qalam-app-bd7d0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:718707208086:android:74b2b2807c9fded0dbb7b7",
+        "android_client_info": {
+          "package_name": "com.technion.qalam"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmroX2mBg-rO9tbMlvphdOXYLhOjyugK0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
