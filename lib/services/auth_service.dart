@@ -17,6 +17,7 @@
 // no network or live device.
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 
 /// Wraps [FirebaseAuth] to expose the app's two identity operations: an idempotent
 /// anonymous boot sign-in (v1) and the v2 account-linking upgrade seam.
@@ -36,8 +37,20 @@ class AuthService {
   /// carries zero PII (D-09b) and is the one that reads curriculum and (in v2) will
   /// call the tutor.
   Future<void> ensureSignedIn() async {
-    if (_auth.currentUser == null) {
+    if (_auth.currentUser != null) return;
+    try {
       await _auth.signInAnonymously();
+    } catch (e) {
+      // Boot resilience: a failed anonymous sign-in — no network on a fresh
+      // install, or the Anonymous provider not yet enabled in the console — must
+      // NOT crash the app at launch (main() awaits this before runApp). Swallow
+      // it and continue: with no identity the Firestore read is denied, so
+      // CurriculumRepository degrades to the bundled offline assets (the
+      // offline-first guarantee). Logged so the cause stays visible.
+      debugPrint(
+        'AuthService.ensureSignedIn: anonymous sign-in failed, '
+        'continuing offline (curriculum falls back to bundle): $e',
+      );
     }
   }
 

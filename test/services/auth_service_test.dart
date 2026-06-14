@@ -64,6 +64,22 @@ void main() {
       expect(auth.currentUser, isNotNull);
       expect(auth.currentUser!.uid, equals(uidBefore));
     });
+
+    test('does NOT throw when anonymous sign-in fails (boot resilience)',
+        () async {
+      // A failed boot sign-in — no network on a fresh install, or the Anonymous
+      // provider not enabled — must degrade to offline, never crash main()
+      // before runApp(). ensureSignedIn must complete without rethrowing.
+      final auth = _MockFirebaseAuth();
+      when(() => auth.currentUser).thenReturn(null);
+      when(() => auth.signInAnonymously())
+          .thenThrow(FirebaseAuthException(code: 'network-request-failed'));
+
+      final service = AuthService(auth);
+
+      await expectLater(service.ensureSignedIn(), completes);
+      verify(() => auth.signInAnonymously()).called(1);
+    });
   });
 
   group('AuthService.linkToPermanent', () {
