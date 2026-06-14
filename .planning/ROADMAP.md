@@ -378,7 +378,7 @@ Plans:
 **Wave 2** *(blocked on Wave 1)*
 
 - [ ] 06.1-03-PLAN.md — Python firebase-admin seed + export + round-trip test + Firestore DB/region/SA-key checkpoints (SC#3, SC#4-export; D-07/13/14/15/16)
-- [ ] 06.1-04-PLAN.md — CurriculumRepository Firestore-read + bundle fallback + validator + .withFirestore seam (SC#2, SC#4; D-01/02/03/04/05/07)
+- [x] 06.1-04-PLAN.md — CurriculumRepository Firestore-read + bundle fallback + validator + .withFirestore seam (SC#2, SC#4; D-01/02/03/04/05/07)
 
 **Wave 3** *(blocked on Wave 2)*
 
@@ -479,7 +479,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 4. Scoring Quality & Calibration | 5/6 | In Progress (04-06 deferred, human-gated) | - |
 | 5. Profiles & Onboarding | 4/4 | Complete | - |
 | 6. Lesson Progression & Home | 10/10 | Complete   | 2026-06-14 |
-| 06.1 Firebase Curriculum Backend (INSERTED) | 2/5 | In Progress|  |
+| 06.1 Firebase Curriculum Backend (INSERTED) | 3/5 | In Progress|  |
 | 7. Full Curriculum & Pronunciation Audio | 0/TBD | Not started | - |
 | 8. Sentence-Building & Grammar Exercises | 0/TBD | Not started | - |
 | 9. Parent Dashboard | 3/3 | Complete    | 2026-06-13 |
