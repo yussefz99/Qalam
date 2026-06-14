@@ -19,9 +19,9 @@ CUR-/PLAT- IDs.
 
 ### Daily Lesson & Progression
 
-- [ ] **S1-01**: On opening the app, the child immediately sees today's lesson already prepared, with one clear way to start
+- [x] **S1-01**: On opening the app, the child immediately sees today's lesson already prepared, with one clear way to start
   - *Accept:* landing shows the next unlocked lesson for the current child; a single prominent Start; no navigation required
-- [ ] **S1-09**: The next lesson unlocks only after the child passes the current one
+- [x] **S1-09**: The next lesson unlocks only after the child passes the current one
   - *Accept:* "pass" = the curriculum's clean-reps-to-advance for that item; locked lessons are visibly unavailable; unlock is immediate on pass
 
 ### Handwriting Practice (the core loop)
@@ -110,8 +110,8 @@ Which phase covers which requirement. Each v1 requirement maps to exactly one ph
 | PLAT-03 | Phase 3 — Trace One Letter End-to-End | Complete |
 | S1-02 | Phase 5 — Profiles & Onboarding | Complete |
 | S1-03 | Phase 5 — Profiles & Onboarding | Complete |
-| S1-01 | Phase 6 — Lesson Progression & Home | Pending |
-| S1-09 | Phase 6 — Lesson Progression & Home | Pending |
+| S1-01 | Phase 6 — Lesson Progression & Home | Complete |
+| S1-09 | Phase 6 — Lesson Progression & Home | Complete |
 | S1-06 | Phase 7 — Full Curriculum & Pronunciation Audio | Pending |
 | S1-07 | Phase 8 — Sentence-Building & Grammar Exercises | Pending |
 | S1-08 | Phase 8 — Sentence-Building & Grammar Exercises | Pending |

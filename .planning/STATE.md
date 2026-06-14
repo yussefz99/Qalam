@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 06-07-PLAN.md
-last_updated: "2026-06-14T15:11:23.695Z"
-last_activity: 2026-06-14 -- Phase 06 planning complete
+stopped_at: Completed 06-10-PLAN.md
+last_updated: "2026-06-14T15:26:42.296Z"
+last_activity: 2026-06-14
 progress:
-  total_phases: 13
+  total_phases: 14
   completed_phases: 7
   total_plans: 44
-  completed_plans: 41
-  percent: 54
+  completed_plans: 42
+  percent: 50
 ---
 
 # Project State
@@ -26,10 +26,10 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 06 (lesson-progression-home) — EXECUTING
-Plan: 3 of 8
+Plan: 4 of 8
 Phase: 05 (profiles-onboarding) — 4/4 plans complete, verification human_needed (device UAT)
 Status: Ready to execute
-Last activity: 2026-06-14 -- Phase 06 planning complete
+Last activity: 2026-06-14
 
 Progress: [█████░░░░░] 54% (7 of 13 tracked phases complete)
 <!-- reconciled 2026-06-11: 13 tracked phases (integer 1-10 + inserted 02.1/02.1.1/03.1). Complete: 1, 2, 02.1, 02.1.1, 3, 03.1, 5. Phase 4 in progress (5/6, 04-06 deferred). Evidence: every plan in those phases has a SUMMARY file; scorer + curriculum repo + models exist in lib/. -->
@@ -73,6 +73,7 @@ Progress: [█████░░░░░] 54% (7 of 13 tracked phases complete)
 | Phase 05 P04 | ~12min | 1 task | 3 files |
 | Phase 06 P07 | ~50min | 2 tasks | 6 files |
 | Phase 06 P08 | ~12min | 2 tasks | 8 files |
+| Phase 06 P10 | ~7min | 4 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -124,6 +125,8 @@ Recent decisions affecting current work:
 - [Phase ?]: [Phase 06-08]: Combined-bbox stroke normalization extracted to lib/core/strokes/stroke_normalization.dart (single home; authoring_export delegates, Pitfall 2 preserved).
 - [Phase ?]: [Phase 06-08]: StrokeOrderAnimation parameterized with optional duration/color (default-preserving: durWrite + inkStroke when omitted); ghost comparison reuses it at durWrite*2 + warnSoft.
 - [Phase ?]: [Phase 06-08]: D-21 ghost comparison shipped — child failing strokes held in _TraceWorkspace State only, cleared on retry/pass/continue/dispose (T-03-01); 'Watch the Difference' shown only when strokes held.
+- [Phase 06]: [Phase 06-10]: Dotted-letter dots render as calm ink circles in BOTH Watch animation and Trace guide; painters read StrokeSpec.type directly (ReferencePath.resolve stays point-geometry identity, T-06-10-01).
+- [Phase 06]: [Phase 06-10]: Single-point dots excluded from PathMetric length math; each dot gets a small fixed beat and appears just after its body stroke — ink-colored, not gold, no bounce (anti-gamification).
 
 ### Pending Todos
 
@@ -157,6 +160,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-13T17:47:52.583Z
-Stopped at: Completed 06-07-PLAN.md
+Last session: 2026-06-14T15:26:03.702Z
+Stopped at: Completed 06-10-PLAN.md
 Resume files: .planning/phases/05-profiles-onboarding/05-04-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)

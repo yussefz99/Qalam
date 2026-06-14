@@ -299,14 +299,14 @@ Plans:
   2. Locked lessons are visibly unavailable until their prerequisite is passed.
   3. Passing a lesson (meeting its clean-reps-to-advance rule) immediately unlocks the next lesson, which then appears as today's lesson.
 
-**Plans:** 8/8 plans complete + 2 device-UAT gap-closure plans (06-09, 06-10)
+**Plans:** 9/10 plans executed
 Plans:
 **Wave 1**
 
 - [x] 06-01-PLAN.md — 28-lesson catalog + pure-Dart progression engine (D-01/D-02/D-06)
 - [x] 06-02-PLAN.md — Schema v4: LetterReps persistence, watch streams, startingLessonId namespace (D-10)
 - [ ] 06-09-PLAN.md — Fix A (gap): lower kClosedLoopEpsilon 0.30→0.10 so 9 curl letters load (owner sign-off gate)
-- [ ] 06-10-PLAN.md — Fix B (gap): render type==dot strokes as calm ink circles in Watch animation + Trace guide
+- [x] 06-10-PLAN.md — Fix B (gap): render type==dot strokes as calm ink circles in Watch animation + Trace guide
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -327,6 +327,45 @@ Plans:
 - [x] 06-08-PLAN.md — Slow-motion ghost comparison (D-21)
 
 **UI hint**: yes
+
+### Phase 06.1: Firebase Curriculum Backend (INSERTED)
+
+**Goal:** Stand up **Firestore** in the existing `qalam-app-bd7d0` project as the cloud
+source-of-truth for curriculum content (letters + questions/exercises), wire the Flutter
+app to Firebase, migrate the signed-off **alif** seed + lesson skeleton into Firestore
+collections, and add a build/export step that snapshots Firestore back to the bundled
+`assets/curriculum/letters.json` **so the app still loads fully offline**. Firestore is the
+editing/storage backend; the running app keeps reading the bundled snapshot. This phase
+delivers the schema/collections/wiring + alif migration + export tooling — **not** full
+content (letters 2–28 and grammar/sentence questions are authored under the owner's-mother
+sign-off in Phases 7–8).
+
+**Mode:** mvp
+**Depends on:** Phase 2 (curriculum schema + bundled-loader seam), Phase 6
+**Requirements**: (infra for CUR-01; preserves PLAT-01 offline-first)
+
+**⚠ Owner override (2026-06-14):** This reverses the Decided "v1 local-only, no Firebase"
+item (PROJECT.md / STATE.md). The offline-first promise (PLAT-01, Phase 2 SC#1
+"loads from bundled data") is held by keeping the app on the bundled snapshot; Firestore
+is authoring/storage only, not a runtime read dependency.
+
+**⚠ Flag:** the existing project is configured for **Data Connect (Cloud SQL/Postgres)**
+in a sibling spike folder (`../qalam_ink_spike`) with billing OFF. This phase uses
+**Firestore** per the Decided stack (free Spark tier suffices for now).
+
+**Success Criteria** (what must be TRUE):
+
+  1. The Flutter app is wired to Firebase (`firebase_options.dart`, `google-services.json`, FlutterFire deps) and builds/runs on Android against `qalam-app-bd7d0`.
+  2. Firestore has typed `letters` and `questions` collections whose shape round-trips losslessly with the existing Dart curriculum models (no content lost vs `letters.json`).
+  3. The signed-off alif (referenceStrokes, commonMistakes, tolerances, sign-off flag) plus the lesson skeleton are migrated into Firestore.
+  4. An export step snapshots Firestore → `assets/curriculum/letters.json`; the app loads that bundle and every existing flow still works **fully offline** (no Firestore runtime read on the practice path).
+  5. Firestore security rules lock curriculum content to read-only for clients (writes via authoring/export tooling only); no child PII is introduced.
+
+**Plans:** 0 plans
+
+Plans:
+
+- [ ] TBD (run /gsd:plan-phase 06.1 to break down)
 
 ### Phase 7: Full Curriculum & Pronunciation Audio
 
@@ -408,7 +447,8 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 03.1 Journey Map Screen (INSERTED) | 3/3 | Complete | - |
 | 4. Scoring Quality & Calibration | 5/6 | In Progress (04-06 deferred, human-gated) | - |
 | 5. Profiles & Onboarding | 4/4 | Complete | - |
-| 6. Lesson Progression & Home | 8/8 | Complete   | 2026-06-13 |
+| 6. Lesson Progression & Home | 9/10 | In Progress|  |
+| 06.1 Firebase Curriculum Backend (INSERTED) | 0/TBD | Not planned | - |
 | 7. Full Curriculum & Pronunciation Audio | 0/TBD | Not started | - |
 | 8. Sentence-Building & Grammar Exercises | 0/TBD | Not started | - |
 | 9. Parent Dashboard | 0/TBD | Not started | - |
