@@ -361,11 +361,23 @@ in a sibling spike folder (`../qalam_ink_spike`) with billing OFF. This phase us
   4. An export step snapshots Firestore → `assets/curriculum/letters.json`; the app loads that bundle and every existing flow still works **fully offline** (no Firestore runtime read on the practice path).
   5. Firestore security rules lock curriculum content to read-only for clients (writes via authoring/export tooling only); no child PII is introduced.
 
-**Plans:** 0 plans
+**Plans:** 5 plans
 
 Plans:
 
-- [ ] TBD (run /gsd:plan-phase 06.1 to break down)
+**Wave 1**
+
+- [ ] 06.1-01-PLAN.md — FlutterFire wiring + Gradle/minSdk + anonymous-auth boot + linkWithCredential seam (SC#1; D-09/09a/b/c/12/16/17)
+- [ ] 06.1-02-PLAN.md — Shared point codec ({x,y}⇄[x,y]) + Firestore⇄Letter/Lesson mapper, Dart + Python, round-trip parity tests (SC#2; D-06/08/13/15)
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [ ] 06.1-03-PLAN.md — Python firebase-admin seed + export + round-trip test + Firestore DB/region/SA-key checkpoints (SC#3, SC#4-export; D-07/13/14/15/16)
+- [ ] 06.1-04-PLAN.md — CurriculumRepository Firestore-read + bundle fallback + validator + .withFirestore seam (SC#2, SC#4; D-01/02/03/04/05/07)
+
+**Wave 3** *(blocked on Wave 2)*
+
+- [ ] 06.1-05-PLAN.md — firestore.rules (read-requires-auth, client-writes-denied, v2 claim seam) + deploy + Rules-Playground verify (SC#5; D-10/10a/11)
 
 ### Phase 7: Full Curriculum & Pronunciation Audio
 
