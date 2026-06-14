@@ -142,6 +142,37 @@ void main() {
   });
 
   testWidgets(
+      'LIVE unlock(): the boundary swaps from the PIN flow to the dashboard '
+      'when the gate notifies (device-UAT regression)', (tester) async {
+    // Start LOCKED and pump — the PIN flow is shown. Then flip the SAME gate
+    // instance via unlock() (what the PIN screen does after a correct PIN) and
+    // pump WITHOUT re-navigating. The boundary must rebuild and show the
+    // dashboard. This drives the live notifyListeners() path that the
+    // "start already unlocked" test above never exercised — the gap that let a
+    // ChangeNotifier-as-provider-value miss its rebuild and leave the screen
+    // stuck on the confirm step on a real device.
+    final gate = ParentGate(unlocked: false);
+    final router = _parentRouter(gate);
+    await tester.pumpWidget(_harness(router: router, db: db, gate: gate));
+    await tester.pumpAndSettle();
+
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+
+    // Locked: the PIN flow is up, the dashboard empty-state is not.
+    expect(find.text(l10n.parentEmptyTitle), findsNothing,
+        reason: 'while locked the dashboard must not render');
+
+    // Flip the live gate exactly as a correct PIN would, no re-navigation.
+    gate.unlock();
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.parentEmptyTitle), findsOneWidget,
+        reason:
+            'a live unlock() must rebuild the boundary into the dashboard — '
+            'not leave the screen stuck on the PIN flow');
+  });
+
+  testWidgets(
       'Done relocks the gate (per-entry, D-07) and a second entry re-prompts '
       'the PIN', (tester) async {
     final gate = ParentGate(unlocked: true);

@@ -40,13 +40,30 @@ class ParentDashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // The access boundary: watch the gate flag and render the PIN flow until it
-    // flips unlocked. A child who reaches /parent sees only the PIN gate.
-    final unlocked = ref.watch(parentGateProvider.select((g) => g.unlocked));
-    if (!unlocked) {
-      return const ParentPinGate();
-    }
-    return const _ParentDashboardBody();
+    // The access boundary: render the PIN flow until the gate flips unlocked.
+    // A child who reaches /parent sees only the PIN gate.
+    //
+    // BUGFIX (device UAT): `ParentGate` is a `ChangeNotifier` exposed as a plain
+    // provider VALUE. `ref.watch(parentGateProvider.select((g) => g.unlocked))`
+    // reads the flag ONCE but never rebuilds when the notifier fires — a plain
+    // Riverpod `Provider` only re-emits when the provider itself rebuilds, not
+    // when the held object mutates via notifyListeners(). So after a correct PIN
+    // `unlock()` flipped the gate and notified, but this boundary widget (a
+    // single-route, switch-in-widget gate — no re-navigation) never rebuilt and
+    // the screen stayed stuck on the PIN flow. Listen to the notifier directly
+    // so unlock()/lock() rebuild the boundary. The keepAlive instance is stable,
+    // so `ref.watch` here just hands us the gate; ListenableBuilder does the
+    // reacting. (The router's `refreshListenable` is unaffected.)
+    final gate = ref.watch(parentGateProvider);
+    return ListenableBuilder(
+      listenable: gate,
+      builder: (BuildContext context, Widget? _) {
+        if (!gate.unlocked) {
+          return const ParentPinGate();
+        }
+        return const _ParentDashboardBody();
+      },
+    );
   }
 }
 
