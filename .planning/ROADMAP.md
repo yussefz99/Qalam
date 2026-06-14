@@ -331,23 +331,28 @@ Plans:
 ### Phase 06.1: Firebase Curriculum Backend (INSERTED)
 
 **Goal:** Stand up **Firestore** in the existing `qalam-app-bd7d0` project as the cloud
-source-of-truth for curriculum content (letters + questions/exercises), wire the Flutter
-app to Firebase, migrate the signed-off **alif** seed + lesson skeleton into Firestore
-collections, and add a build/export step that snapshots Firestore back to the bundled
-`assets/curriculum/letters.json` **so the app still loads fully offline**. Firestore is the
-editing/storage backend; the running app keeps reading the bundled snapshot. This phase
-delivers the schema/collections/wiring + alif migration + export tooling — **not** full
-content (letters 2–28 and grammar/sentence questions are authored under the owner's-mother
-sign-off in Phases 7–8).
+source-of-truth for curriculum content (`letters` + `lessons`), wire the Flutter app to
+Firebase with a **full, v2-ready Firebase Auth foundation** (anonymous at runtime), migrate
+the signed-off **alif** seed + 28-lesson skeleton into Firestore, and make the app **read
+curriculum live from Firestore** (one-shot `.get()` into the kept-alive cache) with **Firestore
+offline persistence + a bundled-seed cold-start fallback** so it still works fully offline.
+A Python `firebase-admin` export refreshes the bundled snapshot. This phase delivers the
+schema/collections/wiring + auth + alif migration + seed/export tooling — **not** full content
+(letters 2–28 and grammar/sentence questions are authored under the owner's-mother sign-off in
+Phases 7–8).
 
 **Mode:** mvp
 **Depends on:** Phase 2 (curriculum schema + bundled-loader seam), Phase 6
 **Requirements**: (infra for CUR-01; preserves PLAT-01 offline-first)
 
 **⚠ Owner override (2026-06-14):** This reverses the Decided "v1 local-only, no Firebase"
-item (PROJECT.md / STATE.md). The offline-first promise (PLAT-01, Phase 2 SC#1
-"loads from bundled data") is held by keeping the app on the bundled snapshot; Firestore
-is authoring/storage only, not a runtime read dependency.
+item (PROJECT.md / STATE.md). The owner chose a **live Firestore read** at runtime (CONTEXT
+D-01). The offline-first promise (PLAT-01) is held NOT by avoiding cloud but by **Firestore
+offline persistence (on by default) + a bundled-seed cold-start fallback** (CONTEXT D-02/D-03):
+the practice/trace path is cache-served and never blocks on a network round-trip. The owner
+also chose a **full, v2-ready auth foundation** (CONTEXT D-09..D-10a): real providers enabled,
+anonymous at runtime, anonymous→permanent linking architected, role-ready rules — but **no
+child login UI and no child PII** (Decided child-safety holds).
 
 **⚠ Flag:** the existing project is configured for **Data Connect (Cloud SQL/Postgres)**
 in a sibling spike folder (`../qalam_ink_spike`) with billing OFF. This phase uses
@@ -356,10 +361,10 @@ in a sibling spike folder (`../qalam_ink_spike`) with billing OFF. This phase us
 **Success Criteria** (what must be TRUE):
 
   1. The Flutter app is wired to Firebase (`firebase_options.dart`, `google-services.json`, FlutterFire deps) and builds/runs on Android against `qalam-app-bd7d0`.
-  2. Firestore has typed `letters` and `questions` collections whose shape round-trips losslessly with the existing Dart curriculum models (no content lost vs `letters.json`).
-  3. The signed-off alif (referenceStrokes, commonMistakes, tolerances, sign-off flag) plus the lesson skeleton are migrated into Firestore.
-  4. An export step snapshots Firestore → `assets/curriculum/letters.json`; the app loads that bundle and every existing flow still works **fully offline** (no Firestore runtime read on the practice path).
-  5. Firestore security rules lock curriculum content to read-only for clients (writes via authoring/export tooling only); no child PII is introduced.
+  2. Firestore has a `letters` collection + a `lessons` collection (doc-per-entry, nested) plus a `meta/toleranceRamp` config doc, whose shape round-trips losslessly with the existing Dart curriculum models — including the `{x,y}`⇄`[x,y]` point codec and the empty-stroke skeleton letters (no content lost vs `letters.json`/`lessons.json`).
+  3. The signed-off alif (referenceStrokes, commonMistakes, tolerances, sign-off flag) plus the 28-lesson skeleton are migrated into Firestore via the Python `firebase-admin` seed.
+  4. The app reads curriculum **live from Firestore** (one-shot `.get()` into the kept-alive cache); with Firestore offline persistence + a bundled-seed cold-start fallback, **every flow still works fully offline** (incl. airplane-mode cold install) and the practice/trace path never blocks on a network round-trip. A Python export refreshes the bundled snapshot.
+  5. Firestore security rules require authentication to read curriculum and deny all client writes (content written only via the admin service account / console); the app authenticates **anonymously** (no accounts, no child PII), and rules leave a seam to tighten by custom-claim roles in v2.
 
 **Plans:** 5 plans
 
