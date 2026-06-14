@@ -1,0 +1,56 @@
+rules_version = '2';
+
+// Qalam Firestore security rules.
+//
+// Phase 06.1 — curriculum backend. Decisions enforced here:
+//   D-10  Curriculum is readable by ANY signed-in identity (anonymous OK);
+//         ALL client writes are denied. Content is written only by the
+//         admin-SDK tooling (Plan 03), which bypasses these rules.
+//   D-10a App Check is deferred to Phase 10. These rules contain no construct
+//         that would conflict with enabling App Check later (no request.app
+//         dependence either way) — App Check can be layered on without a rewrite.
+//   D-11  NO child profile / progress / stroke data lives in Firestore this
+//         phase. There is deliberately NO child-data collection match below;
+//         the deny-by-default catch-all blocks any such path. Child data stays
+//         in local Drift only — zero child PII surface in Firestore.
+//
+// v2 custom-claim seam: when roles (parent/admin/tutor) arrive, tighten the
+// write rules by uncommenting and adapting the role guard shown inline below.
+// Until then every collection is read-requires-auth + write-denied.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Curriculum: letters — readable by any signed-in identity (incl. anonymous);
+    // no client writes (seeded/edited only via the admin-SDK tooling).
+    match /letters/{letterId} {
+      allow read: if request.auth != null;
+      // v2 custom-claim seam (currently denied for all clients):
+      //   allow write: if request.auth.token.role == 'admin';
+      allow write: if false;
+    }
+
+    // Curriculum: lessons — same policy as letters.
+    match /lessons/{lessonId} {
+      allow read: if request.auth != null;
+      // v2 custom-claim seam:
+      //   allow write: if request.auth.token.role == 'admin';
+      allow write: if false;
+    }
+
+    // Curriculum config/meta (e.g. meta/toleranceRamp) — same policy.
+    match /meta/{doc} {
+      allow read: if request.auth != null;
+      // v2 custom-claim seam:
+      //   allow write: if request.auth.token.role == 'admin';
+      allow write: if false;
+    }
+
+    // Deny-by-default catch-all. Any path not explicitly matched above —
+    // including any future/accidental child-data path (D-11) — is denied for
+    // both read and write to every client.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
