@@ -4,7 +4,7 @@ milestone: v1.0
 milestone_name: milestone
 status: 06.1-04 executed on main; 06.1-03 and 06.1-05 remain
 stopped_at: "Completed 06.1-04 (Firestore curriculum repository). Firestore-first read + bundle fallback + validator + .withFirestore seam GREEN; 7 fake_cloud_firestore tests pass, offline-first preserved, API unchanged. Next: 06.1-05 (Firestore rules + device verify); 06.1-03 (Python seed/export) also pending."
-last_updated: "2026-06-14T19:45:00.510Z"
+last_updated: "2026-06-14T19:47:04.716Z"
 last_activity: 2026-06-14
 progress:
   total_phases: 14
@@ -25,8 +25,8 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 
 ## Current Position
 
-Phase: 06.1 (firebase-curriculum-backend) — IN PROGRESS (3/5 plans complete: 01, 02, 04; 03 Python seed/export still pending)
-Plan: 06.1-04 complete (Firestore curriculum repository — Firestore-first read + bundle fallback + validator + .withFirestore seam); 06.1-03 (Python seed/export) + 06.1-05 (rules + device verify) remain
+Phase: 09
+Plan: Not started
 Phase: 09 (parent-dashboard) — 3/3 complete, verification human_needed (device UAT)
 Phase: 05 (profiles-onboarding) — 4/4 plans complete, verification human_needed (device UAT)
 Status: 06.1-04 executed on main; 06.1-03 and 06.1-05 remain
@@ -40,7 +40,7 @@ Progress: [█████░░░░░] 54% (7 of 13 tracked phases complete)
 
 **Velocity:**
 
-- Total plans completed: 36 of 34 (only 04-06 deferred/human-gated)
+- Total plans completed: 41 of 34 (only 04-06 deferred/human-gated)
 - Phases complete: 7 of 13 tracked (1, 2, 02.1, 02.1.1, 3, 03.1, 5); Phase 4 in progress (5/6)
 - Average duration: — min
 - Total execution time: 0.0 hours
@@ -54,6 +54,7 @@ Progress: [█████░░░░░] 54% (7 of 13 tracked phases complete)
 | 02.1 | 4 | - | - |
 | 02.1.1 | 5 | - | - |
 | 09 | 3 | - | - |
+| 06.1 | 5 | - | - |
 
 **Recent Trend:**
 

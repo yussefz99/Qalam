@@ -54,7 +54,7 @@ CUR-/PLAT- IDs.
 
 - [x] **CUR-01**: The full curriculum (28 letters + words + sentences + grammar) authored by the owner's mother is held in a faithful data schema that the code only reads
   - *Accept:* schema holds, per letter: contextual forms, ordered reference stroke paths (coordinates), stroke order, intro order, clean-reps-to-advance, per-letter pass tolerances, 3–4 common mistakes (each with a child-friendly fix message), and audio references; words/sentences/grammar content modeled; placeholder entries (if any) are explicitly marked; owner's-mother sign-off gate before lessons ship
-- [ ] **PLAT-01**: The app runs fully offline, local-only, with no account or login (satisfies NTH-05 by design)
+- [x] **PLAT-01**: The app runs fully offline, local-only, with no account or login (satisfies NTH-05 by design)
   - *Accept:* every v1 flow works airplane-mode; the ML Kit Arabic model is fetched once at onboarding then cached; verified on a fresh install with no network
 - [x] **PLAT-02**: Arabic renders correctly RTL with connected-script shaping
   - *Accept:* correct isolated/initial/medial/final forms; the dotted guide letter is drawn from reference paths (not a Text widget); chosen font glyph-audited across all curriculum letters and forms; numeral system chosen explicitly
@@ -116,7 +116,7 @@ Which phase covers which requirement. Each v1 requirement maps to exactly one ph
 | S1-07 | Phase 8 — Sentence-Building & Grammar Exercises | Pending |
 | S1-08 | Phase 8 — Sentence-Building & Grammar Exercises | Pending |
 | S1-11 | Phase 9 — Parent Dashboard | Complete |
-| PLAT-01 | Phase 10 — Offline Hardening & Release | Pending |
+| PLAT-01 | Phase 10 — Offline Hardening & Release | Complete |
 
 **Notes:**
 
