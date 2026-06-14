@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qalam/data/curriculum_repository.dart';
@@ -338,5 +339,74 @@ void main() {
             reason: 'curl letter "$id" was rejected at load by the D-04 guard');
       }
     });
+  });
+
+  group('curl-letter centerline sanity (Fix A confirm-before-shipping)', () {
+    // The automated half of Fix A's confirm-before-shipping check: each of the
+    // 9 curl letters must be a genuine OPEN centerline (pen-tip path down the
+    // middle, looping back NEAR the start) — NOT a closed edge-trace around the
+    // letter's outline that the 0.10 threshold would merely mask. A real
+    // centerline ends ≥ 0.10 from its start; a return-to-start edge-trace ends
+    // ≈ 0.0. If any letter's first→last distance comes back < 0.10, the test
+    // fails LOUDLY: that letter is an edge-trace needing owner / owner's-mother
+    // re-authoring (OUT OF SCOPE here — surface it, do not patch the data).
+    //
+    // Expected lower bound per letter from 06-FIXES.md (taa_h tightest, 0.121).
+    const expectedFirstToLast = <String, double>{
+      'jeem': 0.289,
+      'haa_c': 0.270,
+      'khaa': 0.272,
+      'saad': 0.193,
+      'daad': 0.189,
+      'taa_h': 0.121,
+      'ayn': 0.268,
+      'ghayn': 0.258,
+      'faa': 0.265,
+    };
+
+    late Map<String, Letter> byId;
+
+    setUp(() async {
+      final shipped =
+          File('assets/curriculum/letters.json').readAsStringSync();
+      final repo = CurriculumRepository.fromStrings(shipped, _lesson01Json);
+      byId = {for (final l in await repo.getLetters()) l.id: l};
+    });
+
+    for (final entry in expectedFirstToLast.entries) {
+      final id = entry.key;
+      final expectedMin = entry.value;
+
+      test('$id first reference stroke is an open centerline '
+          '(first→last ≥ 0.10, not an edge-trace)', () {
+        final letter = byId[id];
+        expect(letter, isNotNull, reason: 'curl letter "$id" did not load');
+
+        // The first NON-DOT reference stroke is the body centerline.
+        final body = letter!.referenceStrokes
+            .firstWhere((s) => s.type != 'dot');
+        final first = body.points.first;
+        final last = body.points.last;
+        final firstToLast = math.sqrt(
+          math.pow(first[0] - last[0], 2) + math.pow(first[1] - last[1], 2),
+        );
+
+        // ≥ 0.10: admitted by the lowered D-04 guard AND not a ≈0.0 outline.
+        expect(firstToLast, greaterThanOrEqualTo(0.10),
+            reason: 'curl letter "$id" first→last distance '
+                '${firstToLast.toStringAsFixed(3)} < 0.10 — this looks like an '
+                'edge-trace (return-to-start outline), NOT an open centerline. '
+                'It must be RE-AUTHORED by the owner / owner\'s mother, not '
+                'masked by the threshold (OUT OF SCOPE for 06-09).');
+
+        // Cross-check against 06-FIXES.md's recorded number so a future stroke
+        // re-author that quietly drops the centerline below its documented
+        // value is caught here too (small tolerance for authoring jitter).
+        expect(firstToLast, closeTo(expectedMin, 0.02),
+            reason: 'curl letter "$id" first→last distance '
+                '${firstToLast.toStringAsFixed(3)} drifted from the '
+                '06-FIXES.md value $expectedMin');
+      });
+    }
   });
 }
