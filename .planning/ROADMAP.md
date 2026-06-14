@@ -299,13 +299,13 @@ Plans:
   2. Locked lessons are visibly unavailable until their prerequisite is passed.
   3. Passing a lesson (meeting its clean-reps-to-advance rule) immediately unlocks the next lesson, which then appears as today's lesson.
 
-**Plans:** 9/10 plans executed
+**Plans:** 10/10 plans complete
 Plans:
 **Wave 1**
 
 - [x] 06-01-PLAN.md — 28-lesson catalog + pure-Dart progression engine (D-01/D-02/D-06)
 - [x] 06-02-PLAN.md — Schema v4: LetterReps persistence, watch streams, startingLessonId namespace (D-10)
-- [ ] 06-09-PLAN.md — Fix A (gap): lower kClosedLoopEpsilon 0.30→0.10 so 9 curl letters load (owner sign-off gate)
+- [x] 06-09-PLAN.md — Fix A (gap): lower kClosedLoopEpsilon 0.30→0.10 so 9 curl letters load (owner sign-off gate)
 - [x] 06-10-PLAN.md — Fix B (gap): render type==dot strokes as calm ink circles in Watch animation + Trace guide
 
 **Wave 2** *(blocked on Wave 1 completion)*
@@ -447,7 +447,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 03.1 Journey Map Screen (INSERTED) | 3/3 | Complete | - |
 | 4. Scoring Quality & Calibration | 5/6 | In Progress (04-06 deferred, human-gated) | - |
 | 5. Profiles & Onboarding | 4/4 | Complete | - |
-| 6. Lesson Progression & Home | 9/10 | In Progress|  |
+| 6. Lesson Progression & Home | 10/10 | Complete   | 2026-06-14 |
 | 06.1 Firebase Curriculum Backend (INSERTED) | 0/TBD | Not planned | - |
 | 7. Full Curriculum & Pronunciation Audio | 0/TBD | Not started | - |
 | 8. Sentence-Building & Grammar Exercises | 0/TBD | Not started | - |

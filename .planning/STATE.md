@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 06.1 context gathered
-last_updated: "2026-06-14T15:28:35.416Z"
+stopped_at: Completed 06-09-PLAN.md (kClosedLoopEpsilon -> 0.06, owner sign-off)
+last_updated: "2026-06-14T15:43:46.405Z"
 last_activity: 2026-06-14
 progress:
   total_phases: 14
-  completed_phases: 7
+  completed_phases: 8
   total_plans: 44
-  completed_plans: 42
-  percent: 50
+  completed_plans: 43
+  percent: 57
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 06 (lesson-progression-home) — EXECUTING
-Plan: 4 of 8
+Plan: 5 of 8
 Phase: 05 (profiles-onboarding) — 4/4 plans complete, verification human_needed (device UAT)
 Status: Ready to execute
 Last activity: 2026-06-14
@@ -74,6 +74,7 @@ Progress: [█████░░░░░] 54% (7 of 13 tracked phases complete)
 | Phase 06 P07 | ~50min | 2 tasks | 6 files |
 | Phase 06 P08 | ~12min | 2 tasks | 8 files |
 | Phase 06 P10 | ~7min | 4 tasks | 5 files |
+| Phase 06 P09 | ~6min | 1 task | 2 files |
 
 ## Accumulated Context
 
@@ -127,6 +128,7 @@ Recent decisions affecting current work:
 - [Phase ?]: [Phase 06-08]: D-21 ghost comparison shipped — child failing strokes held in _TraceWorkspace State only, cleared on retry/pass/continue/dispose (T-03-01); 'Watch the Difference' shown only when strokes held.
 - [Phase 06]: [Phase 06-10]: Dotted-letter dots render as calm ink circles in BOTH Watch animation and Trace guide; painters read StrokeSpec.type directly (ReferencePath.resolve stays point-geometry identity, T-06-10-01).
 - [Phase 06]: [Phase 06-10]: Single-point dots excluded from PathMetric length math; each dot gets a small fixed beat and appears just after its body stroke — ink-colored, not gold, no bounce (anti-gamification).
+- [Phase 06]: [Phase 06-09]: kClosedLoopEpsilon set to 0.06 (owner-directed, not plan's 0.10) — split-the-gap margin between a ~=0.0 closed outline and taa_h's 0.121, absorbing re-author drift across all 28 letters; D-04 guard confirmed LOAD-TIME-only over authored reference data, never the child's live trace.
 
 ### Pending Todos
 
@@ -160,6 +162,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-14T15:28:35.411Z
-Stopped at: Phase 06.1 context gathered
+Last session: 2026-06-14T15:43:12.777Z
+Stopped at: Completed 06-09-PLAN.md (kClosedLoopEpsilon -> 0.06, owner sign-off)
 Resume files: .planning/phases/05-profiles-onboarding/05-04-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
