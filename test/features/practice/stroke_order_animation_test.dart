@@ -32,6 +32,60 @@ const List<StrokeSpec> _alifStrokes = <StrokeSpec>[
 ];
 
 // ---------------------------------------------------------------------------
+// Baa-like dotted fixture — one body line stroke + one single-point dot.
+// The dot sits well below the body so its painted circle is unambiguous.
+// ---------------------------------------------------------------------------
+
+const List<StrokeSpec> _baaStrokes = <StrokeSpec>[
+  StrokeSpec(
+    order: 1,
+    label: 'body',
+    type: 'line',
+    direction: 'rightToLeft',
+    points: <List<double>>[
+      <double>[0.8, 0.4],
+      <double>[0.5, 0.5],
+      <double>[0.2, 0.4],
+    ],
+  ),
+  StrokeSpec(
+    order: 2,
+    label: 'dot',
+    type: 'dot',
+    direction: 'tap',
+    points: <List<double>>[
+      <double>[0.5, 0.8],
+    ],
+  ),
+];
+
+// ---------------------------------------------------------------------------
+// Recording canvas — captures drawCircle calls so a test can prove the dot
+// is painted (and with which color) rather than only that the widget builds.
+// ---------------------------------------------------------------------------
+
+class _CircleCall {
+  _CircleCall(this.center, this.radius, this.color);
+  final Offset center;
+  final double radius;
+  final Color color;
+}
+
+class _RecordingCanvas implements Canvas {
+  final List<_CircleCall> circles = <_CircleCall>[];
+
+  @override
+  void drawCircle(Offset c, double radius, Paint paint) {
+    circles.add(_CircleCall(c, radius, paint.color));
+  }
+
+  @override
+  void noSuchMethod(Invocation invocation) {
+    // Ignore every other Canvas call (drawPath, etc.) — we only assert circles.
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
 
@@ -170,6 +224,64 @@ void main() {
           reason: 'A 2800ms run must still be animating at 1400ms');
       await tester.pumpAndSettle();
       expect(tester.hasRunningAnimations, isFalse);
+    });
+
+    testWidgets(
+        '6. a dotted letter paints a calm filled ink circle for its dot stroke',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: SizedBox(
+              width: 400,
+              height: 400,
+              child: StrokeOrderAnimation(referenceStrokes: _baaStrokes),
+            ),
+          ),
+        ),
+      );
+
+      // Let the auto-play run to completion so the dot's beat has elapsed.
+      await tester.pumpAndSettle();
+
+      // Reach into the rendered CustomPaint and re-run its painter against a
+      // recording canvas to prove the dot is actually drawn (not just built).
+      final CustomPaint paintWidget = tester.widget<CustomPaint>(
+        find.descendant(
+          of: find.byType(StrokeOrderAnimation),
+          matching: find.byType(CustomPaint),
+        ),
+      );
+      final CustomPainter painter = paintWidget.painter!;
+      final _RecordingCanvas rec = _RecordingCanvas();
+      painter.paint(rec, const Size(400, 400));
+
+      // The dot's scaled position: (0.5 * 400, 0.8 * 400) = (200, 320).
+      const Offset expectedDot = Offset(200, 320);
+      final Iterable<_CircleCall> inkDots = rec.circles.where(
+        (_CircleCall c) =>
+            c.color == QalamColors.inkStroke &&
+            (c.center - expectedDot).distance < 1.0,
+      );
+      expect(
+        inkDots,
+        isNotEmpty,
+        reason: 'A type=="dot" stroke must paint a filled ink circle at its '
+            'scaled point after the animation settles.',
+      );
+
+      // Anti-gamification: the dot must NOT use the gold reward color — that
+      // stays reward-exclusive (start-dot + pen-tip only).
+      final Iterable<_CircleCall> goldAtDot = rec.circles.where(
+        (_CircleCall c) =>
+            c.color == QalamColors.reward &&
+            (c.center - expectedDot).distance < 1.0,
+      );
+      expect(
+        goldAtDot,
+        isEmpty,
+        reason: 'The dot must be ink, not gold — gold is reward-exclusive.',
+      );
     });
 
     testWidgets(
