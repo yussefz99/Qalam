@@ -25,6 +25,19 @@ import '../../models/letter.dart';
 ///
 /// Phase 3 wraps the returned points into a `dart:ui` `Path` for `PathMetric`;
 /// that UI concern stays out of this pure-Dart layer.
+///
+/// `type` IS DELIBERATELY NOT CARRIED HERE (plan 06-10). `resolve` is
+/// point-geometry only — the scorer's source of truth — and its signature
+/// `List<List<List<double>>>` is depended on by the scorer and every existing
+/// caller. Dot detection for RENDERING (a `type == "dot"` stroke must paint a
+/// calm ink circle, and must be kept out of the polyline length math because a
+/// single-point dot has no length) reads `StrokeSpec.type` DIRECTLY in the
+/// Watch-animation and Trace-guide painters
+/// (`stroke_order_animation.dart` / `stroke_canvas.dart`).
+///
+/// Do NOT "fix" the dot bug by threading `type` through `resolve` or changing
+/// its return type — that would break the scorer's contract. The dot fix lives
+/// in the typed-`StrokeSpec` painter path, by design (threat T-06-10-01).
 class ReferencePath {
   const ReferencePath._();
 
