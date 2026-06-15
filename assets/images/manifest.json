@@ -1,0 +1,1590 @@
+{
+  "_meta": {
+    "purpose": "Generation spec for Qalam vocab illustrations. imageId -> word/gloss/file. Placeholders are swappable by imageId (same pattern as assets/audio/). status:'pending' = pixels not yet generated.",
+    "source": ".planning/research/learning-experience/CONTENT-INVENTORY.json",
+    "styleGuide": "assets/images/ILLUSTRATION-STYLE.md",
+    "builtBy": "tools/illustrations/build_manifest.py (re-run when the inventory changes)",
+    "wordCount": 221,
+    "needsReviewCount": 18,
+    "idScheme": "img.<translit> (phonetic slug), matching img.baab / img.arnab.",
+    "idSchemeConflict": "EXERCISE-CONFIGS.json wired a few words with english-gloss ids (img.door=باب, img.duck=بطة, img.milk=حليب). Canonical id here is the translit; the existing id is kept under 'aliases'. OWNER DECISION NEEDED: pick one scheme, then drop the alias or rename the file.",
+    "needsReviewMeaning": "Abstract / verb / colour / number / ambiguous word — do NOT force a picture; the owner's mother decides whether & how to depict it.",
+    "signedOff": false
+  },
+  "images": [
+    {
+      "imageId": "img.afaa",
+      "word": "أفعى",
+      "gloss": "snake",
+      "file": "img.afaa.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.ajeen",
+      "word": "عجين",
+      "gloss": "dough",
+      "file": "img.ajeen.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.akhdar",
+      "word": "أخضر",
+      "gloss": "green (colour)",
+      "file": "img.akhdar.webp",
+      "status": "pending",
+      "needsReview": true
+    },
+    {
+      "imageId": "img.alam",
+      "word": "علم",
+      "gloss": "flag — or 'knowledge' (ambiguous)",
+      "file": "img.alam.webp",
+      "status": "pending",
+      "needsReview": true
+    },
+    {
+      "imageId": "img.ananaas",
+      "word": "أناناس",
+      "gloss": "pineapple",
+      "file": "img.ananaas.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.arnab",
+      "word": "أرنب",
+      "gloss": "rabbit",
+      "file": "img.arnab.webp",
+      "status": "generated"
+    },
+    {
+      "imageId": "img.asaa",
+      "word": "عصا",
+      "gloss": "walking stick",
+      "file": "img.asaa.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.asad",
+      "word": "أسد",
+      "gloss": "lion",
+      "file": "img.asad.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.aswad",
+      "word": "أسود",
+      "gloss": "black (colour)",
+      "file": "img.aswad.webp",
+      "status": "pending",
+      "needsReview": true
+    },
+    {
+      "imageId": "img.athaath",
+      "word": "أثاث",
+      "gloss": "furniture",
+      "file": "img.athaath.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.azraq",
+      "word": "أزرق",
+      "gloss": "blue (colour)",
+      "file": "img.azraq.webp",
+      "status": "pending",
+      "needsReview": true
+    },
+    {
+      "imageId": "img.baab",
+      "word": "باب",
+      "gloss": "door",
+      "file": "img.baab.webp",
+      "status": "generated",
+      "aliases": [
+        "img.door"
+      ]
+    },
+    {
+      "imageId": "img.baadhinjaan",
+      "word": "باذنجان",
+      "gloss": "eggplant",
+      "file": "img.baadhinjaan.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.babbaghaa",
+      "word": "ببغاء",
+      "gloss": "parrot",
+      "file": "img.babbaghaa.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.bahr",
+      "word": "بحر",
+      "gloss": "sea",
+      "file": "img.bahr.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.baid",
+      "word": "بيض",
+      "gloss": "eggs",
+      "file": "img.baid.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.baida",
+      "word": "بيضة",
+      "gloss": "egg",
+      "file": "img.baida.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.bait",
+      "word": "بيت",
+      "gloss": "house",
+      "file": "img.bait.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.balah",
+      "word": "بلح",
+      "gloss": "dates",
+      "file": "img.balah.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.bantaloon",
+      "word": "بنطلون",
+      "gloss": "trousers",
+      "file": "img.bantaloon.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.baoud",
+      "word": "بعوض",
+      "gloss": "mosquito",
+      "file": "img.baoud.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.baqara",
+      "word": "بقرة",
+      "gloss": "cow",
+      "file": "img.baqara.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.basal",
+      "word": "بصل",
+      "gloss": "onion",
+      "file": "img.basal.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.bataata",
+      "word": "بطاطا",
+      "gloss": "potato",
+      "file": "img.bataata.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.batreeq",
+      "word": "بطريق",
+      "gloss": "penguin",
+      "file": "img.batreeq.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.batt",
+      "word": "بط",
+      "gloss": "ducks",
+      "file": "img.batt.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.batta",
+      "word": "بطة",
+      "gloss": "duck",
+      "file": "img.batta.webp",
+      "status": "pending",
+      "aliases": [
+        "img.duck"
+      ]
+    },
+    {
+      "imageId": "img.biar",
+      "word": "بئر",
+      "gloss": "water well",
+      "file": "img.biar.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.bint",
+      "word": "بنت",
+      "gloss": "girl",
+      "file": "img.bint.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.bitteekh",
+      "word": "بطيخ",
+      "gloss": "watermelon",
+      "file": "img.bitteekh.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.booma",
+      "word": "بومة",
+      "gloss": "owl",
+      "file": "img.booma.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.burj",
+      "word": "برج",
+      "gloss": "tower",
+      "file": "img.burj.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.burtuqaal",
+      "word": "برتقال",
+      "gloss": "orange",
+      "file": "img.burtuqaal.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.daaira",
+      "word": "دائرة",
+      "gloss": "circle",
+      "file": "img.daaira.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.daar",
+      "word": "دار",
+      "gloss": "house",
+      "file": "img.daar.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.daff",
+      "word": "دف",
+      "gloss": "tambourine",
+      "file": "img.daff.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.dahk",
+      "word": "ضحك",
+      "gloss": "laughter",
+      "file": "img.dahk.webp",
+      "status": "pending",
+      "needsReview": true
+    },
+    {
+      "imageId": "img.dajaaj",
+      "word": "دجاج",
+      "gloss": "chickens",
+      "file": "img.dajaaj.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.dajaaja",
+      "word": "دجاجة",
+      "gloss": "hen",
+      "file": "img.dajaaja.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.dalw",
+      "word": "دلو",
+      "gloss": "bucket",
+      "file": "img.dalw.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.daraj",
+      "word": "درج",
+      "gloss": "stairs",
+      "file": "img.daraj.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.darraaja",
+      "word": "دراجة",
+      "gloss": "bicycle",
+      "file": "img.darraaja.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.deek",
+      "word": "ديك",
+      "gloss": "rooster",
+      "file": "img.deek.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.deenaasoor",
+      "word": "ديناصور",
+      "gloss": "dinosaur",
+      "file": "img.deenaasoor.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.dhabi",
+      "word": "ظبي",
+      "gloss": "gazelle",
+      "file": "img.dhabi.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.dharf",
+      "word": "ظرف",
+      "gloss": "envelope",
+      "file": "img.dharf.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.dhiab",
+      "word": "ذئب",
+      "gloss": "wolf",
+      "file": "img.dhiab.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.dhubaaba",
+      "word": "ذبابة",
+      "gloss": "fly",
+      "file": "img.dhubaaba.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.dhufr",
+      "word": "ظفر",
+      "gloss": "fingernail",
+      "file": "img.dhufr.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.dhura",
+      "word": "ذرة",
+      "gloss": "corn",
+      "file": "img.dhura.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.difda",
+      "word": "ضفدع",
+      "gloss": "frog",
+      "file": "img.difda.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.dimaagh",
+      "word": "دماغ",
+      "gloss": "brain",
+      "file": "img.dimaagh.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.dooda",
+      "word": "دودة",
+      "gloss": "worm",
+      "file": "img.dooda.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.door",
+      "word": "دور",
+      "gloss": "houses",
+      "file": "img.door.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.dubb",
+      "word": "دب",
+      "gloss": "bear",
+      "file": "img.dubb.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.dukhaan",
+      "word": "دخان",
+      "gloss": "smoke",
+      "file": "img.dukhaan.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.dukkaan",
+      "word": "دكان",
+      "gloss": "shop",
+      "file": "img.dukkaan.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.faar",
+      "word": "فار",
+      "gloss": "mouse",
+      "file": "img.faar.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.fahd",
+      "word": "فهد",
+      "gloss": "cheetah",
+      "file": "img.fahd.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.far",
+      "word": "فأر",
+      "gloss": "mouse",
+      "file": "img.far.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.faraasha",
+      "word": "فراشة",
+      "gloss": "butterfly",
+      "file": "img.faraasha.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.faraawla",
+      "word": "فراولة",
+      "gloss": "strawberry",
+      "file": "img.faraawla.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.farah",
+      "word": "فرح",
+      "gloss": "joy",
+      "file": "img.farah.webp",
+      "status": "pending",
+      "needsReview": true
+    },
+    {
+      "imageId": "img.fawaakih",
+      "word": "فواكه",
+      "gloss": "fruits",
+      "file": "img.fawaakih.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.feel",
+      "word": "فيل",
+      "gloss": "elephant",
+      "file": "img.feel.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.finjaan",
+      "word": "فنجان",
+      "gloss": "cup",
+      "file": "img.finjaan.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.firaash",
+      "word": "فراش",
+      "gloss": "butterflies",
+      "file": "img.firaash.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.fustaan",
+      "word": "فستان",
+      "gloss": "dress",
+      "file": "img.fustaan.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.ghaima",
+      "word": "غيمة",
+      "gloss": "cloud",
+      "file": "img.ghaima.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.ghassaala",
+      "word": "غسالة",
+      "gloss": "washing machine",
+      "file": "img.ghassaala.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.haafila",
+      "word": "حافلة",
+      "gloss": "bus",
+      "file": "img.haafila.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.haatif",
+      "word": "هاتف",
+      "gloss": "telephone",
+      "file": "img.haatif.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.hadeeth",
+      "word": "حديث",
+      "gloss": "modern / speech",
+      "file": "img.hadeeth.webp",
+      "status": "pending",
+      "needsReview": true
+    },
+    {
+      "imageId": "img.hadiyya",
+      "word": "هدية",
+      "gloss": "gift",
+      "file": "img.hadiyya.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.halazoon",
+      "word": "حلزون",
+      "gloss": "snail",
+      "file": "img.halazoon.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.haleeb",
+      "word": "حليب",
+      "gloss": "milk",
+      "file": "img.haleeb.webp",
+      "status": "generated",
+      "aliases": [
+        "img.milk"
+      ]
+    },
+    {
+      "imageId": "img.halwa",
+      "word": "حلوى",
+      "gloss": "sweets",
+      "file": "img.halwa.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.hamaama",
+      "word": "حمامة",
+      "gloss": "dove",
+      "file": "img.hamaama.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.haqeeba",
+      "word": "حقيبة",
+      "gloss": "bag",
+      "file": "img.haqeeba.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.hidhaa",
+      "word": "حذاء",
+      "gloss": "shoes",
+      "file": "img.hidhaa.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.hilaal",
+      "word": "هلال",
+      "gloss": "crescent moon",
+      "file": "img.hilaal.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.himaar",
+      "word": "حمار",
+      "gloss": "donkey",
+      "file": "img.himaar.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.hirra",
+      "word": "هرة",
+      "gloss": "cat",
+      "file": "img.hirra.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.hisaan",
+      "word": "حصان",
+      "gloss": "horse",
+      "file": "img.hisaan.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.hoot",
+      "word": "حوت",
+      "gloss": "whale",
+      "file": "img.hoot.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.huda",
+      "word": "هدى",
+      "gloss": "guidance / a name",
+      "file": "img.huda.webp",
+      "status": "pending",
+      "needsReview": true
+    },
+    {
+      "imageId": "img.ibreeq",
+      "word": "إبريق",
+      "gloss": "jug",
+      "file": "img.ibreeq.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.inab",
+      "word": "عنب",
+      "gloss": "grapes",
+      "file": "img.inab.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.isbaa",
+      "word": "إصبع",
+      "gloss": "finger",
+      "file": "img.isbaa.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.istaiqadh",
+      "word": "استيقظ",
+      "gloss": "woke up (verb)",
+      "file": "img.istaiqadh.webp",
+      "status": "pending",
+      "needsReview": true
+    },
+    {
+      "imageId": "img.ithnaan",
+      "word": "اثنان",
+      "gloss": "two (number)",
+      "file": "img.ithnaan.webp",
+      "status": "pending",
+      "needsReview": true
+    },
+    {
+      "imageId": "img.jabal",
+      "word": "جبل",
+      "gloss": "mountain",
+      "file": "img.jabal.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.jamal",
+      "word": "جمل",
+      "gloss": "camel",
+      "file": "img.jamal.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.janzeer",
+      "word": "جنزير",
+      "gloss": "chain",
+      "file": "img.janzeer.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.jareeda",
+      "word": "جريدة",
+      "gloss": "newspaper",
+      "file": "img.jareeda.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.jarw",
+      "word": "جرو",
+      "gloss": "puppy",
+      "file": "img.jarw.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.jawz",
+      "word": "جوز",
+      "gloss": "walnut",
+      "file": "img.jawz.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.jazar",
+      "word": "جزر",
+      "gloss": "carrot",
+      "file": "img.jazar.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.jundi",
+      "word": "جندي",
+      "gloss": "soldier",
+      "file": "img.jundi.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.juradh",
+      "word": "جرذ",
+      "gloss": "rat",
+      "file": "img.juradh.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.kaas",
+      "word": "كأس",
+      "gloss": "cup",
+      "file": "img.kaas.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.kahf",
+      "word": "كهف",
+      "gloss": "cave",
+      "file": "img.kahf.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.kaka",
+      "word": "كعكة",
+      "gloss": "cake",
+      "file": "img.kaka.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.kalb",
+      "word": "كلب",
+      "gloss": "dog",
+      "file": "img.kalb.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.kangar",
+      "word": "كنغر",
+      "gloss": "kangaroo",
+      "file": "img.kangar.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.kanz",
+      "word": "كنز",
+      "gloss": "treasure",
+      "file": "img.kanz.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.karaz",
+      "word": "كرز",
+      "gloss": "cherry",
+      "file": "img.karaz.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.khaima",
+      "word": "خيمة",
+      "gloss": "tent",
+      "file": "img.khaima.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.kharaj",
+      "word": "خرج",
+      "gloss": "went out (verb)",
+      "file": "img.kharaj.webp",
+      "status": "pending",
+      "needsReview": true
+    },
+    {
+      "imageId": "img.kharoof",
+      "word": "خروف",
+      "gloss": "sheep",
+      "file": "img.kharoof.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.khataa",
+      "word": "خطأ",
+      "gloss": "mistake / wrong",
+      "file": "img.khataa.webp",
+      "status": "pending",
+      "needsReview": true
+    },
+    {
+      "imageId": "img.khookh",
+      "word": "خوخ",
+      "gloss": "peach",
+      "file": "img.khookh.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.khubz",
+      "word": "خبز",
+      "gloss": "bread",
+      "file": "img.khubz.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.kimaama",
+      "word": "كمامة",
+      "gloss": "face mask",
+      "file": "img.kimaama.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.kitaab",
+      "word": "كتاب",
+      "gloss": "book",
+      "file": "img.kitaab.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.kookh",
+      "word": "كوخ",
+      "gloss": "hut",
+      "file": "img.kookh.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.koosa",
+      "word": "كوسا",
+      "gloss": "zucchini",
+      "file": "img.koosa.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.kummathra",
+      "word": "كمثرى",
+      "gloss": "pear",
+      "file": "img.kummathra.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.kura",
+      "word": "كرة",
+      "gloss": "ball",
+      "file": "img.kura.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.kursi",
+      "word": "كرسي",
+      "gloss": "chair",
+      "file": "img.kursi.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.lahm",
+      "word": "لحم",
+      "gloss": "meat",
+      "file": "img.lahm.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.laimoon",
+      "word": "ليمون",
+      "gloss": "lemon",
+      "file": "img.laimoon.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.laith",
+      "word": "ليث",
+      "gloss": "lion",
+      "file": "img.laith.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.lisaan",
+      "word": "لسان",
+      "gloss": "tongue",
+      "file": "img.lisaan.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.maaiz",
+      "word": "ماعز",
+      "gloss": "goat",
+      "file": "img.maaiz.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.mahdhoodh",
+      "word": "محظوظ",
+      "gloss": "lucky (adjective)",
+      "file": "img.mahdhoodh.webp",
+      "status": "pending",
+      "needsReview": true
+    },
+    {
+      "imageId": "img.maktoob",
+      "word": "مكتوب",
+      "gloss": "envelope / letter",
+      "file": "img.maktoob.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.masjid",
+      "word": "مسجد",
+      "gloss": "mosque",
+      "file": "img.masjid.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.mathal",
+      "word": "مثل",
+      "gloss": "proverb / like",
+      "file": "img.mathal.webp",
+      "status": "pending",
+      "needsReview": true
+    },
+    {
+      "imageId": "img.midhalla",
+      "word": "مظلة",
+      "gloss": "umbrella",
+      "file": "img.midhalla.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.miftaah",
+      "word": "مفتاح",
+      "gloss": "key",
+      "file": "img.miftaah.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.mihraath",
+      "word": "محراث",
+      "gloss": "plough",
+      "file": "img.mihraath.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.miknasa",
+      "word": "مكنسة",
+      "gloss": "broom",
+      "file": "img.miknasa.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.mikwaa",
+      "word": "مكواة",
+      "gloss": "iron",
+      "file": "img.mikwaa.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.milh",
+      "word": "ملح",
+      "gloss": "salt",
+      "file": "img.milh.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.miqass",
+      "word": "مقص",
+      "gloss": "scissors",
+      "file": "img.miqass.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.misbaah",
+      "word": "مصباح",
+      "gloss": "lamp",
+      "file": "img.misbaah.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.mooz",
+      "word": "موز",
+      "gloss": "banana",
+      "file": "img.mooz.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.muallim",
+      "word": "معلم",
+      "gloss": "teacher",
+      "file": "img.muallim.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.muhaddad",
+      "word": "مهدد",
+      "gloss": "threatened (uncertain word)",
+      "file": "img.muhaddad.webp",
+      "status": "pending",
+      "needsReview": true
+    },
+    {
+      "imageId": "img.muharrij",
+      "word": "مهرج",
+      "gloss": "clown",
+      "file": "img.muharrij.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.muhr",
+      "word": "مهر",
+      "gloss": "foal",
+      "file": "img.muhr.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.musht",
+      "word": "مشط",
+      "gloss": "comb",
+      "file": "img.musht.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.muthallath",
+      "word": "مثلث",
+      "gloss": "triangle",
+      "file": "img.muthallath.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.muthamman",
+      "word": "مثمن",
+      "gloss": "octagon",
+      "file": "img.muthamman.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.naar",
+      "word": "نار",
+      "gloss": "fire",
+      "file": "img.naar.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.nabaat",
+      "word": "نبات",
+      "gloss": "plant",
+      "file": "img.nabaat.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.nahla",
+      "word": "نحلة",
+      "gloss": "bee",
+      "file": "img.nahla.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.nahr",
+      "word": "نهر",
+      "gloss": "river",
+      "file": "img.nahr.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.najma",
+      "word": "نجمة",
+      "gloss": "star",
+      "file": "img.najma.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.nakhla",
+      "word": "نخلة",
+      "gloss": "palm tree",
+      "file": "img.nakhla.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.nimr",
+      "word": "نمر",
+      "gloss": "tiger",
+      "file": "img.nimr.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.nujoom",
+      "word": "نجوم",
+      "gloss": "stars",
+      "file": "img.nujoom.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.qafas",
+      "word": "قفص",
+      "gloss": "cage",
+      "file": "img.qafas.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.qalam",
+      "word": "قلم",
+      "gloss": "pen",
+      "file": "img.qalam.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.qalb",
+      "word": "قلب",
+      "gloss": "heart",
+      "file": "img.qalb.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.qamar",
+      "word": "قمر",
+      "gloss": "moon",
+      "file": "img.qamar.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.qann",
+      "word": "قن",
+      "gloss": "chicken coop",
+      "file": "img.qann.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.qaraa",
+      "word": "قرأ",
+      "gloss": "read (verb)",
+      "file": "img.qaraa.webp",
+      "status": "pending",
+      "needsReview": true
+    },
+    {
+      "imageId": "img.qird",
+      "word": "قرد",
+      "gloss": "monkey",
+      "file": "img.qird.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.qitta",
+      "word": "قطة",
+      "gloss": "cat",
+      "file": "img.qitta.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.quffaaz",
+      "word": "قفاز",
+      "gloss": "glove",
+      "file": "img.quffaaz.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.qunfudh",
+      "word": "قنفذ",
+      "gloss": "hedgehog",
+      "file": "img.qunfudh.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.raas",
+      "word": "رأس",
+      "gloss": "head",
+      "file": "img.raas.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.ragheef",
+      "word": "رغيف",
+      "gloss": "loaf of bread",
+      "file": "img.ragheef.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.rajul",
+      "word": "رجل",
+      "gloss": "man",
+      "file": "img.rajul.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.reesh",
+      "word": "ريش",
+      "gloss": "feathers",
+      "file": "img.reesh.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.reesha",
+      "word": "ريشة",
+      "gloss": "feather",
+      "file": "img.reesha.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.risaala",
+      "word": "رسالة",
+      "gloss": "letter / message",
+      "file": "img.risaala.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.rummaan",
+      "word": "رمان",
+      "gloss": "pomegranate",
+      "file": "img.rummaan.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.saaa",
+      "word": "ساعة",
+      "gloss": "clock",
+      "file": "img.saaa.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.saarookh",
+      "word": "صاروخ",
+      "gloss": "rocket",
+      "file": "img.saarookh.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.sabr",
+      "word": "صبر",
+      "gloss": "cactus",
+      "file": "img.sabr.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.safeena",
+      "word": "سفينة",
+      "gloss": "ship",
+      "file": "img.safeena.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.sahm",
+      "word": "سهم",
+      "gloss": "arrow",
+      "file": "img.sahm.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.sahn",
+      "word": "صحن",
+      "gloss": "plate",
+      "file": "img.sahn.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.sakhra",
+      "word": "صخرة",
+      "gloss": "rock",
+      "file": "img.sakhra.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.samaka",
+      "word": "سمكة",
+      "gloss": "fish",
+      "file": "img.samaka.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.samgh",
+      "word": "صمغ",
+      "gloss": "glue",
+      "file": "img.samgh.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.sareer",
+      "word": "سرير",
+      "gloss": "bed",
+      "file": "img.sareer.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.sayyaad",
+      "word": "صياد",
+      "gloss": "fisherman",
+      "file": "img.sayyaad.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.sayyaara",
+      "word": "سيارة",
+      "gloss": "car",
+      "file": "img.sayyaara.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.shajara",
+      "word": "شجرة",
+      "gloss": "tree",
+      "file": "img.shajara.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.shams",
+      "word": "شمس",
+      "gloss": "sun",
+      "file": "img.shams.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.shubbaak",
+      "word": "شباك",
+      "gloss": "window",
+      "file": "img.shubbaak.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.shumoo",
+      "word": "شموع",
+      "gloss": "candles",
+      "file": "img.shumoo.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.sows",
+      "word": "صوص",
+      "gloss": "chick",
+      "file": "img.sows.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.sulhufaa",
+      "word": "سلحفاة",
+      "gloss": "turtle",
+      "file": "img.sulhufaa.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.sundooq",
+      "word": "صندوق",
+      "gloss": "box",
+      "file": "img.sundooq.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.taaira",
+      "word": "طائرة",
+      "gloss": "airplane",
+      "file": "img.taaira.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.taaj",
+      "word": "تاج",
+      "gloss": "crown",
+      "file": "img.taaj.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.tabeeb",
+      "word": "طبيب",
+      "gloss": "doctor",
+      "file": "img.tabeeb.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.tamaatim",
+      "word": "طماطم",
+      "gloss": "tomato",
+      "file": "img.tamaatim.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.tamr",
+      "word": "تمر",
+      "gloss": "dates",
+      "file": "img.tamr.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.teen",
+      "word": "تين",
+      "gloss": "fig",
+      "file": "img.teen.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.thalab",
+      "word": "ثعلب",
+      "gloss": "fox",
+      "file": "img.thalab.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.thalj",
+      "word": "ثلج",
+      "gloss": "snow",
+      "file": "img.thalj.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.thamar",
+      "word": "ثمر",
+      "gloss": "fruit",
+      "file": "img.thamar.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.thawb",
+      "word": "ثوب",
+      "gloss": "garment",
+      "file": "img.thawb.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.thawr",
+      "word": "ثور",
+      "gloss": "bull",
+      "file": "img.thawr.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.thoom",
+      "word": "ثوم",
+      "gloss": "garlic",
+      "file": "img.thoom.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.thuabaan",
+      "word": "ثعبان",
+      "gloss": "snake",
+      "file": "img.thuabaan.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.tilfaaz",
+      "word": "تلفاز",
+      "gloss": "television",
+      "file": "img.tilfaaz.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.timsaah",
+      "word": "تمساح",
+      "gloss": "crocodile",
+      "file": "img.timsaah.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.toot",
+      "word": "توت",
+      "gloss": "berries",
+      "file": "img.toot.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.tuffaah",
+      "word": "تفاح",
+      "gloss": "apple",
+      "file": "img.tuffaah.webp",
+      "status": "generated"
+    },
+    {
+      "imageId": "img.tuffaaha",
+      "word": "تفاحة",
+      "gloss": "apple",
+      "file": "img.tuffaaha.webp",
+      "status": "generated"
+    },
+    {
+      "imageId": "img.usfoor",
+      "word": "عصفور",
+      "gloss": "sparrow",
+      "file": "img.usfoor.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.ushsh",
+      "word": "عش",
+      "gloss": "nest",
+      "file": "img.ushsh.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.wajh",
+      "word": "وجه",
+      "gloss": "face",
+      "file": "img.wajh.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.walad",
+      "word": "ولد",
+      "gloss": "boy",
+      "file": "img.walad.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.waraqa",
+      "word": "ورقة",
+      "gloss": "paper / leaf",
+      "file": "img.waraqa.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.warda",
+      "word": "وردة",
+      "gloss": "rose",
+      "file": "img.warda.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.watwaat",
+      "word": "وطواط",
+      "gloss": "bat",
+      "file": "img.watwaat.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.yad",
+      "word": "يد",
+      "gloss": "hand",
+      "file": "img.yad.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.yadhak",
+      "word": "يضحك",
+      "gloss": "he laughs (verb)",
+      "file": "img.yadhak.webp",
+      "status": "pending",
+      "needsReview": true
+    },
+    {
+      "imageId": "img.yaktub",
+      "word": "يكتب",
+      "gloss": "he writes (verb)",
+      "file": "img.yaktub.webp",
+      "status": "pending",
+      "needsReview": true
+    },
+    {
+      "imageId": "img.zahra",
+      "word": "زهرة",
+      "gloss": "flower",
+      "file": "img.zahra.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.zait",
+      "word": "زيت",
+      "gloss": "oil",
+      "file": "img.zait.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.zaitoon",
+      "word": "زيتون",
+      "gloss": "olives",
+      "file": "img.zaitoon.webp",
+      "status": "pending"
+    },
+    {
+      "imageId": "img.zawraq",
+      "word": "زورق",
+      "gloss": "boat",
+      "file": "img.zawraq.webp",
+      "status": "pending"
+    }
+  ]
+}
