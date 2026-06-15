@@ -63,6 +63,12 @@ dependencies:
   firebase_core: ^4.10.0          # Firebase app init (qalam-app-bd7d0)
   cloud_firestore: ^6.5.0         # live curriculum reads + offline persistence (D-03)
   firebase_auth: ^6.5.2           # anonymous sign-in + linkWithCredential seam (D-09c)
+  # Offline pronunciation playback (S1-06). Plays BUNDLED Flutter assets via
+  # AssetSource — no TTS, no network round-trip at trace time (PLAT-01). Package
+  # legitimacy approved by the owner at the blocking-human gate (07-02 Checkpoint):
+  # audioplayers, latest stable 6.x — long-standing verified-publisher package on
+  # pub.dev. Exact resolved version recorded in 07-02-SUMMARY.md + assets/audio/README.md.
+  audioplayers: ^6.5.0
 
 dev_dependencies:
   flutter_test:
@@ -98,6 +104,7 @@ flutter:
   generate: true
 
   assets:
+    - assets/audio/
     - assets/curriculum/
     - assets/fonts/
     - assets/icons/
