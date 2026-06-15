@@ -41,21 +41,19 @@ class AssetImageResolver {
   /// (`assets/curriculum/words.json` + `exercises.json`):
   ///   • `img.door`     باب "door"  — words grid + writeWord/teachCard prompts
   ///   • `img.duck`     بطة "duck"  — words grid + writeLetter prompt
-  ///   • `img.milk`     حليب "milk" — words grid  (ART PENDING, see below)
+  ///   • `img.milk`     حليب "milk" — words grid
   ///   • `img.big-door`            — the البابُ كبير "the door is big" scene
   ///
   /// Each is keyed to its on-disk `.webp`. Add a new entry (and its file) to
-  /// wire another illustration. PLACEHOLDER-SWAPPABLE: an entry may be mapped
-  /// before its file exists — `img.milk` has no committed art yet, so it
-  /// resolves to a path that fails to load and silently degrades to the hatched
-  /// stub (mirrors assets/audio/README.md's "NOT YET RECORDED" `word.haliib`).
-  /// Dropping `img.milk.webp` into `assets/images/` later renders it with no
-  /// code change.
+  /// wire another illustration. PLACEHOLDER-SWAPPABLE: a mapped file that is
+  /// missing or unloadable silently degrades to the hatched stub (mirrors
+  /// assets/audio/README.md's never-block posture), so a not-yet-drawn entry is
+  /// safe to map ahead of its art.
   static const Map<String, String> _imageIdToAsset = <String, String>{
     'img.door': '$_imageDir/img.door.webp',
     'img.duck': '$_imageDir/img.duck.webp',
     'img.big-door': '$_imageDir/img.big-door.webp',
-    'img.milk': '$_imageDir/img.milk.webp', // ART PENDING — degrades to stub
+    'img.milk': '$_imageDir/img.milk.webp',
   };
 
   /// Pure resolver: maps an [imageId] to a bundled asset path, or null when
