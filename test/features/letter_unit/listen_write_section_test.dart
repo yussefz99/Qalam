@@ -161,7 +161,8 @@ void main() {
   });
 
   testWidgets(
-      'Test 4: a pass on the FIRST-LETTER task does NOT finish (word required)',
+      'Test 4: a pass on the FIRST-LETTER task also finishes (a correct answer '
+      'must never leave the child stuck — owner-reported)',
       (tester) async {
     var finished = 0;
     await _pump(tester, onFinish: () => finished++);
@@ -177,9 +178,9 @@ void main() {
       ..applyResult(const CheckResult.pass());
     await tester.pumpAndSettle();
 
-    // Tapping Next on the first-letter pass does NOT open the gate.
+    // Tapping Next on the first-letter pass advances too (no dead end).
     await tester.tap(find.text('Next exercise'));
     await tester.pump();
-    expect(finished, 0);
+    expect(finished, 1);
   });
 }
