@@ -6,8 +6,11 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:qalam/core/scoring/stroke_validation.dart';
 import 'package:qalam/data/firestore_curriculum_codec.dart';
+import 'package:qalam/models/exercise.dart';
 import 'package:qalam/models/letter.dart';
+import 'package:qalam/models/letter_unit.dart';
 import 'package:qalam/models/lesson.dart';
+import 'package:qalam/models/word.dart';
 
 part 'curriculum_repository.g.dart';
 
@@ -17,6 +20,13 @@ class CurriculumRepository {
   List<Letter>? _lettersView;   // unmodifiable view — same instance on every call
   List<Lesson>? _lessons;
   List<String>? _defaultToleranceRamp;
+
+  // Schema v2 caches (Plan 07-01): loaded lazily on first read, held for the
+  // app lifetime like _letters/_lessons. Each is read Firestore-first with a
+  // bundled-seed fallback, the same pattern as the letters/lessons path.
+  List<Exercise>? _exercises;
+  List<Word>? _words;
+  List<LetterUnit>? _units;
 
   // Non-null = test mode; null = load from rootBundle
   final String? _lettersJsonOverride;
@@ -225,19 +235,114 @@ class CurriculumRepository {
     return _defaultToleranceRamp!;
   }
 
-  /// Returns empty list if exercises.json does not exist (Phase 8 creates it).
-  /// D-10: handle absence gracefully — return empty, never throw.
-  Future<List<dynamic>> getExercises() async {
+  // --- Schema v2 typed reads: exercises / words / units (Plan 07-01) ---------
+  //
+  // Each follows the EXACT `_loadLettersFromFirestoreOrBundle` shape: one-shot
+  // `.get()` of the collection, non-empty → map via the codec, empty/throw →
+  // bundled JSON fallback. The `.fromStrings` JSON-override test path keeps the
+  // graceful-absence contract (returns empty — no Schema v2 seed in that mode).
+
+  /// Typed `getExercises()` (Plan 07-01) — Firestore-first, bundle fallback.
+  ///
+  /// The 19 baa configs ship as the bundled seed (`assets/curriculum/exercises.json`,
+  /// `signedOff:false`). On the `.fromStrings` test path there is no Schema v2
+  /// seed, so this returns empty (graceful absence, D-10 — never throws).
+  Future<List<Exercise>> getExercises() async {
+    final cached = _exercises;
+    if (cached != null) return cached;
+
     if (_lettersJsonOverride != null) {
-      return const []; // test mode: no exercises file
+      return _exercises = const []; // JSON-override test mode: no exercises seed
+    }
+
+    final loaded = await _loadCollectionFirestoreOrBundle(
+      collection: 'exercises',
+      bundlePath: 'assets/curriculum/exercises.json',
+      rootKey: 'exercises',
+      fromFirestore: exerciseFromFirestore,
+      fromJson: Exercise.fromJson,
+    );
+    return _exercises = loaded;
+  }
+
+  /// Typed `getWords()` (Plan 07-01) — Firestore-first, bundle fallback.
+  Future<List<Word>> getWords() async {
+    final cached = _words;
+    if (cached != null) return cached;
+
+    if (_lettersJsonOverride != null) {
+      return _words = const [];
+    }
+
+    final loaded = await _loadCollectionFirestoreOrBundle(
+      collection: 'words',
+      bundlePath: 'assets/curriculum/words.json',
+      rootKey: 'words',
+      fromFirestore: wordFromFirestore,
+      fromJson: Word.fromJson,
+    );
+    return _words = loaded;
+  }
+
+  /// The `LetterUnit` for [letterId] (Plan 07-01) — Firestore-first, bundle
+  /// fallback. Returns null when no unit exists for that letter.
+  Future<LetterUnit?> getUnit(String letterId) async {
+    final units = await _getUnits();
+    try {
+      return units.firstWhere((u) => u.letterId == letterId);
+    } on StateError {
+      return null;
+    }
+  }
+
+  Future<List<LetterUnit>> _getUnits() async {
+    final cached = _units;
+    if (cached != null) return cached;
+
+    if (_lettersJsonOverride != null) {
+      return _units = const [];
+    }
+
+    final loaded = await _loadCollectionFirestoreOrBundle(
+      collection: 'units',
+      bundlePath: 'assets/curriculum/units.json',
+      rootKey: 'units',
+      fromFirestore: unitFromFirestore,
+      fromJson: LetterUnit.fromJson,
+    );
+    return _units = loaded;
+  }
+
+  /// Generic Schema v2 collection loader (mirrors
+  /// `_loadLettersFromFirestoreOrBundle`): one-shot Firestore `.get()`,
+  /// non-empty → map every doc via [fromFirestore]; empty / error / missing
+  /// bundle → parse the bundled `{ <rootKey>: [...] }` JSON via [fromJson].
+  /// Never throws — a malformed Firestore payload falls through to the seed
+  /// and the practice path never blocks (T-07-01-03).
+  Future<List<T>> _loadCollectionFirestoreOrBundle<T>({
+    required String collection,
+    required String bundlePath,
+    required String rootKey,
+    required T Function(Map<String, dynamic>) fromFirestore,
+    required T Function(Map<String, dynamic>) fromJson,
+  }) async {
+    try {
+      final snap = await _firestore.collection(collection).get();
+      if (snap.docs.isNotEmpty) {
+        return snap.docs.map((d) => fromFirestore(d.data())).toList();
+      }
+    } catch (_) {
+      // network/permission/cold-first-run → fall through to the bundle.
     }
     try {
-      final raw =
-          await rootBundle.loadString('assets/curriculum/exercises.json');
+      final raw = await rootBundle.loadString(bundlePath);
       final decoded = json.decode(raw) as Map<String, dynamic>;
-      return (decoded['exercises'] as List<dynamic>?) ?? [];
+      final rawList = decoded[rootKey] as List<dynamic>? ?? const [];
+      return rawList
+          .map((e) => fromJson(e as Map<String, dynamic>))
+          .toList();
     } catch (_) {
-      return const [];
+      return <T>[];
     }
   }
 }

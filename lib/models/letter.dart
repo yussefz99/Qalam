@@ -90,6 +90,49 @@ class CommonMistake {
       );
 }
 
+/// Curriculum Schema v2 — per-positional-form authored data (#6 / SCHEMA-V2 §2).
+///
+/// A connector letter (like baa) has up to four [Form]s — isolated, initial,
+/// medial, final — each carrying its own reference strokes, common mistakes, and
+/// (optionally) tolerances. Non-connectors (ا د ذ ر ز و) populate only
+/// isolated+final; the other slots stay null on [Letter.contextualForms].
+///
+/// This is ADDITIVE: the existing `Letter.forms` ([LetterForms]) holds the four
+/// glyph STRINGS for rendering. `Letter.contextualForms` holds these richer
+/// [Form] OBJECTS for the per-form scorer. Both coexist — see [Letter].
+class Form {
+  /// the pen-path reference strokes for this positional form.
+  final List<StrokeSpec> referenceStrokes;
+
+  /// named common-mistake checks → authored fix lines, for this form.
+  final List<CommonMistake> commonMistakes;
+
+  /// per-form, owner-tunable scoring tolerances; null → scorer default.
+  final Tolerances? tolerances;
+
+  const Form({
+    this.referenceStrokes = const [],
+    this.commonMistakes = const [],
+    this.tolerances,
+  });
+
+  factory Form.fromJson(Map<String, dynamic> json) {
+    final rawStrokes = json['referenceStrokes'] as List<dynamic>? ?? const [];
+    final rawMistakes = json['commonMistakes'] as List<dynamic>? ?? const [];
+    final tolerancesJson = json['tolerances'] as Map<String, dynamic>?;
+    return Form(
+      referenceStrokes: rawStrokes
+          .map((s) => StrokeSpec.fromJson(s as Map<String, dynamic>))
+          .toList(),
+      commonMistakes: rawMistakes
+          .map((m) => CommonMistake.fromJson(m as Map<String, dynamic>))
+          .toList(),
+      tolerances:
+          tolerancesJson != null ? Tolerances.fromJson(tolerancesJson) : null,
+    );
+  }
+}
+
 class AudioRef {
   final String? letter; // asset path or null (Phase 7 fills)
   final List<String> examples;
@@ -125,6 +168,16 @@ class Letter {
   /// `Tolerances.normal`. Mirrors the [audio] nullable-nested-model precedent.
   final Tolerances? tolerances;
 
+  /// Curriculum Schema v2 (#6 / SCHEMA-V2 §2) — per-positional-form authored
+  /// data, keyed by FormName ("isolated"|"initial"|"medial"|"final"). NULLABLE
+  /// and ADDITIVE: existing letters.json (which has the old [LetterForms]
+  /// glyph-string [forms]) still parses with `contextualForms == null`. The two
+  /// fields are distinct on purpose:
+  ///   • [forms]            — the four glyph STRINGS, for rendering.
+  ///   • [contextualForms]  — the richer per-form [Form] OBJECTS, for scoring.
+  /// A slot may itself be null for a non-connector's missing positions.
+  final Map<String, Form?>? contextualForms;
+
   const Letter({
     required this.id,
     required this.char,
@@ -138,6 +191,7 @@ class Letter {
     required this.signedOff,
     this.audio,
     this.tolerances,
+    this.contextualForms,
   });
 
   factory Letter.fromJson(Map<String, dynamic> json) {
@@ -145,6 +199,8 @@ class Letter {
     final rawMistakes = json['commonMistakes'] as List<dynamic>? ?? [];
     final audioJson = json['audio'] as Map<String, dynamic>?;
     final tolerancesJson = json['tolerances'] as Map<String, dynamic>?;
+    final contextualFormsJson =
+        json['contextualForms'] as Map<String, dynamic>?;
     return Letter(
       id: json['id'] as String,
       char: json['char'] as String,
@@ -163,6 +219,16 @@ class Letter {
       audio: audioJson != null ? AudioRef.fromJson(audioJson) : null,
       tolerances:
           tolerancesJson != null ? Tolerances.fromJson(tolerancesJson) : null,
+      // Additive per-form Form objects. A slot whose value is null (a
+      // non-connector's missing position) maps to a null Form.
+      contextualForms: contextualFormsJson != null
+          ? contextualFormsJson.map(
+              (k, v) => MapEntry(
+                k,
+                v != null ? Form.fromJson(v as Map<String, dynamic>) : null,
+              ),
+            )
+          : null,
     );
   }
 }
