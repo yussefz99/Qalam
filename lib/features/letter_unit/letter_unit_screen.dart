@@ -25,6 +25,7 @@ import 'package:go_router/go_router.dart';
 import '../../data/curriculum_repository.dart';
 import '../../models/exercise.dart';
 import '../../models/letter.dart';
+import '../../services/model_download_service.dart';
 import '../../models/letter_unit.dart';
 import '../../models/word.dart';
 import '../../theme/qalam_tokens.dart';
@@ -119,6 +120,10 @@ class LetterUnitScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Kick off the ML Kit Arabic model download the moment the unit opens, so the
+    // word-recognition scorer (Words / Listen & Write sections) is ready by the
+    // time the child gets there — best-effort, never blocks (D-05).
+    ref.watch(modelDownloadServiceProvider);
     final async = ref.watch(letterUnitDataProvider(letterId));
     return Scaffold(
       backgroundColor: QalamTokens.parchment,

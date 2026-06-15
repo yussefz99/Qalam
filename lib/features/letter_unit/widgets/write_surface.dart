@@ -30,8 +30,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/exercise_engine/check_result.dart';
 import '../../../core/exercise_engine/exercise_validator.dart';
+import '../../../core/recognition/ml_kit_recognizer.dart';
 import '../../../models/exercise.dart';
 import '../../../models/letter.dart';
+import '../../../services/model_download_service.dart';
 import '../../../theme/qalam_tokens.dart';
 import '../../../theme/text_styles.dart';
 import '../../../widgets/arabic_text.dart';
@@ -152,10 +154,32 @@ class _WriteSurfaceState extends ConsumerState<WriteSurface> {
         .map((s) => s.map((o) => <double>[o.dx, o.dy]).toList())
         .toList();
     final spec = exerciseSpecFromExercise(widget.exercise);
+
+    // Word checks (base 'sequence') are scored by RECOGNISING the written text
+    // and comparing it to expected.word — geometry alone cannot tell باب from بب.
+    // The validator needs `writtenWord`; without it the sequence check has no
+    // evidence and passes blindly (owner bug: "no scoring — any writing is
+    // correct"). Best-effort & offline (D-04/D-05): only when the ML Kit Arabic
+    // model is downloaded. Ready-but-unreadable → '' so the validator records a
+    // miss; not-ready → null so it degrades to the geometric/pass path (the model
+    // keeps downloading in the background) rather than hard-blocking the child.
+    String? writtenWord;
+    if (spec.check?.base == 'sequence' &&
+        ref.read(modelDownloadServiceProvider).isReady) {
+      final recognizer = MlKitRecognizer();
+      try {
+        final res = await recognizer.identify(pixelStrokes);
+        writtenWord = (res.topCandidate ?? '').trim();
+      } finally {
+        await recognizer.close();
+      }
+    }
+
     final result = await validateExercise(
       spec,
       pixelStrokes,
       letter: widget.letter,
+      writtenWord: writtenWord,
     );
     if (!mounted) return;
     widget.onResult?.call(result);
