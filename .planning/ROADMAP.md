@@ -417,9 +417,9 @@ Plans:
 
 **Wave 1** *(engine spine — parallel, no file overlap)*
 
-- [ ] 07-01-PLAN.md — Schema v2 typed models (Exercise/PromptPart/Surface/Answer/Check + Word + LetterUnit + per-form Form) + CurriculumRepository getExercises/getWords/getUnit (Firestore-first, bundle fallback); 19 baa configs deserialize 1:1 (CUR-01)
-- [ ] 07-02-PLAN.md — Audio slice (S1-06): vetted audio package + AssetLetterAudioPlayer over the existing seam + bundled baa clips (offline) + Firestore rules for words/exercises/units (autonomous:false — package legitimacy gate)
-- [ ] 07-03-PLAN.md — Validator spine (TDD): validateExercise (glyph/sequence/order + positionalForm/joinContinuity/transformRule) reusing the existing geometric scorer → CheckResult (CUR-01)
+- [x] 07-01-PLAN.md — Schema v2 typed models (Exercise/PromptPart/Surface/Answer/Check + Word + LetterUnit + per-form Form) + CurriculumRepository getExercises/getWords/getUnit (Firestore-first, bundle fallback); 19 baa configs deserialize 1:1 (CUR-01)
+- [x] 07-02-PLAN.md — Audio slice (S1-06): vetted audio package + AssetLetterAudioPlayer over the existing seam + bundled baa clips (offline) + Firestore rules for words/exercises/units (autonomous:false — package legitimacy gate)
+- [x] 07-03-PLAN.md — Validator spine (TDD): validateExercise (glyph/sequence/order + positionalForm/joinContinuity/transformRule) reusing the existing geometric scorer → CheckResult (CUR-01)
 
 **Wave 2** *(blocked on Wave 1)*
 
@@ -438,10 +438,12 @@ Plans:
 - [ ] 07-07-PLAN.md — autonomous:false — DRAFT baa's four contextual-form reference strokes + vocab + audio → owner's-mother sign-off human gate → Firestore seed/export; baa end-to-end real, signed off (CUR-01 / S1-06; SC#4)
 
 **Canonical refs (MUST read before planning/implementing):**
+
 - `docs/design/prototypes/letter-unit-baa/` — **the visual contract; implement EXACTLY** (HANDOFF.md, COMPONENTS.md, SCHEMA-BINDINGS.md, EXERCISE-CONFIGS.json, TOKENS.md, `prototype/` HTML/CSS/JS).
 - `.planning/research/learning-experience/SCHEMA-V2.md` — the locked data schema.
 - `.planning/research/learning-experience/COMPONENT-SYSTEM.md` — the 5-component architecture.
 - The Phase 06.1 plans — the Firestore/`CurriculumRepository` seam this extends.
+
 **UI hint**: yes — implement the prototype exactly; **no new design work**.
 **Research hint**: no — design + schema are locked (prototype + Schema v2). Plan directly.
 
@@ -538,7 +540,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 5. Profiles & Onboarding | 4/4 | Complete | - |
 | 6. Lesson Progression & Home | 10/10 | Complete   | 2026-06-14 |
 | 06.1 Firebase Curriculum Backend (INSERTED) | 5/5 | Complete    | 2026-06-14 |
-| 7. Learning Engine & Letter Unit | 0/TBD | Not started | - |
+| 7. Learning Engine & Letter Unit | 3/7 | In Progress|  |
 | 8. Full Curriculum & All Question Types | 0/TBD | Not started | - |
 | 9. Parent Dashboard | 3/3 | Complete    | 2026-06-13 |
 | 10. Offline Hardening & Release | 0/TBD | Not started | - |
