@@ -191,8 +191,15 @@ void main() {
       ),
     );
 
-    expect(find.byType(StrokeOrderAnimation), findsOneWidget);
+    // The demo starts HIDDEN — a clean dotted guide so the child can write
+    // immediately (owner bug #3c: the demo used to persist on the canvas).
+    expect(find.byType(StrokeOrderAnimation), findsNothing);
     expect(find.text('Watch me'), findsOneWidget);
+
+    // Tapping "Watch me" reveals the demo replay.
+    await tester.tap(find.text('Watch me'));
+    await tester.pump();
+    expect(find.byType(StrokeOrderAnimation), findsOneWidget);
   });
 
   testWidgets('Test 5: letter-complete runs the validator and forwards a result',

@@ -43,6 +43,7 @@ class WordsSectionStrings {
     this.listenLabel = 'Listen',
     this.listenPlay = 'Play word',
     this.hint = 'Trace at least one word to go on.',
+    this.continueLabel = 'Continue',
   });
 
   final String kick;
@@ -53,6 +54,7 @@ class WordsSectionStrings {
   final String listenLabel;
   final String listenPlay;
   final String hint;
+  final String continueLabel;
 }
 
 /// Pairs a vocab [Word] with the [Exercise] that traces it (writeWord /
@@ -173,13 +175,40 @@ class WordsSectionState extends ConsumerState<WordsSection> {
                 ],
               ),
             ),
+            const SizedBox(height: 14),
+            // The advance footer — the grid had no way forward, so the section
+            // got stuck after tracing (owner bug #5). A hint until the first
+            // word is traced, then a Continue CTA → Section 5.
+            Row(
+              children: [
+                Expanded(
+                  child: _done.isEmpty
+                      ? Text(
+                          s.hint,
+                          style: QalamTextStyles.button.copyWith(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: QalamTokens.fgMuted,
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+                PrimaryButton(
+                  key: const ValueKey('wordsContinue'),
+                  label: s.continueLabel,
+                  iconAfter: Icons.arrow_forward_rounded,
+                  enabled: _done.isNotEmpty,
+                  onTap: widget.onAdvance,
+                ),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
 
-  // ── one word's trace surface (the engine scaffold + a Listen side card) ─────
+  // ── one word's trace surface (the engine scaffold + a Back-to-words CTA) ────
   Widget _buildTrace(int i) {
     final s = widget.strings;
     final wt = widget.words[i];
@@ -188,6 +217,9 @@ class WordsSectionState extends ConsumerState<WordsSection> {
       key: ValueKey<String>('wordTrace:${w.id}'),
       child: Stack(
         children: [
+          // The engine scaffold drives the trace + grading + its Clear/Next CTAs;
+          // the word sound plays from the PromptHeader Play (a separate overlaid
+          // Listen card used to cover those CTAs; owner bug #5).
           Positioned.fill(
             child: ExerciseScaffold(
               exercise: wt.exercise,
@@ -196,20 +228,6 @@ class WordsSectionState extends ConsumerState<WordsSection> {
               // A clean pass marks the word traced + returns to the grid.
               onNext: () => debugMarkWordTraced(i),
               onAudioTap: _play,
-            ),
-          ),
-          // The Listen side card — an offline Play affordance for the word.
-          PositionedDirectional(
-            bottom: 28,
-            end: 40,
-            child: ListenCard(
-              label: s.listenLabel,
-              glyph: w.text,
-              romanization: _romGloss(w),
-              playLabel: s.listenPlay,
-              glyphSize: 48,
-              playKey: ValueKey<String>('wordTraceListen:${w.id}'),
-              onPlay: () => _play(w.audio),
             ),
           ),
           // The "Back to words" quiet CTA — top-start, returns to the grid.
@@ -225,14 +243,6 @@ class WordsSectionState extends ConsumerState<WordsSection> {
         ],
       ),
     );
-  }
-
-  /// "baab · door" — romanization + the English gloss, like the prototype's
-  /// `${w.rom} · ${w.en}`.
-  String _romGloss(Word w) {
-    final en = w.gloss['en'];
-    final rom = w.id;
-    return en == null || en.isEmpty ? rom : '$rom · $en';
   }
 }
 

@@ -33,7 +33,6 @@ import '../../../theme/qalam_tokens.dart';
 import '../../../theme/text_styles.dart';
 import '../../../widgets/arabic_text.dart';
 import '../widgets/exercise_scaffold.dart';
-import '../widgets/prompt_header.dart';
 
 /// Static copy for the Meet section (call site passes the l10n strings; English
 /// defaults keep the widget test independent of `flutter gen-l10n`, per the
@@ -126,14 +125,6 @@ class _MeetSectionState extends ConsumerState<MeetSection> {
     ];
   }
 
-  /// The single audioId carried by the meet config's audio part (snd.baa).
-  String? get _audioId {
-    for (final p in widget.exercise.prompt) {
-      if (p is AudioPart) return p.audioId;
-    }
-    return null;
-  }
-
   void _play(String? id) {
     if (id == null || id.isEmpty) return;
     // Fire-and-forget: the offline player degrades to a silent no-op on an
@@ -154,12 +145,13 @@ class _MeetSectionState extends ConsumerState<MeetSection> {
       // Any audio prompt part in the header plays the bundled clip offline.
       onAudioTap: _play,
       // The morph card replaces the (absent) WriteSurface on the teachCard path.
+      // The baa sound plays from the scaffold's PromptHeader "Hear" button — the
+      // morph card carried a SECOND "Hear" (owner bug #2a), now removed.
       customSurface: (_) => _MorphCard(
         forms: _forms,
         active: _active,
         strings: s,
         onSelect: (i) => setState(() => _active = i),
-        onHear: () => _play(_audioId),
       ),
     );
   }
@@ -173,14 +165,12 @@ class _MorphCard extends StatelessWidget {
     required this.active,
     required this.strings,
     required this.onSelect,
-    required this.onHear,
   });
 
   final List<_MorphForm> forms;
   final int active;
   final MeetSectionStrings strings;
   final ValueChanged<int> onSelect;
-  final VoidCallback onHear;
 
   @override
   Widget build(BuildContext context) {
@@ -258,16 +248,6 @@ class _MorphCard extends StatelessWidget {
                           _JoinHint(label: strings.joinsOn, pointsLeft: false),
                     ),
                   ),
-                // .playbtn "Hear" — top-right (LTR-anchored control).
-                Positioned(
-                  top: 16,
-                  right: 16,
-                  child: _HearButton(
-                    key: const ValueKey('meetHearButton'),
-                    label: strings.hear,
-                    onTap: onHear,
-                  ),
-                ),
               ],
             ),
           ),
@@ -404,46 +384,3 @@ class _ScrubStop extends StatelessWidget {
   }
 }
 
-/// `.playbtn` "Hear" — the morph card's offline sound control.
-class _HearButton extends StatelessWidget {
-  const _HearButton({super.key, required this.label, required this.onTap});
-
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      label: label,
-      child: Material(
-        color: QalamTokens.inkTeal,
-        borderRadius: BorderRadius.circular(16),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: onTap,
-          child: Container(
-            height: 46, // prototype meetPlay height:46
-            padding: const EdgeInsets.symmetric(horizontal: 18),
-            alignment: Alignment.center,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.volume_up_rounded,
-                    size: 22, color: QalamTokens.fgOnPrimary),
-                const SizedBox(width: 10),
-                Text(
-                  label,
-                  style: QalamTextStyles.button.copyWith(
-                    fontSize: 16,
-                    color: QalamTokens.fgOnPrimary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}

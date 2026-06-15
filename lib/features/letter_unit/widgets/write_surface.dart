@@ -23,6 +23,8 @@
 // the ExerciseSpec adapter, and forwards the CheckResult to the host. The strokes
 // are scored and discarded here (T-07-04-01) — only the verdict leaves.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -88,6 +90,28 @@ class WriteSurface extends ConsumerStatefulWidget {
 class _WriteSurfaceState extends ConsumerState<WriteSurface> {
   final GlobalKey<StrokeOrderAnimationState> _demoKey =
       GlobalKey<StrokeOrderAnimationState>();
+
+  /// The trace canvas starts with a CLEAN dotted guide — the demo only plays
+  /// when the child taps "Watch me", then auto-clears (owner bug #3c: the demo
+  /// used to persist on the canvas, blocking the child from writing). The Watch
+  /// & Trace section already shows the full demo in its own Watch phase first.
+  bool _demoVisible = false;
+  Timer? _demoTimer;
+  static const Duration _demoDuration = Duration(milliseconds: 2400);
+
+  void _playDemo() {
+    _demoTimer?.cancel();
+    setState(() => _demoVisible = true);
+    _demoTimer = Timer(_demoDuration, () {
+      if (mounted) setState(() => _demoVisible = false);
+    });
+  }
+
+  @override
+  void dispose() {
+    _demoTimer?.cancel();
+    super.dispose();
+  }
 
   bool get _isTrace => widget.surface.mode == 'trace';
 
@@ -163,13 +187,15 @@ class _WriteSurfaceState extends ConsumerState<WriteSurface> {
                   ),
                 ),
 
-              // the demo "Watch me" overlay (trace + surface.demo).
-              if (_isTrace && widget.surface.demo)
+              // the demo "Watch me" overlay — only while actively replaying, so
+              // it clears off the canvas afterwards (owner bug #3c).
+              if (_isTrace && widget.surface.demo && _demoVisible)
                 Positioned.fill(
                   child: IgnorePointer(
                     child: StrokeOrderAnimation(
                       key: _demoKey,
                       referenceStrokes: _referenceStrokes,
+                      duration: _demoDuration,
                     ),
                   ),
                 ),
@@ -201,7 +227,7 @@ class _WriteSurfaceState extends ConsumerState<WriteSurface> {
                   right: 14,
                   child: _WatchMeButton(
                     label: widget.watchMeLabel,
-                    onTap: () => _demoKey.currentState?.replay(),
+                    onTap: _playDemo,
                   ),
                 ),
             ],

@@ -31,7 +31,6 @@ import '../../../theme/qalam_tokens.dart';
 import '../../../theme/text_styles.dart';
 import '../../../widgets/arabic_text.dart';
 import '../widgets/exercise_scaffold.dart';
-import 'section_side_cards.dart';
 
 /// Static copy for the Forms section (English defaults; call site passes l10n).
 class FormsSectionStrings {
@@ -158,14 +157,6 @@ class FormsSectionState extends ConsumerState<FormsSection> {
     ref.read(audioPlayerProvider).playLetter(id);
   }
 
-  /// The audioId carried by an exercise's prompt (for the listen card).
-  String? _audioOf(Exercise e) {
-    for (final p in e.prompt) {
-      if (p is AudioPart) return p.audioId;
-    }
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
     if (_joinStage) return _buildJoin();
@@ -233,33 +224,18 @@ class FormsSectionState extends ConsumerState<FormsSection> {
         glyph: step.glyph,
       );
     }
-    // The engine scaffold drives the config-through-components trace + grading.
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: ExerciseScaffold(
-            // A key per form so the scaffold/controller reset cleanly on switch.
-            key: ValueKey<String>('formScaffold:${step.form}'),
-            exercise: step.exercise,
-            letter: widget.letter,
-            kick: step.label,
-            onNext: () => _onFormPassed(step.form),
-            onAudioTap: _play,
-          ),
-        ),
-        PositionedDirectional(
-          bottom: 28,
-          end: 40,
-          child: ListenCard(
-            label: widget.strings.listenLabel,
-            glyph: step.glyph,
-            romanization: step.label,
-            playLabel: widget.strings.listenPlay,
-            glyphSize: 54,
-            onPlay: () => _play(_audioOf(step.exercise)),
-          ),
-        ),
-      ],
+    // The engine scaffold drives the config-through-components trace + grading,
+    // including its own Clear / Next CTAs and the PromptHeader Play (the single
+    // audio affordance — a separate overlaid Listen card used to cover the CTAs;
+    // owner bug #4).
+    return ExerciseScaffold(
+      // A key per form so the scaffold/controller reset cleanly on switch.
+      key: ValueKey<String>('formScaffold:${step.form}'),
+      exercise: step.exercise,
+      letter: widget.letter,
+      kick: step.label,
+      onNext: () => _onFormPassed(step.form),
+      onAudioTap: _play,
     );
   }
 
@@ -268,30 +244,12 @@ class FormsSectionState extends ConsumerState<FormsSection> {
     final s = widget.strings;
     return KeyedSubtree(
       key: const ValueKey('joinStage'),
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: ExerciseScaffold(
-              exercise: widget.join,
-              letter: widget.letter,
-              kick: s.joinKick,
-              onNext: widget.onAdvance,
-              onAudioTap: _play,
-            ),
-          ),
-          PositionedDirectional(
-            bottom: 28,
-            end: 40,
-            child: ListenCard(
-              label: s.listenLabel,
-              glyph: 'باب',
-              romanization: 'baab',
-              playLabel: s.listenPlay,
-              glyphSize: 54,
-              onPlay: () => _play(_audioOf(widget.join)),
-            ),
-          ),
-        ],
+      child: ExerciseScaffold(
+        exercise: widget.join,
+        letter: widget.letter,
+        kick: s.joinKick,
+        onNext: widget.onAdvance,
+        onAudioTap: _play,
       ),
     );
   }

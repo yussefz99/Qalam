@@ -286,6 +286,11 @@ class _TutorColumn extends StatelessWidget {
       ExerciseTone.neutral => QalamTokens.aquaEdge,
     };
     final bool toned = tone != ExerciseTone.neutral;
+    final String bubbleText = _bubbleText();
+    // Hide the speech bubble entirely when there's nothing to say (e.g. a
+    // teachCard idle with no line) — an empty bubble read as a stray "white box
+    // under the mascot" (owner bug #2b). It returns the moment a verdict lands.
+    final bool showBubble = bubbleText.trim().isNotEmpty;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -317,9 +322,10 @@ class _TutorColumn extends StatelessWidget {
             color: QalamTokens.fgMuted,
           ),
         ),
-        const SizedBox(height: 12),
-        // .ex-speech — the bubble (toned coral/leaf on a verdict).
-        Container(
+        if (showBubble) ...[
+          const SizedBox(height: 12),
+          // .ex-speech — the bubble (toned coral/leaf on a verdict).
+          Container(
           constraints: const BoxConstraints(minHeight: 92), // .ex-speech min-height
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
           decoration: BoxDecoration(
@@ -356,7 +362,8 @@ class _TutorColumn extends StatelessWidget {
               ),
             ],
           ),
-        ),
+          ),
+        ],
       ],
     );
   }

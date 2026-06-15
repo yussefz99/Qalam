@@ -28,7 +28,6 @@ import '../../../models/letter.dart';
 import '../../../providers/audio_providers.dart';
 import '../../../theme/qalam_tokens.dart';
 import '../../../theme/text_styles.dart';
-import '../../../widgets/arabic_text.dart';
 import '../../practice/widgets/stroke_order_animation.dart';
 import '../widgets/exercise_scaffold.dart';
 import 'section_side_cards.dart';
@@ -95,14 +94,6 @@ class _WatchTraceSectionState extends ConsumerState<WatchTraceSection> {
   _Phase _phase = _Phase.watch;
   final GlobalKey<StrokeOrderAnimationState> _demoKey =
       GlobalKey<StrokeOrderAnimationState>();
-
-  /// The audioId carried by the exercise (snd.baa), for the Listen card.
-  String? get _audioId {
-    for (final p in widget.exercise.prompt) {
-      if (p is AudioPart) return p.audioId;
-    }
-    return null;
-  }
 
   /// The isolated form's reference strokes for the Watch demo (falls back to the
   /// letter's base strokes if the contextual form is absent).
@@ -186,35 +177,19 @@ class _WatchTraceSectionState extends ConsumerState<WatchTraceSection> {
     );
   }
 
-  // ── Trace phase — the engine scaffold + the Listen side card ───────────────
+  // ── Trace phase — the engine scaffold drives trace + grading + CTAs ────────
   Widget _buildTrace() {
     final s = widget.strings;
-    return Stack(
-      children: [
-        // The config-driven engine: WriteSurface(trace) + grading + star.
-        Positioned.fill(
-          child: ExerciseScaffold(
-            exercise: widget.exercise,
-            letter: widget.letter,
-            kick: s.traceKick,
-            onNext: widget.onAdvance,
-            onAudioTap: _play,
-          ),
-        ),
-        // The Listen side card — an offline Play affordance for the baa sound.
-        PositionedDirectional(
-          bottom: 28,
-          end: 40,
-          child: ListenCard(
-            label: s.listenLabel,
-            glyph: widget.letter.char,
-            romanization: s.romanization,
-            playLabel: s.listenPlay,
-            playKey: const ValueKey('traceListenPlay'),
-            onPlay: () => _play(_audioId),
-          ),
-        ),
-      ],
+    // The config-driven engine: WriteSurface(trace) + grading + star + the
+    // Clear / Next CTAs. The baa sound plays from the PromptHeader's Play button
+    // (the single audio affordance — a separate overlaid Listen card used to
+    // duplicate it AND cover the Clear/Next CTAs; owner bugs #3a/#3b).
+    return ExerciseScaffold(
+      exercise: widget.exercise,
+      letter: widget.letter,
+      kick: s.traceKick,
+      onNext: widget.onAdvance,
+      onAudioTap: _play,
     );
   }
 }

@@ -131,14 +131,17 @@ void main() {
     );
   });
 
-  testWidgets('Test 5: the Listen side card plays the baa sound offline',
+  testWidgets('Test 5: the trace PromptHeader Play plays the baa sound offline',
       (tester) async {
     final audio = await _pump(tester);
     await tester.tap(find.text("I'll try"));
     await tester.pumpAndSettle();
 
     expect(audio.played, isEmpty);
-    await tester.tap(find.byKey(const ValueKey('traceListenPlay')));
+    // The single audio affordance is the engine PromptHeader Play button (the
+    // overlaid Listen card that duplicated it AND covered the CTAs was removed —
+    // owner bugs #3a/#3b).
+    await tester.tap(find.text('Play'));
     await tester.pump();
     expect(audio.played, contains('snd.baa'));
   });

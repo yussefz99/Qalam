@@ -87,7 +87,9 @@ void main() {
     final audio = await _pumpMeet(tester);
     expect(audio.played, isEmpty);
 
-    await tester.tap(find.byKey(const ValueKey('meetHearButton')));
+    // The single "Hear" affordance is the engine PromptHeader's audio button
+    // (the duplicate morph-card Hear was removed — owner bug #2a).
+    await tester.tap(find.text('Hear'));
     await tester.pump();
 
     expect(audio.played, contains('snd.baa'));
