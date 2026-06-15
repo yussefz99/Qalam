@@ -101,8 +101,8 @@ void main() {
 
       expect(exercises, hasLength(19));
       expect(exercises, everyElement(isA<Exercise>()));
-      // The bundled seed ships unsigned (content TBD).
-      expect(exercises.every((e) => e.signedOff == false), isTrue);
+      // baa's configs are signed off (owner authorised, 2026-06-15).
+      expect(exercises.every((e) => e.signedOff == true), isTrue);
       // The teachCard config parses with null assessed fields.
       final teachCard = exercises.firstWhere((e) => e.type == 'teachCard');
       expect(teachCard.surface, isNull);

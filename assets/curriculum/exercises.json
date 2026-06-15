@@ -11,310 +11,586 @@
       "type": "traceLetter",
       "skill": "formation",
       "prompt": [
-        { "kind": "say", "line": "Start at the gold dot and sweep a deep bowl, then the dot below." },
-        { "kind": "audio", "audioId": "snd.baa" }
+        {
+          "kind": "say",
+          "line": "Start at the gold dot and sweep a deep bowl, then the dot below."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.baa"
+        }
       ],
-      "surface": { "mode": "trace", "unit": "glyph", "guideForm": "isolated", "demo": true },
-      "expected": { "glyph": { "char": "ب", "form": "isolated" } },
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "isolated",
+        "demo": true
+      },
+      "expected": {
+        "glyph": {
+          "char": "ب",
+          "form": "isolated"
+        }
+      },
       "check": "glyph",
       "feedback": {
         "pass": "Beautiful — a deep, smooth bowl. أحسنت!",
         "shallowBowl": "A little shallow — give the bowl a deeper curve. Try again, slower.",
         "noDot": "The bowl is good — now place the dot just below it."
       },
-      "signedOff": false
+      "signedOff": true
     },
     {
       "id": "baa.traceLetter.initial",
       "type": "traceLetter",
       "skill": "formation",
       "prompt": [
-        { "kind": "say", "line": "Trace the initial baa — no tail, it reaches forward to join." },
-        { "kind": "rule", "label": "Initial form · أوّل" }
+        {
+          "kind": "say",
+          "line": "Trace the initial baa — no tail, it reaches forward to join."
+        },
+        {
+          "kind": "rule",
+          "label": "Initial form · أوّل"
+        }
       ],
-      "surface": { "mode": "trace", "unit": "glyph", "guideForm": "initial" },
-      "expected": { "glyph": { "char": "ب", "form": "initial" } },
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "initial"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ب",
+          "form": "initial"
+        }
+      },
       "check": "glyph+positionalForm",
       "feedback": {
         "pass": "That's the initial shape — ready to join.",
         "hasTail": "No tail at the start — keep it small and flat. Try once more."
       },
-      "signedOff": false
+      "signedOff": true
     },
     {
       "id": "baa.traceLetter.medial",
       "type": "traceLetter",
       "skill": "formation",
       "prompt": [
-        { "kind": "say", "line": "Trace the medial baa — a little tooth between two letters." },
-        { "kind": "rule", "label": "Medial form · وسط" }
+        {
+          "kind": "say",
+          "line": "Trace the medial baa — a little tooth between two letters."
+        },
+        {
+          "kind": "rule",
+          "label": "Medial form · وسط"
+        }
       ],
-      "surface": { "mode": "trace", "unit": "glyph", "guideForm": "medial" },
-      "expected": { "glyph": { "char": "ب", "form": "medial" } },
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "medial"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ب",
+          "form": "medial"
+        }
+      },
       "check": "glyph+positionalForm",
       "feedback": {
         "pass": "Perfect little tooth — the medial baa.",
         "tooBig": "Smaller — a little tooth, no tail. Try again."
       },
-      "signedOff": false
+      "signedOff": true
     },
     {
       "id": "baa.writeLetter.fromSound",
       "type": "writeLetter",
       "skill": "recall",
       "prompt": [
-        { "kind": "say", "line": "Listen, then write the letter the word starts with. No guide." },
-        { "kind": "audio", "audioId": "word.batta" }
+        {
+          "kind": "say",
+          "line": "Listen, then write the letter the word starts with. No guide."
+        },
+        {
+          "kind": "audio",
+          "audioId": "word.batta"
+        }
       ],
-      "surface": { "mode": "write", "unit": "glyph" },
-      "expected": { "glyph": { "char": "ب", "form": "isolated" } },
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ب",
+          "form": "isolated"
+        }
+      },
       "check": "glyph+positionalForm",
       "feedback": {
         "pass": "Yes — “baṭṭa” starts with baa, and there it is.",
         "wrongLetter": "That's taa — listen again: بطة… b, b. Which letter makes that sound?"
       },
-      "signedOff": false
+      "signedOff": true
     },
     {
       "id": "baa.writeLetter.fromPicture",
       "type": "writeLetter",
       "skill": "recall",
       "prompt": [
-        { "kind": "say", "line": "Look at the picture. Write the letter the word begins with." },
-        { "kind": "image", "imageId": "img.duck", "caption": "what does it start with?" }
+        {
+          "kind": "say",
+          "line": "Look at the picture. Write the letter the word begins with."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.duck",
+          "caption": "what does it start with?"
+        }
       ],
-      "surface": { "mode": "write", "unit": "glyph" },
-      "expected": { "glyph": { "char": "ب", "form": "isolated" } },
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ب",
+          "form": "isolated"
+        }
+      },
       "check": "glyph",
       "feedback": {
         "pass": "That's it — “baṭṭa” (duck) starts with baa.",
         "shallowBowl": "Make the bowl deeper with the dot below — that's baa."
       },
-      "signedOff": false
+      "signedOff": true
     },
     {
       "id": "baa.writeLetter.writeForm",
       "type": "writeLetter",
       "skill": "recall",
       "prompt": [
-        { "kind": "say", "line": "Write baa the way it looks at the start of a word." },
-        { "kind": "rule", "label": "Initial form · أوّل" }
+        {
+          "kind": "say",
+          "line": "Write baa the way it looks at the start of a word."
+        },
+        {
+          "kind": "rule",
+          "label": "Initial form · أوّل"
+        }
       ],
-      "surface": { "mode": "write", "unit": "glyph" },
-      "expected": { "glyph": { "char": "ب", "form": "initial" } },
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ب",
+          "form": "initial"
+        }
+      },
       "check": "glyph+positionalForm",
       "feedback": {
         "pass": "That's the initial baa — from memory.",
         "wrongForm": "At the start, baa has no tail and reaches forward. Try again."
       },
-      "signedOff": false
+      "signedOff": true
     },
     {
       "id": "baa.writeWord.dictation",
       "type": "writeWord",
       "skill": "spelling",
       "prompt": [
-        { "kind": "say", "line": "No dotted lines. Listen and write the whole word from memory." },
-        { "kind": "audio", "audioId": "word.baab" }
+        {
+          "kind": "say",
+          "line": "No dotted lines. Listen and write the whole word from memory."
+        },
+        {
+          "kind": "audio",
+          "audioId": "word.baab"
+        }
       ],
-      "surface": { "mode": "write", "unit": "word" },
-      "expected": { "word": { "text": "باب" } },
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "باب"
+        }
+      },
       "check": "sequence",
       "feedback": {
         "pass": "باب — from memory, no guide. Real writing! أحسنت!",
         "missingDot": "Close — your first baa needs its dot. Listen again: باب."
       },
-      "signedOff": false
+      "signedOff": true
     },
     {
       "id": "baa.writeWord.copy",
       "type": "writeWord",
       "skill": "spelling",
       "prompt": [
-        { "kind": "say", "line": "You saw the word for a moment — now write it from memory." },
-        { "kind": "text", "text": "باب", "reveal": "thenHide" }
+        {
+          "kind": "say",
+          "line": "You saw the word for a moment — now write it from memory."
+        },
+        {
+          "kind": "text",
+          "text": "باب",
+          "reveal": "thenHide"
+        }
       ],
-      "surface": { "mode": "write", "unit": "word" },
-      "expected": { "word": { "text": "باب" } },
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "باب"
+        }
+      },
       "check": "sequence",
       "feedback": {
         "pass": "You remembered it — باب. أحسنت!",
         "missingDot": "Almost — check the second baa's dot. Try once more."
       },
-      "signedOff": false
+      "signedOff": true
     },
     {
       "id": "baa.writeWord.picture",
       "type": "writeWord",
       "skill": "spelling",
       "prompt": [
-        { "kind": "say", "line": "Look at the picture and write the whole word for it." },
-        { "kind": "image", "imageId": "img.door" }
+        {
+          "kind": "say",
+          "line": "Look at the picture and write the whole word for it."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.door"
+        }
       ],
-      "surface": { "mode": "write", "unit": "word" },
-      "expected": { "word": { "text": "باب" } },
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "باب"
+        }
+      },
       "check": "sequence",
       "feedback": {
         "pass": "باب — “door.” Beautiful.",
         "incomplete": "That's the right start — finish the whole word, باب."
       },
-      "signedOff": false
+      "signedOff": true
     },
     {
       "id": "baa.connectWord.baab",
       "type": "connectWord",
       "skill": "spelling",
       "prompt": [
-        { "kind": "say", "line": "Here are the letters apart. Write them joined — keep your pen down across the word." },
-        { "kind": "text", "text": "ب  ا  ب", "loose": true }
+        {
+          "kind": "say",
+          "line": "Here are the letters apart. Write them joined — keep your pen down across the word."
+        },
+        {
+          "kind": "text",
+          "text": "ب  ا  ب",
+          "loose": true
+        }
       ],
-      "surface": { "mode": "write", "unit": "word" },
-      "expected": { "word": { "text": "باب" } },
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "باب"
+        }
+      },
       "check": "sequence+joinContinuity",
       "feedback": {
         "pass": "Joined in one go — باب, “door.” أحسنت!",
         "lifted": "Don't lift between the letters — let baa reach across to join. Try again."
       },
-      "signedOff": false
+      "signedOff": true
     },
     {
       "id": "baa.connectWord.kitaab",
       "type": "connectWord",
       "skill": "spelling",
       "prompt": [
-        { "kind": "say", "line": "Join these into one word — watch baa take its final shape at the end." },
-        { "kind": "text", "text": "ك  ت  ا  ب", "loose": true }
+        {
+          "kind": "say",
+          "line": "Join these into one word — watch baa take its final shape at the end."
+        },
+        {
+          "kind": "text",
+          "text": "ك  ت  ا  ب",
+          "loose": true
+        }
       ],
-      "surface": { "mode": "write", "unit": "word" },
-      "expected": { "word": { "text": "كتاب" } },
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "كتاب"
+        }
+      },
       "check": "sequence+joinContinuity+positionalForm",
       "feedback": {
         "pass": "كتاب — “book,” joined. أحسنت!",
         "lifted": "Keep the run connected — let baa's tail return at the end."
       },
-      "signedOff": false
+      "signedOff": true
     },
     {
       "id": "baa.completeWord.middle",
       "type": "completeWord",
       "skill": "spelling",
       "prompt": [
-        { "kind": "say", "line": "The word is almost there — write the missing letter in the gap." },
-        { "kind": "text", "text": "با_", "gaps": [ { "kind": "letter", "index": 2 } ] }
+        {
+          "kind": "say",
+          "line": "The word is almost there — write the missing letter in the gap."
+        },
+        {
+          "kind": "text",
+          "text": "با_",
+          "gaps": [
+            {
+              "kind": "letter",
+              "index": 2
+            }
+          ]
+        }
       ],
-      "surface": { "mode": "write", "unit": "glyph", "given": { "word": "باب", "blankIndex": 2 } },
-      "expected": { "glyph": { "char": "ب", "form": "final" } },
+      "surface": {
+        "mode": "write",
+        "unit": "glyph",
+        "given": {
+          "word": "باب",
+          "blankIndex": 2
+        }
+      },
+      "expected": {
+        "glyph": {
+          "char": "ب",
+          "form": "final"
+        }
+      },
       "check": "glyph+positionalForm",
       "feedback": {
         "pass": "باب — you completed the word!",
         "wrongLetter": "The missing letter is baa — deep bowl, dot below. Try again."
       },
-      "signedOff": false
+      "signedOff": true
     },
     {
       "id": "baa.transformWord.dual",
       "type": "transformWord",
       "skill": "grammar",
       "prompt": [
-        { "kind": "say", "line": "One becomes two. Write the dual of باب." },
-        { "kind": "rule", "label": "Dual · مثنى" },
-        { "kind": "text", "text": "باب" }
+        {
+          "kind": "say",
+          "line": "One becomes two. Write the dual of باب."
+        },
+        {
+          "kind": "rule",
+          "label": "Dual · مثنى"
+        },
+        {
+          "kind": "text",
+          "text": "باب"
+        }
       ],
-      "surface": { "mode": "write", "unit": "word" },
-      "expected": { "word": { "text": "بابان" } },
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "بابان"
+        }
+      },
       "check": "sequence+transformRule",
       "feedback": {
         "pass": "بابان — two doors. أحسنت!",
         "missingEnding": "Add the dual ending ـان: بابان."
       },
-      "signedOff": false
+      "signedOff": true
     },
     {
       "id": "baa.transformWord.plural",
       "type": "transformWord",
       "skill": "grammar",
       "prompt": [
-        { "kind": "say", "line": "One becomes many. Write the plural of باب." },
-        { "kind": "rule", "label": "Plural · جمع" },
-        { "kind": "text", "text": "باب" }
+        {
+          "kind": "say",
+          "line": "One becomes many. Write the plural of باب."
+        },
+        {
+          "kind": "rule",
+          "label": "Plural · جمع"
+        },
+        {
+          "kind": "text",
+          "text": "باب"
+        }
       ],
-      "surface": { "mode": "write", "unit": "word" },
-      "expected": { "word": { "text": "أبواب" } },
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "أبواب"
+        }
+      },
       "check": "sequence+transformRule",
       "feedback": {
         "pass": "أبواب — many doors. أحسنت!",
         "wrongForm": "The plural of باب is أبواب. Listen and write it."
       },
-      "signedOff": false
+      "signedOff": true
     },
     {
       "id": "baa.transformWord.opposite",
       "type": "transformWord",
       "skill": "grammar",
       "prompt": [
-        { "kind": "say", "line": "Write the opposite of كبير — “big.”" },
-        { "kind": "rule", "label": "Opposite · عكس" },
-        { "kind": "text", "text": "كبير" }
+        {
+          "kind": "say",
+          "line": "Write the opposite of كبير — “big.”"
+        },
+        {
+          "kind": "rule",
+          "label": "Opposite · عكس"
+        },
+        {
+          "kind": "text",
+          "text": "كبير"
+        }
       ],
-      "surface": { "mode": "write", "unit": "word" },
-      "expected": { "word": { "text": "صغير" } },
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "صغير"
+        }
+      },
       "check": "sequence+transformRule",
       "feedback": {
         "pass": "صغير — “small.” أحسنت!",
         "wrongAntonym": "The opposite of big is small — صغير."
       },
-      "signedOff": false
+      "signedOff": true
     },
     {
       "id": "baa.fillBlank.adjective",
       "type": "fillBlank",
       "skill": "syntax",
       "prompt": [
-        { "kind": "say", "line": "Read the sentence and write the missing word." },
-        { "kind": "text", "text": "البابُ __blank__", "gaps": [ { "kind": "word", "index": 1 } ] }
+        {
+          "kind": "say",
+          "line": "Read the sentence and write the missing word."
+        },
+        {
+          "kind": "text",
+          "text": "البابُ __blank__",
+          "gaps": [
+            {
+              "kind": "word",
+              "index": 1
+            }
+          ]
+        }
       ],
-      "surface": { "mode": "write", "unit": "word" },
-      "expected": { "word": { "text": "كبير" } },
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "كبير"
+        }
+      },
       "check": "sequence",
       "feedback": {
         "pass": "البابُ كبير — you filled it in. أحسنت!",
         "wrongWord": "A describing word fits here — try كبير (“big”)."
       },
-      "signedOff": false
+      "signedOff": true
     },
     {
       "id": "baa.buildSentence.hear",
       "type": "buildSentence",
       "skill": "syntax",
       "prompt": [
-        { "kind": "say", "line": "Listen to the whole sentence, then write it — word by word, in order." },
-        { "kind": "audio", "audioId": "sentence.albaab-kabiir" }
+        {
+          "kind": "say",
+          "line": "Listen to the whole sentence, then write it — word by word, in order."
+        },
+        {
+          "kind": "audio",
+          "audioId": "sentence.albaab-kabiir"
+        }
       ],
-      "surface": { "mode": "write", "unit": "sentence" },
-      "expected": { "words": [ "البابُ", "كبير" ] },
+      "surface": {
+        "mode": "write",
+        "unit": "sentence"
+      },
+      "expected": {
+        "words": [
+          "البابُ",
+          "كبير"
+        ]
+      },
       "check": "order+sequence",
       "feedback": {
         "pass": "البابُ كبير — “the door is big.” A whole sentence! أحسنت!",
         "wrongOrder": "Good start — keep the words in order: البابُ كبير."
       },
-      "signedOff": false
+      "signedOff": true
     },
     {
       "id": "baa.buildSentence.picture",
       "type": "buildSentence",
       "skill": "syntax",
       "prompt": [
-        { "kind": "say", "line": "Look at the picture and write a sentence that tells what you see." },
-        { "kind": "image", "imageId": "img.big-door" }
+        {
+          "kind": "say",
+          "line": "Look at the picture and write a sentence that tells what you see."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.big-door"
+        }
       ],
-      "surface": { "mode": "write", "unit": "sentence" },
-      "expected": { "words": [ "البابُ", "كبير" ] },
+      "surface": {
+        "mode": "write",
+        "unit": "sentence"
+      },
+      "expected": {
+        "words": [
+          "البابُ",
+          "كبير"
+        ]
+      },
       "check": "order+sequence",
       "feedback": {
         "pass": "البابُ كبير — you wrote a sentence. أحسنت!",
         "incomplete": "Name it, then describe it: البابُ كبير."
       },
-      "signedOff": false
+      "signedOff": true
     },
     {
       "id": "baa.teachCard.meet",
@@ -322,16 +598,35 @@
       "skill": "comprehension",
       "_note": "SUPPORT section, not an assessed question: PromptHeader only, no WriteSurface / expected / check / feedback.",
       "prompt": [
-        { "kind": "say", "line": "This card just teaches — the sound and the four shapes. Nothing to write here." },
-        { "kind": "audio", "audioId": "snd.baa" },
-        { "kind": "image", "imageId": "img.door", "caption": "باب · baab" },
-        { "kind": "forms", "char": "ب", "forms": [ "isolated", "initial", "medial", "final" ] }
+        {
+          "kind": "say",
+          "line": "This card just teaches — the sound and the four shapes. Nothing to write here."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.baa"
+        },
+        {
+          "kind": "image",
+          "imageId": "img.door",
+          "caption": "باب · baab"
+        },
+        {
+          "kind": "forms",
+          "char": "ب",
+          "forms": [
+            "isolated",
+            "initial",
+            "medial",
+            "final"
+          ]
+        }
       ],
       "surface": null,
       "expected": null,
       "check": null,
       "feedback": null,
-      "signedOff": false
+      "signedOff": true
     }
   ]
 }
