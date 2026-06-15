@@ -108,6 +108,7 @@ flutter:
     - assets/curriculum/
     - assets/fonts/
     - assets/icons/
+    - assets/images/
     - assets/mascot/
     - assets/logo.svg
 
