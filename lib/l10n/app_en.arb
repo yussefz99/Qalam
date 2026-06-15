@@ -1,262 +1,297 @@
 {
   "@@locale": "en",
-
   "openPractice": "Open Practice",
   "@openPractice": {
     "description": "Primary CTA on Home that opens the Practice screen."
   },
-
   "clear": "Clear",
   "@clear": {
     "description": "Practice action that clears the writing canvas."
   },
-
   "homePlaceholderHeading": "Your Journey Starts Soon",
   "@homePlaceholderHeading": {
     "description": "Heading on the Home placeholder card."
   },
-
   "homePlaceholderBody": "Your letters and lessons will live here. For now, head to Practice and write.",
   "@homePlaceholderBody": {
     "description": "Body copy on the Home placeholder card."
   },
-
   "writeHere": "Write Here",
   "@writeHere": {
     "description": "Heading for the Practice empty state."
   },
-
   "practiceEmptyBody": "Pick up your pen and draw on the page. Tap Clear to start over.",
   "@practiceEmptyBody": {
     "description": "Body copy for the Practice empty state."
   },
-
   "settings": "Settings",
   "@settings": {
     "description": "Settings screen heading and nav label."
   },
-
   "settingsPlaceholderBody": "Grown-up settings will live here soon.",
   "@settingsPlaceholderBody": {
     "description": "Body copy on the Settings placeholder."
   },
-
   "databaseError": "Something Didn't Save. Close the app and open it again — your work is kept on this tablet.",
   "@databaseError": {
     "description": "Generic shell-level error shown when a database read/write fails."
   },
-
   "clearConfirmHeading": "Clear your writing?",
   "@clearConfirmHeading": {
     "description": "Heading of the destructive Clear-canvas confirmation dialog."
   },
-
   "clearConfirmBody": "This erases what's on the page.",
   "@clearConfirmBody": {
     "description": "Body of the Clear-canvas confirmation dialog."
   },
-
   "keepWriting": "Keep Writing",
   "@keepWriting": {
     "description": "Non-destructive dismiss action on the Clear-canvas confirmation dialog."
   },
-
   "demoHomeGreeting": "Let's learn, Layla.",
   "@demoHomeGreeting": {
     "description": "Demo Home warm greeting. Static placeholder name (no profile system — Phase 5). DP-05/specifics."
   },
-
   "demoLessonEyebrow": "TODAY'S LESSON",
   "@demoLessonEyebrow": {
     "description": "Demo Home eyebrow above the alif lesson card (Label scale, dotted-caption voice)."
   },
-
   "demoLessonTitle": "Alif",
   "@demoLessonTitle": {
     "description": "Demo Home lesson-card title — the one signed-off letter for this loop."
   },
-
   "demoWatchEyebrow": "WATCH · STROKE ORDER",
   "@demoWatchEyebrow": {
     "description": "Watch step eyebrow (03-UI-SPEC Copywriting Contract, verbatim)."
   },
-
   "demoWatchHeading": "Watch me write baa.",
   "@demoWatchHeading": {
     "description": "Watch step heading — the mascot Qalam speaks. Baa demo loop (matches Home + mockups)."
   },
-
   "demoWatchTip": "Start at the gold dot. Follow the curve to the left.",
   "@demoWatchTip": {
     "description": "Watch tip-card body. Calm, specific guidance for the baa curve — never hype."
   },
-
   "demoTraceEyebrow": "YOUR TURN · TRACE",
   "@demoTraceEyebrow": {
     "description": "Trace step eyebrow (03-UI-SPEC Copywriting Contract, verbatim)."
   },
-
   "demoTraceHeading": "Now you trace baa.",
   "@demoTraceHeading": {
     "description": "Trace step heading — hands the pen to the child. Baa demo loop."
   },
-
   "demoTraceProgress": "Stroke 1 of 1",
   "@demoTraceProgress": {
     "description": "Trace per-stroke progress (the demo baa is one main stroke). Western numerals only; pedagogical, not a score."
   },
-
   "demoStartTracing": "Start Tracing",
   "@demoStartTracing": {
     "description": "Watch → Trace CTA (Title Case)."
   },
-
   "demoTraceSubmit": "Done — Check My Work",
   "@demoTraceSubmit": {
     "description": "Warm, child-appropriate Trace submit / stylus-up CTA (Title Case). Plan 04 references this key BY NAME for the Trace submit affordance."
   },
-
   "demoTryAgain": "Try Again",
   "@demoTryAgain": {
     "description": "Trace miss retry CTA — retry the SAME stroke after a named fix; unlimited, no counter (Title Case)."
   },
-
   "demoCelebrationEyebrow": "MASTERED",
   "@demoCelebrationEyebrow": {
     "description": "Celebration eyebrow / mastery label (03-UI-SPEC), shown with one gold star glyph."
   },
-
   "demoCelebrationHeading": "You learned the letter baa.",
   "@demoCelebrationHeading": {
     "description": "Celebration heading — the mastery moment (Baa demo loop, faithful to mockup)."
   },
-
   "demoCelebrationPraiseAr": "أحسنت",
   "@demoCelebrationPraiseAr": {
     "description": "Celebration Arabic praise island (RTL, Noto Naskh) — 'well done', paired with the English line. Never bold/italic/letterSpaced."
   },
-
   "demoBackHome": "Back Home",
   "@demoBackHome": {
     "description": "Celebration primary CTA returning to demo Home (Title Case). No 'See journey' — Journey is Phase 6."
   },
-
   "demoMissFix": "Your baa needs a deeper curve at the bottom — try again, slower this time.",
   "@demoMissFix": {
     "description": "HERO miss state — a SPECIFIC named fix in the tutor's warm voice (Baa demo loop). Never a generic bounce; always names the exact fix. Mock demo copy (baa is not yet a signed-off curriculum letter)."
   },
-
   "demoPassPraise": "Beautiful — a smooth, deep curve. أحسنت.",
   "@demoPassPraise": {
     "description": "Clean-pass praise — specific warm praise that names what was good (the smooth, deep baa curve). Never over-praise sloppy work."
   },
-
   "demoPassContinue": "Continue",
   "@demoPassContinue": {
     "description": "Clean-pass primary CTA advancing to the Celebration screen (Title Case). Calm, never hype."
   },
-
   "demoHomeStudentName": "Layla",
-  "@demoHomeStudentName": { "description": "Demo Home header — student display name." },
+  "@demoHomeStudentName": {
+    "description": "Demo Home header — student display name."
+  },
   "demoHomeStudentGrade": "Grade 3",
-  "@demoHomeStudentGrade": { "description": "Demo Home header — student grade label." },
+  "@demoHomeStudentGrade": {
+    "description": "Demo Home header — student grade label."
+  },
   "demoHomeStarCount": "39",
-  "@demoHomeStarCount": { "description": "Demo Home header — running star count (faithful-to-mockup demo; Western numerals)." },
+  "@demoHomeStarCount": {
+    "description": "Demo Home header — running star count (faithful-to-mockup demo; Western numerals)."
+  },
   "demoHomeNavHome": "Home",
-  "@demoHomeNavHome": { "description": "Demo Home left nav-rail label — Home (active)." },
+  "@demoHomeNavHome": {
+    "description": "Demo Home left nav-rail label — Home (active)."
+  },
   "demoHomeNavJourney": "Journey",
-  "@demoHomeNavJourney": { "description": "Demo Home left nav-rail label — Journey." },
+  "@demoHomeNavJourney": {
+    "description": "Demo Home left nav-rail label — Journey."
+  },
   "demoHomeNavParent": "Parent",
-  "@demoHomeNavParent": { "description": "Demo Home left nav-rail label — Parent." },
+  "@demoHomeNavParent": {
+    "description": "Demo Home left nav-rail label — Parent."
+  },
   "demoHomeEyebrow": "SUNDAY · TODAY'S LESSON",
-  "@demoHomeEyebrow": { "description": "Demo Home hero eyebrow." },
+  "@demoHomeEyebrow": {
+    "description": "Demo Home hero eyebrow."
+  },
   "demoHomeWelcome": "Welcome back, Layla.",
-  "@demoHomeWelcome": { "description": "Demo Home hero heading — warm welcome." },
+  "@demoHomeWelcome": {
+    "description": "Demo Home hero heading — warm welcome."
+  },
   "demoHomeSubtitle": "Qalam has a new lesson ready for you.",
-  "@demoHomeSubtitle": { "description": "Demo Home hero subtitle in the tutor's voice." },
+  "@demoHomeSubtitle": {
+    "description": "Demo Home hero subtitle in the tutor's voice."
+  },
   "demoHomeLessonEyebrow": "LETTERS & WRITING · LESSON 4",
-  "@demoHomeLessonEyebrow": { "description": "Demo Home Today's-Lesson card eyebrow." },
+  "@demoHomeLessonEyebrow": {
+    "description": "Demo Home Today's-Lesson card eyebrow."
+  },
   "demoHomeLessonTitle": "The letter Baa",
-  "@demoHomeLessonTitle": { "description": "Demo Home Today's-Lesson card title (matches the home.png mockup)." },
+  "@demoHomeLessonTitle": {
+    "description": "Demo Home Today's-Lesson card title (matches the home.png mockup)."
+  },
   "demoHomeLessonMeta": "8 minutes · stroke order, tracing, and sounds",
-  "@demoHomeLessonMeta": { "description": "Demo Home Today's-Lesson card duration + contents line." },
+  "@demoHomeLessonMeta": {
+    "description": "Demo Home Today's-Lesson card duration + contents line."
+  },
   "demoHomeUpNext": "UP NEXT",
-  "@demoHomeUpNext": { "description": "Demo Home Up-Next section eyebrow." },
+  "@demoHomeUpNext": {
+    "description": "Demo Home Up-Next section eyebrow."
+  },
   "demoHomeUpNext1Eyebrow": "SENTENCE BUILDING · L 5",
-  "@demoHomeUpNext1Eyebrow": { "description": "Demo Home Up-Next item 1 eyebrow." },
+  "@demoHomeUpNext1Eyebrow": {
+    "description": "Demo Home Up-Next item 1 eyebrow."
+  },
   "demoHomeUpNext1Title": "Sentence: I see a house",
-  "@demoHomeUpNext1Title": { "description": "Demo Home Up-Next item 1 title." },
+  "@demoHomeUpNext1Title": {
+    "description": "Demo Home Up-Next item 1 title."
+  },
   "demoHomeUpNext1Min": "6 min",
-  "@demoHomeUpNext1Min": { "description": "Demo Home Up-Next item 1 duration." },
+  "@demoHomeUpNext1Min": {
+    "description": "Demo Home Up-Next item 1 duration."
+  },
   "demoHomeUpNext2Eyebrow": "PRONUNCIATION · L 6",
-  "@demoHomeUpNext2Eyebrow": { "description": "Demo Home Up-Next item 2 eyebrow." },
+  "@demoHomeUpNext2Eyebrow": {
+    "description": "Demo Home Up-Next item 2 eyebrow."
+  },
   "demoHomeUpNext2Title": "Sounds: tha vs taa",
-  "@demoHomeUpNext2Title": { "description": "Demo Home Up-Next item 2 title." },
+  "@demoHomeUpNext2Title": {
+    "description": "Demo Home Up-Next item 2 title."
+  },
   "demoHomeUpNext2Min": "4 min",
-  "@demoHomeUpNext2Min": { "description": "Demo Home Up-Next item 2 duration." },
+  "@demoHomeUpNext2Min": {
+    "description": "Demo Home Up-Next item 2 duration."
+  },
   "demoHomeThisWeek": "THIS WEEK",
-  "@demoHomeThisWeek": { "description": "Demo Home This-Week card eyebrow (faithful-to-mockup demo)." },
+  "@demoHomeThisWeek": {
+    "description": "Demo Home This-Week card eyebrow (faithful-to-mockup demo)."
+  },
   "demoHomeWeekStats": "3 lessons · 9 stars",
-  "@demoHomeWeekStats": { "description": "Demo Home This-Week headline stats (faithful-to-mockup demo)." },
+  "@demoHomeWeekStats": {
+    "description": "Demo Home This-Week headline stats (faithful-to-mockup demo)."
+  },
   "demoHomeWeekProgress": "4 of 6 weekly lessons",
-  "@demoHomeWeekProgress": { "description": "Demo Home This-Week progress caption (faithful-to-mockup demo)." },
+  "@demoHomeWeekProgress": {
+    "description": "Demo Home This-Week progress caption (faithful-to-mockup demo)."
+  },
   "demoHomeSeeJourney": "See journey",
-  "@demoHomeSeeJourney": { "description": "Demo Home This-Week CTA label." },
-
+  "@demoHomeSeeJourney": {
+    "description": "Demo Home This-Week CTA label."
+  },
   "demoReplay": "Replay",
-  "@demoReplay": { "description": "Watch/Trace canvas replay affordance — replays the stroke-order animation." },
+  "@demoReplay": {
+    "description": "Watch/Trace canvas replay affordance — replays the stroke-order animation."
+  },
   "demoWatchTipLabel": "TIP",
-  "@demoWatchTipLabel": { "description": "Watch side-card eyebrow above the one-line tip." },
+  "@demoWatchTipLabel": {
+    "description": "Watch side-card eyebrow above the one-line tip."
+  },
   "demoWatchHearSound": "Hear the sound",
-  "@demoWatchHearSound": { "description": "Watch side-card audio affordance (decorative in the mocked demo)." },
+  "@demoWatchHearSound": {
+    "description": "Watch side-card audio affordance (decorative in the mocked demo)."
+  },
   "demoWatchAgain": "Watch again",
-  "@demoWatchAgain": { "description": "Watch secondary ghost button — replays the demonstration (decorative)." },
-
+  "@demoWatchAgain": {
+    "description": "Watch secondary ghost button — replays the demonstration (decorative)."
+  },
   "demoTraceListen": "LISTEN",
-  "@demoTraceListen": { "description": "Trace side-card eyebrow above the baa glyph + sound affordance." },
+  "@demoTraceListen": {
+    "description": "Trace side-card eyebrow above the baa glyph + sound affordance."
+  },
   "demoTracePlaySound": "Play sound",
-  "@demoTracePlaySound": { "description": "Trace side-card audio affordance (decorative in the mocked demo)." },
+  "@demoTracePlaySound": {
+    "description": "Trace side-card audio affordance (decorative in the mocked demo)."
+  },
   "demoTraceMarkCorrect": "Mark correct",
-  "@demoTraceMarkCorrect": { "description": "Trace secondary button from the mockup (decorative in the mocked demo)." },
+  "@demoTraceMarkCorrect": {
+    "description": "Trace secondary button from the mockup (decorative in the mocked demo)."
+  },
   "demoTraceNext": "Next",
-  "@demoTraceNext": { "description": "Trace primary CTA advancing to the Feedback (miss) screen (faithful to mockup)." },
-
+  "@demoTraceNext": {
+    "description": "Trace primary CTA advancing to the Feedback (miss) screen (faithful to mockup)."
+  },
   "demoMissChip": "Let's fix this",
-  "@demoMissChip": { "description": "Feedback miss — a warm coral chip over the canvas. Never red, never a red X." },
+  "@demoMissChip": {
+    "description": "Feedback miss — a warm coral chip over the canvas. Never red, never a red X."
+  },
   "demoPassChip": "Beautiful work",
-  "@demoPassChip": { "description": "Feedback pass — a quiet success chip over the canvas." },
-
+  "@demoPassChip": {
+    "description": "Feedback pass — a quiet success chip over the canvas."
+  },
   "demoCelebrationStamp": "MASTERED",
-  "@demoCelebrationStamp": { "description": "Celebration rotated teal 'MASTERED' stamp over the giant glyph." },
+  "@demoCelebrationStamp": {
+    "description": "Celebration rotated teal 'MASTERED' stamp over the giant glyph."
+  },
   "demoCelebrationTotalLabel": "TOTAL",
-  "@demoCelebrationTotalLabel": { "description": "Celebration eyebrow above the running star total (gamification chrome, owner override)." },
+  "@demoCelebrationTotalLabel": {
+    "description": "Celebration eyebrow above the running star total (gamification chrome, owner override)."
+  },
   "demoCelebrationStarCount": "42",
-  "@demoCelebrationStarCount": { "description": "Celebration running star total after the +3 earned this lesson (Western numerals)." },
+  "@demoCelebrationStarCount": {
+    "description": "Celebration running star total after the +3 earned this lesson (Western numerals)."
+  },
   "demoCelebrationStarsWord": "stars",
-  "@demoCelebrationStarsWord": { "description": "Celebration star-total unit word." },
+  "@demoCelebrationStarsWord": {
+    "description": "Celebration star-total unit word."
+  },
   "demoCelebrationStarsDelta": "+3 today",
-  "@demoCelebrationStarsDelta": { "description": "Celebration stars earned this lesson (gamification chrome, owner override)." },
-
+  "@demoCelebrationStarsDelta": {
+    "description": "Celebration stars earned this lesson (gamification chrome, owner override)."
+  },
   "practiceWatchEyebrow": "WATCH · STROKE ORDER",
   "@practiceWatchEyebrow": {
     "description": "Watch step eyebrow label (Label scale, ALL CAPS). Shown above the heading on the Watch phase screen."
   },
-
   "practiceTraceEyebrow": "YOUR TURN · TRACE",
   "@practiceTraceEyebrow": {
     "description": "Trace step eyebrow label (Label scale, ALL CAPS). Shown above the heading on the Trace phase screen."
   },
-
   "practiceMasteredEyebrow": "MASTERED",
   "@practiceMasteredEyebrow": {
     "description": "Mastery celebration eyebrow / badge label (Label scale, ALL CAPS). Shown with exactly one gold star glyph."
   },
-
   "practiceWatchHeading": "Watch me write alif.",
   "@practiceWatchHeading": {
     "description": "Watch phase heading — the mascot Qalam speaks in first person. Display scale (42px Fredoka). DEPRECATED for child-facing use in Phase 6 — see practiceWatchHeadingFor (templated)."
   },
-
   "practiceWatchHeadingFor": "Watch me write {letterName}.",
   "@practiceWatchHeadingFor": {
     "description": "Watch phase heading, templated on the letter (Pitfall 6 — Phase 6 makes baa+ reachable, so this must never say 'alif' for another letter). The mascot Qalam speaks in first person. Display scale (42px Fredoka). {letterName} is the romanized letter name.",
@@ -266,62 +301,50 @@
       }
     }
   },
-
   "practiceTraceHeading": "Now you trace alif.",
   "@practiceTraceHeading": {
     "description": "Trace phase heading — hands the pen to the child. Display scale (42px Fredoka)."
   },
-
   "practiceTipLabel": "Tip",
   "@practiceTipLabel": {
     "description": "Tip card title (Title/Button scale 24px Fredoka). Short label above the tip body."
   },
-
   "practiceTipBody": "Start at the gold dot. Follow the line down.",
   "@practiceTipBody": {
     "description": "Tip card body — specific, calm guidance for alif. Body scale (18px Nunito). 'gold dot' references the reward-colored start marker."
   },
-
   "practiceStartButton": "Start",
   "@practiceStartButton": {
     "description": "Entry screen primary CTA advancing into the Watch step. Title Case, short for ages 5-10."
   },
-
   "practiceIllTryButton": "I'll Try",
   "@practiceIllTryButton": {
     "description": "Watch step primary CTA advancing Watch to Trace. Title Case."
   },
-
   "practiceWatchAgainButton": "Watch Again",
   "@practiceWatchAgainButton": {
     "description": "Watch step secondary ghost button — replays the stroke-order demonstration. Title Case."
   },
-
   "practiceReplayButton": "Replay",
   "@practiceReplayButton": {
     "description": "Trace step secondary ghost button — replays the demo over the guide. Title Case."
   },
-
   "practiceTryAgainButton": "Try Again",
   "@practiceTryAgainButton": {
     "description": "Trace miss retry CTA — retries the SAME stroke after a named fix. Unlimited, no counter. Title Case."
   },
-
   "practiceNextButton": "Next",
   "@practiceNextButton": {
     "description": "Trace clean-pass CTA (pre-mastery) — advances to the next rep. Title Case."
   },
-
   "practiceBackHomeButton": "Back Home",
   "@practiceBackHomeButton": {
     "description": "Celebration screen primary CTA returning to Home. Title Case. No 'See journey' — Journey is Phase 6."
   },
-
   "practiceStrokeProgress": "Stroke 1 of 1",
   "@practiceStrokeProgress": {
     "description": "Trace per-stroke progress indicator. Alif has one stroke. Pedagogical counter (not a score). Western numerals only."
   },
-
   "practiceRepProgress": "{n} of 3",
   "@practiceRepProgress": {
     "description": "Clean-rep progress during a session (e.g. '1 of 3'). Neutral progress indicator, NOT a score. Western numerals only.",
@@ -332,72 +355,58 @@
       }
     }
   },
-
   "practiceFeedbackTooShort": "Your alif needs to be taller — draw it from the top all the way down.",
   "@practiceFeedbackTooShort": {
     "description": "Named fix for MistakeId.tooShort / strokeLengthBelowThreshold. VERBATIM from alif commonMistakes in letters.json. Tutor's warm, specific voice — never 'Oops'."
   },
-
   "practiceFeedbackWrongDirection": "Start your alif at the top and come down — not from the bottom up.",
   "@practiceFeedbackWrongDirection": {
     "description": "Named fix for MistakeId.wrongDirection / strokeDirectionInverted. VERBATIM from alif commonMistakes in letters.json. Tutor's warm, specific voice."
   },
-
   "practiceFeedbackTooCurved": "Alif is a straight line — try to keep it as straight as you can.",
   "@practiceFeedbackTooCurved": {
     "description": "Named fix for MistakeId.tooCurved / strokeCurvatureExceedsThreshold. VERBATIM from alif commonMistakes in letters.json. Tutor's warm, specific voice."
   },
-
   "practiceFeedbackFallback": "Something looks off — try again, slower this time.",
   "@practiceFeedbackFallback": {
     "description": "Fallback named-fix when no authored commonMistake matches. Calm, specific — NEVER 'Oops, try again!' (PLAT-03 / Pitfall 7)."
   },
-
   "practiceFeedbackWrongStrokeCount": "Baa is two parts — the boat, then one dot underneath.",
   "@practiceFeedbackWrongStrokeCount": {
     "description": "Named fix for MistakeId.wrongStrokeCount / strokeCountMismatch (whole-letter). Placeholder copy in the tutor's warm, specific voice — the mother refines it in Plan 06. NEVER generic (Pitfall 7 / PLAT-03)."
   },
-
   "practiceFeedbackWrongStrokeOrder": "Draw the boat first, then add the dot underneath.",
   "@practiceFeedbackWrongStrokeOrder": {
     "description": "Named fix for MistakeId.wrongStrokeOrder / strokeOrderWrong (whole-letter). Placeholder copy in the tutor's warm, specific voice — refined by the mother in Plan 06. NEVER generic."
   },
-
   "practiceFeedbackDotMisplaced": "Baa's dot goes under the boat, not on top — try the dot again.",
   "@practiceFeedbackDotMisplaced": {
     "description": "Named fix for MistakeId.dotMisplaced / dotPositionWrong (whole-letter). Placeholder copy in the tutor's warm, specific voice — refined by the mother in Plan 06. NEVER generic."
   },
-
   "practiceFeedbackWrongLetterIdentity": "That looks like a different letter — let's write baa together, slower.",
   "@practiceFeedbackWrongLetterIdentity": {
     "description": "Named fix for MistakeId.wrongLetterIdentity / letterIdentityMismatch (advisory ML Kit gate, D-04). Placeholder copy in the tutor's warm, specific voice — refined by the mother in Plan 06. NEVER generic."
   },
-
   "practiceGettingReadyTitle": "Getting ready",
   "@practiceGettingReadyTitle": {
     "description": "Calm heading shown while the ML Kit Arabic model is still downloading on first launch (D-05). Never an error — the lesson still works; this is a quiet wait, not a block."
   },
-
   "practiceGettingReadyBody": "I'm getting your letters ready. You can start tracing now — I'll be right here.",
   "@practiceGettingReadyBody": {
     "description": "Calm body copy for the getting-ready state while the model downloads (D-05). Reassuring, never an error or a hard block — the geometric scorer already works."
   },
-
   "practicePraiseEyebrow": "NICE",
   "@practicePraiseEyebrow": {
     "description": "Eyebrow shown above the per-rep praise panel after a clean trace. Calm, never hype — no '+1' or points (PLAT-03 anti-gamification)."
   },
-
   "practicePraiseArabic": "أحسنت",
   "@practicePraiseArabic": {
     "description": "Per-rep praise Arabic word (RTL, Noto Naskh) — 'well done' — shown after each clean rep. Same warm register as the mastery celebration, smaller moment."
   },
-
   "practicePraiseLine": "That's a clean alif. Nicely done.",
   "@practicePraiseLine": {
     "description": "Warm, specific per-rep praise after a clean trace. Tutor's voice — calm, never 'Great job!!!' hype. Names what was good."
   },
-
   "practicePraiseRemaining": "{n} more in a row to master it.",
   "@practicePraiseRemaining": {
     "description": "Informational line telling the child how many consecutive clean reps remain. Pedagogical progress, NOT a score. Western numerals only.",
@@ -408,17 +417,14 @@
       }
     }
   },
-
   "practiceKeepGoingButton": "Keep going",
   "@practiceKeepGoingButton": {
     "description": "Primary button on the per-rep praise panel — advances to trace the next rep."
   },
-
   "practiceCelebrationArabic": "أحسنت",
   "@practiceCelebrationArabic": {
     "description": "Mastery celebration Arabic praise (RTL island, Noto Naskh) — 'well done'. Never bold/italic/letterSpaced. Paired with the English celebration line."
   },
-
   "homeGreeting": "Welcome back, {nickname}.",
   "@homeGreeting": {
     "description": "Home screen warm greeting heading. {nickname} is the child's chosen fixed-set display label (S1-03 — never a real name). Anti-gamification: no stars/streaks/counters here.",
@@ -428,62 +434,50 @@
       }
     }
   },
-
   "homeGreetingSubtitle": "Qalam has a new lesson ready for you.",
   "@homeGreetingSubtitle": {
     "description": "Home screen greeting subtitle — tutor's calm voice, one sentence. Pitched to ages 5-10."
   },
-
   "homeLessonEyebrow": "TODAY'S LESSON",
   "@homeLessonEyebrow": {
     "description": "Home screen 'Today's Lesson' card eyebrow — Label scale, ALL CAPS. Pedagogical label, not gamification."
   },
-
   "homeLessonTitle": "The Letter Alif",
   "@homeLessonTitle": {
     "description": "Home screen lesson card title. Alif is the first signed-off curriculum letter."
   },
-
   "homeLessonSubtitle": "Stroke order and tracing",
   "@homeLessonSubtitle": {
     "description": "Home screen lesson card subtitle — a brief description of what the lesson contains."
   },
-
   "navHome": "Home",
   "@navHome": {
     "description": "Left nav-rail label — Home (active state)."
   },
-
   "navJourney": "Journey",
   "@navJourney": {
     "description": "Left nav-rail label — Journey (locked, Phase 6)."
   },
-
   "navParent": "Parent",
   "@navParent": {
     "description": "Left nav-rail label — Parent (locked, Phase 9)."
   },
-
   "comingSoon": "Coming soon",
   "@comingSoon": {
     "description": "Locked nav item sublabel shown under Journey and Parent nav entries."
   },
-
   "practiceTutorName": "Qalam",
   "@practiceTutorName": {
     "description": "Tutor panel — mascot name label displayed below the mascot in the left zone of the trace workspace."
   },
-
   "practiceTutorRole": "Your Writing Tutor",
   "@practiceTutorRole": {
     "description": "Tutor panel — mascot role subtitle displayed below the name in the left zone."
   },
-
   "practiceTutorCoaching": "Take your time. Start at the gold dot and bring it straight down.",
   "@practiceTutorCoaching": {
     "description": "Default idle-state coaching line shown in the tutor bubble during the trace phase. Calm, specific — references the gold start-dot."
   },
-
   "practiceTutorThinking": "Let me look at your {letter}",
   "@practiceTutorThinking": {
     "description": "Tutor bubble prefix shown while scoring is in progress (thinking state). Followed by the thinking-dots animation.",
@@ -494,122 +488,98 @@
       }
     }
   },
-
   "practiceTutorSays": "Qalam says",
   "@practiceTutorSays": {
     "description": "Tone label displayed above the bubble body in showFix and showPraise phases. Attributes the feedback to the tutor."
   },
-
   "practiceTraceLeadIn": "Now you trace",
   "@practiceTraceLeadIn": {
     "description": "First word-group of the trace workspace heading, followed by the Arabic glyph and romanized name. Display scale (42px Fredoka)."
   },
-
   "practiceCleanRepsLabel": "Clean reps",
   "@practiceCleanRepsLabel": {
     "description": "Label above the clean-rep pip row in the trace workspace heading. Pedagogical progress indicator — not a score."
   },
-
   "practiceTraceHint": "Lift your pen when you finish the stroke.",
   "@practiceTraceHint": {
     "description": "Soft hint shown on the left of the bottom action row during the trace phase. Calm, instructional — never hype."
   },
-
   "practiceSoundLabel": "Sound",
   "@practiceSoundLabel": {
     "description": "Eyebrow label on the Sound section card in the tutor panel. Title case."
   },
-
   "practiceHearLetterLabel": "Hear the letter",
   "@practiceHearLetterLabel": {
     "description": "Accessibility / semantics label for the round speaker button in the Sound card. Also used as the button tooltip."
   },
-
   "practiceShowMeAgainButton": "Show Me Again",
   "@practiceShowMeAgainButton": {
     "description": "Ghost button in the showFix bottom-action row — triggers the ghost cast overlay on the canvas. Title Case."
   },
-
   "practiceCastWatchLine": "Watch — start at the dot and come all the way down.",
   "@practiceCastWatchLine": {
     "description": "Tutor bubble neutral coaching line shown while the ghost cast overlay is playing. Calm, specific."
   },
-
   "practiceWatchMeLabel": "Watch Me",
   "@practiceWatchMeLabel": {
     "description": "Tag label on the Watch Me corner card in the top-right of the trace canvas. Ink-teal, Label scale."
   },
-
   "practiceWatchMeHint": "Tap to show me here",
   "@practiceWatchMeHint": {
     "description": "Secondary hint line on the Watch Me corner card. fgMuted, small — guides the child to tap for a ghost cast."
   },
-
   "practiceClearButton": "Clear",
   "@practiceClearButton": {
     "description": "Compact ghost control at the bottom-left of the trace canvas — clears the current stroke attempt and starts fresh."
   },
-
   "journeySeeJourney": "See journey",
   "@journeySeeJourney": {
     "description": "Ghost navigation link on the MasteryCelebration screen. Navigates to /journey. Navigation affordance only — no star count, no score (Phase 03.1 D-23/D-24)."
   },
-
   "onboardingTitle": "Let's set up your learner",
   "@onboardingTitle": {
     "description": "First-launch onboarding card heading (S1-03). Warm, calm, pitched to a parent + child sitting together. Heading scale."
   },
-
   "onboardingSubtitle": "Pick a grade, an avatar, and a nickname.",
   "@onboardingSubtitle": {
     "description": "First-launch onboarding card subtitle — one calm sentence naming the three fixed-set choices. No free-text anywhere (S1-03)."
   },
-
   "onboardingGradePrompt": "Grade",
   "@onboardingGradePrompt": {
     "description": "Section label above the grade chip selector (the parent's pick → curriculum entry point, S1-02). Label scale."
   },
-
   "onboardingAvatarPrompt": "Pick your avatar",
   "@onboardingAvatarPrompt": {
     "description": "Section label above the avatar grid (the child's pick from 6 fixed avatars, S1-03). Label scale."
   },
-
   "onboardingNicknamePrompt": "Pick your nickname",
   "@onboardingNicknamePrompt": {
     "description": "Section label above the nickname grid (the child's pick from a fixed Arabic-flavored set, S1-03). Label scale."
   },
-
   "onboardingGradeKg": "KG",
   "@onboardingGradeKg": {
     "description": "Grade chip label for kindergarten (grade key 'kg')."
   },
-
   "onboardingGrade1": "Grade 1",
   "@onboardingGrade1": {
     "description": "Grade chip label for first grade (grade key 'grade1')."
   },
-
   "onboardingGrade2": "Grade 2",
   "@onboardingGrade2": {
     "description": "Grade chip label for second grade (grade key 'grade2')."
   },
-
   "onboardingGrade3": "Grade 3",
   "@onboardingGrade3": {
     "description": "Grade chip label for third grade (grade key 'grade3')."
   },
-
   "onboardingGrade4plus": "Grade 4+",
   "@onboardingGrade4plus": {
     "description": "Grade chip label for fourth grade and up (grade key 'grade4plus')."
   },
-
   "onboardingSubmit": "Let's go",
   "@onboardingSubmit": {
     "description": "Onboarding 'Let's go' CTA pill — saves the fixed-set profile and navigates to Home. Ink-teal (no gold/reward — PLAT-03). Button scale."
   },
-
   "homeLessonTitleFor": "The Letter {letterName}",
   "@homeLessonTitleFor": {
     "description": "Home today-card title for the prepared lesson (UI-SPEC Copywriting Contract; consumed by 06-05).",
@@ -619,22 +589,18 @@
       }
     }
   },
-
   "homeAllMasteredEyebrow": "YOUR LETTERS",
   "@homeAllMasteredEyebrow": {
     "description": "Home all-mastered card eyebrow (D-11 state — every lesson passed)."
   },
-
   "homeAllMasteredTitle": "You've mastered all your letters.",
   "@homeAllMasteredTitle": {
     "description": "Home all-mastered card title (D-11). Calm statement of fact — no hype (PLAT-03)."
   },
-
   "homeAllMasteredBody": "Visit your journey to practice any letter again.",
   "@homeAllMasteredBody": {
     "description": "Home all-mastered card body — points to the journey map for free practice (D-11)."
   },
-
   "homeInkFillSemantics": "{n} of {total} clean reps",
   "@homeInkFillSemantics": {
     "description": "Accessibility-only label for the ink-fill progress on the today card (D-12). NEVER rendered as visible text — no numerals on screen (PLAT-03).",
@@ -647,17 +613,14 @@
       }
     }
   },
-
   "celebrationNextLesson": "Next Lesson",
   "@celebrationNextLesson": {
     "description": "Mastery celebration primary CTA (D-14) — goes straight into the newly unlocked letter's practice. Filled teal, Title Case, targetComfy. S1-09: unlock is immediate on pass."
   },
-
   "celebrationSeeJourneyButton": "See Journey",
   "@celebrationSeeJourneyButton": {
     "description": "Mastery celebration last-lesson primary CTA (D-16) — when every lesson is mastered there is no Next Lesson, the primary slot becomes 'See Journey'. Title Case button label (distinct from the 'See journey' ghost link)."
   },
-
   "celebrationShowSomeone": "Go show your {letterName} to someone at home.",
   "@celebrationShowSomeone": {
     "description": "Mastery celebration tutor line (D-17). Warm, specific, family-oriented — exactly one line at Body scale under the Arabic praise. The tutor's voice, never chatbot-cheerful. {letterName} is the romanized mastered letter name (e.g. 'baa').",
@@ -667,7 +630,6 @@
       }
     }
   },
-
   "practiceCelebrationLineFor": "You learned {letterName}.",
   "@practiceCelebrationLineFor": {
     "description": "Mastery celebration warm line, templated on the mastered letter (Pitfall 6 — Phase 6 makes baa+ reachable, so this must never say 'alif' after mastering baa). Display scale, paired with the Arabic praise island. {letterName} is the romanized letter name.",
@@ -677,7 +639,6 @@
       }
     }
   },
-
   "practicePraiseLineFor": "That's a clean {letterName}. Nicely done.",
   "@practicePraiseLineFor": {
     "description": "Warm, specific per-rep praise after a clean trace, templated on the letter (generic phrasing; per-letter coaching wording is Phase-7 content, the owner's mother's domain). Tutor's voice — calm, never hype. {letterName} is the romanized letter name.",
@@ -687,72 +648,58 @@
       }
     }
   },
-
   "ghostCompareButton": "Watch the Difference",
   "@ghostCompareButton": {
     "description": "ShowFix-zone ghost button (D-21): opens the slow-motion side-by-side replay of the child's stroke beside Qalam's reference. Title Case, ghost treatment beside the existing 'Show Me Again'. A teaching moment, never error-shaming."
   },
-
   "ghostCompareTitle": "Watch the difference.",
   "@ghostCompareTitle": {
     "description": "Title of the ghost-comparison panel (D-21), Title/24px role. Calm and specific — never 'wrong vs right' framing."
   },
-
   "ghostCompareYours": "Yours",
   "@ghostCompareYours": {
     "description": "Label for the child's own stroke panel in the ghost comparison (D-21), Label scale. The child's stroke renders in coral (warnSoft) — never shamed as wrong."
   },
-
   "ghostCompareQalams": "Qalam's",
   "@ghostCompareQalams": {
     "description": "Label for the reference-stroke panel in the ghost comparison (D-21), Label scale. Qalam's stroke renders in deep-ink (inkStroke)."
   },
-
   "parentTitle": "Parent Area",
   "@parentTitle": {
     "description": "Phase 9 Parent Area screen title (Heading/28px). Shown on the PIN-create, PIN-enter, and dashboard screens. Draft — owner owns final wording (Open Q2)."
   },
-
   "parentPinCreatePrompt": "Create a PIN",
   "@parentPinCreatePrompt": {
     "description": "Phase 9 PIN-create prompt (Heading/28px), shown on first access to the Parent Area (D-01/D-02)."
   },
-
   "parentPinCreateHelp": "Choose a 4-digit PIN to protect this area.",
   "@parentPinCreateHelp": {
     "description": "Phase 9 PIN-create step-1 helper (Body/18px). Explains why a PIN is being set."
   },
-
   "parentPinConfirmPrompt": "Re-enter your PIN to confirm.",
   "@parentPinConfirmPrompt": {
     "description": "Phase 9 PIN-create step-2 prompt (Body/18px). Asks the parent to confirm the chosen PIN."
   },
-
   "parentPinMismatch": "Those didn't match. Try once more.",
   "@parentPinMismatch": {
     "description": "Phase 9 PIN-create mismatch message (Body/18px, warnSoft). Calm, no blame — returns to step 1."
   },
-
   "parentPinNoRecovery": "There's no way to recover a forgotten PIN. The only reset is clearing the app's data — which also erases your child's progress.",
   "@parentPinNoRecovery": {
     "description": "Phase 9 honest no-recovery line (Body/18px, fgMuted) shown beneath the create field. Honest, plain, non-alarming (D-02). Draft — owner owns final wording (Open Q2)."
   },
-
   "parentPinConfirm": "Confirm",
   "@parentPinConfirm": {
     "description": "Phase 9 PIN-create step-2 primary CTA — enabled only at 4 digits."
   },
-
   "parentPinEnterPrompt": "Enter your PIN",
   "@parentPinEnterPrompt": {
     "description": "Phase 9 PIN-enter prompt (Heading/28px), shown on every subsequent entry to the Parent Area (D-07)."
   },
-
   "parentPinWrong": "Incorrect PIN. Try again.",
   "@parentPinWrong": {
     "description": "Phase 9 wrong-PIN message (Body/18px, warnSoft). Generic — never reveals which digit (V7). The 4-dot indicator clears."
   },
-
   "parentPinCooldown": "Too many tries. You can try again in {seconds}s.",
   "@parentPinCooldown": {
     "description": "Phase 9 brute-force cooldown message (Body/18px, fgMuted) after ~5 wrong attempts (D-08). Live countdown, calm — keypad disabled, no red, no lock-out language. Western numerals only.",
@@ -763,7 +710,6 @@
       }
     }
   },
-
   "parentSummary": "{mastered} of {total} letters mastered",
   "@parentSummary": {
     "description": "Phase 9 dashboard summary line (Heading/28px). {total} = curriculumRepository.getLetters().length (Open Q1 — full 28). Plain INFORMATION, NOT a score treatment, never gold. The denominator is NEVER hardcoded (Pitfall 5). Western numerals only.",
@@ -778,7 +724,6 @@
       }
     }
   },
-
   "parentRowMastered": "Mastered · {reps} clean reps · {date}",
   "@parentRowMastered": {
     "description": "Phase 9 dashboard mastered-letter row. 'Mastered' is the Label (leaf); the rest is Body/fgMuted. {date} is a device-locale short date (Western numerals).",
@@ -793,7 +738,6 @@
       }
     }
   },
-
   "parentRowInProgress": "In progress · {reps} clean reps",
   "@parentRowInProgress": {
     "description": "Phase 9 dashboard in-progress-letter row (Label fgMuted + Body fgMuted). No date. Western numerals only.",
@@ -804,92 +748,74 @@
       }
     }
   },
-
   "parentEmptyTitle": "No lessons completed yet.",
   "@parentEmptyTitle": {
     "description": "Phase 9 dashboard empty-state heading (Heading/28px). Calm — never an error or an empty void (D-04)."
   },
-
   "parentEmptyBody": "When your child finishes a letter, it will appear here.",
   "@parentEmptyBody": {
     "description": "Phase 9 dashboard empty-state body (Body/18px, fgMuted)."
   },
-
   "commonContinue": "Continue",
   "@commonContinue": {
     "description": "Shared primary CTA label — 'Continue'. Used by the Phase 9 PIN-create step-1 (enabled only at 4 digits) and reusable elsewhere."
   },
-
   "commonDone": "Done",
   "@commonDone": {
     "description": "Shared exit/confirm CTA label — 'Done' (Button/24px). Phase 9 dashboard exit returns to child Home and RELOCKS the Parent Area (D-07)."
   },
-
   "promptPlay": "Play",
   "@promptPlay": {
     "description": "Phase 7 Letter-Unit PromptHeader — label on the teal audio play button (.pp-audio). The child taps to hear the prompt sound."
   },
-
   "feedbackIdleHint": "Write on the surface — Qalam checks your strokes.",
   "@feedbackIdleHint": {
     "description": "Phase 7 Letter-Unit FeedbackPanel idle hint (.fb-hint). Calm, instructional — shown before the child writes. Never hype."
   },
-
   "feedbackPassTag": "Correct · one quiet star",
   "@feedbackPassTag": {
     "description": "Phase 7 Letter-Unit FeedbackPanel pass eyebrow (.fb-tag). 'one quiet star' is deliberate anti-gamification framing — a mastery marker, not a score (CLAUDE.md Decided)."
   },
-
   "feedbackFixTag": "A specific fix",
   "@feedbackFixTag": {
     "description": "Phase 7 Letter-Unit FeedbackPanel fix eyebrow (.fb-tag). Names that the line below is a SPECIFIC, actionable fix in the tutor's voice — never a generic 'Oops'."
   },
-
   "exerciseTutorName": "Qalam",
   "@exerciseTutorName": {
     "description": "Phase 7 Letter-Unit ExerciseScaffold — the tutor name shown under the mascot (.ex-tid .nm)."
   },
-
   "exerciseTutorRole": "Your Writing Tutor",
   "@exerciseTutorRole": {
     "description": "Phase 7 Letter-Unit ExerciseScaffold — the tutor role label under the name (.ex-tid .role)."
   },
-
   "exerciseTutorSays": "Qalam says",
   "@exerciseTutorSays": {
     "description": "Phase 7 Letter-Unit ExerciseScaffold — the speech-bubble tone label shown above pass/fix feedback (.ex-speech .tone). Attributes the feedback to the tutor."
   },
-
   "exerciseClear": "Clear",
   "@exerciseClear": {
     "description": "Phase 7 Letter-Unit ExerciseScaffold CTA — clears the writing surface (.exbtn quiet)."
   },
-
   "exerciseTryAgain": "Try again",
   "@exerciseTryAgain": {
     "description": "Phase 7 Letter-Unit ExerciseScaffold CTA on a miss — clears and lets the child retry the same exercise (.exbtn primary). Unlimited, no counter."
   },
-
   "exerciseNext": "Next exercise",
   "@exerciseNext": {
     "description": "Phase 7 Letter-Unit ExerciseScaffold CTA on a pass — advances to the next exercise (.exbtn primary)."
   },
-
   "exerciseMarkCorrect": "Mark correct",
   "@exerciseMarkCorrect": {
     "description": "Phase 7 Letter-Unit ExerciseScaffold idle CTA — accepts the current writing as correct (.exbtn primary), mirroring the prototype's manual mark affordance."
   },
-
   "exerciseGotIt": "Got it",
   "@exerciseGotIt": {
     "description": "Phase 7 Letter-Unit ExerciseScaffold teachCard support CTA — acknowledges a non-graded teach card and advances. No grading on a teach card."
   },
-
   "exerciseSurfaceTagTrace": "Trace · over the guide",
   "@exerciseSurfaceTagTrace": {
     "description": "Phase 7 Letter-Unit WriteSurface mode tag (.surface-tag) for trace mode — the child traces over the dotted guide."
   },
-
   "exerciseSurfaceTagWrite": "Write · {unit} · no guide",
   "@exerciseSurfaceTagWrite": {
     "description": "Phase 7 Letter-Unit WriteSurface mode tag (.surface-tag) for write mode — the child writes on a blank ruled line with no guide. {unit} is glyph/word/sentence.",
@@ -900,144 +826,200 @@
       }
     }
   },
-
   "exerciseWatchMe": "Watch me",
   "@exerciseWatchMe": {
     "description": "Phase 7 Letter-Unit WriteSurface demo affordance — replays the animated stroke-order demonstration over the guide (surface.demo)."
   },
-
   "exerciseTeachCardHint": "Nothing to write — this card teaches.",
   "@exerciseTeachCardHint": {
     "description": "Phase 7 Letter-Unit ExerciseScaffold teachCard hint shown in place of the write hint when there is no surface to grade (surface==null)."
   },
-
   "meetKick": "Meet the Letter",
   "@meetKick": {
     "description": "Phase 7 Letter-Unit Section 1 (Meet) eyebrow label."
   },
-
   "meetHear": "Hear",
   "@meetHear": {
     "description": "Phase 7 Letter-Unit Section 1 (Meet) morph-card Play button — plays the letter sound offline."
   },
-
   "meetStartWriting": "Start Writing",
   "@meetStartWriting": {
     "description": "Phase 7 Letter-Unit Section 1 (Meet) primary CTA — advances to Section 2 (Watch & Trace)."
   },
-
   "meetJoinsOn": "joins on",
   "@meetJoinsOn": {
     "description": "Phase 7 Letter-Unit Section 1 (Meet) join-hint label beside the arrow showing which side the contextual form reaches to join."
   },
-
   "formIsolated": "Isolated",
   "@formIsolated": {
     "description": "Phase 7 Letter-Unit contextual-form label — the letter on its own."
   },
-
   "formInitial": "Initial",
   "@formInitial": {
     "description": "Phase 7 Letter-Unit contextual-form label — the letter at the start of a word."
   },
-
   "formMedial": "Medial",
   "@formMedial": {
     "description": "Phase 7 Letter-Unit contextual-form label — the letter in the middle of a word."
   },
-
   "formFinal": "Final",
   "@formFinal": {
     "description": "Phase 7 Letter-Unit contextual-form label — the letter at the end of a word."
   },
-
   "meetExplainIsolated": "On its own — the full bowl with its tail.",
   "@meetExplainIsolated": {
     "description": "Phase 7 Letter-Unit Section 1 (Meet) explain line for the isolated form of baa."
   },
-
   "meetExplainInitial": "At the start — the tail goes; it reaches forward to join.",
   "@meetExplainInitial": {
     "description": "Phase 7 Letter-Unit Section 1 (Meet) explain line for the initial form of baa."
   },
-
   "meetExplainMedial": "In the middle — just a little tooth between letters.",
   "@meetExplainMedial": {
     "description": "Phase 7 Letter-Unit Section 1 (Meet) explain line for the medial form of baa."
   },
-
   "meetExplainFinal": "At the end — the tail comes back.",
   "@meetExplainFinal": {
     "description": "Phase 7 Letter-Unit Section 1 (Meet) explain line for the final form of baa."
   },
-
   "watchKick": "Watch · Stroke Order",
   "@watchKick": {
     "description": "Phase 7 Letter-Unit Section 2 (Watch & Trace) eyebrow during the Watch (demo) phase."
   },
-
   "traceKick": "Your Turn · Trace",
   "@traceKick": {
     "description": "Phase 7 Letter-Unit Section 2 (Watch & Trace) eyebrow during the Trace phase."
   },
-
   "watchAgain": "Watch again",
   "@watchAgain": {
     "description": "Phase 7 Letter-Unit Section 2 CTA — replays the stroke-order demo."
   },
-
   "watchIllTry": "I'll try",
   "@watchIllTry": {
     "description": "Phase 7 Letter-Unit Section 2 CTA — advances from the Watch phase to the Trace phase."
   },
-
   "watchTipLabel": "Tip",
   "@watchTipLabel": {
     "description": "Phase 7 Letter-Unit Section 2 Watch-phase tip side-card label."
   },
-
   "watchTipBody": "Start at the gold dot. Follow the curve down and to the left, then place the dot below.",
   "@watchTipBody": {
     "description": "Phase 7 Letter-Unit Section 2 Watch-phase tip side-card body."
   },
-
   "listenLabel": "Listen",
   "@listenLabel": {
     "description": "Phase 7 Letter-Unit Listen side-card label (Watch & Trace)."
   },
-
   "listenPlaySound": "Play sound",
   "@listenPlaySound": {
     "description": "Phase 7 Letter-Unit Listen side-card Play button — plays the letter sound offline."
   },
-
   "formsKick": "Forms in Context",
   "@formsKick": {
     "description": "Phase 7 Letter-Unit Section 3 (Forms in context) eyebrow label."
   },
-
   "formsJoinKick": "Join Them",
   "@formsJoinKick": {
     "description": "Phase 7 Letter-Unit Section 3 eyebrow on the join-into-word stage."
   },
-
   "formsThisForm": "This form",
   "@formsThisForm": {
     "description": "Phase 7 Letter-Unit Section 3 Listen side-card label for the active contextual form."
   },
-
   "formsHearIt": "Hear it",
   "@formsHearIt": {
     "description": "Phase 7 Letter-Unit Section 3 Listen side-card Play button — plays the form/word sound offline."
   },
-
   "formNotYetAuthoredTitle": "Coming soon",
   "@formNotYetAuthoredTitle": {
     "description": "Phase 7 Letter-Unit Section 3 calm placeholder title shown when a contextual form's reference strokes are not yet authored/signed-off (pre-07-07). Never crashes, never fabricates strokes."
   },
-
   "formNotYetAuthoredBody": "This form is still being prepared by your teacher. You can come back to it soon.",
   "@formNotYetAuthoredBody": {
     "description": "Phase 7 Letter-Unit Section 3 calm placeholder body for an un-signed-off contextual form (the human sign-off gate is honored)."
+  },
+  "wordsKick": "Words with Baa",
+  "@wordsKick": {
+    "description": "Plan 07-06 Words section (Section 4) eyebrow — the three baa vocab words."
+  },
+  "wordsPlay": "Play",
+  "@wordsPlay": {
+    "description": "Plan 07-06 Words section — the round Play button on a word card (plays the word clip offline)."
+  },
+  "wordsTapToTrace": "Tap to trace",
+  "@wordsTapToTrace": {
+    "description": "Plan 07-06 Words section — the call-to-action tag on an untraced word card."
+  },
+  "wordsTraced": "Traced",
+  "@wordsTraced": {
+    "description": "Plan 07-06 Words section — the tag on a word card the child has already traced."
+  },
+  "wordsBackToWords": "Back to words",
+  "@wordsBackToWords": {
+    "description": "Plan 07-06 Words section — the quiet CTA that returns from a word's trace surface to the three-card grid."
+  },
+  "wordsListenLabel": "Listen",
+  "@wordsListenLabel": {
+    "description": "Plan 07-06 Words section — the Listen side card label on a word's trace surface."
+  },
+  "wordsListenPlay": "Play word",
+  "@wordsListenPlay": {
+    "description": "Plan 07-06 Words section — the offline Play button label on a word's Listen side card."
+  },
+  "wordsHint": "Trace at least one word to go on.",
+  "@wordsHint": {
+    "description": "Plan 07-06 Words section — the gating hint (trace one word to advance)."
+  },
+  "listenWriteKick": "Listen & Write",
+  "@listenWriteKick": {
+    "description": "Plan 07-06 Listen & Write section (Section 5) eyebrow — the recall gate."
+  },
+  "listenWriteWordTab": "Write the word",
+  "@listenWriteWordTab": {
+    "description": "Plan 07-06 Listen & Write — the toggle tab selecting the write-the-whole-word recall task."
+  },
+  "listenWriteFirstLetterTab": "First letter",
+  "@listenWriteFirstLetterTab": {
+    "description": "Plan 07-06 Listen & Write — the toggle tab selecting the write-the-first-letter (phonological awareness) task."
+  },
+  "listenWriteWordTask": "Listen, then write the whole word.",
+  "@listenWriteWordTask": {
+    "description": "Plan 07-06 Listen & Write — the task line for the write-the-word mode."
+  },
+  "listenWriteWordSub": "Dictation — from memory, no guide.",
+  "@listenWriteWordSub": {
+    "description": "Plan 07-06 Listen & Write — the sub line under the write-the-word task."
+  },
+  "listenWriteLetterTask": "Listen. Write the letter the word starts with.",
+  "@listenWriteLetterTask": {
+    "description": "Plan 07-06 Listen & Write — the task line for the first-letter mode."
+  },
+  "listenWriteLetterSub": "Phonological awareness — hear → first letter.",
+  "@listenWriteLetterSub": {
+    "description": "Plan 07-06 Listen & Write — the sub line under the first-letter task."
+  },
+  "listenWritePlayWord": "Play the word",
+  "@listenWritePlayWord": {
+    "description": "Plan 07-06 Listen & Write — the big offline Play button label."
+  },
+  "listenWriteNoGuide": "No guide · from memory",
+  "@listenWriteNoGuide": {
+    "description": "Plan 07-06 Listen & Write — the badge over the recall surface (no dotted guide; write from memory)."
+  },
+  "letterUnitLabel": "Letter Unit",
+  "@letterUnitLabel": {
+    "description": "Plan 07-06 LetterUnit shell — the app-bar unit label (followed by the letter glyph)."
+  },
+  "letterUnitBack": "Back",
+  "@letterUnitBack": {
+    "description": "Plan 07-06 LetterUnit shell — the app-bar back icon button label (a11y)."
+  },
+  "letterUnitClose": "Close unit",
+  "@letterUnitClose": {
+    "description": "Plan 07-06 LetterUnit shell — the app-bar close icon button label (a11y)."
+  },
+  "letterUnitPreparing": "Getting your letter ready…",
+  "@letterUnitPreparing": {
+    "description": "Plan 07-06 LetterUnit shell — the calm panel shown while the unit loads or when the letter is not yet available (never a raw error to the child)."
   }
 }

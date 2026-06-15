@@ -126,6 +126,14 @@ GoRouter _makeRouter() => GoRouter(
           builder: (context, state) =>
               const Scaffold(body: Text('Practice Screen')),
         ),
+        // Plan 07-06: baa's today-card opens its Letter Unit at /unit?letter=baa.
+        // A stub stands in for the real LetterUnitScreen so the deep-link
+        // assertion below has a destination to land on.
+        GoRoute(
+          path: '/unit',
+          builder: (context, state) =>
+              const Scaffold(body: Text('Letter Unit Screen')),
+        ),
         GoRoute(
           path: '/journey',
           builder: (context, state) =>
@@ -324,7 +332,7 @@ void main() {
     // -----------------------------------------------------------------------
     testWidgets(
         'today = baa\'s lesson → card shows the ب glyph and "The Letter Baa"; '
-        'tap navigates to /practice?lesson=lesson_02 (Test 5)',
+        'tap navigates to /unit?letter=baa (Test 5)',
         (WidgetTester tester) async {
       final router = _makeRouter();
       await tester.pumpWidget(
@@ -346,8 +354,11 @@ void main() {
 
       await tester.tap(find.byKey(const Key('todaysLessonCard')));
       await tester.pumpAndSettle();
-      expect(_location(router), '/practice?lesson=lesson_02',
-          reason: 'the card Start carries today\'s real lesson id.');
+      // Plan 07-06: baa has a full Letter Unit, so its today-card opens
+      // /unit?letter=baa (not the thin /practice loop). Other letters keep
+      // /practice until their units are built.
+      expect(_location(router), '/unit?letter=baa',
+          reason: 'baa\'s card opens its Letter Unit (Plan 07-06).');
     });
 
     // -----------------------------------------------------------------------

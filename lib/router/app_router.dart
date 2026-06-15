@@ -11,6 +11,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../dev/authoring_screen.dart';
 import '../dev/glyph_audit_screen.dart';
 import '../features/journey/journey_screen.dart';
+import '../features/letter_unit/letter_unit_screen.dart';
 import '../features/onboarding/onboarding_screen.dart';
 import '../providers/parent_providers.dart';
 import '../providers/profile_providers.dart';
@@ -80,6 +81,28 @@ GoRouter appRouter(Ref ref) {
           return PracticeScreen(
             key: ValueKey<String?>(lessonId),
             lessonId: lessonId,
+          );
+        },
+      ),
+      // The Letter Unit (Plan 07-06). `?letter=` deep-links a specific letter's
+      // 6-section unit; home's today-card and the journey node open it. The
+      // ValueKey forces a FRESH LetterUnitScreen State per letter id (Pitfall 5,
+      // mirroring `/practice`). The letter param is validated DOWNSTREAM against
+      // the curriculum catalog (T-07-06-01): an unknown/missing id degrades to
+      // the built unit (`baa`) so the child never sees an error or an arbitrary
+      // load. The onboarding/parent gates above are untouched (matchedLocation
+      // is path-only — the query param is invisible to the redirect).
+      GoRoute(
+        path: '/unit',
+        builder: (context, state) {
+          final raw = state.uri.queryParameters['letter'];
+          // Degrade an empty/missing id to the built unit; a syntactically-bad
+          // id (the screen's loader returns null) shows the calm "preparing"
+          // panel rather than crashing.
+          final letterId = (raw == null || raw.trim().isEmpty) ? 'baa' : raw;
+          return LetterUnitScreen(
+            key: ValueKey<String>('unit:$letterId'),
+            letterId: letterId,
           );
         },
       ),
