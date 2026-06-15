@@ -50,10 +50,15 @@ class WriteSurface extends ConsumerStatefulWidget {
     required this.letter,
     this.onResult,
     this.onValidating,
+    this.canvasController,
     this.watchMeLabel = 'Watch me',
     this.traceTag = 'Trace · over the guide',
     this.writeTagBuilder,
   });
+
+  /// Imperative handle the engine scaffold uses to Clear the ink and force a
+  /// Done/submit (write-mode exercises have no auto-complete trigger).
+  final StrokeCanvasController? canvasController;
 
   /// The full exercise config (its check/expected/feedback drive validation).
   final Exercise exercise;
@@ -210,6 +215,7 @@ class _WriteSurfaceState extends ConsumerState<WriteSurface> {
                   ),
                   referenceStrokes: _referenceStrokes,
                   onLetterComplete: _onLetterComplete,
+                  controller: widget.canvasController,
                 ),
               ),
 

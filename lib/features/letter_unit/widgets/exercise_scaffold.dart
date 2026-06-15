@@ -26,6 +26,7 @@ import '../../../models/letter.dart';
 import '../../../theme/qalam_tokens.dart';
 import '../../../theme/text_styles.dart';
 import '../../../widgets/qalam_mascot.dart';
+import '../../practice/widgets/stroke_canvas.dart';
 import '../exercise_controller.dart';
 import 'feedback_panel_v2.dart';
 import 'progress_ribbon.dart';
@@ -43,6 +44,7 @@ class ExerciseScaffoldStrings {
     this.tryAgain = 'Try again',
     this.next = 'Next exercise',
     this.markCorrect = 'Mark correct',
+    this.done = 'Done',
     this.gotIt = 'Got it',
     this.playLabel = 'Play',
     this.watchMe = 'Watch me',
@@ -56,6 +58,7 @@ class ExerciseScaffoldStrings {
   final String tryAgain;
   final String next;
   final String markCorrect;
+  final String done;
   final String gotIt;
   final String playLabel;
   final String watchMe;
@@ -108,6 +111,11 @@ class ExerciseScaffold extends ConsumerStatefulWidget {
 }
 
 class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
+  /// The imperative handle into the WriteSurface's canvas — the Clear and Done
+  /// CTAs drive the actual ink through this (Clear used to reset only the mascot;
+  /// Done is the submit trigger write-mode exercises had no way to fire).
+  final StrokeCanvasController _canvasController = StrokeCanvasController();
+
   bool get _isTeachCard => widget.exercise.surface == null;
 
   @override
@@ -125,7 +133,16 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
   void _onResult(CheckResult result) =>
       ref.read(exerciseControllerProvider.notifier).applyResult(result);
 
-  void _clear() => ref.read(exerciseControllerProvider.notifier).reset();
+  /// Clear the child's ink AND reset the mascot/feedback — the Clear / Try-again
+  /// CTAs. (Previously only the controller reset, so the drawing stayed put.)
+  void _clear() {
+    _canvasController.clear();
+    ref.read(exerciseControllerProvider.notifier).reset();
+  }
+
+  /// Submit what's drawn for scoring — the Done CTA. Essential for write-mode
+  /// (word) exercises, which have no auto count-reached completion.
+  void _submit() => _canvasController.submit();
 
   @override
   Widget build(BuildContext context) {
@@ -204,6 +221,7 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
         letter: widget.letter,
         onValidating: _onValidating,
         onResult: _onResult,
+        canvasController: _canvasController,
         watchMeLabel: widget.strings.watchMe,
       );
     }
@@ -245,8 +263,10 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
     );
   }
 
-  /// The CTA set per phase, mirroring the prototype's `ctaFor`:
-  ///   pass → "Next exercise"  · fix → "Clear" + "Try again"  · idle → "Clear" + "Mark correct".
+  /// The CTA set per phase:
+  ///   pass → "Next exercise"  · fix → "Clear" + "Try again"
+  ///   idle → "Clear" + "Done" (Done submits the drawing for scoring — the only
+  ///   way write-mode word exercises can finish; trace also auto-completes).
   List<Widget> _ctaFor(ExercisePhase phase, ExerciseScaffoldStrings s) {
     switch (phase) {
       case ExercisePhase.pass:
@@ -260,6 +280,8 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
       default:
         return [
           _QuietCta(label: s.clear, onTap: _clear),
+          const SizedBox(width: 12),
+          _PrimaryCta(label: s.done, onTap: _submit),
         ];
     }
   }

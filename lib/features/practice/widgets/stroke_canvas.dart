@@ -47,14 +47,53 @@ import '../../../theme/dimens.dart';
 /// Prior strokes are NEVER discarded on a new pointer-down (the Plan 04-04 fix to
 /// the single-stroke accumulation bug) — so baa's boat survives while the child
 /// draws its dot.
+/// Imperative handle for a [StrokeCanvas] — lets the exercise engine CLEAR the
+/// child's ink and force a SUBMIT (score whatever is drawn so far). For
+/// write-mode exercises (no reference strokes) the count-reached auto-complete
+/// never fires, so [submit] is the ONLY way to trigger scoring; for trace mode
+/// it is an explicit "I'm done" alongside the automatic completion.
+class StrokeCanvasController {
+  Object? _owner;
+  VoidCallback? _onClear;
+  VoidCallback? _onSubmit;
+
+  void _attach(Object owner,
+      {required VoidCallback onClear, required VoidCallback onSubmit}) {
+    _owner = owner;
+    _onClear = onClear;
+    _onSubmit = onSubmit;
+  }
+
+  void _detach(Object owner) {
+    // Only the state that currently owns the callbacks may clear them — guards
+    // against a stale dispose racing a fresh attach when the canvas key changes.
+    if (identical(_owner, owner)) {
+      _owner = null;
+      _onClear = null;
+      _onSubmit = null;
+    }
+  }
+
+  /// Clear all ink (in-progress + accumulated) so the child can start over.
+  void clear() => _onClear?.call();
+
+  /// Submit the strokes drawn so far for scoring (no-op if nothing is drawn).
+  void submit() => _onSubmit?.call();
+}
+
 class StrokeCanvas extends StatefulWidget {
   const StrokeCanvas({
     super.key,
     required this.referenceStrokes,
     this.onStrokeSubmitted,
     this.onLetterComplete,
+    this.controller,
     this.acceptTouch = DebugFlags.allowFingerInput,
   });
+
+  /// Optional imperative handle for clear / submit (the exercise engine wires
+  /// the scaffold's Clear and Done buttons through this).
+  final StrokeCanvasController? controller;
 
   /// The letter's authored strokes (source: curriculum letters.json).
   /// The painter iterates these directly: body (line/curve) strokes draw the
@@ -95,6 +134,49 @@ class _StrokeCanvasState extends State<StrokeCanvas> {
   /// True once [onLetterComplete] has fired for this letter, so we never
   /// double-fire if an extra stroke somehow arrives after completion.
   bool _letterComplete = false;
+
+  // --- imperative clear / submit (via StrokeCanvasController) ---------------
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller?._attach(this, onClear: _clearInk, onSubmit: _submitNow);
+  }
+
+  @override
+  void didUpdateWidget(StrokeCanvas oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.controller, widget.controller)) {
+      oldWidget.controller?._detach(this);
+      widget.controller?._attach(this, onClear: _clearInk, onSubmit: _submitNow);
+    }
+  }
+
+  /// Wipe all ink so the child can start the letter over (the engine's Clear /
+  /// Try-again). Resets the letter-complete latch so scoring can fire again.
+  void _clearInk() {
+    if (!mounted) return;
+    setState(() {
+      _activePoints = null;
+      _completedStrokes.clear();
+      _letterComplete = false;
+    });
+  }
+
+  /// Force a whole-letter submit of the strokes drawn so far — the only scoring
+  /// trigger for write-mode exercises (no reference strokes to count against).
+  /// No-op if nothing is drawn or the letter already scored.
+  void _submitNow() {
+    if (_letterComplete || _completedStrokes.isEmpty) return;
+    _letterComplete = true;
+    widget.onLetterComplete?.call(
+      List<List<Offset>>.unmodifiable(
+        _completedStrokes
+            .map((List<Offset> s) => List<Offset>.unmodifiable(s))
+            .toList(growable: false),
+      ),
+    );
+  }
 
   // --- input filter --------------------------------------------------------
 
@@ -202,6 +284,7 @@ class _StrokeCanvasState extends State<StrokeCanvas> {
 
   @override
   void dispose() {
+    widget.controller?._detach(this);
     // Points are in-memory only — discard on dispose (T-03-01 / T-01-05).
     _activePoints = null;
     _completedStrokes.clear();
