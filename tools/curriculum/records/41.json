@@ -1,0 +1,24 @@
+{
+  "fileId": "41",
+  "title": "وعي صوتي سجع",
+  "kind": "pdf",
+  "letters": [],
+  "worksheetType": "writeWord",
+  "exerciseTypesSeen": ["connectWord", "fillBlank"],
+  "instruction_ar": "مدوا خط بين الصورتين التي على نفس الوزن",
+  "instruction_en": "Draw a line between the two pictures that have the same rhyme/weight (sound ending).",
+  "vocab": [],
+  "items": [
+    {"page": "p002", "instruction_ar": "السجع — مدوا خط بين الصورتين التي على نفس الوزن", "leftColumn_pictures": ["كلب", "علم", "نار", "طائرة"], "rightColumn_pictures": ["قلم", "سيارة", "قلب", "فأر"], "rhymeGroups": [["كلب", "قلب"], ["علم", "قلم"], ["نار", "فأر"]], "note": "Arabic words inferred from pictures, not printed; line-matching by ending sound. كلب/قلب and علم/قلم rhyme strongly; نار/فأر plausible; طائرة/سيارة a remaining pair."},
+    {"page": "p003", "instruction_ar": "السجع — مدوا خط بين الصورتين التي على نفس الوزن", "leftColumn_pictures": ["خروف", "بنت", "جوز هند", "جمل"], "rightColumn_pictures": ["جبل", "صوف", "فأس", "لوز"], "rhymeGroups": [["خروف", "صوف"], ["جمل", "جبل"], ["جوز هند", "لوز"]], "note": "Inferred picture words. خروف/صوف and جمل/جبل rhyme; جوز/لوز plausible (final sound). Left 'بنت' (girl face) pairing to فأس (pickaxe) is unclear — low confidence on that pair."},
+    {"page": "p004", "instruction_ar": "ضع إشارة ✓ اذا تشابهت الصور بالسجع ( على نفس الوزن )", "worksheetTask": "fillBlank", "checkboxPairs": [["قلم", "علم"], ["فستان", "غابة"], ["بطة", "شجرة"], ["جبل", "جمل"], ["قطة", "قمر"]], "note": "Checkbox task: mark ✓ if the two pictures rhyme. قلم/علم rhyme (check); جبل/جمل rhyme (check). Others (فستان/غابة, بطة/شجرة, قطة/قمر) do not clearly rhyme. Picture words inferred."},
+    {"page": "p005", "instruction_ar": "مدوا خط بين الصورتين التي على نفس الوزن", "leftColumn_pictures": ["تفاحة", "كتب", "فتاة تصلّي", "فأر", "خيوط متشابكة"], "rightColumn_pictures": ["منزل/بيت لعب", "تمساح", "طبلة", "فانوس", "جبال"], "rhymeGroups": [], "note": "Picture identifications uncertain; intended rhyme pairings not confidently readable from images. Left col bottom (tangled threads) and several right-col items ambiguous. Low confidence on this page's pairings."},
+    {"page": "p006", "instruction_ar": "لائم بين الصورتين اللتان لهما نفس الإيقاع أو الوزن :", "leftColumn_pictures": ["بيت", "جرس", "سيارة", "كوب"], "rightColumn_pictures": ["حصان", "طائرة", "فستان", "زيت"], "rhymeGroups": [["بيت", "زيت"], ["كوب", "ثوب"]], "note": "Match pictures with same rhythm/weight. بيت/زيت rhyme clearly. Other intended pairs (جرس, سيارة, كوب vs حصان, طائرة, فستان) inferred; جرس/حصان and كوب could pair variously — uncertain."},
+    {"page": "p007", "instruction_ar": "مد خطا بين صورتين لهما نفس القافية", "leftColumn_pictures": ["رمان", "طائرة ورقية", "شجرة", "قلم", "بلورة/مصباح", "فيل/مظلة"], "rightColumn_pictures": ["باب", "قلم/صاروخ", "كأس/مصباح", "سهم", "فطر", "كتاب", "ليمون"], "rhymeGroups": [], "note": "Match two pictures with same rhyme (قافية). Picture identifications and intended pairings not confidently readable; right column has an arrow graphic suggesting a worked example. Low confidence on specific pairs."}
+  ],
+  "grammar": [],
+  "sentences": [],
+  "notes": "Phonological-awareness rhyme (سجع) worksheet, first grade, by د. ناديا أبو طعمة. All printed INSTRUCTIONS are clearly legible and given in real Arabic by sight. The exercises are picture-matching (draw a line / put a check between pictures that rhyme on the same ending/weight); NO Arabic words are printed beside the pictures — every word in leftColumn/rightColumn/rhymeGroups is INFERRED from the drawn picture and is a best-guess identification, not transcribed text. Confidence high on instructions, lower on inferred picture words and intended pairings (esp. p005 and p007). worksheetType set to 'writeWord' as the closest fit (word-level rhyme task), though the child draws lines/checks rather than writing. signedOff:false.",
+  "signedOff": false,
+  "confidence": "medium"
+}

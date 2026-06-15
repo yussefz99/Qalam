@@ -1,0 +1,32 @@
+{
+  "fileId": "10",
+  "title": "تاء وعي صوتي",
+  "kind": "docx",
+  "letters": ["ت"],
+  "worksheetType": "writeLetter",
+  "exerciseTypesSeen": ["writeLetter"],
+  "instruction_ar": "",
+  "instruction_en": "(No Arabic instruction text visible in the images. Title implies: phonological awareness for the letter ت — identify/mark the pictures whose names contain the sound ت.)",
+  "vocab": [
+    "تمساح",
+    "تاج",
+    "تلفاز",
+    "تفاحة",
+    "توت",
+    "سمكة",
+    "سيارة",
+    "ساعة",
+    "فأر"
+  ],
+  "items": [
+    {"word": "تمساح", "position": "initial"},
+    {"word": "تاج", "position": "initial"},
+    {"word": "تلفاز", "position": "initial"},
+    {"word": "تفاحة", "position": "initial"},
+    {"word": "توت", "position": "initial"}
+  ],
+  "grammar": [],
+  "sentences": [],
+  "notes": "9 images, all generic line-art clipart with NO Arabic labels and NO visible Arabic instruction text. Some carry English template captions ('C is for Car', 'Apple'). Pictures identified by sight; Arabic words are INFERRED from the depicted objects, not read — flagged low confidence. Pictures consistent with target sound ت (placed in items, all word-initial): m002=crocodile=تمساح, m006=crown=تاج, m007=television=تلفاز (could be تلفزيون), m008=apple=تفاحة, m004=strawberries=توت (could be فراولة). Likely distractors WITHOUT ت (in vocab, not items): m001=fish=سمكة, m003=car=سيارة, m005=wristwatch=ساعة, m009=mouse=فأر. m004 ambiguous (توت vs فراولة). No .wdp/.wmf files present; all 9 images viewed. Cannot confirm the actual exercise instruction (circle/color/write) — title and worksheet kind drive the writeLetter mapping.",
+  "confidence": "low"
+}

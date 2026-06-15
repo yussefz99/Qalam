@@ -83,5 +83,6 @@ tools/curriculum/*adminsdk*.json
 tools/tts/.env
 tools/tts/*.env
 
-# Raw curriculum worksheets (mother's Drive) â€” local input, never commit
+# Curriculum source worksheets (large binaries) + rendered pages — local only, not committed
 tools/curriculum/source/
+tools/curriculum/render/

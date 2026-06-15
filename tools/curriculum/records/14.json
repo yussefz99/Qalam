@@ -1,0 +1,21 @@
+{
+  "fileId": "14",
+  "title": "تنقيط حرف الظاء",
+  "kind": "docx",
+  "letters": ["ظ"],
+  "worksheetType": "traceLetter",
+  "exerciseTypesSeen": ["traceLetter"],
+  "instruction_ar": "",
+  "instruction_en": "Trace the dotted letter ظ (thaa/zaa). Single-letter dotted-tracing worksheet: a name line (الاسم) at top, a large reference letter and an example picture, the letter shown with stroke-order arrows, then rows of dotted ظ to trace over.",
+  "vocab": ["ظرف"],
+  "items": [
+    {"letter": "ظ", "word": "ظرف", "activity": "traceLetter — reference: large ظ and a picture of an envelope (ظرف, envelope); the example word ظرف is shown with the ظ highlighted"},
+    {"letter": "ظ", "word": "", "activity": "traceLetter — stroke-order model of ظ with directional arrows (dotted start point + arrows)"},
+    {"letter": "ظ", "word": "", "activity": "traceLetter — two rows of dotted ظ forms to trace over the baseline (left columns plain dotted outline, right columns add stroke-order arrows)"}
+  ],
+  "grammar": [],
+  "sentences": [],
+  "notes": "Single-letter dotted-tracing worksheet for ظ (thaa). Folder has m001.jpeg (grayscale), m003.jpg (a colored variant of the same page, not separately viewed but same layout by file pattern) and m002.wdp (JPEG-XR, not viewable). No Arabic instruction sentence printed — only the name field (الاسم) heading and the example word ظرف (envelope, matching the envelope illustration). Footer credit: learnwithanas.blogspot.com. Tracing rows show the ظ form with its single dot above; stroke-order arrows indicate the loop/body first. Read by sight; clear.",
+  "confidence": "high",
+  "signedOff": false
+}

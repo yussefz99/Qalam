@@ -1,0 +1,165 @@
+{
+  "fileId": "42",
+  "title": "وعي صوتي لجميع الحروف",
+  "kind": "pdf",
+  "letters": ["أ","ب","ت","ث","ج","ح","خ","د","ذ","ر","ز","س","ش","ص","ض","ط","ع","غ","ف","ق","ك","ل","م","ن","ه","و","ي","ظ"],
+  "worksheetType": "writeLetter",
+  "exerciseTypesSeen": ["writeLetter"],
+  "instruction_ar": "اكتب الحرف الذي تبدأ به كل صورة",
+  "instruction_en": "Write the letter that each picture begins with (phonological awareness: identify the target sound in each pictured word).",
+  "vocab": [
+    {"ar": "رُمّان", "en": "pomegranate"},
+    {"ar": "أناناس", "en": "pineapple"},
+    {"ar": "طائرة", "en": "airplane"},
+    {"ar": "بُرتقال", "en": "orange (fruit)"},
+    {"ar": "قلم", "en": "pen"},
+    {"ar": "هدية", "en": "gift"},
+    {"ar": "شمس", "en": "sun"},
+    {"ar": "حلوى", "en": "candy"},
+    {"ar": "تفاحة", "en": "apple"},
+    {"ar": "زهرة", "en": "flower"},
+    {"ar": "ثوم", "en": "garlic"},
+    {"ar": "نجوم", "en": "stars"},
+    {"ar": "جزر", "en": "carrot"},
+    {"ar": "يد", "en": "hand"},
+    {"ar": "عنب", "en": "grapes"},
+    {"ar": "حقيبة", "en": "schoolbag"},
+    {"ar": "زيتون", "en": "olives"},
+    {"ar": "خبز", "en": "bread"},
+    {"ar": "مصباح", "en": "lightbulb"},
+    {"ar": "مكنسة", "en": "broom"},
+    {"ar": "غسّالة", "en": "washing machine"},
+    {"ar": "دراجة", "en": "bicycle"},
+    {"ar": "ذرة", "en": "corn"},
+    {"ar": "هاتف", "en": "telephone"},
+    {"ar": "ليمون", "en": "lemon"},
+    {"ar": "باذنجان", "en": "eggplant"},
+    {"ar": "سيارة", "en": "car"},
+    {"ar": "موز", "en": "banana"},
+    {"ar": "جريدة", "en": "newspaper"},
+    {"ar": "فراولة", "en": "strawberry"},
+    {"ar": "دلو", "en": "bucket"},
+    {"ar": "كرسي", "en": "chair"},
+    {"ar": "بطاطا", "en": "potato"},
+    {"ar": "ظرف", "en": "envelope"},
+    {"ar": "ورقة", "en": "sheet of paper"},
+    {"ar": "طماطم", "en": "tomato"}
+  ],
+  "items": [
+    {"letter": "أ", "word": "رُمّان", "position": "medial", "note": "pomegranate; alef as internal long vowel"},
+    {"letter": "أ", "word": "أناناس", "position": "initial"},
+    {"letter": "أ", "word": "طائرة", "position": "medial", "note": "airplane; hamza on alef internal"},
+
+    {"letter": "ب", "word": "بُرتقال", "position": "initial"},
+    {"letter": "ب", "word": "قلم", "position": "none", "note": "pen pictured; no baa — likely a distractor/non-example"},
+    {"letter": "ب", "word": "هدية", "position": "none", "note": "gift pictured; no baa — likely distractor"},
+
+    {"letter": "ت", "word": "شمس", "position": "none", "note": "sun pictured; no taa — distractor"},
+    {"letter": "ت", "word": "حلوى", "position": "none", "note": "candy pictured; no taa — distractor"},
+    {"letter": "ت", "word": "تفاحة", "position": "initial"},
+
+    {"letter": "ث", "word": "زهرة", "position": "none", "note": "flower pictured; no thaa — distractor"},
+    {"letter": "ث", "word": "ثوم", "position": "initial", "note": "garlic"},
+    {"letter": "ث", "word": "نجوم", "position": "none", "note": "stars pictured; no thaa — distractor"},
+
+    {"letter": "ج", "word": "جزر", "position": "initial", "note": "carrot"},
+    {"letter": "ج", "word": "يد", "position": "none", "note": "hand pictured; no jeem — distractor"},
+    {"letter": "ج", "word": "عنب", "position": "none", "note": "grapes pictured; no jeem — distractor"},
+
+    {"letter": "ح", "word": "حقيبة", "position": "initial", "note": "schoolbag"},
+    {"letter": "ح", "word": "زيتون", "position": "none", "note": "olives pictured; no haa — distractor"},
+    {"letter": "ح", "word": "بُرتقال", "position": "none", "note": "orange pictured; no haa — distractor"},
+
+    {"letter": "خ", "word": "خبز", "position": "initial", "note": "bread"},
+    {"letter": "خ", "word": "مصباح", "position": "none", "note": "lightbulb pictured; haa not khaa — distractor"},
+    {"letter": "خ", "word": "طائرة", "position": "none", "note": "airplane pictured; no khaa — distractor"},
+
+    {"letter": "د", "word": "مكنسة", "position": "none", "note": "broom pictured; no daal — distractor"},
+    {"letter": "د", "word": "غسّالة", "position": "none", "note": "washing machine pictured; no daal — distractor"},
+    {"letter": "د", "word": "دراجة", "position": "initial", "note": "bicycle"},
+
+    {"letter": "ذ", "word": "ذرة", "position": "initial", "note": "corn"},
+    {"letter": "ذ", "word": "زهرة", "position": "none", "note": "flower pictured; no dhaal — distractor"},
+    {"letter": "ذ", "word": "هاتف", "position": "none", "note": "telephone pictured; no dhaal — distractor"},
+
+    {"letter": "ر", "word": "حقيبة", "position": "none", "note": "schoolbag pictured; no raa — distractor"},
+    {"letter": "ر", "word": "رُمّان", "position": "initial", "note": "pomegranate"},
+    {"letter": "ر", "word": "ليمون", "position": "none", "note": "lemon pictured; no raa — distractor"},
+
+    {"letter": "ز", "word": "ثوم", "position": "none", "note": "garlic pictured; no zaay — distractor"},
+    {"letter": "ز", "word": "جريدة", "position": "none", "note": "newspaper pictured; no zaay — distractor"},
+    {"letter": "ز", "word": "زيتون", "position": "initial", "note": "olives"},
+
+    {"letter": "س", "word": "بُرتقال", "position": "none", "note": "orange pictured; no seen — distractor"},
+    {"letter": "س", "word": "باذنجان", "position": "none", "note": "eggplant pictured; no seen — distractor"},
+    {"letter": "س", "word": "سيارة", "position": "initial", "note": "car"},
+
+    {"letter": "ش", "word": "شمس", "position": "initial", "note": "sun"},
+    {"letter": "ش", "word": "باذنجان", "position": "none", "note": "eggplant pictured; no sheen — distractor"},
+    {"letter": "ش", "word": "طماطم", "position": "none", "note": "tomato pictured; no sheen — distractor"},
+
+    {"letter": "ص", "word": "حلوى", "position": "none", "note": "candy pictured; no saad — distractor"},
+    {"letter": "ص", "word": "موز", "position": "none", "note": "banana pictured; no saad — distractor"},
+    {"letter": "ص", "word": "جريدة", "position": "none", "note": "newspaper pictured; no saad — distractor"},
+
+    {"letter": "ض", "word": "هدية", "position": "none", "note": "gift pictured; no daad — distractor"},
+    {"letter": "ض", "word": "تفاحة", "position": "none", "note": "apple pictured; no daad — distractor"},
+
+    {"letter": "ط", "word": "طائرة", "position": "initial", "note": "airplane"},
+    {"letter": "ط", "word": "أناناس", "position": "none", "note": "pineapple pictured; no taa(emphatic) — distractor"},
+    {"letter": "ط", "word": "سيارة", "position": "none", "note": "car pictured; no emphatic taa — distractor"},
+
+    {"letter": "ع", "word": "ورقة", "position": "none", "note": "blank paper pictured; no ayn — distractor"},
+    {"letter": "ع", "word": "عنب", "position": "initial", "note": "grapes"},
+    {"letter": "ع", "word": "خبز", "position": "none", "note": "bread pictured; no ayn — distractor"},
+
+    {"letter": "غ", "word": "دراجة", "position": "none", "note": "bicycle pictured; no ghayn — distractor"},
+    {"letter": "غ", "word": "شمس", "position": "none", "note": "sun pictured; no ghayn — distractor"},
+    {"letter": "غ", "word": "غسّالة", "position": "initial", "note": "washing machine"},
+
+    {"letter": "ف", "word": "فراولة", "position": "initial", "note": "strawberry"},
+    {"letter": "ف", "word": "هاتف", "position": "final", "note": "telephone"},
+    {"letter": "ف", "word": "دلو", "position": "none", "note": "bucket pictured; no faa — distractor"},
+
+    {"letter": "ق", "word": "ذرة", "position": "none", "note": "corn pictured; no qaaf — distractor"},
+    {"letter": "ق", "word": "قلم", "position": "initial", "note": "pen"},
+    {"letter": "ق", "word": "نجوم", "position": "none", "note": "stars pictured; no qaaf — distractor"},
+
+    {"letter": "ك", "word": "حقيبة", "position": "none", "note": "schoolbag pictured; no kaaf — distractor"},
+    {"letter": "ك", "word": "يد", "position": "none", "note": "hand pictured; no kaaf — distractor"},
+    {"letter": "ك", "word": "كرسي", "position": "initial", "note": "chair"},
+
+    {"letter": "ل", "word": "غسّالة", "position": "medial", "note": "washing machine"},
+    {"letter": "ل", "word": "ليمون", "position": "initial", "note": "lemon"},
+    {"letter": "ل", "word": "ورقة", "position": "none", "note": "blank paper pictured; no laam — distractor"},
+
+    {"letter": "م", "word": "دلو", "position": "none", "note": "bucket pictured; no meem — distractor"},
+    {"letter": "م", "word": "حلوى", "position": "none", "note": "candy pictured; no meem — distractor"},
+    {"letter": "م", "word": "موز", "position": "initial", "note": "banana"},
+
+    {"letter": "ن", "word": "طائرة", "position": "none", "note": "airplane pictured; no noon — distractor"},
+    {"letter": "ن", "word": "نجوم", "position": "initial", "note": "stars"},
+    {"letter": "ن", "word": "أناناس", "position": "medial", "note": "pineapple"},
+
+    {"letter": "ه", "word": "هاتف", "position": "initial", "note": "telephone"},
+    {"letter": "ه", "word": "جزر", "position": "none", "note": "carrot pictured; no haa — distractor"},
+    {"letter": "ه", "word": "كرسي", "position": "none", "note": "chair pictured; no haa — distractor"},
+
+    {"letter": "و", "word": "بطاطا", "position": "none", "note": "potato pictured; no waaw — distractor"},
+    {"letter": "و", "word": "فراولة", "position": "medial", "note": "strawberry"},
+    {"letter": "و", "word": "ورقة", "position": "initial", "note": "sheet of paper"},
+
+    {"letter": "ي", "word": "يد", "position": "initial", "note": "hand"},
+    {"letter": "ي", "word": "هدية", "position": "medial", "note": "gift"},
+    {"letter": "ي", "word": "تفاحة", "position": "none", "note": "apple pictured; no yaa — distractor"},
+
+    {"letter": "ظ", "word": "مصباح", "position": "none", "note": "lightbulb pictured; no zaa — distractor"},
+    {"letter": "ظ", "word": "ظرف", "position": "initial", "note": "envelope"},
+    {"letter": "ظ", "word": "ثوم", "position": "none", "note": "garlic pictured; no zaa — distractor"}
+  ],
+  "grammar": [],
+  "sentences": [],
+  "notes": "Phonological-awareness flashcard set: one card per Arabic letter (28 letters across pages 1-7; page 8 is an answer/label key strip). Each card shows the target letter plus 3 pictures; the child writes/identifies the target letter and decides which pictured word(s) contain its sound. Cards mix correct examples with distractors, so many items carry position 'none' (target sound absent). Word identities were cross-checked against the labeled Arabic key strip on p008 by sight. Some letters (ض, ظ, ك, ل etc.) had a blank picture cell in the card grid, so fewer than 3 picture-words appear for those. Vocabulary read by sight; common kid nouns. Several distractor mappings are inferred (which 3 pictures sit on which card) and could vary; the correct-example word per letter is high confidence, the distractor assignments are medium confidence. p008 dense answer strip Arabic labels partially small — used for confirmation, not all individually legible.",
+  "confidence": "medium",
+  "signedOff": false
+}

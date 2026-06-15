@@ -1,0 +1,26 @@
+{
+  "fileId": "12",
+  "title": "تنقيط جميع الحروف",
+  "kind": "pdf",
+  "letters": ["ا", "ب", "ت", "ث", "ج", "ح", "خ", "د", "ذ", "ر", "ز", "س", "ش", "ص", "ض", "ط", "ظ", "ع", "غ", "ف", "ق", "ك", "ل", "م", "ن", "ه", "و", "ي"],
+  "worksheetType": "traceLetter",
+  "exerciseTypesSeen": ["traceLetter"],
+  "instruction_ar": "أكتب حرف ...",
+  "instruction_en": "Write the letter ... (each page names one letter)",
+  "vocab": [],
+  "items": [
+    {"letter": "ا", "page": 2, "instruction_ar": "أكتب حرف أ", "form": "isolated", "task": "trace dotted letter"},
+    {"letter": "ب", "page": 3, "instruction_ar": "أكتب حرف ب", "form": "isolated", "task": "trace dotted letter"},
+    {"letter": "ت", "page": 4, "instruction_ar": "أكتب حرف ت", "form": "isolated", "task": "trace dotted letter"},
+    {"letter": "ث", "page": 5, "instruction_ar": "أكتب حرف ث", "form": "isolated", "task": "trace dotted letter"},
+    {"letter": "ج", "page": 6, "instruction_ar": "أكتب حرف ج", "form": "isolated", "task": "trace dotted letter"},
+    {"letter": "ح", "page": 7, "instruction_ar": "أكتب حرف ح", "form": "isolated", "task": "trace dotted letter"},
+    {"letter": "ص", "page": 15, "instruction_ar": "أكتب حرف ص", "form": "isolated", "task": "trace dotted letter"},
+    {"letter": "ي", "page": 29, "instruction_ar": "أكتب حرف ي", "form": "isolated", "task": "trace dotted letter"}
+  ],
+  "grammar": [],
+  "sentences": [],
+  "notes": "Sampled pages 1-7, 15, 29 (9 of 29). Cover page p1 = 'حروفي' (My Letters), prepared by الأستاذة ماجدة العشري. Pages 2-29 = one Arabic letter per page in standard alphabetical order (28 letters, ا..ي). Each page layout: title 'أكتب حرف X' (Write the letter X) top-right, a top model row showing the solid letter 4x, then 5 rows x 4 cells of dotted/guided isolated letterforms to trace. Confirmed sequence anchors: p2=أ, p3=ب, p4=ت, p5=ث, p6=ج, p7=ح, p15=ص, p29=ي — consistent with full alphabet order. 'letters' array lists the canonical 28-letter alphabet (alif written as ا; cover/p2 model glyph shows hamza form أ). No example words/vocab — pure isolated-letter tracing. items[] holds only the sampled pages.",
+  "confidence": "high",
+  "signedOff": false
+}

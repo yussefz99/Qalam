@@ -1,0 +1,22 @@
+{
+  "fileId": "21",
+  "title": "حرف اللام",
+  "kind": "docx",
+  "letters": ["ل"],
+  "worksheetType": "traceLetter",
+  "exerciseTypesSeen": ["traceLetter", "teachCard"],
+  "instruction_ar": "الاسم: ____   (تتبّع حرف اللام بالقلم)",
+  "instruction_en": "Name: ____  Trace the letter Laam (ل) with a pencil; color the picture.",
+  "vocab": ["ليمون", "لحم", "لسان"],
+  "items": [
+    {"activity": "teach card / letter header", "detail": "Large gray isolated letter ل shown for tracing, with the word «ليمون» (lemon) and a single «ل» marked with a start-dot and directional arrow showing stroke order."},
+    {"activity": "trace the letter forms", "detail": "Dotted-line tracing grid: rows of the isolated ل to trace, plus connected/joined forms with grey directional arrows indicating stroke direction (right-to-left)."},
+    {"activity": "color the picture", "detail": "Lemon illustration (ليمون) on the main worksheet page to color, reinforcing the laam vocabulary word."},
+    {"activity": "vocabulary clip-art (loose embedded images)", "detail": "Coloring clip-art images bundled in the packet: two lemons (ليمون), a butterfly, a fish, a piece of meat / drumstick (لحم), Mickey kicking a ball, and an open mouth with tongue (لسان). These illustrate example words; some (butterfly, fish, ball, Mickey) do not contain laam and appear to be generic coloring filler — flag for the mother to confirm intended vocabulary."}
+  ],
+  "grammar": [],
+  "sentences": [],
+  "notes": "m009.wdp could NOT be viewed (HD Photo / .wdp format not renderable) — needs separate conversion to confirm contents. Main pedagogical page is m008 (a 'learnwithanas.blogspot.com' tracing sheet). Several embedded clip-art images (m003 butterfly, m004 fish, m006 Mickey-with-ball) do NOT contain the letter laam and look like generic coloring art rather than laam vocabulary — flag for the mother. Confident laam vocab from the sheet: ليمون (printed), plus لحم (meat, from m005 drumstick) and لسان (tongue, from m007 mouth) inferred from clip-art. Header word «ليمون» read by sight on m008.",
+  "confidence": "medium",
+  "signedOff": false
+}
