@@ -33,7 +33,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 5: Profiles & Onboarding** - A parent creates a local child profile (name + grade), and the child picks an avatar and nickname on first open.
 - [x] **Phase 6: Lesson Progression & Home** - On open the child sees today's prepared lesson with one Start; the next lesson unlocks only after passing the current one. (completed 2026-06-13)
 - [ ] **Phase 7: Learning Engine & Letter Unit** - Build the production learning engine + multi-section Letter Unit, pixel-faithful to the Claude Design prototype and driven by Curriculum Schema v2 on Firestore, proven end-to-end on baa (5 reusable components, every exercise from config, audio, one star).
-- [ ] **Phase 8: Full Curriculum & All Question Types** - Author all 28 letters (forms, vocab, audio) + all question configs (grammar + sentence-building) into the engine as Schema v2 data, batched behind the owner's-mother sign-off → full v1 content-complete.
+- [ ] **Phase 8: First Three Letters — Demo-Complete** - Author the first three letters (**alif · baa · taa**) as COMPLETE Letter Units through the Phase 7 engine — every applicable section, every question type, vocab, audio, common mistakes — with journey progression across the three, polished and rock-solid for the live Technion demo. baa is done; alif + taa to author (data only). The full 28-letter curriculum is deferred to a later phase (Phase 8 was rescoped 2026-06-15 for the demo).
 - [x] **Phase 9: Parent Dashboard** - A parent enters a PIN and sees a read-only view of the child's completed lessons and scores. (completed 2026-06-13)
 - [ ] **Phase 10: Offline Hardening & Release** - Every flow works airplane-mode on a fresh install, the ML Kit model is fetched-once-and-cached, and child data stays minimal and private.
 
@@ -447,32 +447,38 @@ Plans:
 **UI hint**: yes — implement the prototype exactly; **no new design work**.
 **Research hint**: no — design + schema are locked (prototype + Schema v2). Plan directly.
 
-### Phase 8: Full Curriculum & All Question Types
+### Phase 8: First Three Letters — Demo-Complete
 
-**Goal**: Pour the complete curriculum into the Phase 7 engine — all **28 letters** (4 contextual
-forms where they exist, vocab, pronunciation audio, common mistakes) and **all question/exercise
-configs** (incl. grammar transforms مفرد/مثنى/جمع · opposites, and sentence-building) — each authored
-as **Schema v2 data** and **signed off in batches by the owner's mother** — so the full v1 learning
-experience is content-complete. New question kinds are new configs over the Phase 7 components.
+**Goal**: Make the **first three letters — alif (ا) · baa (ب) · taa (ت)** — each a COMPLETE, polished
+Letter Unit running through the Phase 7 engine, so the live Technion demo shows a real, *scaling*
+product (not a one-letter prototype). Every applicable section, every question type that fits the
+letter, vocab + pronunciation audio + common mistakes — all **Schema v2 data**, no design changes.
+The journey map shows the three as a walkable progression. baa is already done end-to-end; this phase
+brings **alif** and **taa** to the same bar and hardens all three for a flawless on-device demo.
 
-**⚠ HARD CONSTRAINT:** same as Phase 7 — all surfaces use the existing components built to the Claude
-Design prototype; content is added **as data only, no design changes**. Handwriting-first throughout
-(the child writes; never tap-one-of-four).
+**Rescoped 2026-06-15** from "all 28 letters" → "first 3, demo-complete" for the Technion meeting.
+The full 28-letter curriculum + grammar/sentence batches move to a later phase.
+
+**⚠ HARD CONSTRAINT:** same as Phase 7 — all surfaces use the existing Phase 7 components built to the
+Claude Design prototype; content is added **as data only, no design changes**. Handwriting-first
+throughout (the child writes; never tap-one-of-four). taa models on baa (boat body + dots); the owner
+authors/edits the per-form reference strokes via the Stroke Studio / DB and signs off.
 
 **Mode:** mvp
-**Depends on**: Phase 7 (the engine + components + Schema v2)
-**Requirements**: CUR-01 (full), S1-07 (sentence-building), S1-08 (grammar)
+**Depends on**: Phase 7 (the engine + components + Schema v2 + the proven baa exemplar)
+**Requirements**: CUR-01 (first-3 slice), S1-07 (sentence-building, where it fits), S1-08 (grammar, where it fits)
 **Success Criteria** (what must be TRUE):
 
-  1. All 28 letters authored (4 forms where they exist — non-connectors ا د ذ ر ز و are isolated+final only — vocab, audio, common mistakes), loaded from Firestore; every entry the owner's-mother's spec or explicitly marked placeholder; the full set signed off.
-  2. All exercise types present as curriculum data — traceLetter / writeLetter / writeWord / connectWord / completeWord / transformWord (grammar) / fillBlank / buildSentence — drawn from the curriculum, rendered by the Phase 7 components.
-  3. Sentence-building and grammar are handwriting-first (the child writes), never multiple-choice tap-the-answer (the anti-product).
-  4. Every letter unit is reachable and progression works across the full curriculum.
+  1. alif, baa, taa each authored as a complete Letter Unit (sections appropriate to the letter — taa is a connector with 4 forms like baa; alif is a non-connector → isolated+final + a leaner unit), loaded from data, signed off.
+  2. The question types that suit each letter are present as data and render through the Phase 7 components — at minimum trace/write letter + the per-form trace + words; richer types (grammar transform, fill-blank, sentence) wherever the content supports them.
+  3. Real scoring works for all three: geometric stroke scorer for letters/forms, ML Kit word recognition for words; handwriting-first, never tap-one-of-four.
+  4. All three letter units are reachable from Home/Journey, the journey shows them as a progression (e.g. alif/baa complete → taa current), and walking alif→baa→taa works end-to-end.
+  5. Demo-hardened: no dead-ends, no stuck states, no placeholder "Coming soon" in the demo path; stable on the Pixel-Tablet build.
 
 **Plans**: TBD
 **Canonical refs**: same as Phase 7 (`docs/design/prototypes/letter-unit-baa/` + `SCHEMA-V2.md` + `COMPONENT-SYSTEM.md`).
 **UI hint**: no new design — reuse the Phase 7 components.
-**Research hint**: no — locked. Content authoring is gated by the owner's-mother sign-off.
+**Research hint**: no — locked. Content modeled on the signed-off baa; the owner authors strokes + signs off.
 
 ### Phase 9: Parent Dashboard
 
