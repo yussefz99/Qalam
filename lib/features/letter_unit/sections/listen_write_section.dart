@@ -134,9 +134,11 @@ class ListenWriteSectionState extends ConsumerState<ListenWriteSection> {
     ref.read(audioPlayerProvider).playLetter(id);
   }
 
-  /// The scaffold's onNext: a clean pass. Only the WORD task opens the gate.
+  /// The scaffold's onNext: a clean pass on EITHER task completes the section.
+  /// (The word is the primary recall, but a correct first-letter answer must not
+  /// leave the child stuck with "correct, but it won't move" — owner-reported.)
   void _onPass() {
-    if (_mode == LwMode.word) widget.onFinish?.call();
+    widget.onFinish?.call();
   }
 
   @override
