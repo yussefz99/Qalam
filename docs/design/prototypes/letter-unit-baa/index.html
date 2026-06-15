@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qalam — Letter Unit “baa (ب)” · Handoff</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=Cairo:wght@600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="prototype/shared/core.css">
+<style>
+  html,body{background:var(--bg);height:auto;min-height:100%;}
+  .wrap{max-width:1080px;margin:0 auto;padding:52px 40px 90px;}
+  .kick{font-family:var(--font-body);font-weight:800;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-teal);}
+  .top{display:flex;align-items:center;gap:30px;margin:6px 0 4px;}
+  .bigb{flex-shrink:0;font-family:'Cairo','Noto Naskh Arabic',sans-serif;font-weight:700;font-size:74px;color:var(--deep-ink);line-height:1;direction:rtl;}
+  h1{font-family:var(--font-display);font-weight:600;font-size:40px;color:var(--fg);margin:0;line-height:1.04;}
+  .lede{font-family:var(--font-body);font-weight:500;font-size:18px;color:var(--fg-muted);max-width:740px;line-height:1.55;margin:18px 0 34px;}
+  .lede b{color:var(--deep-ink);}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:40px;}
+  .card{display:flex;flex-direction:column;gap:10px;background:var(--surface-raised);border:1px solid var(--border);border-radius:22px;
+    padding:26px 26px 24px;text-decoration:none;box-shadow:var(--shadow-md);transition:transform .15s var(--ease-out-quart),box-shadow .15s;}
+  .card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);}
+  .card .tag{font-family:var(--font-body);font-weight:800;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-teal);}
+  .card .nm{font-family:var(--font-display);font-weight:600;font-size:25px;color:var(--fg);display:flex;align-items:center;gap:10px;}
+  .card .nm .g{font-family:var(--font-arabic);font-weight:600;color:var(--deep-ink);}
+  .card .ds{font-family:var(--font-body);font-weight:500;font-size:15px;color:var(--fg-muted);line-height:1.5;}
+  .card .go{margin-top:6px;font-family:var(--font-display);font-weight:600;font-size:15px;color:var(--ink-teal);}
+  .docs{border-top:1px solid var(--border);padding-top:30px;}
+  .docs h2{font-family:var(--font-display);font-weight:600;font-size:22px;color:var(--fg);margin:0 0 4px;}
+  .docs .sub{font-family:var(--font-body);font-weight:500;font-size:14px;color:var(--fg-muted);margin-bottom:18px;}
+  .doclist{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .doc{display:flex;align-items:center;gap:12px;background:var(--bg-deep);border:1px solid var(--border-soft);border-radius:14px;padding:13px 16px;text-decoration:none;}
+  .doc:hover{border-color:var(--ink-teal);}
+  .doc .fn{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:13.5px;color:var(--deep-ink);}
+  .doc .de{font-family:var(--font-body);font-weight:500;font-size:13px;color:var(--fg-muted);margin-left:auto;text-align:right;}
+  .note{margin-top:24px;font-family:var(--font-body);font-weight:600;font-size:13.5px;color:var(--fg-muted);background:var(--reward-tint);border:1px solid #EBD49A;border-radius:14px;padding:13px 16px;line-height:1.5;}
+  .note b{color:#9A6A2E;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kick">Stage B · Design → Engineering Handoff</div>
+  <div class="top">
+    <div class="bigb">ب</div>
+    <h1>Letter Unit “baa” —<br>component handoff</h1>
+  </div>
+  <p class="lede">The baa (ب) Letter Unit, built as <b>one engine</b>: 5 reusable components, and every question type expressed as <b>config</b>. This folder is the working prototype plus the docs an engineer needs to (a) lock a data schema and (b) rebuild the components in Flutter. Handwriting-first throughout; RTL, landscape tablet.</p>
+
+  <div class="grid">
+    <a class="card" href="prototype/letter-unit/index.html">
+      <span class="tag">Prototype · the experience</span>
+      <span class="nm"><span class="g" dir="rtl">ب</span> The baa Letter Unit</span>
+      <span class="ds">The full six-section flow — Meet (with the form morph) → Watch &amp; trace → Forms in context → Words → Listen &amp; write → Mastery. Reuses the existing trace surface, stroke animation, and one-quiet-star celebration.</span>
+      <span class="go">Open the unit →</span>
+    </a>
+    <a class="card" href="prototype/exercise-components/index.html">
+      <span class="tag">Prototype · the engine</span>
+      <span class="nm">Exercise Components</span>
+      <span class="ds">The 5 components with 6 question types + 2 support screens, each a swapped config. Toggle <b>Show config</b> to see which components render and the exact config object behind each screen.</span>
+      <span class="go">Open the component gallery →</span>
+    </a>
+  </div>
+
+  <div class="docs">
+    <h2>Handoff documents</h2>
+    <div class="sub">Read <b>HANDOFF.md</b> first — it ties everything together.</div>
+    <div class="doclist">
+      <a class="doc" href="HANDOFF.md"><span class="fn">HANDOFF.md</span><span class="de">manifest · start here</span></a>
+      <a class="doc" href="COMPONENTS.md"><span class="fn">COMPONENTS.md</span><span class="de">5-component inventory</span></a>
+      <a class="doc" href="SCHEMA-BINDINGS.md"><span class="fn">SCHEMA-BINDINGS.md</span><span class="de">design → schema map</span></a>
+      <a class="doc" href="EXERCISE-CONFIGS.json"><span class="fn">EXERCISE-CONFIGS.json</span><span class="de">concrete configs (baa)</span></a>
+      <a class="doc" href="TOKENS.md"><span class="fn">TOKENS.md</span><span class="de">tokens used + additions</span></a>
+      <a class="doc" href="CHANGES.md"><span class="fn">CHANGES.md</span><span class="de">deviations + open TBDs</span></a>
+      <a class="doc" href="assets/README.md"><span class="fn">assets/</span><span class="de">SVGs · real vs placeholder</span></a>
+    </div>
+    <div class="note"><b>Note on fidelity:</b> the trace surface, stroke animation, and celebration are matched to the existing built screens. Everything labeled <b>placeholder</b> (audio, word illustrations, vocab choices) is an owner/curriculum call — see CHANGES.md for the open list. Nothing here invents pedagogy.</div>
+  </div>
+</div>
+</body>
+</html>
