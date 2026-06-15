@@ -78,3 +78,7 @@ tools/firebase/*adminsdk*.json
 tools/curriculum/*serviceAccount*.json
 tools/curriculum/*.key.json
 tools/curriculum/*adminsdk*.json
+
+# TTS API keys (ElevenLabs) — never commit
+tools/tts/.env
+tools/tts/*.env
