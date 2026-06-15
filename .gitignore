@@ -82,3 +82,6 @@ tools/curriculum/*adminsdk*.json
 # TTS API keys (ElevenLabs) — never commit
 tools/tts/.env
 tools/tts/*.env
+
+# Raw curriculum worksheets (mother's Drive) — local input, never commit
+tools/curriculum/source/
