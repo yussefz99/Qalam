@@ -27,8 +27,12 @@ Define Qalam's **art style**, aligned to the design system, and write it down as
 1. **Build the word→imageId list** from `CONTENT-INVENTORY.json` — every `vocab` word across all
    letters (dedupe; e.g. باب, أرنب, تفاح, …). `imageId` convention: `img.<translit>` (e.g.
    `img.baab`, `img.arnab`) — match the ids already used in `EXERCISE-CONFIGS.json` where they exist.
-2. **Generate one image per word** with your style prompt + the word's meaning (use the English gloss
-   so "باب" → a door, "أرنب" → a rabbit). Whatever image tool you have (DALL·E / SD / Midjourney / API).
+2. **Generate one image per word** using **Codex's built-in image generation** + your style prompt +
+   the word's meaning (use the English gloss so "باب" → a door, "أرنب" → a rabbit).
+   **Consistency technique (critical):** generate **2–3 reference images first**, lock the one whose
+   style you like, then generate every other word **anchored to that style/reference** (reuse the
+   exact style prompt, same palette/line-weight/background) so all ~150 read as ONE set — not 150
+   different styles. Fixed canvas size + a plain parchment or transparent background for all.
 3. **Output:** `assets/images/<imageId>.webp` (small, optimized) + a manifest
    `assets/images/manifest.json` (`imageId → {word, gloss, file}`).
 4. **Flag** abstract/hard-to-draw words (colors, prepositions, grammar words) in the manifest as
@@ -64,9 +68,11 @@ Define Qalam's **art style**, aligned to the design system, and write it down as
 > Read `.planning/research/learning-experience/TASK-illustrations.md` and do it. First define
 > Qalam's illustration style aligned to `docs/design/kit/project/colors_and_type.css` and the
 > screenshots (parchment/ink, warm, rounded, calm — "Real Arabic. Not a game."), and write it as
-> `ILLUSTRATION-STYLE.md` with one reusable style prompt. Then extract every vocab word from
-> `CONTENT-INVENTORY.json`, and generate one placeholder image per word in that single style,
-> named `assets/images/img.<translit>.webp`, plus `assets/images/manifest.json`. Match existing
-> `imageId`s in `docs/design/prototypes/letter-unit-baa/EXERCISE-CONFIGS.json`. Keep one consistent
-> style, optimize file sizes, flag abstract words `needsReview`, and don't touch engine code,
+> `ILLUSTRATION-STYLE.md` with one reusable style prompt. Using **your built-in image generation**,
+> generate **2–3 reference images first**, lock the best style, then extract every vocab word from
+> `CONTENT-INVENTORY.json` and generate one placeholder image per word **anchored to that locked
+> style** (same prompt/palette/background/canvas), named `assets/images/img.<translit>.webp`, plus
+> `assets/images/manifest.json`. Match existing `imageId`s in
+> `docs/design/prototypes/letter-unit-baa/EXERCISE-CONFIGS.json`. Keep ONE consistent style across
+> all images, optimize file sizes, flag abstract words `needsReview`, and don't touch engine code,
 > the schema, or the content drafts.
