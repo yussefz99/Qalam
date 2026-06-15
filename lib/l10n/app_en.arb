@@ -909,5 +909,135 @@
   "exerciseTeachCardHint": "Nothing to write — this card teaches.",
   "@exerciseTeachCardHint": {
     "description": "Phase 7 Letter-Unit ExerciseScaffold teachCard hint shown in place of the write hint when there is no surface to grade (surface==null)."
+  },
+
+  "meetKick": "Meet the Letter",
+  "@meetKick": {
+    "description": "Phase 7 Letter-Unit Section 1 (Meet) eyebrow label."
+  },
+
+  "meetHear": "Hear",
+  "@meetHear": {
+    "description": "Phase 7 Letter-Unit Section 1 (Meet) morph-card Play button — plays the letter sound offline."
+  },
+
+  "meetStartWriting": "Start Writing",
+  "@meetStartWriting": {
+    "description": "Phase 7 Letter-Unit Section 1 (Meet) primary CTA — advances to Section 2 (Watch & Trace)."
+  },
+
+  "meetJoinsOn": "joins on",
+  "@meetJoinsOn": {
+    "description": "Phase 7 Letter-Unit Section 1 (Meet) join-hint label beside the arrow showing which side the contextual form reaches to join."
+  },
+
+  "formIsolated": "Isolated",
+  "@formIsolated": {
+    "description": "Phase 7 Letter-Unit contextual-form label — the letter on its own."
+  },
+
+  "formInitial": "Initial",
+  "@formInitial": {
+    "description": "Phase 7 Letter-Unit contextual-form label — the letter at the start of a word."
+  },
+
+  "formMedial": "Medial",
+  "@formMedial": {
+    "description": "Phase 7 Letter-Unit contextual-form label — the letter in the middle of a word."
+  },
+
+  "formFinal": "Final",
+  "@formFinal": {
+    "description": "Phase 7 Letter-Unit contextual-form label — the letter at the end of a word."
+  },
+
+  "meetExplainIsolated": "On its own — the full bowl with its tail.",
+  "@meetExplainIsolated": {
+    "description": "Phase 7 Letter-Unit Section 1 (Meet) explain line for the isolated form of baa."
+  },
+
+  "meetExplainInitial": "At the start — the tail goes; it reaches forward to join.",
+  "@meetExplainInitial": {
+    "description": "Phase 7 Letter-Unit Section 1 (Meet) explain line for the initial form of baa."
+  },
+
+  "meetExplainMedial": "In the middle — just a little tooth between letters.",
+  "@meetExplainMedial": {
+    "description": "Phase 7 Letter-Unit Section 1 (Meet) explain line for the medial form of baa."
+  },
+
+  "meetExplainFinal": "At the end — the tail comes back.",
+  "@meetExplainFinal": {
+    "description": "Phase 7 Letter-Unit Section 1 (Meet) explain line for the final form of baa."
+  },
+
+  "watchKick": "Watch · Stroke Order",
+  "@watchKick": {
+    "description": "Phase 7 Letter-Unit Section 2 (Watch & Trace) eyebrow during the Watch (demo) phase."
+  },
+
+  "traceKick": "Your Turn · Trace",
+  "@traceKick": {
+    "description": "Phase 7 Letter-Unit Section 2 (Watch & Trace) eyebrow during the Trace phase."
+  },
+
+  "watchAgain": "Watch again",
+  "@watchAgain": {
+    "description": "Phase 7 Letter-Unit Section 2 CTA — replays the stroke-order demo."
+  },
+
+  "watchIllTry": "I'll try",
+  "@watchIllTry": {
+    "description": "Phase 7 Letter-Unit Section 2 CTA — advances from the Watch phase to the Trace phase."
+  },
+
+  "watchTipLabel": "Tip",
+  "@watchTipLabel": {
+    "description": "Phase 7 Letter-Unit Section 2 Watch-phase tip side-card label."
+  },
+
+  "watchTipBody": "Start at the gold dot. Follow the curve down and to the left, then place the dot below.",
+  "@watchTipBody": {
+    "description": "Phase 7 Letter-Unit Section 2 Watch-phase tip side-card body."
+  },
+
+  "listenLabel": "Listen",
+  "@listenLabel": {
+    "description": "Phase 7 Letter-Unit Listen side-card label (Watch & Trace)."
+  },
+
+  "listenPlaySound": "Play sound",
+  "@listenPlaySound": {
+    "description": "Phase 7 Letter-Unit Listen side-card Play button — plays the letter sound offline."
+  },
+
+  "formsKick": "Forms in Context",
+  "@formsKick": {
+    "description": "Phase 7 Letter-Unit Section 3 (Forms in context) eyebrow label."
+  },
+
+  "formsJoinKick": "Join Them",
+  "@formsJoinKick": {
+    "description": "Phase 7 Letter-Unit Section 3 eyebrow on the join-into-word stage."
+  },
+
+  "formsThisForm": "This form",
+  "@formsThisForm": {
+    "description": "Phase 7 Letter-Unit Section 3 Listen side-card label for the active contextual form."
+  },
+
+  "formsHearIt": "Hear it",
+  "@formsHearIt": {
+    "description": "Phase 7 Letter-Unit Section 3 Listen side-card Play button — plays the form/word sound offline."
+  },
+
+  "formNotYetAuthoredTitle": "Coming soon",
+  "@formNotYetAuthoredTitle": {
+    "description": "Phase 7 Letter-Unit Section 3 calm placeholder title shown when a contextual form's reference strokes are not yet authored/signed-off (pre-07-07). Never crashes, never fabricates strokes."
+  },
+
+  "formNotYetAuthoredBody": "This form is still being prepared by your teacher. You can come back to it soon.",
+  "@formNotYetAuthoredBody": {
+    "description": "Phase 7 Letter-Unit Section 3 calm placeholder body for an un-signed-off contextual form (the human sign-off gate is honored)."
   }
 }
