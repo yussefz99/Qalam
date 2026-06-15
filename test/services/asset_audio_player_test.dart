@@ -39,6 +39,10 @@ void main() {
         'assets/audio/word.batta.mp3',
       );
       expect(
+        AssetLetterAudioPlayer.audioAssetFor('word.haliib'),
+        'assets/audio/word.haliib.mp3',
+      );
+      expect(
         AssetLetterAudioPlayer.audioAssetFor('sentence.albaab-kabiir'),
         'assets/audio/sentence.albaab-kabiir.mp3',
       );
@@ -53,7 +57,7 @@ void main() {
 
     test('an unknown audioId resolves to null (nothing to play)', () {
       expect(AssetLetterAudioPlayer.audioAssetFor('does.not.exist'), isNull);
-      expect(AssetLetterAudioPlayer.audioAssetFor('word.haliib'), isNull);
+      expect(AssetLetterAudioPlayer.audioAssetFor('word.notmapped'), isNull);
     });
 
     test('empty / whitespace / foreign-path inputs resolve to null', () {

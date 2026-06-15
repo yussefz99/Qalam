@@ -38,7 +38,7 @@ this table — **keep them in lockstep.**
 | `word.baab` | `assets/audio/word.baab.mp3` | `baa.writeWord.dictation` (باب — "door") | **PLACEHOLDER** |
 | `word.batta` | `assets/audio/word.batta.mp3` | `baa.writeLetter.fromSound` (بطة — "duck") | **PLACEHOLDER** |
 | `sentence.albaab-kabiir` | `assets/audio/sentence.albaab-kabiir.mp3` | `baa.buildSentence.hear` (البابُ كبير — "the door is big") | **PLACEHOLDER** |
-| `word.haliib` | _(not yet bundled)_ | (named in the unit's word set; no exercise references it yet) | **NOT YET RECORDED** — resolves to a silent no-op until the owner supplies حليب + an entry here and in `_audioIdToAsset` |
+| `word.haliib` | `assets/audio/word.haliib.mp3` | the حليب ("milk") card in the Words-with-Baa grid (`WordsSection`) | **PLACEHOLDER** (interim ElevenLabs) |
 
 ### Real vs placeholder — and why the build stays green
 
@@ -50,9 +50,9 @@ records them, placeholder clip files ship in their place.
 The build, tests, and trace loop are **green regardless** of whether a given clip
 is real or placeholder, because:
 
-- An `audioId` that is **not** in `_audioIdToAsset` (e.g. `word.haliib`, or any
-  typo) resolves to `null` → `playLetter` is a **silent no-op** (never throws,
-  never blocks the child — T-07-02-04).
+- An `audioId` that is **not** in `_audioIdToAsset` (e.g. a clip for another
+  letter not yet wired, or any typo) resolves to `null` → `playLetter` is a
+  **silent no-op** (never throws, never blocks the child — T-07-02-04).
 - A mapped clip that is missing or undecodable is caught and swallowed inside
   `playLetter` — same silent degrade.
 
@@ -64,7 +64,7 @@ rather than an error.
 1. Record the clip (short, clean, the owner's-mother's voice). Export to `.mp3`.
 2. Replace the placeholder file at the asset path above (keep the same filename
    so no code change is needed), **or** add a new file + a new row here and a new
-   entry in `_audioIdToAsset` for a brand-new `audioId` (e.g. `word.haliib`).
+   entry in `_audioIdToAsset` for a brand-new `audioId` (e.g. `word.<new>`).
 3. `assets/audio/` is already declared in `pubspec.yaml` (`flutter.assets`), so a
    replaced or added file is bundled on the next build — no pubspec change for a
    like-named replacement.

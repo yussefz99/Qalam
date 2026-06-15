@@ -54,16 +54,14 @@ class AssetLetterAudioPlayer implements LetterAudioPlayer {
   /// is documented there with its real-vs-placeholder status (all PLACEHOLDER
   /// until the owner records the clips).
   ///
-  /// NOTE on `word.haliib`: it is named in the plan's clip manifest but is NOT
-  /// yet a bundled file (no exercise references it in the baa unit, and no
-  /// recording exists). It is intentionally ABSENT from this map so it resolves
-  /// to null → a silent no-op, exactly like any other not-yet-recorded clip.
-  /// When the owner supplies حليب, add the file + an entry here and to the
-  /// README in one change.
+  /// `word.haliib` (حليب, "milk") is the third Words-with-Baa card. Its clip now
+  /// ships in `assets/audio/`, so it is mapped here — without this entry the
+  /// milk card's Play button resolves to null and is a silent no-op.
   static const Map<String, String> _audioIdToAsset = <String, String>{
     'snd.baa': '$_audioDir/snd.baa.mp3',
     'word.baab': '$_audioDir/word.baab.mp3',
     'word.batta': '$_audioDir/word.batta.mp3',
+    'word.haliib': '$_audioDir/word.haliib.mp3',
     'sentence.albaab-kabiir': '$_audioDir/sentence.albaab-kabiir.mp3',
   };
 
