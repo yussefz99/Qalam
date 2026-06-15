@@ -823,5 +823,91 @@
   "commonDone": "Done",
   "@commonDone": {
     "description": "Shared exit/confirm CTA label — 'Done' (Button/24px). Phase 9 dashboard exit returns to child Home and RELOCKS the Parent Area (D-07)."
+  },
+
+  "promptPlay": "Play",
+  "@promptPlay": {
+    "description": "Phase 7 Letter-Unit PromptHeader — label on the teal audio play button (.pp-audio). The child taps to hear the prompt sound."
+  },
+
+  "feedbackIdleHint": "Write on the surface — Qalam checks your strokes.",
+  "@feedbackIdleHint": {
+    "description": "Phase 7 Letter-Unit FeedbackPanel idle hint (.fb-hint). Calm, instructional — shown before the child writes. Never hype."
+  },
+
+  "feedbackPassTag": "Correct · one quiet star",
+  "@feedbackPassTag": {
+    "description": "Phase 7 Letter-Unit FeedbackPanel pass eyebrow (.fb-tag). 'one quiet star' is deliberate anti-gamification framing — a mastery marker, not a score (CLAUDE.md Decided)."
+  },
+
+  "feedbackFixTag": "A specific fix",
+  "@feedbackFixTag": {
+    "description": "Phase 7 Letter-Unit FeedbackPanel fix eyebrow (.fb-tag). Names that the line below is a SPECIFIC, actionable fix in the tutor's voice — never a generic 'Oops'."
+  },
+
+  "exerciseTutorName": "Qalam",
+  "@exerciseTutorName": {
+    "description": "Phase 7 Letter-Unit ExerciseScaffold — the tutor name shown under the mascot (.ex-tid .nm)."
+  },
+
+  "exerciseTutorRole": "Your Writing Tutor",
+  "@exerciseTutorRole": {
+    "description": "Phase 7 Letter-Unit ExerciseScaffold — the tutor role label under the name (.ex-tid .role)."
+  },
+
+  "exerciseTutorSays": "Qalam says",
+  "@exerciseTutorSays": {
+    "description": "Phase 7 Letter-Unit ExerciseScaffold — the speech-bubble tone label shown above pass/fix feedback (.ex-speech .tone). Attributes the feedback to the tutor."
+  },
+
+  "exerciseClear": "Clear",
+  "@exerciseClear": {
+    "description": "Phase 7 Letter-Unit ExerciseScaffold CTA — clears the writing surface (.exbtn quiet)."
+  },
+
+  "exerciseTryAgain": "Try again",
+  "@exerciseTryAgain": {
+    "description": "Phase 7 Letter-Unit ExerciseScaffold CTA on a miss — clears and lets the child retry the same exercise (.exbtn primary). Unlimited, no counter."
+  },
+
+  "exerciseNext": "Next exercise",
+  "@exerciseNext": {
+    "description": "Phase 7 Letter-Unit ExerciseScaffold CTA on a pass — advances to the next exercise (.exbtn primary)."
+  },
+
+  "exerciseMarkCorrect": "Mark correct",
+  "@exerciseMarkCorrect": {
+    "description": "Phase 7 Letter-Unit ExerciseScaffold idle CTA — accepts the current writing as correct (.exbtn primary), mirroring the prototype's manual mark affordance."
+  },
+
+  "exerciseGotIt": "Got it",
+  "@exerciseGotIt": {
+    "description": "Phase 7 Letter-Unit ExerciseScaffold teachCard support CTA — acknowledges a non-graded teach card and advances. No grading on a teach card."
+  },
+
+  "exerciseSurfaceTagTrace": "Trace · over the guide",
+  "@exerciseSurfaceTagTrace": {
+    "description": "Phase 7 Letter-Unit WriteSurface mode tag (.surface-tag) for trace mode — the child traces over the dotted guide."
+  },
+
+  "exerciseSurfaceTagWrite": "Write · {unit} · no guide",
+  "@exerciseSurfaceTagWrite": {
+    "description": "Phase 7 Letter-Unit WriteSurface mode tag (.surface-tag) for write mode — the child writes on a blank ruled line with no guide. {unit} is glyph/word/sentence.",
+    "placeholders": {
+      "unit": {
+        "type": "String",
+        "example": "glyph"
+      }
+    }
+  },
+
+  "exerciseWatchMe": "Watch me",
+  "@exerciseWatchMe": {
+    "description": "Phase 7 Letter-Unit WriteSurface demo affordance — replays the animated stroke-order demonstration over the guide (surface.demo)."
+  },
+
+  "exerciseTeachCardHint": "Nothing to write — this card teaches.",
+  "@exerciseTeachCardHint": {
+    "description": "Phase 7 Letter-Unit ExerciseScaffold teachCard hint shown in place of the write hint when there is no surface to grade (surface==null)."
   }
 }
