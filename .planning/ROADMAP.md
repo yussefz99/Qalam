@@ -412,7 +412,31 @@ never new UI.
   4. **baa is end-to-end real:** all its contextual forms authored + owner's-mother signed off, vocab + pronunciation audio play offline, on-device geometric scoring + authored feedback, one quiet star at mastery.
   5. The journey map and home deep-link into the resume-aware unit (reusing existing nav).
 
-**Plans**: TBD
+**Plans**: 7 plans
+Plans:
+
+**Wave 1** *(engine spine — parallel, no file overlap)*
+
+- [ ] 07-01-PLAN.md — Schema v2 typed models (Exercise/PromptPart/Surface/Answer/Check + Word + LetterUnit + per-form Form) + CurriculumRepository getExercises/getWords/getUnit (Firestore-first, bundle fallback); 19 baa configs deserialize 1:1 (CUR-01)
+- [ ] 07-02-PLAN.md — Audio slice (S1-06): vetted audio package + AssetLetterAudioPlayer over the existing seam + bundled baa clips (offline) + Firestore rules for words/exercises/units (autonomous:false — package legitimacy gate)
+- [ ] 07-03-PLAN.md — Validator spine (TDD): validateExercise (glyph/sequence/order + positionalForm/joinContinuity/transformRule) reusing the existing geometric scorer → CheckResult (CUR-01)
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [ ] 07-04-PLAN.md — The 5 reusable components pixel-faithful: ExerciseScaffold + PromptHeader + WriteSurface (wraps existing StrokeCanvas) + FeedbackPanel + ProgressRibbon + ExerciseController + QalamTokens; config-driven, Riverpod-only (CUR-01)
+
+**Wave 3** *(blocked on Wave 2)*
+
+- [ ] 07-05-PLAN.md — Sections 1-3: Meet (teachCard + four-forms morph) + Watch & Trace (isolated baa) + Forms in context; config-driven, offline audio (CUR-01 / S1-06)
+
+**Wave 4** *(blocked on Wave 3 — shares app_en.arb with 07-05)*
+
+- [ ] 07-06-PLAN.md — Sections 4-6: Words + Listen & Write (recall gate) + Mastery (one quiet star) + LetterUnit shell (R→L ribbon, resume-aware) + /unit route + home/journey deep-links (CUR-01 / S1-06; SC#1/#2/#5)
+
+**Wave 5** *(blocked on Wave 4 — human-gated)*
+
+- [ ] 07-07-PLAN.md — autonomous:false — DRAFT baa's four contextual-form reference strokes + vocab + audio → owner's-mother sign-off human gate → Firestore seed/export; baa end-to-end real, signed off (CUR-01 / S1-06; SC#4)
+
 **Canonical refs (MUST read before planning/implementing):**
 - `docs/design/prototypes/letter-unit-baa/` — **the visual contract; implement EXACTLY** (HANDOFF.md, COMPONENTS.md, SCHEMA-BINDINGS.md, EXERCISE-CONFIGS.json, TOKENS.md, `prototype/` HTML/CSS/JS).
 - `.planning/research/learning-experience/SCHEMA-V2.md` — the locked data schema.
