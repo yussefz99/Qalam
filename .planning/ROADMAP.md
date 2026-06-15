@@ -427,7 +427,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2)*
 
-- [ ] 07-05-PLAN.md — Sections 1-3: Meet (teachCard + four-forms morph) + Watch & Trace (isolated baa) + Forms in context; config-driven, offline audio (CUR-01 / S1-06)
+- [x] 07-05-PLAN.md — Sections 1-3: Meet (teachCard + four-forms morph) + Watch & Trace (isolated baa) + Forms in context; config-driven, offline audio (CUR-01 / S1-06)
 
 **Wave 4** *(blocked on Wave 3 — shares app_en.arb with 07-05)*
 
@@ -540,7 +540,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 5. Profiles & Onboarding | 4/4 | Complete | - |
 | 6. Lesson Progression & Home | 10/10 | Complete   | 2026-06-14 |
 | 06.1 Firebase Curriculum Backend (INSERTED) | 5/5 | Complete    | 2026-06-14 |
-| 7. Learning Engine & Letter Unit | 4/7 | In Progress|  |
+| 7. Learning Engine & Letter Unit | 5/7 | In Progress|  |
 | 8. Full Curriculum & All Question Types | 0/TBD | Not started | - |
 | 9. Parent Dashboard | 3/3 | Complete    | 2026-06-13 |
 | 10. Offline Hardening & Release | 0/TBD | Not started | - |
