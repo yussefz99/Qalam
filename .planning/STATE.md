@@ -30,7 +30,7 @@ Plan: 1 of 7
 Phase: 09 (parent-dashboard) — 3/3 complete, verification human_needed (device UAT)
 Phase: 05 (profiles-onboarding) — 4/4 plans complete, verification human_needed (device UAT)
 Status: Executing Phase 07
-Last activity: 2026-06-15 -- Phase 07 execution started
+Last activity: 2026-06-15 - Completed quick task 260615-tqu: wire baa-unit vocab illustrations into the app
 
 Progress: [█████░░░░░] 54% (7 of 13 tracked phases complete)
 <!-- reconciled 2026-06-11: 13 tracked phases (integer 1-10 + inserted 02.1/02.1.1/03.1). Complete: 1, 2, 02.1, 02.1.1, 3, 03.1, 5. Phase 4 in progress (5/6, 04-06 deferred). Evidence: every plan in those phases has a SUMMARY file; scorer + curriculum repo + models exist in lib/. -->
@@ -169,6 +169,7 @@ None yet.
 | 260602-00f | Rebuild demo Home faithful to home.png (owner override: gamification) | 2026-06-02 | 586b195 | [260602-00f-rebuild-demo-home-faithful-to-home-png-d](./quick/260602-00f-rebuild-demo-home-faithful-to-home-png-d/) |
 | 260602-bw1 | Rebuild Watch/Trace/Feedback/Celebration faithful to mockups; demo loop → Baa (owner override: gamification) | 2026-06-02 | 326c221 | [260602-bw1-rebuild-demo-walkthrough-baa](./quick/260602-bw1-rebuild-demo-walkthrough-baa/) |
 | 260607-pr1 | Practice screen three-zone Trace/ShowFix/ShowPraise tutor redesign + Hear-the-letter (UI-only; scorer/state-machine/persistence untouched) | 2026-06-07 | 8f8eb56 | [practice-redesign spec](../docs/design/practice-redesign/) |
+| 260615-tqu | Wire baa-unit vocab illustrations into the app: bundle assets/images/, add imageId→asset resolver (mirrors audio seam) + provider, render Image.asset in _ImagePart with silent-degrade hatched-stub fallback | 2026-06-15 | 2cff97e | [260615-tqu-wire-baa-unit-vocab-illustrations-into-t](./quick/260615-tqu-wire-baa-unit-vocab-illustrations-into-t/) |
 
 ## Deferred Items
 
