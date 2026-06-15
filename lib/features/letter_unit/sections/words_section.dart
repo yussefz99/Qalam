@@ -215,32 +215,39 @@ class WordsSectionState extends ConsumerState<WordsSection> {
     final w = wt.word;
     return KeyedSubtree(
       key: ValueKey<String>('wordTrace:${w.id}'),
-      child: Stack(
-        children: [
-          // The engine scaffold drives the trace + grading + its Clear/Next CTAs;
-          // the word sound plays from the PromptHeader Play (a separate overlaid
-          // Listen card used to cover those CTAs; owner bug #5).
-          Positioned.fill(
-            child: ExerciseScaffold(
-              exercise: wt.exercise,
-              letter: widget.letter,
-              kick: s.kick,
-              // A clean pass marks the word traced + returns to the grid.
-              onNext: () => debugMarkWordTraced(i),
-              onAudioTap: _play,
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // "Back to words" in its OWN row above the engine — it used to float
+            // over the tutor column and land ON the mascot (owner bug: wrong
+            // place). Returns to the grid.
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(26, 14, 26, 0),
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: QuietButton(
+                  label: s.backToWords,
+                  icon: Icons.arrow_back_rounded,
+                  onTap: _backToGrid,
+                ),
+              ),
             ),
-          ),
-          // The "Back to words" quiet CTA — top-start, returns to the grid.
-          PositionedDirectional(
-            top: 18,
-            start: 26,
-            child: QuietButton(
-              label: s.backToWords,
-              icon: Icons.arrow_back_rounded,
-              onTap: _backToGrid,
+            // The engine scaffold drives the trace + grading + its Clear/Done/Next
+            // CTAs; the word sound plays from the PromptHeader Play.
+            Expanded(
+              child: ExerciseScaffold(
+                exercise: wt.exercise,
+                letter: widget.letter,
+                kick: s.kick,
+                // A clean pass marks the word traced + returns to the grid.
+                onNext: () => debugMarkWordTraced(i),
+                onAudioTap: _play,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

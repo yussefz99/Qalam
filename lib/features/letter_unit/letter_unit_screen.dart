@@ -321,30 +321,43 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
   Exercise _writeLetter(LetterUnitData d) =>
       d.exercise('${_letterId}.writeLetter.fromSound') ?? _fallbackWriteLetter();
 
-  /// The three vocab words (door/duck/milk) paired with a trace Exercise — the
-  /// connectWord/writeWord configs in order, falling back to a generic trace.
+  /// The three vocab words (door/duck/milk), each paired with a write exercise
+  /// that checks THAT word. The authored baa configs all target باب, so pairing
+  /// them by index made every card check "door" with the wrong prompt (owner
+  /// bug); instead each card gets a per-word write exercise built from the word's
+  /// own data (text + audio), so door→باب, duck→بطة, milk→حليب.
   List<WordTrace> _wordTraces(LetterUnitData d) {
-    final wordConfigs = <Exercise>[
-      if (d.exercise('${_letterId}.connectWord.baab') != null)
-        d.exercise('${_letterId}.connectWord.baab')!,
-      if (d.exercise('${_letterId}.writeWord.picture') != null)
-        d.exercise('${_letterId}.writeWord.picture')!,
-      if (d.exercise('${_letterId}.writeWord.copy') != null)
-        d.exercise('${_letterId}.writeWord.copy')!,
-    ];
     // Only the baa-family words that actually contain this letter, capped at 3.
     final words =
         d.words.where((w) => w.letters.contains(_letterId)).take(3).toList();
     return [
-      for (var i = 0; i < words.length; i++)
-        WordTrace(
-          word: words[i],
-          exercise: wordConfigs.isNotEmpty
-              ? wordConfigs[i % wordConfigs.length]
-              : _fallbackWriteWord(text: words[i].text),
-        ),
+      for (final w in words)
+        WordTrace(word: w, exercise: _wordExercise(w)),
     ];
   }
+
+  /// A write-the-word exercise for one vocab [w] — its OWN word is the answer and
+  /// its OWN clip is the prompt audio. Distinct id per word so the canvas resets
+  /// cleanly between cards.
+  Exercise _wordExercise(Word w) => Exercise(
+        id: '${_letterId}.writeWord.${w.id}',
+        type: 'writeWord',
+        skill: 'spelling',
+        prompt: [
+          const SayPart('Write the word.'),
+          if ((w.audio ?? '').isNotEmpty) AudioPart(w.audio!),
+        ],
+        surface: const Surface(mode: 'write', unit: 'word'),
+        expected: Answer(word: WordAnswer(w.text)),
+        check: const Check(base: 'sequence'),
+        feedback: const {
+          'pass': 'Well written.',
+          'incomplete': 'Look at the word and write all of its letters.',
+          'wrongWord':
+              'That is a different word — look at the picture and try again.',
+        },
+        signedOff: false,
+      );
 
   // ── calm fallbacks (a section is always navigable; never a crash) ───────────
 
