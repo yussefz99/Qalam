@@ -127,6 +127,32 @@ void main() {
       expect(find.byIcon(Icons.volume_up_rounded), findsNothing);
       expect(find.byType(ArabicText), findsNothing);
     });
+
+    testWidgets(
+        'Test 5a: a MAPPED imageId renders a real Image, not the hatched stub',
+        (tester) async {
+      // img.door resolves to a bundled assets/images/ path, so _ImagePart shows
+      // an Image.asset (the real illustration) instead of the imageId Text stub.
+      const part = ImagePart('img.door');
+      await _pump(tester, const PromptHeader(parts: [part]));
+
+      expect(find.byType(Image), findsOneWidget);
+      // The hatched-stub label (the imageId as Text) is NOT shown for a mapped id.
+      expect(find.text('img.door'), findsNothing);
+    });
+
+    testWidgets(
+        'Test 5b: an UNKNOWN imageId silently falls back to the hatched stub',
+        (tester) async {
+      // img.nope resolves to null → _ImagePart keeps today's behavior: the
+      // hatched aqua box showing the imageId as Text, no Image, no throw. This is
+      // the never-block / silent-degrade posture, mirroring the audio seam.
+      const part = ImagePart('img.nope');
+      await _pump(tester, const PromptHeader(parts: [part]));
+
+      expect(find.text('img.nope'), findsOneWidget);
+      expect(find.byType(Image), findsNothing);
+    });
   });
 
   group('FeedbackPanelV2 (anti-gamification)', () {

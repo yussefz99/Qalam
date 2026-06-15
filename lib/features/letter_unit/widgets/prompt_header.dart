@@ -20,6 +20,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../models/exercise.dart';
+import '../../../services/asset_image_resolver.dart';
 import '../../../theme/qalam_tokens.dart';
 import '../../../theme/text_styles.dart';
 import '../../../widgets/arabic_text.dart';
@@ -168,9 +169,17 @@ class _AudioPart extends StatelessWidget {
 
 // ── image (.pp-img hatched stub + caption) ───────────────────────────────────
 
-/// The picture stub — components.css `.pp-img` (a 128×84 hatched aqua box) with
-/// an optional caption beneath (.pp-cap). A STUB by design: real illustration
-/// assets are Plan 07-07's content job (07-01 SUMMARY: placeholder imageIds).
+/// The picture card — components.css `.pp-img` (a 128×84 aqua box, radius 14)
+/// with an optional caption beneath (.pp-cap). Renders the REAL illustration
+/// when its `imageId` resolves to a bundled `assets/images/` asset
+/// (quick task 260615-tqu, wiring the baa unit's door/duck/big-door art);
+/// otherwise it falls back to the original hatched stub — the imageId shown as a
+/// Text chip inside the box.
+///
+/// SILENT-DEGRADE (mirrors the audio seam's never-block posture): an unmapped
+/// imageId resolves to null → the hatched stub; and a mapped-but-unloadable file
+/// hits `Image.asset`'s errorBuilder, which reuses the SAME stub. Either way a
+/// missing image never throws and never blocks the trace loop.
 class _ImagePart extends StatelessWidget {
   const _ImagePart({required this.imageId, this.caption});
 
@@ -179,6 +188,10 @@ class _ImagePart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Pure static resolution — the leaf widget needs no Riverpod wiring (the
+    // provider exists for future Consumer call sites). Null → render the stub.
+    final String? assetPath = AssetImageResolver.imageAssetFor(imageId);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -192,21 +205,21 @@ class _ImagePart extends StatelessWidget {
             border: Border.all(color: QalamTokens.aquaEdge),
           ),
           alignment: Alignment.center,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-            decoration: BoxDecoration(
-              color: QalamTokens.surfaceRaised.withValues(alpha: 0.85),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Text(
-              imageId,
-              textAlign: TextAlign.center,
-              style: QalamTextStyles.label.copyWith(
-                fontSize: 10,
-                color: QalamTokens.fgMuted,
-              ),
-            ),
-          ),
+          // The real illustration when resolvable; the hatched imageId stub
+          // otherwise. The Image is clipped to the radius-14 box and falls back
+          // to the SAME stub if the asset fails to load (silent degrade).
+          child: assetPath == null
+              ? _hatchedStub()
+              : ClipRRect(
+                  borderRadius: BorderRadius.circular(14),
+                  child: Image.asset(
+                    assetPath,
+                    width: 128,
+                    height: 84,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stack) => _hatchedStub(),
+                  ),
+                ),
         ),
         if (caption != null && caption!.isNotEmpty) ...[
           const SizedBox(height: 4),
@@ -220,6 +233,25 @@ class _ImagePart extends StatelessWidget {
       ],
     );
   }
+
+  /// The original hatched stub — the imageId in a raised rounded chip. Shared by
+  /// BOTH the unknown-id branch and the Image.asset load-error fallback so the
+  /// silent-degrade looks identical whether the id is unmapped or the file fails.
+  Widget _hatchedStub() => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+        decoration: BoxDecoration(
+          color: QalamTokens.surfaceRaised.withValues(alpha: 0.85),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Text(
+          imageId,
+          textAlign: TextAlign.center,
+          style: QalamTextStyles.label.copyWith(
+            fontSize: 10,
+            color: QalamTokens.fgMuted,
+          ),
+        ),
+      );
 }
 
 // ── text (.pp-text Arabic, with __blank__ / _letter_ slot markers) ───────────
