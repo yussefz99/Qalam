@@ -1,0 +1,5745 @@
+{
+  "meta": {
+    "generatedBy": "Codex from local rendered worksheet images and existing per-file vision records",
+    "sourceFolder": "tools/curriculum/source/",
+    "renderFolder": "tools/curriculum/render/",
+    "guardrails": [
+      "vision/rendered images only",
+      "no Arabic text extraction",
+      "signedOff:false",
+      "uncertain items confidence:low/medium"
+    ],
+    "recordCount": 42,
+    "lowConfidenceFileIds": [
+      "06",
+      "09",
+      "10",
+      "23",
+      "27",
+      "37",
+      "38",
+      "40"
+    ],
+    "unreadableFileIds": [
+      "09"
+    ]
+  },
+  "perFile": [
+    {
+      "title": "??? ??? ????? ?????",
+      "letters": [
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+      ],
+      "worksheetType": "writeLetter",
+      "exerciseTypesSeen": [
+        "writeLetter",
+        "traceLetter"
+      ],
+      "instruction_ar": "???? ????? / ??? ????? ?????",
+      "instruction_en": "Write or rewrite the target letter shown in the center of the picture card.",
+      "vocab": [],
+      "items": [
+        {
+          "letter": "?",
+          "activity": "picture-cued letter card plus dotted writing boxes"
+        },
+        {
+          "letter": "?",
+          "activity": "picture-cued letter card plus dotted writing boxes"
+        }
+      ],
+      "grammar": [],
+      "sentences": [],
+      "notes": "Rendered pages show two target-letter picture cards per page with dotted practice boxes and a blank writing line. Picture labels are not printed; image cue words should be confirmed by the mother before being used as vocab.",
+      "confidence": "medium",
+      "signedOff": false,
+      "fileId": "01",
+      "driveFileId": "1zBenOxTEEywWhma4g0adCLyaKU7L7e4j",
+      "sourceFile": "sgariah.حرف.ربط.اعادة كتابة (3).pdf",
+      "renderedImageCount": 14
+    },
+    {
+      "fileId": "02",
+      "title": "أ - ب - ت - ث",
+      "kind": "docx",
+      "letters": [
+        "ا",
+        "ب",
+        "ت",
+        "ث"
+      ],
+      "worksheetType": "teachCard",
+      "exerciseTypesSeen": [
+        "teachCard",
+        "traceLetter",
+        "writeLetter",
+        "connectWord",
+        "completeWord",
+        "fillBlank"
+      ],
+      "instruction_ar": "ضع دائرة حول حرف الألف",
+      "instruction_en": "Put a circle around the letter Alif (one of several instructions; this is the recurring 'circle the target letter' task on the teaching cards)",
+      "vocab": [
+        "أسد",
+        "أرنب",
+        "قرأ",
+        "خطأ",
+        "فأر",
+        "كأس",
+        "أزرق",
+        "موز",
+        "تين",
+        "رأس",
+        "بطة",
+        "بط",
+        "بيت",
+        "بومة",
+        "بطريق",
+        "بطيخ",
+        "دب",
+        "عنب",
+        "نبات",
+        "بقرة",
+        "باب",
+        "جبل",
+        "قلب",
+        "تفاح",
+        "تاج",
+        "تمر",
+        "تمساح",
+        "مفتاح",
+        "زيت",
+        "توت",
+        "بنت",
+        "كتاب",
+        "تلفاز",
+        "ثعلب",
+        "ثور",
+        "ثوم",
+        "ثعبان",
+        "ثوب",
+        "ثلج",
+        "اثنان",
+        "مثلث",
+        "أثاث",
+        "ليث",
+        "ثعبان",
+        "كمثرى",
+        "حديث",
+        "ثمر",
+        "مثل"
+      ],
+      "items": [
+        {
+          "letter": "ا",
+          "word": "أسد",
+          "activity": "teach card / vocab image (lion)"
+        },
+        {
+          "letter": "ا",
+          "word": "أرنب",
+          "activity": "teach card / vocab image (rabbit)"
+        },
+        {
+          "letter": "ا",
+          "word": "أسد",
+          "activity": "trace letter forms (stroke order, hamza + alif)"
+        },
+        {
+          "letter": "ا",
+          "word": "فأر",
+          "activity": "teach card words (mouse, with خطأ=X marker, قرأ=read)"
+        },
+        {
+          "letter": "ا",
+          "word": "أرنب",
+          "activity": "cut-out match: image to letter forms (isolated/initial/medial/final)"
+        },
+        {
+          "letter": "ا",
+          "word": "أسد",
+          "activity": "connect letter (أ) to matching pictures; color the balloons showing letter أ"
+        },
+        {
+          "letter": "ا",
+          "word": "كأس",
+          "activity": "connect letter to matching word (كأس, أزرق)"
+        },
+        {
+          "letter": "ا",
+          "word": "أرنب",
+          "activity": "circle words containing letter أ (أرنب, موز, فأر, تين, رأس, كأس)"
+        },
+        {
+          "letter": "ا",
+          "word": "أسد",
+          "activity": "full worksheet: trace, color picture, circle target letter in grid"
+        },
+        {
+          "letter": "ب",
+          "word": "بط",
+          "activity": "teach card / vocab image (duck)"
+        },
+        {
+          "letter": "ب",
+          "word": "بيت",
+          "activity": "teach card / trace; house image"
+        },
+        {
+          "letter": "ب",
+          "word": "دب",
+          "activity": "teach card words (bear, grapes عنب, plant نبات, cow بقرة)"
+        },
+        {
+          "letter": "ب",
+          "word": "بطة",
+          "activity": "image-to-form: بطة (initial بـ), جبل (medial ـبـ), قلب (final ـب)"
+        },
+        {
+          "letter": "ب",
+          "word": "باب",
+          "activity": "trace dots over door image; write letter ب correctly"
+        },
+        {
+          "letter": "ب",
+          "word": "بطة",
+          "activity": "connect the duck to the lake with letter (ب); color the doors showing ب"
+        },
+        {
+          "letter": "ب",
+          "word": "بطة",
+          "activity": "search for letter ب and color it (stars with ب/أ/ت)"
+        },
+        {
+          "letter": "ب",
+          "word": "بيت",
+          "activity": "cut-out forms of ب (isolated/initial/medial/final), house image"
+        },
+        {
+          "letter": "ب",
+          "word": "بيضة",
+          "activity": "teach card: duck بطة, egg بيضة; circle ب in letter grid"
+        },
+        {
+          "letter": "ب",
+          "word": "بيت",
+          "activity": "color letter ب; read short vowels بَ بُ بِ and color balloons"
+        },
+        {
+          "letter": "ب",
+          "word": "بطة",
+          "activity": "full worksheet: trace, circle boat/items, write ب"
+        },
+        {
+          "letter": "ت",
+          "word": "تين",
+          "activity": "teach card words: تين, تفاح, تاج, تمر, تمساح"
+        },
+        {
+          "letter": "ت",
+          "word": "تاج",
+          "activity": "trace letter ت (crown image)"
+        },
+        {
+          "letter": "ت",
+          "word": "تين",
+          "activity": "teach card: تين, مفتاح, زيت, توت"
+        },
+        {
+          "letter": "ت",
+          "word": "تمر",
+          "activity": "rewrite letter ت with short vowels تَ تُ تِ"
+        },
+        {
+          "letter": "ت",
+          "word": "تاج",
+          "activity": "stroke-order trace of ت with directional arrows"
+        },
+        {
+          "letter": "ت",
+          "word": "تاج",
+          "activity": "trace dotted ت rows (حرف التاء)"
+        },
+        {
+          "letter": "ت",
+          "word": "بنت",
+          "activity": "trace dots; circle letter ت; write ت correctly (girl image)"
+        },
+        {
+          "letter": "ت",
+          "word": "تفاح",
+          "activity": "'all about letter ت' cover card; apple + crocodile to color, write name"
+        },
+        {
+          "letter": "ت",
+          "word": "تفاح",
+          "activity": "cut-out forms of ت (isolated/medial/final), apple image"
+        },
+        {
+          "letter": "ت",
+          "word": "تمساح",
+          "activity": "full worksheet: crocodile + apple, trace, color, circle ت in grid"
+        },
+        {
+          "letter": "ت",
+          "word": "تلفاز",
+          "activity": "vocab cards: تاج, تفاح, توت, تلفاز, تمساح"
+        },
+        {
+          "letter": "ت",
+          "word": "تفاح",
+          "activity": "copy and write the letter ت ('in my beautiful handwriting')"
+        },
+        {
+          "letter": "ت",
+          "word": "كتاب",
+          "activity": "worksheet: بنت, كتاب, تفاح; write ت"
+        },
+        {
+          "letter": "ت",
+          "word": "تمساح",
+          "activity": "teach card حرف التاء: تفاحة, تمساح; circle ت in grid"
+        },
+        {
+          "letter": "ث",
+          "word": "ثعلب",
+          "activity": "trace letter ث (fox image)"
+        },
+        {
+          "letter": "ث",
+          "word": "ثعلب",
+          "activity": "stroke-order trace of ث (3 dots) with arrows"
+        },
+        {
+          "letter": "ث",
+          "word": "ثوم",
+          "activity": "teach card words: ثوم, ثور, ثعلب, ثعبان, ثوب, ثلج"
+        },
+        {
+          "letter": "ث",
+          "word": "ثعبان",
+          "activity": "activity on ث: ثعبان, مثلث, ليث, أثاث; trace rows"
+        },
+        {
+          "letter": "ث",
+          "word": "ثعبان",
+          "activity": "full worksheet الثاء: snake + fox, trace, circle ث"
+        },
+        {
+          "letter": "ث",
+          "word": "ثور",
+          "activity": "teach card حرف الثاء: ثور, ثعلب; circle ث in grid"
+        },
+        {
+          "letter": "ث",
+          "word": "ثعلب",
+          "activity": "teach card: ثعلب, اثنان, مثلث, أثاث"
+        },
+        {
+          "letter": "ث",
+          "word": "ثعبان",
+          "activity": "trace dotted ث rows"
+        },
+        {
+          "letter": "ث",
+          "word": "ثعبان",
+          "activity": "cut-out forms of ث (isolated/initial/medial/final), snake image"
+        },
+        {
+          "letter": "ث",
+          "word": "مثلث",
+          "activity": "ث worksheet: مثلث (triangle), ثلج (ice); write ث"
+        },
+        {
+          "letter": "ث",
+          "word": "مثلث",
+          "activity": "connect letter ث to word (مثلث, ثوم, ليث); color words containing ث (حديث, ثمر, باب, ثلج, مثل, تمر)"
+        },
+        {
+          "letter": "ث",
+          "word": "ثعلب",
+          "activity": "position card: ثعلب (start), كمثرى (middle), مثلث (end-connected), أثاث (end-separated)"
+        },
+        {
+          "letter": "ا",
+          "word": "",
+          "activity": "review activity: circle/color faces showing letter ا vs ب (Alif identification)"
+        }
+      ],
+      "grammar": [],
+      "sentences": [],
+      "notes": "All 77 images viewed successfully (PNG/JPEG only; no .wdp/.wmf unviewable files). File is a compilation of teaching cards + tracing/activity worksheets for the first four letters in alphabetic order: ا(أ), ب, ت, ث. Many images (m001-m007, m017-m024, m026, m037-m042, m044, m046-m047, m073-m077) are standalone clipart used as vocab illustrations (lion, well, boy, mouse, glass/cup, cow, penguin, polar bear, dog, door, berries, whale, crocodile, tulips, teacher, etc.); several clipart files are duplicated at the end (m073=m001 lion, m074=m017 cow, m075 door, m076-m077 berries). Letter ا is presented as hamza-on-alif (أ) on most teaching cards (vocab أسد/أرنب) but plain alif (ا) appears in identification grids; recorded as 'ا' in letters[] per the canonical letter. m048 is an image-to-form strip showing a 3-dotted (ث-like) letter paired with apple/orange/blackberry pictures whose words start with ت/ب, not ث — likely a layout/clipart mismatch in the source; FLAG FOR MOTHER to confirm intended letter. Short-vowel (harakat) practice appears for ب (بَ بُ بِ) and ت (تَ تُ تِ). Vowel marks on isolated vocab words were not always legible and were normalized to standard spelling. No full sentences present; vocab is single words only. Stroke-order arrow diagrams present for أ, ت, ث (not a clear standalone one for ب beyond the dotted trace). Confidence high for the four target letters and the activity taxonomy; medium on a few individual vowel diacritics and the m048 mismatch.",
+      "confidence": "high",
+      "signedOff": false,
+      "driveFileId": "1cPL_ohG-PXDD8wCHlhJ6SGafVoUyiHBf",
+      "sourceFile": "أ - ب - ت - ث.docx",
+      "renderedImageCount": 77
+    },
+    {
+      "fileId": "03",
+      "title": "اختر الصورة المناسبة للحرف",
+      "kind": "pdf",
+      "letters": [
+        "ك",
+        "ش",
+        "ح",
+        "ب",
+        "د",
+        "ف",
+        "س",
+        "م",
+        "ل",
+        "أ"
+      ],
+      "worksheetType": "writeLetter",
+      "exerciseTypesSeen": [
+        "writeLetter"
+      ],
+      "instruction_ar": "اختر الصورة المناسبة للحرف",
+      "instruction_en": "Choose the picture that matches the letter (the picture whose word begins with that letter).",
+      "vocab": [
+        {
+          "word": "شمس",
+          "gloss": "sun"
+        },
+        {
+          "word": "حصان",
+          "gloss": "horse"
+        },
+        {
+          "word": "بقرة",
+          "gloss": "cow"
+        },
+        {
+          "word": "دودة",
+          "gloss": "worm/caterpillar"
+        },
+        {
+          "word": "فراشة",
+          "gloss": "butterfly"
+        },
+        {
+          "word": "سلحفاة",
+          "gloss": "turtle"
+        },
+        {
+          "word": "كرز",
+          "gloss": "cherry"
+        },
+        {
+          "word": "برتقال",
+          "gloss": "orange"
+        },
+        {
+          "word": "موز",
+          "gloss": "banana"
+        },
+        {
+          "word": "ليمون",
+          "gloss": "lemon"
+        },
+        {
+          "word": "أناناس",
+          "gloss": "pineapple"
+        }
+      ],
+      "items": [
+        {
+          "letter": "ش",
+          "word": "شمس"
+        },
+        {
+          "letter": "ح",
+          "word": "حصان"
+        },
+        {
+          "letter": "ب",
+          "word": "بقرة"
+        },
+        {
+          "letter": "د",
+          "word": "دودة"
+        },
+        {
+          "letter": "ف",
+          "word": "فراشة"
+        },
+        {
+          "letter": "س",
+          "word": "سلحفاة"
+        },
+        {
+          "letter": "ك",
+          "word": "كرز"
+        },
+        {
+          "letter": "ب",
+          "word": "برتقال"
+        },
+        {
+          "letter": "م",
+          "word": "موز"
+        },
+        {
+          "letter": "ل",
+          "word": "ليمون"
+        },
+        {
+          "letter": "أ",
+          "word": "أناناس"
+        }
+      ],
+      "grammar": [],
+      "sentences": [],
+      "notes": "Cut-out matching cards: each card shows one Arabic letter beside a column of 3 small pictures; the child selects the picture whose word begins with the letter. Picture sets repeat across pairs of cards (same 3 images, different target letter), so the intended answer is the one image whose word starts with the card's letter. p001 cards: ك/ش (ball, sun, crab-or-seaweed -> شمس for ش), ح/ب (horse, cat, cow -> حصان/بقرة), د/ف (caterpillar, butterfly, squirrel -> دودة/فراشة). p002 cards: س/ك (turtle, cherry, bread -> سلحفاة/كرز), ب/م (lemon, banana, orange -> برتقال/موز), ل/أ (lemon, pineapple, pear -> ليمون/أناناس). The ك card on p001 and the bread image have no clearly matching answer among their shown pictures (low confidence on those specific pairings). Words inferred from pictures, not printed on the page. p003 is a blank white page (no content).",
+      "confidence": "medium",
+      "signedOff": false,
+      "driveFileId": "1LQk_O2Tu79aLl8cUi3Q5FtsgEMQVuQXI",
+      "sourceFile": "اختر_الصورة_المناسبة_للحرف.pdf",
+      "renderedImageCount": 3
+    },
+    {
+      "title": "??????? ????? ???-2",
+      "letters": [],
+      "worksheetType": "connectWord",
+      "exerciseTypesSeen": [
+        "connectWord",
+        "traceLetter"
+      ],
+      "instruction_ar": "?????? ???-??. ??? ???? ???? ??????. / ???? ??? ??????. / ???? ??? ???????.",
+      "instruction_en": "Eye-hand readiness: trace paths, match letters, and match simple words.",
+      "vocab": [
+        "????",
+        "???",
+        "????",
+        "?????"
+      ],
+      "items": [
+        {
+          "activity": "trace paths from cat to milk bowl"
+        },
+        {
+          "activity": "match letters"
+        },
+        {
+          "activity": "match words"
+        }
+      ],
+      "grammar": [],
+      "sentences": [],
+      "notes": "Readiness worksheet. Includes pre-writing paths and matching printed letters/words such as ????? ???? ????? ?????. Not a letter-unit content source; classify as handwriting/motor readiness plus connectWord handwriting-first equivalent.",
+      "confidence": "medium",
+      "signedOff": false,
+      "fileId": "04",
+      "driveFileId": "1neIYD0uQzA9hLrtaU17cqwmnhWyukfo1",
+      "sourceFile": "استعداد للأول رقم-2.pdf",
+      "renderedImageCount": 10
+    },
+    {
+      "title": "????????? ???? ??????",
+      "letters": [],
+      "worksheetType": "traceLetter",
+      "exerciseTypesSeen": [
+        "traceLetter"
+      ],
+      "instruction_ar": "???? ??? ??????",
+      "instruction_en": "Trace over the dotted paths.",
+      "vocab": [],
+      "items": [],
+      "grammar": [],
+      "sentences": [],
+      "notes": "Pre-writing motor-control sheets with dotted straight, curved, zigzag, and maze-like paths. No Arabic vocab/sentences beyond the instruction.",
+      "confidence": "high",
+      "signedOff": false,
+      "fileId": "05",
+      "driveFileId": "16275mFsaXSCEM5HyNkKYRTiIrLVkQFqH",
+      "sourceFile": "الاستعداد للصف الأوّل-29.pdf",
+      "renderedImageCount": 4
+    },
+    {
+      "title": "????? ??",
+      "letters": [
+        "?"
+      ],
+      "worksheetType": "traceLetter",
+      "exerciseTypesSeen": [
+        "teachCard",
+        "traceLetter",
+        "writeLetter"
+      ],
+      "instruction_ar": "???? ??? ??",
+      "instruction_en": "Write/trace the letter haa.",
+      "vocab": [],
+      "items": [],
+      "grammar": [],
+      "sentences": [],
+      "notes": "Single-page haa packet. Rendered as an image-based worksheet; use as haa formation/content cue, but individual vocab on the page should be checked visually with the mother if needed.",
+      "confidence": "low",
+      "signedOff": false,
+      "fileId": "06",
+      "driveFileId": "1a_dAUclhu911830OX__EEcND68lCOmJP",
+      "sourceFile": "الحرف هـ.pdf",
+      "renderedImageCount": 1
+    },
+    {
+      "fileId": "07",
+      "title": "الحروف مع صور وكلمات",
+      "kind": "pdf",
+      "letters": [
+        "ء",
+        "ب",
+        "ت",
+        "ث",
+        "ج",
+        "ح",
+        "خ",
+        "د",
+        "ذ",
+        "ر",
+        "ز",
+        "س",
+        "ش",
+        "ص",
+        "ض",
+        "ط",
+        "ظ",
+        "ع",
+        "غ",
+        "ف",
+        "ق",
+        "ك",
+        "ل",
+        "م",
+        "ن",
+        "ه",
+        "و",
+        "ي",
+        "ا"
+      ],
+      "worksheetType": "teachCard",
+      "instruction_ar": "",
+      "instruction_en": "Letter teaching chart: each page shows one Arabic letter in the center with four example words, each paired with a picture (letter + picture + word).",
+      "vocab": [
+        "أرنب",
+        "فأر",
+        "ببغاء",
+        "بئر",
+        "برتقال",
+        "شباك",
+        "باب",
+        "أرنب",
+        "تفاح",
+        "برتقال",
+        "بيت",
+        "حوت",
+        "ثعلب",
+        "مثمن",
+        "محراث",
+        "مثلث",
+        "جمل",
+        "شجرة",
+        "درج",
+        "ثلج",
+        "حمار",
+        "صحن",
+        "تفاح",
+        "ملح",
+        "خروف",
+        "أخضر",
+        "خوخ",
+        "بطيخ",
+        "دار",
+        "ضفدع",
+        "قرد",
+        "ولد",
+        "ذئب",
+        "حذاء",
+        "جرذ",
+        "قنفذ",
+        "رمان",
+        "أزرق",
+        "دور",
+        "بئر",
+        "زيتون",
+        "أزرق",
+        "ماعز",
+        "موز",
+        "سيارة",
+        "أسود",
+        "شمس",
+        "رأس",
+        "شجرة",
+        "مشط",
+        "ريش",
+        "فراش",
+        "صبر",
+        "عصفور",
+        "قفص",
+        "صوص",
+        "ضفدع",
+        "أخضر",
+        "بيض",
+        "بعوض",
+        "طائرة",
+        "بنطلون",
+        "بط",
+        "وطواط",
+        "ظبي",
+        "مظلة",
+        "استيقظ",
+        "محظوظ",
+        "عنب",
+        "ساعة",
+        "إصبع",
+        "شموع",
+        "غيمة",
+        "كنغر",
+        "صمغ",
+        "دماغ",
+        "فنجان",
+        "عصفور",
+        "هاتف",
+        "دف",
+        "قمر",
+        "مقص",
+        "إبريق",
+        "زورق",
+        "كلب",
+        "مكتوب",
+        "ديك",
+        "شباك",
+        "ليمون",
+        "قلم",
+        "فيل",
+        "هلال",
+        "مفتاح",
+        "نمر",
+        "معلم",
+        "نجوم",
+        "نار",
+        "سفينة",
+        "قن",
+        "حلزون",
+        "هاتف",
+        "مهرج",
+        "فراشة",
+        "وردة",
+        "وردة",
+        "ليمون",
+        "دلو",
+        "جرو",
+        "يد",
+        "سرير",
+        "كرسي",
+        "جندي",
+        "فار",
+        "أفعى",
+        "عصا"
+      ],
+      "items": [
+        {
+          "letter": "ء",
+          "word": "أرنب",
+          "pictureShows": "rabbit"
+        },
+        {
+          "letter": "ء",
+          "word": "فأر",
+          "pictureShows": "mouse"
+        },
+        {
+          "letter": "ء",
+          "word": "ببغاء",
+          "pictureShows": "parrot"
+        },
+        {
+          "letter": "ء",
+          "word": "بئر",
+          "pictureShows": "water well"
+        },
+        {
+          "letter": "ب",
+          "word": "برتقال",
+          "pictureShows": "oranges"
+        },
+        {
+          "letter": "ب",
+          "word": "شباك",
+          "pictureShows": "window"
+        },
+        {
+          "letter": "ب",
+          "word": "باب",
+          "pictureShows": "door"
+        },
+        {
+          "letter": "ب",
+          "word": "أرنب",
+          "pictureShows": "rabbit"
+        },
+        {
+          "letter": "ت",
+          "word": "تفاح",
+          "pictureShows": "apple"
+        },
+        {
+          "letter": "ت",
+          "word": "برتقال",
+          "pictureShows": "oranges"
+        },
+        {
+          "letter": "ت",
+          "word": "بيت",
+          "pictureShows": "house"
+        },
+        {
+          "letter": "ت",
+          "word": "حوت",
+          "pictureShows": "whale"
+        },
+        {
+          "letter": "ث",
+          "word": "ثعلب",
+          "pictureShows": "fox"
+        },
+        {
+          "letter": "ث",
+          "word": "مثمن",
+          "pictureShows": "octagon shape"
+        },
+        {
+          "letter": "ث",
+          "word": "محراث",
+          "pictureShows": "plough"
+        },
+        {
+          "letter": "ث",
+          "word": "مثلث",
+          "pictureShows": "triangle"
+        },
+        {
+          "letter": "ج",
+          "word": "جمل",
+          "pictureShows": "camel"
+        },
+        {
+          "letter": "ج",
+          "word": "شجرة",
+          "pictureShows": "tree"
+        },
+        {
+          "letter": "ج",
+          "word": "درج",
+          "pictureShows": "stairs"
+        },
+        {
+          "letter": "ج",
+          "word": "ثلج",
+          "pictureShows": "snowman / snow"
+        },
+        {
+          "letter": "ح",
+          "word": "حمار",
+          "pictureShows": "donkey"
+        },
+        {
+          "letter": "ح",
+          "word": "صحن",
+          "pictureShows": "plate with cutlery"
+        },
+        {
+          "letter": "ح",
+          "word": "تفاح",
+          "pictureShows": "apple"
+        },
+        {
+          "letter": "ح",
+          "word": "ملح",
+          "pictureShows": "salt shaker"
+        },
+        {
+          "letter": "خ",
+          "word": "خروف",
+          "pictureShows": "sheep"
+        },
+        {
+          "letter": "خ",
+          "word": "أخضر",
+          "pictureShows": "green star (color green)"
+        },
+        {
+          "letter": "خ",
+          "word": "خوخ",
+          "pictureShows": "peaches"
+        },
+        {
+          "letter": "خ",
+          "word": "بطيخ",
+          "pictureShows": "watermelon"
+        },
+        {
+          "letter": "د",
+          "word": "دار",
+          "pictureShows": "house"
+        },
+        {
+          "letter": "د",
+          "word": "ضفدع",
+          "pictureShows": "frog"
+        },
+        {
+          "letter": "د",
+          "word": "قرد",
+          "pictureShows": "monkey"
+        },
+        {
+          "letter": "د",
+          "word": "ولد",
+          "pictureShows": "boy"
+        },
+        {
+          "letter": "ذ",
+          "word": "ذئب",
+          "pictureShows": "wolf"
+        },
+        {
+          "letter": "ذ",
+          "word": "حذاء",
+          "pictureShows": "shoes / slippers"
+        },
+        {
+          "letter": "ذ",
+          "word": "جرذ",
+          "pictureShows": "rat"
+        },
+        {
+          "letter": "ذ",
+          "word": "قنفذ",
+          "pictureShows": "hedgehog"
+        },
+        {
+          "letter": "ر",
+          "word": "رمان",
+          "pictureShows": "pomegranate"
+        },
+        {
+          "letter": "ر",
+          "word": "أزرق",
+          "pictureShows": "blue circle (color blue)"
+        },
+        {
+          "letter": "ر",
+          "word": "دور",
+          "pictureShows": "houses"
+        },
+        {
+          "letter": "ر",
+          "word": "بئر",
+          "pictureShows": "water well"
+        },
+        {
+          "letter": "ز",
+          "word": "زيتون",
+          "pictureShows": "olives"
+        },
+        {
+          "letter": "ز",
+          "word": "أزرق",
+          "pictureShows": "blue octagon (color blue)"
+        },
+        {
+          "letter": "ز",
+          "word": "ماعز",
+          "pictureShows": "goat"
+        },
+        {
+          "letter": "ز",
+          "word": "موز",
+          "pictureShows": "bananas"
+        },
+        {
+          "letter": "س",
+          "word": "سيارة",
+          "pictureShows": "car"
+        },
+        {
+          "letter": "س",
+          "word": "أسود",
+          "pictureShows": "black rectangle (color black)"
+        },
+        {
+          "letter": "س",
+          "word": "شمس",
+          "pictureShows": "sun"
+        },
+        {
+          "letter": "س",
+          "word": "رأس",
+          "pictureShows": "head"
+        },
+        {
+          "letter": "ش",
+          "word": "شجرة",
+          "pictureShows": "tree"
+        },
+        {
+          "letter": "ش",
+          "word": "مشط",
+          "pictureShows": "comb"
+        },
+        {
+          "letter": "ش",
+          "word": "ريش",
+          "pictureShows": "feathers"
+        },
+        {
+          "letter": "ش",
+          "word": "فراش",
+          "pictureShows": "butterflies"
+        },
+        {
+          "letter": "ص",
+          "word": "صبر",
+          "pictureShows": "cactus"
+        },
+        {
+          "letter": "ص",
+          "word": "عصفور",
+          "pictureShows": "sparrow / bird"
+        },
+        {
+          "letter": "ص",
+          "word": "قفص",
+          "pictureShows": "birdcage"
+        },
+        {
+          "letter": "ص",
+          "word": "صوص",
+          "pictureShows": "chick"
+        },
+        {
+          "letter": "ض",
+          "word": "ضفدع",
+          "pictureShows": "frog"
+        },
+        {
+          "letter": "ض",
+          "word": "أخضر",
+          "pictureShows": "green sun (color green)"
+        },
+        {
+          "letter": "ض",
+          "word": "بيض",
+          "pictureShows": "eggs in carton"
+        },
+        {
+          "letter": "ض",
+          "word": "بعوض",
+          "pictureShows": "mosquitoes"
+        },
+        {
+          "letter": "ط",
+          "word": "طائرة",
+          "pictureShows": "airplane"
+        },
+        {
+          "letter": "ط",
+          "word": "بنطلون",
+          "pictureShows": "trousers / jeans"
+        },
+        {
+          "letter": "ط",
+          "word": "بط",
+          "pictureShows": "ducks"
+        },
+        {
+          "letter": "ط",
+          "word": "وطواط",
+          "pictureShows": "bat"
+        },
+        {
+          "letter": "ظ",
+          "word": "ظبي",
+          "pictureShows": "gazelle"
+        },
+        {
+          "letter": "ظ",
+          "word": "مظلة",
+          "pictureShows": "umbrella"
+        },
+        {
+          "letter": "ظ",
+          "word": "استيقظ",
+          "pictureShows": "child waking up in bed"
+        },
+        {
+          "letter": "ظ",
+          "word": "محظوظ",
+          "pictureShows": "child playing with toy car"
+        },
+        {
+          "letter": "ع",
+          "word": "عنب",
+          "pictureShows": "grapes"
+        },
+        {
+          "letter": "ع",
+          "word": "ساعة",
+          "pictureShows": "alarm clock"
+        },
+        {
+          "letter": "ع",
+          "word": "إصبع",
+          "pictureShows": "pointing finger"
+        },
+        {
+          "letter": "ع",
+          "word": "شموع",
+          "pictureShows": "candles"
+        },
+        {
+          "letter": "غ",
+          "word": "غيمة",
+          "pictureShows": "cloud"
+        },
+        {
+          "letter": "غ",
+          "word": "كنغر",
+          "pictureShows": "kangaroo"
+        },
+        {
+          "letter": "غ",
+          "word": "صمغ",
+          "pictureShows": "glue"
+        },
+        {
+          "letter": "غ",
+          "word": "دماغ",
+          "pictureShows": "brain"
+        },
+        {
+          "letter": "ف",
+          "word": "فنجان",
+          "pictureShows": "cup / teacup"
+        },
+        {
+          "letter": "ف",
+          "word": "عصفور",
+          "pictureShows": "sparrow / bird"
+        },
+        {
+          "letter": "ف",
+          "word": "هاتف",
+          "pictureShows": "telephone"
+        },
+        {
+          "letter": "ف",
+          "word": "دف",
+          "pictureShows": "tambourine"
+        },
+        {
+          "letter": "ق",
+          "word": "قمر",
+          "pictureShows": "moon"
+        },
+        {
+          "letter": "ق",
+          "word": "مقص",
+          "pictureShows": "scissors"
+        },
+        {
+          "letter": "ق",
+          "word": "إبريق",
+          "pictureShows": "jug / pitcher"
+        },
+        {
+          "letter": "ق",
+          "word": "زورق",
+          "pictureShows": "boat"
+        },
+        {
+          "letter": "ك",
+          "word": "كلب",
+          "pictureShows": "dog"
+        },
+        {
+          "letter": "ك",
+          "word": "مكتوب",
+          "pictureShows": "envelope / letter (email)"
+        },
+        {
+          "letter": "ك",
+          "word": "ديك",
+          "pictureShows": "rooster"
+        },
+        {
+          "letter": "ك",
+          "word": "شباك",
+          "pictureShows": "window"
+        },
+        {
+          "letter": "ل",
+          "word": "ليمون",
+          "pictureShows": "lemon"
+        },
+        {
+          "letter": "ل",
+          "word": "قلم",
+          "pictureShows": "pen"
+        },
+        {
+          "letter": "ل",
+          "word": "فيل",
+          "pictureShows": "elephant"
+        },
+        {
+          "letter": "ل",
+          "word": "هلال",
+          "pictureShows": "crescent moon and star"
+        },
+        {
+          "letter": "م",
+          "word": "مفتاح",
+          "pictureShows": "key"
+        },
+        {
+          "letter": "م",
+          "word": "نمر",
+          "pictureShows": "tiger"
+        },
+        {
+          "letter": "م",
+          "word": "معلم",
+          "pictureShows": "teacher at blackboard"
+        },
+        {
+          "letter": "م",
+          "word": "نجوم",
+          "pictureShows": "stars"
+        },
+        {
+          "letter": "ن",
+          "word": "نار",
+          "pictureShows": "fire / campfire"
+        },
+        {
+          "letter": "ن",
+          "word": "سفينة",
+          "pictureShows": "ship"
+        },
+        {
+          "letter": "ن",
+          "word": "قن",
+          "pictureShows": "chicken coop / person"
+        },
+        {
+          "letter": "ن",
+          "word": "حلزون",
+          "pictureShows": "snail"
+        },
+        {
+          "letter": "ه",
+          "word": "هاتف",
+          "pictureShows": "telephone"
+        },
+        {
+          "letter": "ه",
+          "word": "مهرج",
+          "pictureShows": "clown"
+        },
+        {
+          "letter": "ه",
+          "word": "فراشة",
+          "pictureShows": "butterfly"
+        },
+        {
+          "letter": "ه",
+          "word": "وردة",
+          "pictureShows": "rose"
+        },
+        {
+          "letter": "و",
+          "word": "وردة",
+          "pictureShows": "rose"
+        },
+        {
+          "letter": "و",
+          "word": "ليمون",
+          "pictureShows": "lemon"
+        },
+        {
+          "letter": "و",
+          "word": "دلو",
+          "pictureShows": "bucket"
+        },
+        {
+          "letter": "و",
+          "word": "جرو",
+          "pictureShows": "puppy"
+        },
+        {
+          "letter": "ي",
+          "word": "يد",
+          "pictureShows": "hand"
+        },
+        {
+          "letter": "ي",
+          "word": "سرير",
+          "pictureShows": "bed"
+        },
+        {
+          "letter": "ي",
+          "word": "كرسي",
+          "pictureShows": "chair"
+        },
+        {
+          "letter": "ي",
+          "word": "جندي",
+          "pictureShows": "soldier"
+        },
+        {
+          "letter": "ا",
+          "word": "فار",
+          "pictureShows": "mouse"
+        },
+        {
+          "letter": "ا",
+          "word": "أفعى",
+          "pictureShows": "snake"
+        },
+        {
+          "letter": "ا",
+          "word": "عصا",
+          "pictureShows": "walking stick / cane"
+        }
+      ],
+      "grammar": [],
+      "sentences": [],
+      "notes": "29 pages, one Arabic letter per page (puzzle-card layout: center letter + 4 corner words each with a picture). Letters appear NOT in strict alphabetical order: page 1 is the hamza ء (center glyph ء; example words أرنب/فأر/ببغاء/بئر all contain hamza), then ب..ي in order, and the FINAL page 29 is bare alif ا (long-a, words فار/أفعى/عصا). Confirm with the mother whether page 1 should be classified as أ/همزة and whether placing ا last is intentional. Vowel diacritics (harakat) are inconsistent across pages and were not transcribed exhaustively. Low-confidence/ambiguous items flagged: p011 (ز) top-left shows أزرق with a blue OCTAGON while p010 (ر) shows أزرق with a blue CIRCLE — both rendered as color 'azraq'. p025 (ن) bottom-right word read as 'قن' (coop) but the picture is unclear (looks like a person/scene) — verify intended word. p014 (ص) and p020 (ف) both reuse عصفور (bird). Page colors used as vocab: أخضر (green), أزرق (blue), أسود (black). Some images are smaller/low-res scans (p001, p015, p021).",
+      "confidence": "medium",
+      "driveFileId": "1rM1fIhafoGO-iIorPPASKXisnmlOSK3q",
+      "sourceFile": "الحروف مع صور وكلمات.pdf",
+      "renderedImageCount": 29,
+      "exerciseTypesSeen": [
+        "teachCard"
+      ],
+      "signedOff": false
+    },
+    {
+      "fileId": "08",
+      "title": "الكلمة والعكس",
+      "kind": "pdf",
+      "letters": [],
+      "worksheetType": "transformWord",
+      "instruction_ar": "الكلمة والعكس",
+      "instruction_en": "The word and its opposite — match each word with its antonym.",
+      "vocab": [],
+      "items": [],
+      "grammar": [
+        {
+          "word": "مُرتَّب",
+          "opposite": "فَوضويّ"
+        },
+        {
+          "word": "كَثِير",
+          "opposite": "قَلِيل"
+        },
+        {
+          "word": "مُتَّسِخ",
+          "opposite": "نَظِيف"
+        },
+        {
+          "word": "كَبِير",
+          "opposite": "صَغِير"
+        },
+        {
+          "word": "بَدِين",
+          "opposite": "نَحِيف"
+        },
+        {
+          "word": "قَصِير",
+          "opposite": "طَوِيل"
+        },
+        {
+          "word": "فارِغ",
+          "opposite": "مُمتلِئ"
+        },
+        {
+          "word": "مَفْتوح",
+          "opposite": "مُغلَق"
+        },
+        {
+          "word": "بارِد",
+          "opposite": "ساخِن"
+        },
+        {
+          "word": "حَزِين",
+          "opposite": "سَعِيد"
+        },
+        {
+          "word": "سَرِيع",
+          "opposite": "بَطِيء"
+        },
+        {
+          "word": "قَدِيم",
+          "opposite": "جَدِيد"
+        },
+        {
+          "word": "سَهْل",
+          "opposite": "مُعقَّد"
+        },
+        {
+          "word": "مُبكي",
+          "opposite": "مُضحك"
+        },
+        {
+          "word": "مُبْتَلّ",
+          "opposite": "جَاف"
+        },
+        {
+          "word": "يَنْزَل",
+          "opposite": "يَصْعَد"
+        },
+        {
+          "word": "أَسْود",
+          "opposite": "أَبْيض"
+        },
+        {
+          "word": "بَخِيل",
+          "opposite": "كَرِيم"
+        },
+        {
+          "word": "لَيل",
+          "opposite": "نَهار"
+        },
+        {
+          "word": "مُمتِع",
+          "opposite": "مُمِل"
+        },
+        {
+          "word": "رَخِيص",
+          "opposite": "غَالٍ"
+        },
+        {
+          "word": "خَلف",
+          "opposite": "أَمَام"
+        },
+        {
+          "word": "وَاقف",
+          "opposite": "جَالِس"
+        },
+        {
+          "word": "هُدوء",
+          "opposite": "ضَوضاء"
+        }
+      ],
+      "sentences": [],
+      "notes": "Each PDF spread is a word↔opposite pair: green card (left) = word, pink card (right) = its opposite. 24 pairs across 24 page images, all read by sight. Pairs are stored word→opposite as the green-card term → pink-card term; the antonym relationship is symmetric, so order is presentational only. Page 19 (لَيل↔نَهار) rendered at smaller scale but text legible. Harakat (vowel marks) transcribed as shown; a few cards show partial/optional diacritics. مُبكي / مُضحك (p14) shown without full harakat on the card. Flag for the mother: confirm preferred standard vocalization for these adjectives, and whether يَنْزَل/يَصْعَد (verbs 'goes down'/'goes up') belong with the adjective opposites or in a separate verb set. signedOff:false.",
+      "confidence": "high",
+      "driveFileId": "1mdI78jCeNilkXbC7E4zrFrxTwa_Io0X6",
+      "sourceFile": "الكلمة والعكس ج1.pdf (1).pdf",
+      "renderedImageCount": 24,
+      "exerciseTypesSeen": [
+        "transformWord"
+      ],
+      "signedOff": false
+    },
+    {
+      "title": "????? ? ? ? ? ? ? ? ?",
+      "letters": [
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+      ],
+      "worksheetType": "writeLetter",
+      "exerciseTypesSeen": [
+        "writeLetter",
+        "writeWord"
+      ],
+      "instruction_ar": "",
+      "instruction_en": "Dictation for hamza/alif through khaa.",
+      "vocab": [],
+      "items": [],
+      "grammar": [],
+      "sentences": [],
+      "notes": "UNREADABLE under the task constraints: the DOCX yielded zero renderable embedded images. Arabic text extraction is forbidden because it garbles the worksheets, so no content was transcribed from this file. Needs owner to provide PDF/image render or screenshot export.",
+      "confidence": "low",
+      "signedOff": false,
+      "fileId": "09",
+      "driveFileId": "1KQsqY9uhYaFZToA4R3IiTp2kJuU2U4Dg",
+      "sourceFile": "املاء ء ا ب ت ث ج ح خ.docx",
+      "renderedImageCount": 0
+    },
+    {
+      "fileId": "10",
+      "title": "تاء وعي صوتي",
+      "kind": "docx",
+      "letters": [
+        "ت"
+      ],
+      "worksheetType": "writeLetter",
+      "exerciseTypesSeen": [
+        "writeLetter"
+      ],
+      "instruction_ar": "",
+      "instruction_en": "(No Arabic instruction text visible in the images. Title implies: phonological awareness for the letter ت — identify/mark the pictures whose names contain the sound ت.)",
+      "vocab": [
+        "تمساح",
+        "تاج",
+        "تلفاز",
+        "تفاحة",
+        "توت",
+        "سمكة",
+        "سيارة",
+        "ساعة",
+        "فأر"
+      ],
+      "items": [
+        {
+          "word": "تمساح",
+          "position": "initial"
+        },
+        {
+          "word": "تاج",
+          "position": "initial"
+        },
+        {
+          "word": "تلفاز",
+          "position": "initial"
+        },
+        {
+          "word": "تفاحة",
+          "position": "initial"
+        },
+        {
+          "word": "توت",
+          "position": "initial"
+        }
+      ],
+      "grammar": [],
+      "sentences": [],
+      "notes": "9 images, all generic line-art clipart with NO Arabic labels and NO visible Arabic instruction text. Some carry English template captions ('C is for Car', 'Apple'). Pictures identified by sight; Arabic words are INFERRED from the depicted objects, not read — flagged low confidence. Pictures consistent with target sound ت (placed in items, all word-initial): m002=crocodile=تمساح, m006=crown=تاج, m007=television=تلفاز (could be تلفزيون), m008=apple=تفاحة, m004=strawberries=توت (could be فراولة). Likely distractors WITHOUT ت (in vocab, not items): m001=fish=سمكة, m003=car=سيارة, m005=wristwatch=ساعة, m009=mouse=فأر. m004 ambiguous (توت vs فراولة). No .wdp/.wmf files present; all 9 images viewed. Cannot confirm the actual exercise instruction (circle/color/write) — title and worksheet kind drive the writeLetter mapping.",
+      "confidence": "low",
+      "driveFileId": "1_ezTrLMOUju4xL8rwV7iWM0VnphEksQA",
+      "sourceFile": "تاء وعي صوتي.docx",
+      "renderedImageCount": 9,
+      "signedOff": false
+    },
+    {
+      "title": "????? ???? ????? 1",
+      "letters": [
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+      ],
+      "worksheetType": "writeLetter",
+      "exerciseTypesSeen": [
+        "writeLetter",
+        "traceLetter"
+      ],
+      "instruction_ar": "??? ??????? ???? ????? ??? ??? (...)",
+      "instruction_en": "Color the circles containing the target letter; handwriting-first equivalent is write/trace the target letter after recognition.",
+      "vocab": [],
+      "items": [],
+      "grammar": [],
+      "sentences": [],
+      "notes": "28-page Twinkl coloring/letter-discrimination set, one page per Arabic letter. Each page has a target letter, many letter bubbles, and a picture cue. It is recognition/coloring on paper, mapped to writeLetter/relaxed traceLetter per taxonomy.",
+      "confidence": "high",
+      "signedOff": false,
+      "fileId": "11",
+      "driveFileId": "169o1EhzHXM1UWduPYX4G6QmVVQT3IdeV",
+      "sourceFile": "تلوين حروف مرحلة 1.pdf",
+      "renderedImageCount": 28
+    },
+    {
+      "title": "????? ???? ??????",
+      "letters": [
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+      ],
+      "worksheetType": "traceLetter",
+      "exerciseTypesSeen": [
+        "traceLetter"
+      ],
+      "instruction_ar": "???? ??? ...",
+      "instruction_en": "Trace/write each Arabic letter in dotted boxes.",
+      "vocab": [],
+      "items": [],
+      "grammar": [],
+      "sentences": [],
+      "notes": "Cover plus one dotted practice page per letter. Clear formation/tracing source; no vocab except decorative cover.",
+      "confidence": "high",
+      "signedOff": false,
+      "fileId": "12",
+      "driveFileId": "1c_qL-AmYK8VlXACk6ZsGnYRFXNf1ANh8",
+      "sourceFile": "تنقيط جميع الحروف.pdf",
+      "renderedImageCount": 29
+    },
+    {
+      "fileId": "13",
+      "title": "تنقيط حرف الطاء",
+      "kind": "docx",
+      "letters": [
+        "ط"
+      ],
+      "worksheetType": "traceLetter",
+      "exerciseTypesSeen": [
+        "traceLetter"
+      ],
+      "instruction_ar": "",
+      "instruction_en": "Trace the dotted letter ط (taa). Single-letter dotted-tracing worksheet: a name line (الاسم) at top, a large reference letter and an example picture, the letter shown with stroke-order arrows, then rows of dotted ط to trace over.",
+      "vocab": [
+        "طائرة"
+      ],
+      "items": [
+        {
+          "letter": "ط",
+          "word": "طائرة",
+          "activity": "traceLetter — reference: large ط and a picture of an airplane (طائرة, airplane); the example word طائرة is shown with the ط highlighted"
+        },
+        {
+          "letter": "ط",
+          "word": "",
+          "activity": "traceLetter — stroke-order model of ط with directional arrows (dotted start point + arrows)"
+        },
+        {
+          "letter": "ط",
+          "word": "",
+          "activity": "traceLetter — two rows of dotted ط forms to trace over the baseline (left columns plain dotted outline, right columns add stroke-order arrows)"
+        }
+      ],
+      "grammar": [],
+      "sentences": [],
+      "notes": "Single-letter dotted-tracing worksheet for ط (taa). Folder has m001.jpeg (grayscale), m003.jpg (orange-colored, identical layout) and m002.wdp (JPEG-XR, not viewable but a duplicate of the same page by file pattern). No Arabic instruction sentence printed — only the name field (الاسم) heading and the example word طائرة (airplane, matching the airplane illustration). Footer credit: learnwithanas.blogspot.com. Tracing rows show isolated/initial ط form (with the upright stroke) over a baseline; stroke-order arrows indicate write the loop first then the upright stroke. Read by sight; clear.",
+      "confidence": "high",
+      "signedOff": false,
+      "driveFileId": "1A9DMtY2VkgV1cMO1TFuQRQiG1xlCdtPW",
+      "sourceFile": "تنقيط حرف الطاء.docx",
+      "renderedImageCount": 3
+    },
+    {
+      "fileId": "14",
+      "title": "تنقيط حرف الظاء",
+      "kind": "docx",
+      "letters": [
+        "ظ"
+      ],
+      "worksheetType": "traceLetter",
+      "exerciseTypesSeen": [
+        "traceLetter"
+      ],
+      "instruction_ar": "",
+      "instruction_en": "Trace the dotted letter ظ (thaa/zaa). Single-letter dotted-tracing worksheet: a name line (الاسم) at top, a large reference letter and an example picture, the letter shown with stroke-order arrows, then rows of dotted ظ to trace over.",
+      "vocab": [
+        "ظرف"
+      ],
+      "items": [
+        {
+          "letter": "ظ",
+          "word": "ظرف",
+          "activity": "traceLetter — reference: large ظ and a picture of an envelope (ظرف, envelope); the example word ظرف is shown with the ظ highlighted"
+        },
+        {
+          "letter": "ظ",
+          "word": "",
+          "activity": "traceLetter — stroke-order model of ظ with directional arrows (dotted start point + arrows)"
+        },
+        {
+          "letter": "ظ",
+          "word": "",
+          "activity": "traceLetter — two rows of dotted ظ forms to trace over the baseline (left columns plain dotted outline, right columns add stroke-order arrows)"
+        }
+      ],
+      "grammar": [],
+      "sentences": [],
+      "notes": "Single-letter dotted-tracing worksheet for ظ (thaa). Folder has m001.jpeg (grayscale), m003.jpg (a colored variant of the same page, not separately viewed but same layout by file pattern) and m002.wdp (JPEG-XR, not viewable). No Arabic instruction sentence printed — only the name field (الاسم) heading and the example word ظرف (envelope, matching the envelope illustration). Footer credit: learnwithanas.blogspot.com. Tracing rows show the ظ form with its single dot above; stroke-order arrows indicate the loop/body first. Read by sight; clear.",
+      "confidence": "high",
+      "signedOff": false,
+      "driveFileId": "1Sdb0UtppQZc_wL63O70befsaaSCRsj1U",
+      "sourceFile": "تنقيط حرف الظاء.docx",
+      "renderedImageCount": 3
+    },
+    {
+      "fileId": "15",
+      "title": "تنقيط حرف العين",
+      "kind": "docx",
+      "letters": [
+        "ع"
+      ],
+      "worksheetType": "traceLetter",
+      "exerciseTypesSeen": [
+        "traceLetter"
+      ],
+      "instruction_ar": "",
+      "instruction_en": "Trace the dotted letter ع (ayn). Single-letter dotted-tracing worksheet: a name line (الاسم) at top, a large reference letter and an example picture, the letter shown with stroke-order arrows, then rows of dotted ع to trace over.",
+      "vocab": [
+        "عنب"
+      ],
+      "items": [
+        {
+          "letter": "ع",
+          "word": "عنب",
+          "activity": "traceLetter — reference: large ع (green) and a picture of a bunch of grapes (عنب, grapes); the example word عنب is shown with the ع highlighted"
+        },
+        {
+          "letter": "ع",
+          "word": "",
+          "activity": "traceLetter — stroke-order model of ع with directional arrows (dotted start point + arrows)"
+        },
+        {
+          "letter": "ع",
+          "word": "",
+          "activity": "traceLetter — two rows of dotted ع forms to trace over the baseline (top row larger isolated/initial ع, bottom row smaller; right columns add stroke-order arrows)"
+        }
+      ],
+      "grammar": [],
+      "sentences": [],
+      "notes": "Single-letter dotted-tracing worksheet for ع (ayn). Folder has m001.jpeg (with green reference letter and orange stroke arrows) and m002.wdp (JPEG-XR, not viewable). No Arabic instruction sentence printed — only the name field (الاسم) heading and the example word عنب (grapes, matching the grapes illustration). Footer credit: learnwithanas.blogspot.com. Tracing rows show the open-headed ع form over a baseline; arrows indicate the head/hook first. Read by sight; clear.",
+      "confidence": "high",
+      "signedOff": false,
+      "driveFileId": "1m6DaA43TucIojBeR3T8VjoSikQ2KpX__",
+      "sourceFile": "تنقيط حرف العين.docx",
+      "renderedImageCount": 2
+    },
+    {
+      "title": "????? ??? ?????",
+      "letters": [
+        "?"
+      ],
+      "worksheetType": "traceLetter",
+      "exerciseTypesSeen": [
+        "traceLetter"
+      ],
+      "instruction_ar": "???? ??? ?????",
+      "instruction_en": "Trace/write the letter ghayn.",
+      "vocab": [],
+      "items": [],
+      "grammar": [],
+      "sentences": [],
+      "notes": "Single-letter dotted tracing DOCX. Some embedded WDP media is not renderable, but the visible JPEG page provides the target and tracing intent.",
+      "confidence": "medium",
+      "signedOff": false,
+      "fileId": "16",
+      "driveFileId": "1lcKZcrxqul1igGTJqW9dzwj1AKp4X1jQ",
+      "sourceFile": "تنقيط حرف الغين.docx",
+      "renderedImageCount": 2
+    },
+    {
+      "title": "????? ??? ?????",
+      "letters": [
+        "?"
+      ],
+      "worksheetType": "traceLetter",
+      "exerciseTypesSeen": [
+        "traceLetter"
+      ],
+      "instruction_ar": "???? ??? ?????",
+      "instruction_en": "Trace/write the letter faa.",
+      "vocab": [],
+      "items": [],
+      "grammar": [],
+      "sentences": [],
+      "notes": "Single-letter dotted tracing DOCX. Some embedded WDP media is not renderable, but the visible JPEG page provides the target and tracing intent.",
+      "confidence": "medium",
+      "signedOff": false,
+      "fileId": "17",
+      "driveFileId": "1LM8PNRGTBfzpMGlETCfCIr9ba_qkrJd5",
+      "sourceFile": "تنقيط حرف الفاء.docx",
+      "renderedImageCount": 2
+    },
+    {
+      "fileId": "18",
+      "title": "حرف الحاء والخاء والجيم",
+      "kind": "docx",
+      "letters": [
+        "ح",
+        "خ",
+        "ج"
+      ],
+      "worksheetType": "traceLetter",
+      "exerciseTypesSeen": [
+        "traceLetter",
+        "writeLetter",
+        "writeWord",
+        "completeWord",
+        "connectWord",
+        "fillBlank",
+        "colorPicture",
+        "circleLetter",
+        "underlineWord",
+        "identifyPosition"
+      ],
+      "instruction_ar": "ارسم ولوّن الحرف / أكتب الحرف / أكمل الحرف الناقص في كل مرة / أحوط حرف الجيم / صل الحرف بالكلمة المناسبة",
+      "instruction_en": "Draw and color the letter / Write the letter / Complete the missing letter each time / Circle the letter / Connect the letter to the correct word",
+      "vocab": [
+        "جمل",
+        "نجمة",
+        "مسجد",
+        "عجين",
+        "جوز",
+        "دجاج",
+        "حافلة",
+        "ملح",
+        "لحم",
+        "بحر",
+        "حمامة",
+        "بلح",
+        "حليب",
+        "مفتاح",
+        "ضحك",
+        "فرح",
+        "خروف",
+        "دخان",
+        "صاروخ",
+        "رغيف",
+        "خبز",
+        "خيمة",
+        "خرج",
+        "صخرة",
+        "كوخ"
+      ],
+      "items": [
+        {
+          "letter": "ج",
+          "word": "جمل",
+          "activity": "traceLetter / color picture (camel) and trace the letter ج"
+        },
+        {
+          "letter": "ج",
+          "word": "جمل",
+          "activity": "writeLetter — trace dotted ج rows; reference picture of camel"
+        },
+        {
+          "letter": "ج",
+          "word": "عجين",
+          "activity": "completeWord / fillBlank — write missing ج (عَ..ـين)"
+        },
+        {
+          "letter": "ج",
+          "word": "جوز",
+          "activity": "completeWord / fillBlank — write missing ج (..ـوْزٌ)"
+        },
+        {
+          "letter": "ج",
+          "word": "دجاج",
+          "activity": "completeWord / fillBlank — write missing ج (دَ..ـا)"
+        },
+        {
+          "letter": "ج",
+          "word": "",
+          "activity": "circleLetter — circle the letter ج (حوط) among a cloud of letters"
+        },
+        {
+          "letter": "ج",
+          "word": "",
+          "activity": "colorPicture / listen-and-color — color the pictures whose names start with/contain ج (e.g. bell, rabbit, carrot)"
+        },
+        {
+          "letter": "ج",
+          "word": "نجمة",
+          "activity": "identifyPosition — letter-position card: choose where ج sits in نجمة (star)"
+        },
+        {
+          "letter": "ج",
+          "word": "مسجد",
+          "activity": "identifyPosition — letter-position card: choose where ج sits in مسجد (mosque)"
+        },
+        {
+          "letter": "ج",
+          "word": "جمل",
+          "activity": "identifyPosition — letter-position card: choose where ج sits in جمل (camel)"
+        },
+        {
+          "letter": "ج",
+          "word": "",
+          "activity": "writeLetter — هيا نكتب حرف ج: trace forms (isolated/initial/medial/final ج جـ ـجـ ـج) then write on lined boxes"
+        },
+        {
+          "letter": "ح",
+          "word": "خروف",
+          "activity": "traceLetter / color picture and trace the letter ح (reference image is a sheep)"
+        },
+        {
+          "letter": "ح",
+          "word": "",
+          "activity": "writeLetter — trace dotted ح rows; reference picture of a whale"
+        },
+        {
+          "letter": "ح",
+          "word": "ملح",
+          "activity": "completeWord / fillBlank — write missing ح (مِلـ..)"
+        },
+        {
+          "letter": "ح",
+          "word": "حافلة",
+          "activity": "completeWord / fillBlank — write missing ح (..ـافلة, school bus)"
+        },
+        {
+          "letter": "ح",
+          "word": "لحم",
+          "activity": "completeWord / fillBlank — write missing ح (لـ..ـم, meat)"
+        },
+        {
+          "letter": "ح",
+          "word": "",
+          "activity": "circleLetter — circle the letter ح (أحوط حرف الحاء) among a cloud of letters"
+        },
+        {
+          "letter": "ح",
+          "word": "",
+          "activity": "colorPicture / listen-and-color — color pictures containing ح (e.g. ant, horse/pony, candy)"
+        },
+        {
+          "letter": "ح",
+          "word": "بحر",
+          "activity": "connectWord — connect the letter form to the matching word (chick holding بحر)"
+        },
+        {
+          "letter": "ح",
+          "word": "حمامة",
+          "activity": "connectWord — connect the letter form to the matching word (chick holding حمامة)"
+        },
+        {
+          "letter": "ح",
+          "word": "بلح",
+          "activity": "connectWord — connect the letter form to the matching word (chick holding بلح)"
+        },
+        {
+          "letter": "ح",
+          "word": "حليب",
+          "activity": "underlineWord — underline words containing ح (حليب among options)"
+        },
+        {
+          "letter": "ح",
+          "word": "مفتاح",
+          "activity": "underlineWord — underline words containing ح (مفتاح among options)"
+        },
+        {
+          "letter": "ح",
+          "word": "تفاح",
+          "activity": "underlineWord — underline words containing ح (تفاح among options); distractors: بطيخ، لحم، جزر"
+        },
+        {
+          "letter": "ح",
+          "word": "لحم",
+          "activity": "identifyPosition — letter-position card: choose where ح sits in لحم (meat)"
+        },
+        {
+          "letter": "ح",
+          "word": "ضحك",
+          "activity": "identifyPosition — letter-position card: choose where ح sits in ضحك (laughing)"
+        },
+        {
+          "letter": "ح",
+          "word": "فرح",
+          "activity": "identifyPosition — letter-position card: choose where ح sits in فرح (joy/girl)"
+        },
+        {
+          "letter": "ح",
+          "word": "",
+          "activity": "writeLetter — هيا نكتب حرف ح: trace forms (isolated/initial/medial/final ح حـ ـحـ ـح) then write on lined boxes"
+        },
+        {
+          "letter": "خ",
+          "word": "خروف",
+          "activity": "traceLetter / color picture (sheep) and trace the letter خ"
+        },
+        {
+          "letter": "خ",
+          "word": "خروف",
+          "activity": "writeLetter — trace dotted خ rows; reference picture of a sheep"
+        },
+        {
+          "letter": "خ",
+          "word": "دخان",
+          "activity": "completeWord / fillBlank — write missing خ (دُ..ـان, smoke)"
+        },
+        {
+          "letter": "خ",
+          "word": "صاروخ",
+          "activity": "completeWord / fillBlank — write missing خ (صَارُو.., rocket)"
+        },
+        {
+          "letter": "خ",
+          "word": "رغيف",
+          "activity": "completeWord / fillBlank — write missing letter (..ـرِيفٌ); reference image looks like fire/launch — word unclear, low confidence"
+        },
+        {
+          "letter": "خ",
+          "word": "",
+          "activity": "circleLetter — circle the letter خ (أحوط حرف الخاء) among a cloud of letters"
+        },
+        {
+          "letter": "خ",
+          "word": "",
+          "activity": "colorPicture / listen-and-color — color pictures containing خ (e.g. bread/loaf, clock, olives)"
+        },
+        {
+          "letter": "خ",
+          "word": "خبز",
+          "activity": "connectWord — صل الخبز لسلة الحرف (خ): connect the bread to the basket labeled خ (distractor basket س)"
+        },
+        {
+          "letter": "خ",
+          "word": "خيمة",
+          "activity": "colorPicture — لون خيمة الحرف (خ): color the tents marked خ (distractors أ، س)"
+        },
+        {
+          "letter": "خ",
+          "word": "خرج",
+          "activity": "identifyPosition — letter-position card: choose where خ sits in خرج (bird leaving cage)"
+        },
+        {
+          "letter": "خ",
+          "word": "صخرة",
+          "activity": "identifyPosition — letter-position card: choose where خ sits in صخرة (rock)"
+        },
+        {
+          "letter": "خ",
+          "word": "كوخ",
+          "activity": "identifyPosition — letter-position card: choose where خ sits in كوخ (hut)"
+        },
+        {
+          "letter": "خ",
+          "word": "",
+          "activity": "colorLetter — لون حرف الخاء: color خ in a circle-maze among other letters"
+        }
+      ],
+      "grammar": [],
+      "sentences": [],
+      "notes": "Multi-letter packet covering ح، خ، ج (rendered title order Haa/Khaa/Jeem). 18 images mix three sub-packets. Forms shown for each letter: isolated, initial (جـ/حـ/خـ), medial (ـجـ/ـحـ/ـخـ), final (ـج/ـح/ـخ) on the 'هيا نكتب' and 'أكتب' pages. m001 is a generic dot-tracing picture sheet (تتبع النقط ولون الصورة) shared across packets — not letter-specific. m002/m010/m018 are 'لون حرف ...' circle-maze coloring pages. Cloud circle-letter pages contain many distractor letters not transcribed individually. LOW-CONFIDENCE: m013 third fill-blank word read as رغيف but the picture (fire/launch) and partial text (..ـرِيفٌ) do not clearly match — Arabic vowel marks faint; flagged. No .wdp/.wmf files present (all PNG). No full sentences in this packet — only single words and letter forms.",
+      "confidence": "medium",
+      "signedOff": false,
+      "driveFileId": "1OIVWG1DUio5_AUrLo7hlZ5xH05Gpv84f",
+      "sourceFile": "حرف الحاء والخاء والجيم.docx",
+      "renderedImageCount": 18
+    },
+    {
+      "fileId": "19",
+      "title": "حرف الدال",
+      "kind": "docx",
+      "letters": [
+        "د"
+      ],
+      "worksheetType": "traceLetter",
+      "exerciseTypesSeen": [
+        "teachCard",
+        "traceLetter",
+        "writeLetter",
+        "colorLetter",
+        "findLetter",
+        "circleLetter",
+        "readWord",
+        "writeWithShortVowels"
+      ],
+      "instruction_ar": "أكتب حرف الدال",
+      "instruction_en": "Write the letter daal (د)",
+      "vocab": [
+        "أَسَد",
+        "دَجاجَة",
+        "دودة",
+        "قِرْد",
+        "صَيّاد",
+        "دب",
+        "دِيناصور",
+        "دراجة",
+        "دائِرة"
+      ],
+      "items": [
+        {
+          "word": "د",
+          "activity": "teachCard — stroke-order card with directional arrows and red start dot"
+        },
+        {
+          "word": "د",
+          "activity": "colorLetter — help the girl color letter د among letter bubbles"
+        },
+        {
+          "word": "أَسَد",
+          "activity": "teachCard — picture (lion) + word; د in medial/final position"
+        },
+        {
+          "word": "دَجاجَة",
+          "activity": "teachCard — picture (hen) + word; د in initial position (red)"
+        },
+        {
+          "word": "دودة",
+          "activity": "teachCard — picture (worm) + word; د initial and medial"
+        },
+        {
+          "word": "قِرْد",
+          "activity": "teachCard — picture (monkey) + word; د in final position (red)"
+        },
+        {
+          "word": "صَيّاد",
+          "activity": "teachCard — picture (fisherman) + word; د in final position (red)"
+        },
+        {
+          "word": "دب",
+          "activity": "teachCard — picture (bear) + word; د in initial position"
+        },
+        {
+          "word": "د",
+          "activity": "findLetter — search for letter د among stars of various letters"
+        },
+        {
+          "word": "دجاجة, دودة, دب, دراجة, دائرة",
+          "activity": "readWord — read the words row, then trace and write letter د"
+        },
+        {
+          "word": "دِيناصور, دَجاجة, دراجة, دُبْ",
+          "activity": "teachCard — picture-word panel around central د"
+        },
+        {
+          "word": "د",
+          "activity": "traceLetter — repeated dotted د grid to trace; example دودة"
+        },
+        {
+          "word": "د",
+          "activity": "traceLetter — header حرف الدال, example دودة, dotted د grid"
+        },
+        {
+          "word": "د",
+          "activity": "colorLetter — color the isolated and connected (ـد) forms of د (panda)"
+        },
+        {
+          "word": "دُبْ",
+          "activity": "colorLetter + findLetter — color letter, trace lines, find letter د in grid"
+        },
+        {
+          "word": "دَراجَة",
+          "activity": "circleLetter + traceLetter — trace over dots, circle د, write د correctly"
+        },
+        {
+          "word": "د",
+          "activity": "writeWithShortVowels — rewrite د with short vowels: دَ، دُ، دِ"
+        },
+        {
+          "word": "د",
+          "activity": "writeLetter + colorLetter — write د rows (دَ/دُ/دِ), color د blue among circles; دراجة"
+        }
+      ],
+      "grammar": [],
+      "sentences": [],
+      "notes": "18 images, all viewed. Primary worksheetType=traceLetter (dominant trace/write activity); mix of teach cards, coloring, find-the-letter, circle-the-letter, and short-vowel writing (دَ/دُ/دِ). Letter forms shown: isolated د and connected final form (ـد) in m014. Word forms span initial (دجاجة, دودة, دب, دراجة), medial (أسد), and final (قرد, صياد) positions. Letter ذ does NOT appear (only د). Teachers credited: Kaoutar/Kawthar, Abu Bakr Seddik school. No full sentences present. Arabic read by sight from images. Words دائرة and ديناصور appear only as small inline reading-row items (medium confidence on full diacritics). .wdp/.wmf: none present in folder.",
+      "confidence": "high",
+      "signedOff": false,
+      "driveFileId": "1weNt28M1ufc-CGslc_AArdIQucIJK0H_",
+      "sourceFile": "حرف الدال.docx",
+      "renderedImageCount": 18
+    },
+    {
+      "fileId": "20",
+      "title": "حرف الكاف",
+      "kind": "docx",
+      "letters": [
+        "ك"
+      ],
+      "worksheetType": "traceLetter",
+      "exerciseTypesSeen": [
+        "traceLetter",
+        "writeLetter",
+        "teachCard",
+        "circleLetter",
+        "shortVowelForms",
+        "letterPositionTable"
+      ],
+      "instruction_ar": "صغيري أكتب حرف الكاف",
+      "instruction_en": "My little one, write the letter kaaf",
+      "vocab": [
+        {
+          "word": "كُرَة",
+          "en": "ball"
+        },
+        {
+          "word": "كَرَز",
+          "en": "cherry"
+        },
+        {
+          "word": "كَنْغَر",
+          "en": "kangaroo"
+        },
+        {
+          "word": "كَنْز",
+          "en": "treasure"
+        },
+        {
+          "word": "كَعْكَة",
+          "en": "cake"
+        },
+        {
+          "word": "كِتاب",
+          "en": "book"
+        },
+        {
+          "word": "كَلْب",
+          "en": "dog"
+        },
+        {
+          "word": "كَأْس",
+          "en": "cup / trophy"
+        },
+        {
+          "word": "سَمَكَة",
+          "en": "fish"
+        },
+        {
+          "word": "كُرْسِيّ",
+          "en": "chair"
+        },
+        {
+          "word": "يَكْتُب",
+          "en": "he writes"
+        },
+        {
+          "word": "يَضْحَك",
+          "en": "he laughs"
+        },
+        {
+          "word": "كُوخ",
+          "en": "hut"
+        },
+        {
+          "word": "شُبّاك",
+          "en": "window"
+        },
+        {
+          "word": "دُكّان",
+          "en": "shop"
+        }
+      ],
+      "items": [
+        {
+          "word": "كُرَة",
+          "activity": "teachCard - color the letter and picture (ball)"
+        },
+        {
+          "word": "كَرَز",
+          "activity": "teachCard - color the picture and letter (cherries)"
+        },
+        {
+          "word": "كَنْغَر",
+          "activity": "teachCard - color the picture and letter (kangaroo)"
+        },
+        {
+          "word": "كَنْز",
+          "activity": "teachCard - short vowels (fatha) forms of kaaf shown around treasure chest"
+        },
+        {
+          "word": "كَعْكَة",
+          "activity": "teachCard - picture card with letter ك (cake)"
+        },
+        {
+          "word": "كِتاب",
+          "activity": "teachCard - picture card with letter ك (book)"
+        },
+        {
+          "word": "كَنْغَر",
+          "activity": "teachCard - picture card with letter ك (kangaroo)"
+        },
+        {
+          "word": "ك",
+          "activity": "traceLetter - dotted isolated forms grid; example كَلْب (dog)"
+        },
+        {
+          "word": "ك",
+          "activity": "traceLetter - large model letter then dotted trace rows; instruction صغيري أكتب حرف الكاف"
+        },
+        {
+          "word": "ك",
+          "activity": "traceLetter - dotted grid with header pictures كُرَة / كَرَز"
+        },
+        {
+          "word": "كَلْب / كَأْس / سَمَكَة",
+          "activity": "letterPositionTable - mark position of ك in each word (dog, cup, fish)"
+        },
+        {
+          "word": "ك",
+          "activity": "writeLetter / letterPositionTable - forms table (منفرد/بداية/وسط/نهاية) with examples كُرْسِيّ، يَكْتُب، يَضْحَك; trace rows for ك ك ـكـ ـك"
+        },
+        {
+          "word": "ك",
+          "activity": "circleLetter - circle every letter ك among many letters; instruction قِف بالتلوين الأحمر على كل حرف (ك)"
+        }
+      ],
+      "grammar": [],
+      "sentences": [],
+      "notes": "16 images total; 12 PNG read by sight, 4 unviewable (.wmf: m005, m006, m015, m016) - flagged and skipped. Worksheet teaches letter kaaf (ك). m001 = large stroke-order trace letter (kaaf with arrows). m002 = circle/color-all-kaaf activity among scattered letters (instruction read by sight: 'put red color on every kaaf', medium confidence on exact wording). m003 = intro teach page with كُرَة, كَرَز, كَنْغَر; bottom row lists example words بداية حرف الكاف: كَلْب كَوْخ كُرْسِيّ شُبّاك دُكّان كَعْكَة. m004 = short-vowel (fatha) forms of kaaf around treasure with word كَنْز. m007-m009 = picture flashcards (كَعْكَة، كِتاب، كَنْغَر). m010 = trace grid, example كَلْب. m011-m012 = trace practice sheets. m013 = letter-position table cards (سمكة، كأس، كلب). m014 = twinkl forms/position table + trace rows with examples كرسي، يكتب، يضحك. Forms shown across worksheet: isolated ك, initial كـ, medial ـكـ, final ـك. Vowel diacritics on some vocab inferred from standard spelling - medium confidence on exact harakat.",
+      "confidence": "medium",
+      "driveFileId": "1OrPS_ESsbN_ayCym4wPW4I4OX3i5nzgg",
+      "sourceFile": "حرف الكاف.docx",
+      "renderedImageCount": 16,
+      "signedOff": false
+    },
+    {
+      "fileId": "21",
+      "title": "حرف اللام",
+      "kind": "docx",
+      "letters": [
+        "ل"
+      ],
+      "worksheetType": "traceLetter",
+      "exerciseTypesSeen": [
+        "traceLetter",
+        "teachCard"
+      ],
+      "instruction_ar": "الاسم: ____   (تتبّع حرف اللام بالقلم)",
+      "instruction_en": "Name: ____  Trace the letter Laam (ل) with a pencil; color the picture.",
+      "vocab": [
+        "ليمون",
+        "لحم",
+        "لسان"
+      ],
+      "items": [
+        {
+          "activity": "teach card / letter header",
+          "detail": "Large gray isolated letter ل shown for tracing, with the word «ليمون» (lemon) and a single «ل» marked with a start-dot and directional arrow showing stroke order."
+        },
+        {
+          "activity": "trace the letter forms",
+          "detail": "Dotted-line tracing grid: rows of the isolated ل to trace, plus connected/joined forms with grey directional arrows indicating stroke direction (right-to-left)."
+        },
+        {
+          "activity": "color the picture",
+          "detail": "Lemon illustration (ليمون) on the main worksheet page to color, reinforcing the laam vocabulary word."
+        },
+        {
+          "activity": "vocabulary clip-art (loose embedded images)",
+          "detail": "Coloring clip-art images bundled in the packet: two lemons (ليمون), a butterfly, a fish, a piece of meat / drumstick (لحم), Mickey kicking a ball, and an open mouth with tongue (لسان). These illustrate example words; some (butterfly, fish, ball, Mickey) do not contain laam and appear to be generic coloring filler — flag for the mother to confirm intended vocabulary."
+        }
+      ],
+      "grammar": [],
+      "sentences": [],
+      "notes": "m009.wdp could NOT be viewed (HD Photo / .wdp format not renderable) — needs separate conversion to confirm contents. Main pedagogical page is m008 (a 'learnwithanas.blogspot.com' tracing sheet). Several embedded clip-art images (m003 butterfly, m004 fish, m006 Mickey-with-ball) do NOT contain the letter laam and look like generic coloring art rather than laam vocabulary — flag for the mother. Confident laam vocab from the sheet: ليمون (printed), plus لحم (meat, from m005 drumstick) and لسان (tongue, from m007 mouth) inferred from clip-art. Header word «ليمون» read by sight on m008.",
+      "confidence": "medium",
+      "signedOff": false,
+      "driveFileId": "1vRyuQbgPWzwtQrtufK0y3ijV0f5U3nfB",
+      "sourceFile": "حرف اللام.docx",
+      "renderedImageCount": 9
+    },
+    {
+      "fileId": "22",
+      "title": "حرف الهاء",
+      "kind": "docx",
+      "letters": [
+        "ه"
+      ],
+      "worksheetType": "traceLetter",
+      "exerciseTypesSeen": [
+        "teachCard",
+        "traceLetter",
+        "connectWord",
+        "fillBlank",
+        "writeLetter"
+      ],
+      "instruction_ar": "الاسم: ____   صل غير النقاط واكتب حرف الهاء / ضع دائرة حول الحرف ( هـ / ـهـ / ـه ) / لوّن حرف الهاء / حوّط الصورة التي يحتوي اسمها على الحرف (هـ) ولوّنها",
+      "instruction_en": "Name: ____  Connect the dots and write the letter Haa / Circle the form ( هـ / ـهـ / ـه ) / Color the Haa letter (sort by color) / Circle the pictures whose name contains the letter Haa, and color them.",
+      "vocab": [
+        "هدية",
+        "هاتف",
+        "سهم",
+        "هلال",
+        "وجه",
+        "فهد",
+        "نهر",
+        "هدى",
+        "هرة",
+        "كهف",
+        "مهر",
+        "مهدد"
+      ],
+      "items": [
+        {
+          "word": "هدية",
+          "activity": "teachCard",
+          "detail": "Letter header card (m006 / m013): large gray isolated ه shown for tracing, with a gift illustration (هدية, 'gift') to color, the key word «هدية» printed, and a single initial form «هـ» marked with a start-dot and directional arrows showing stroke order."
+        },
+        {
+          "word": "هـ",
+          "activity": "traceLetter",
+          "detail": "Dotted tracing grid (on m006/m013 teach card and on p002): rows of the dotted initial/isolated haa to trace, with grey directional arrows indicating right-to-left stroke direction; later columns add arrows, earlier ones are blank outline."
+        },
+        {
+          "word": "هـ",
+          "activity": "writeLetter",
+          "detail": "p002 top: 5 rows, instruction «صل غير النقاط واكتب حرف الهاء» — connect the dotted haa shapes then write the letter freehand on the baseline."
+        },
+        {
+          "word": "هـ / ـهـ / ـه",
+          "activity": "fillBlank",
+          "detail": "p002 middle: «ضع دائرة حول الحرف ( هـ / ـهـ / ـه )» — circle the correct form of haa (initial / medial / final) within the word bank below."
+        },
+        {
+          "word": "word bank",
+          "activity": "connectWord",
+          "detail": "p002 bottom word bank (two rows) of haa words for the circle/identify task: Row1 — مهدد، هاتف، سهم، هلال، وجه، فهد ; Row2 — هدية، نهر، هدى، هرة، كهف، مهر. Forms span initial (هاتف، هلال، هدية، هدى، هرة), medial (سهم، نهر، كهف، مهر، مهدد، فهد), and final (وجه)."
+        },
+        {
+          "word": "letter sort",
+          "activity": "writeLetter",
+          "detail": "p001: color-by-letter sorting sheet — instruction approx «لوّن حرف الهاء بالأحمر ...» (color the haa forms one color, distractor letters غ/ض/ظ other colors). Picture rows: phone (هاتف), cloud, frog (ضفدع), envelope (ظرف), boy's face — each tagged with a letter (هـ/ـهـ/ـه vs غ، ض، ظ) to identify and color."
+        },
+        {
+          "word": "picture circle",
+          "activity": "connectWord",
+          "detail": "p003: «حوّط الصورة التي يحتوي اسمها على الحرف (هـ) ولوّنها» — circle the pictures whose name contains haa, then color. 3x3 grid: phone (هاتف), monkey, crescent moon (هلال), tiger/zebra, large ه letter, gift (هدية), arrow (سهم), pyramid (هرم), carrot (جزر)."
+        }
+      ],
+      "grammar": [],
+      "sentences": [],
+      "notes": "m007.wdp and m010.wdp are HD Photo (.wdp) format and could NOT be viewed/rendered — need separate conversion to confirm contents. No .wmf present. m006 and m013 are the same gift/هدية teach card (duplicate; m013 is a lower-res copy). Loose embedded clip-art (m001/m002/m015 phone, m003 frog, m004 envelope, m005 boy face, m008 monkey, m009 moon, m011 pyramid, m012 carrot, m014 hoopoe-bird) are vocabulary/coloring art for the p001-p003 picture exercises; several (frog, envelope, monkey, carrot) do NOT contain haa and serve as distractors or generic art. Header school name on p001-p003 read by sight as «مدرسة بن سعيد الابتدائية» (medium confidence). Word bank on p002 read by sight; «مهدد» and «مهر» are lower confidence (small print). p001 color-instruction distractor list (which color for which letter) is small print — medium confidence; distractor letters identified as غ/ض/ظ. Inferred picture-words (هرم pyramid, جزر carrot, هلال moon, سهم arrow) named by sight of the illustration.",
+      "confidence": "medium",
+      "signedOff": false,
+      "driveFileId": "1DrnPfDe2QjIEO0n4W7MRlORn0gfYIpG3",
+      "sourceFile": "حرف الهاء.docx",
+      "renderedImageCount": 15
+    },
+    {
+      "title": "??? ?????",
+      "letters": [
+        "?"
+      ],
+      "worksheetType": "traceLetter",
+      "exerciseTypesSeen": [
+        "teachCard",
+        "traceLetter",
+        "writeLetter"
+      ],
+      "instruction_ar": "???? ??? ?????",
+      "instruction_en": "Write/trace the letter haa.",
+      "vocab": [],
+      "items": [],
+      "grammar": [],
+      "sentences": [],
+      "notes": "PDF counterpart of the haa packet. Treat as duplicate/alternate render of the haa letter packet; content should be reconciled with file 22 and confirmed by the mother.",
+      "confidence": "low",
+      "signedOff": false,
+      "fileId": "23",
+      "driveFileId": "1s9Bgd8cu8bGRa6e1tMq30a6Dhh0v3UEC",
+      "sourceFile": "حرف الهاء.pdf",
+      "renderedImageCount": 3
+    },
+    {
+      "title": "????? ????? ??? ?????? - ??? ????",
+      "letters": [
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+      ],
+      "worksheetType": "writeLetter",
+      "exerciseTypesSeen": [
+        "writeLetter"
+      ],
+      "instruction_ar": "?? ????? ??? ?????? ???? ???? ??????",
+      "instruction_en": "Circle the picture that begins with the target letter; handwriting-first equivalent: write the initial letter for the picture.",
+      "vocab": [],
+      "items": [],
+      "grammar": [],
+      "sentences": [],
+      "notes": "28-page phonological-awareness set, one target letter per page. Paper task is picture discrimination; mapped to writeLetter from picture/sound. Picture words are not all labeled, so per-picture Arabic vocab is deferred to mother verification.",
+      "confidence": "medium",
+      "signedOff": false,
+      "fileId": "24",
+      "driveFileId": "11G6n7S99yGrGXRM4nrMhpBlgNgu3uyAG",
+      "sourceFile": "دائرة تميز صور الحروف- وعي صوتي.pdf",
+      "renderedImageCount": 28
+    },
+    {
+      "fileId": "25",
+      "title": "راء وعي صوتي",
+      "kind": "docx",
+      "letters": [
+        "ر"
+      ],
+      "worksheetType": "writeLetter",
+      "exerciseTypesSeen": [
+        "writeLetter"
+      ],
+      "instruction_ar": "لون الصورة التي تبدأ بالحرف ر",
+      "instruction_en": "Color the picture that begins with the letter raa (ر)",
+      "vocab": [
+        "ريشة",
+        "رجل",
+        "رمان",
+        "رسالة"
+      ],
+      "items": [
+        {
+          "word": "ريشة",
+          "position": "initial"
+        },
+        {
+          "word": "رجل",
+          "position": "initial"
+        },
+        {
+          "word": "رمان",
+          "position": "initial"
+        },
+        {
+          "word": "رسالة",
+          "position": "initial"
+        }
+      ],
+      "grammar": [],
+      "sentences": [],
+      "notes": "Phonological-awareness worksheet for letter ر. Content-bearing images: m004.jpg (instruction 'لون الصورة التي تبدأ بالحرف ر' with green ر letter and picture circles: sailboat قارب, man رجل, pillow مخدة, envelope رسالة, pomegranate رمان — child colors those starting with ر) and m001.jpg (composite of 4 labeled pictures: feather ريشة, man رجل, pomegranate رمان, plus one unlabeled curved shape top-right). Word labels in m001 read by sight; m004 picture words (قارب/مخدة/رسالة) inferred from the pictures since they are unlabeled circles. رسالة (envelope) and رمان and رجل are the correct ر-initial answers. m002.jpg is an unrelated English ABC sheet (M/N/O: octopus, newspaper, mouse, oval, needle, mailbox), watermarked superanimy.net — decorative/clip-art filler. m003.jpeg (rat), m005.jpeg (boy face), m006.gif (pomegranate outline), m007.gif (leg) are unlabeled coloring clip-art with no Arabic text. No .wdp/.wmf files present.",
+      "confidence": "medium",
+      "driveFileId": "1hWppSfJ-16Rkrx98J00cNvVCl3cFOR1u",
+      "sourceFile": "راء وعي صوتي.docx",
+      "renderedImageCount": 7,
+      "signedOff": false
+    },
+    {
+      "title": "?? ????? ??????? ????????",
+      "letters": [
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+      ],
+      "worksheetType": "writeLetter",
+      "exerciseTypesSeen": [
+        "writeLetter"
+      ],
+      "instruction_ar": "?? ????? ??????? ????????",
+      "instruction_en": "Connect the letter to the matching picture; handwriting-first equivalent: write the initial letter cued by one picture.",
+      "vocab": [],
+      "items": [],
+      "grammar": [],
+      "sentences": [],
+      "notes": "Letter-picture matching worksheet. Good source for exercise family and picture cue usage; do not treat unlabeled image nouns as signed-off vocab until mother confirms.",
+      "confidence": "medium",
+      "signedOff": false,
+      "fileId": "26",
+      "driveFileId": "1q0ndGl1E5EoR75d0dx1dpVlXQDakcRH_",
+      "sourceFile": "صل الحرف بالصورة المناسبة (1).pdf",
+      "renderedImageCount": 5
+    },
+    {
+      "title": "???? ??? ???? ????? ????? ??????",
+      "letters": [
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+      ],
+      "worksheetType": "writeWord",
+      "exerciseTypesSeen": [
+        "writeLetter",
+        "writeWord",
+        "completeWord",
+        "connectWord",
+        "fillBlank",
+        "buildSentence"
+      ],
+      "instruction_ar": "???? / ???? / ?? / ???",
+      "instruction_en": "Advanced grade-one workbook: write, complete, connect, and sentence-building style tasks.",
+      "vocab": [],
+      "items": [],
+      "grammar": [],
+      "sentences": [],
+      "notes": "Large 158-page workbook. It was rendered locally, but this pass records it at inventory level only; detailed per-page Arabic transcription remains low-confidence/needs mother review because of volume and image-only pages.",
+      "confidence": "low",
+      "signedOff": false,
+      "fileId": "27",
+      "driveFileId": "1L_bX_ET0d_5vS5oMg_4U9b0LcJfRu54M",
+      "sourceFile": "كراس عمل للصف الأول (1) مرحلة متقدمة.pdf",
+      "renderedImageCount": 158
+    },
+    {
+      "fileId": "28",
+      "title": "كراس وعي صوتي",
+      "kind": "pdf",
+      "letters": [
+        "ش",
+        "أ",
+        "ج",
+        "غ",
+        "ط",
+        "م",
+        "ح",
+        "ز",
+        "د",
+        "ق",
+        "ف",
+        "ل",
+        "ص",
+        "ر",
+        "ب",
+        "س",
+        "خ",
+        "ك",
+        "ن",
+        "و",
+        "ه",
+        "ي",
+        "ض",
+        "ظ",
+        "ذ",
+        "ت",
+        "ع"
+      ],
+      "worksheetType": "writeLetter",
+      "exerciseTypesSeen": [
+        "writeLetter",
+        "writeWord",
+        "completeWord",
+        "buildSentence"
+      ],
+      "instruction_ar": "انطق اسم الرسمة ثم اختر الصوت الأول واكتبه داخل المربع",
+      "instruction_en": "Say the name of the picture, then choose the first sound and write it inside the box.",
+      "vocab": [
+        "شمس",
+        "أسد",
+        "حصان",
+        "هدية",
+        "برج",
+        "غيمة",
+        "طبيب",
+        "وردة",
+        "نحلة",
+        "زيتون",
+        "ذبابة",
+        "ديك",
+        "خروف",
+        "لحم",
+        "دجاجة",
+        "ضفدع",
+        "قفاز",
+        "يد",
+        "صندوق",
+        "تمساح",
+        "كمامة",
+        "علم",
+        "مسجد",
+        "سيارة",
+        "رمان",
+        "ذرة",
+        "ظفر",
+        "قطة",
+        "بيت",
+        "بطة",
+        "فراولة",
+        "عش",
+        "مشط",
+        "برتقال",
+        "بطيخ",
+        "صاروخ",
+        "فستان",
+        "عصفور",
+        "تفاح",
+        "بقرة",
+        "ملح",
+        "حصان"
+      ],
+      "items": [
+        {
+          "letter": "ش",
+          "word": "شمس",
+          "position": "initial"
+        },
+        {
+          "letter": "أ",
+          "word": "أسد",
+          "position": "initial"
+        },
+        {
+          "letter": "ح",
+          "word": "حصان",
+          "position": "initial"
+        },
+        {
+          "letter": "ه",
+          "word": "هدية",
+          "position": "initial"
+        },
+        {
+          "letter": "ب",
+          "word": "برج",
+          "position": "initial"
+        },
+        {
+          "letter": "غ",
+          "word": "غيمة",
+          "position": "initial"
+        },
+        {
+          "letter": "ط",
+          "word": "طبيب",
+          "position": "initial"
+        },
+        {
+          "letter": "و",
+          "word": "وردة",
+          "position": "initial"
+        },
+        {
+          "letter": "ن",
+          "word": "نحلة",
+          "position": "initial"
+        },
+        {
+          "letter": "ز",
+          "word": "زيتون",
+          "position": "initial"
+        },
+        {
+          "letter": "ذ",
+          "word": "ذبابة",
+          "position": "initial"
+        },
+        {
+          "letter": "د",
+          "word": "ديك",
+          "position": "initial"
+        },
+        {
+          "letter": "خ",
+          "word": "خروف",
+          "position": "initial"
+        },
+        {
+          "letter": "ل",
+          "word": "لحم",
+          "position": "initial"
+        },
+        {
+          "letter": "د",
+          "word": "دجاجة",
+          "position": "initial"
+        },
+        {
+          "letter": "ض",
+          "word": "ضفدع",
+          "position": "initial"
+        },
+        {
+          "letter": "ق",
+          "word": "قفاز",
+          "position": "initial"
+        },
+        {
+          "letter": "ي",
+          "word": "يد",
+          "position": "initial"
+        },
+        {
+          "letter": "ص",
+          "word": "صندوق",
+          "position": "initial"
+        },
+        {
+          "letter": "ت",
+          "word": "تمساح",
+          "position": "initial"
+        },
+        {
+          "letter": "ك",
+          "word": "كمامة",
+          "position": "initial"
+        },
+        {
+          "letter": "ع",
+          "word": "علم",
+          "position": "initial"
+        },
+        {
+          "letter": "م",
+          "word": "مسجد",
+          "position": "initial"
+        },
+        {
+          "letter": "س",
+          "word": "سيارة",
+          "position": "initial"
+        },
+        {
+          "letter": "ر",
+          "word": "رمان",
+          "position": "initial"
+        },
+        {
+          "letter": "ذ",
+          "word": "ذرة",
+          "position": "initial"
+        },
+        {
+          "letter": "ظ",
+          "word": "ظفر",
+          "position": "initial"
+        },
+        {
+          "letter": "س",
+          "word": "شمس",
+          "position": "final"
+        },
+        {
+          "letter": "د",
+          "word": "أسد",
+          "position": "final"
+        },
+        {
+          "letter": "ن",
+          "word": "حصان",
+          "position": "final"
+        },
+        {
+          "letter": "ج",
+          "word": "برج",
+          "position": "final"
+        },
+        {
+          "letter": "ش",
+          "word": "قنفذ",
+          "position": "final"
+        },
+        {
+          "letter": "ف",
+          "word": "قفص",
+          "position": "final"
+        },
+        {
+          "letter": "ع",
+          "word": "كوسا",
+          "position": "final"
+        },
+        {
+          "letter": "ل",
+          "word": "مكواة",
+          "position": "final"
+        },
+        {
+          "letter": "ه",
+          "word": "فواكه",
+          "position": "final"
+        },
+        {
+          "letter": "ل",
+          "word": "بصل",
+          "position": "final"
+        },
+        {
+          "letter": "ي",
+          "word": "كرسي",
+          "position": "final"
+        },
+        {
+          "letter": "ن",
+          "word": "ليمون",
+          "position": "final"
+        }
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "notes": "First-grade phonological-awareness workbook (كراسة تدريبات لغة عربية للصف الأول). Repetitive core layout pp.2-11: picture + 3 candidate letters + a box; child says the word, picks the first or last sound, writes it in the box. p2-6 = first sound (الصوت الأول); p8-11 = last sound (الصوت الأخير). pp.7,12 = same task but no candidate letters, just write the sound. pp.13-14 = identify long-vowel (mad: ا/و/ي) pictures. pp.15-16 = syllable/rhyme awareness (المقطع الساكن, الإيقاع اللفظي/سجع). pp.17-20 = write the missing syllable (اكتب المقطع المناسب) into partial words. p21 = place shadda over the correct letter. pp.22-23 = order scrambled syllables to form a correct word (رتب المقاطع). p24 = match number to picture (professions). pp.25-26 = complete/write sentence for the picture (verbs of رَاشِد). pp.27-28 = read passage and answer the question (camel/dog/frog/bee). p29 = crossword-style write-the-picture-name grid. pp.30-31 = first/last sound circles then write the word. Vocab and items captured by sight from clear pictures; less-certain final-sound words (pp.9-11, where the picture was small) flagged as lower confidence. No Arabic invented beyond what is legible; ambiguous picture names omitted rather than guessed.",
+      "confidence": "medium",
+      "driveFileId": "1s2GKvKFBEn8NUAaGYgszu-eG4UILcAnL",
+      "sourceFile": "كراس وعي صوتي (1).pdf",
+      "renderedImageCount": 31,
+      "signedOff": false
+    },
+    {
+      "title": "????? ???? ??????",
+      "letters": [
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+      ],
+      "worksheetType": "traceLetter",
+      "exerciseTypesSeen": [
+        "teachCard",
+        "traceLetter",
+        "writeLetter"
+      ],
+      "instruction_ar": "???? ?????",
+      "instruction_en": "Alphabet letter workbook: teach/trace/write one letter per page.",
+      "vocab": [],
+      "items": [],
+      "grammar": [],
+      "sentences": [],
+      "notes": "29-page alphabet workbook, likely cover plus one page per letter. Use as all-letter formation/tracing source; individual page vocab should be confirmed from images before promoting to signed content.",
+      "confidence": "medium",
+      "signedOff": false,
+      "fileId": "29",
+      "driveFileId": "1deXDntLcHp5AYbFQJRL7FySsvRPkqWKP",
+      "sourceFile": "كراسة حروف الهجاء.pdf",
+      "renderedImageCount": 29
+    },
+    {
+      "title": "????? ???? ????? 1",
+      "letters": [
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+      ],
+      "worksheetType": "traceLetter",
+      "exerciseTypesSeen": [
+        "teachCard",
+        "traceLetter",
+        "writeLetter"
+      ],
+      "instruction_ar": "???? ?????",
+      "instruction_en": "Stage 1 letter workbook: teach/trace/write one letter per page.",
+      "vocab": [],
+      "items": [],
+      "grammar": [],
+      "sentences": [],
+      "notes": "29-page stage-one letter workbook. Similar to file 29; all content signedOff:false pending mother review.",
+      "confidence": "medium",
+      "signedOff": false,
+      "fileId": "30",
+      "driveFileId": "17JZ5p1CnxsKg1F-INQ8JgPdsn2A-rzn1",
+      "sourceFile": "كراسة حروف مرحلة 1.pdf",
+      "renderedImageCount": 29
+    },
+    {
+      "title": "???? ??? ???? - ?? ????? ??? ????? ????? ???? ?????",
+      "letters": [
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+      ],
+      "worksheetType": "writeLetter",
+      "exerciseTypesSeen": [
+        "writeLetter"
+      ],
+      "instruction_ar": "?? ????? ??? ????? ????? ???? ?????",
+      "instruction_en": "Circle the first letter you hear; handwriting-first equivalent: write the first letter heard.",
+      "vocab": [],
+      "items": [],
+      "grammar": [],
+      "sentences": [],
+      "notes": "12 image cards for phonological awareness. Paper action is circling; app mapping is writeLetter from sound. Specific audio/word prompts need mother confirmation.",
+      "confidence": "medium",
+      "signedOff": false,
+      "fileId": "31",
+      "driveFileId": "1VjXokz056ZXdUsI4JnHZoklqLx8egWWq",
+      "sourceFile": "لعبة وعي صوتي - ضع دائرة حول الحرف الاول الذي تسمعه.docx",
+      "renderedImageCount": 12
+    },
+    {
+      "title": "??? ????? ???? ???? ???? ?????",
+      "letters": [
+        "?"
+      ],
+      "worksheetType": "writeLetter",
+      "exerciseTypesSeen": [
+        "writeLetter"
+      ],
+      "instruction_ar": "??? ????? ???? ???? ???? ?????",
+      "instruction_en": "Color the pictures that start with qaaf; handwriting-first equivalent: write ? for qaaf-starting pictures.",
+      "vocab": [],
+      "items": [],
+      "grammar": [],
+      "sentences": [],
+      "notes": "Qaaf-focused phonological awareness/coloring worksheet. Picture nouns are image-only and should be verified before becoming vocab.",
+      "confidence": "medium",
+      "signedOff": false,
+      "fileId": "32",
+      "driveFileId": "11RN3U6AYYnsO7TQLoAgZoznQjWPb1LFk",
+      "sourceFile": "لون الصور التي تبدأ بحرف القاف.docx",
+      "renderedImageCount": 6
+    },
+    {
+      "title": "??? ?????? ???????? ?????",
+      "letters": [
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+      ],
+      "worksheetType": "writeLetter",
+      "exerciseTypesSeen": [
+        "writeLetter"
+      ],
+      "instruction_ar": "??? ?????? ???????? ?????",
+      "instruction_en": "Color the picture matching the letter; handwriting-first equivalent: write the letter cued by the image.",
+      "vocab": [],
+      "items": [],
+      "grammar": [],
+      "sentences": [],
+      "notes": "26-page letter-picture recognition/coloring set. Some letters may be missing or combined because page count is 26; flagged for mother review.",
+      "confidence": "medium",
+      "signedOff": false,
+      "fileId": "33",
+      "driveFileId": "1JWRogjzQiG8c1C-ex5Rh9S6Nwuh8ZtMV",
+      "sourceFile": "لون الصورة الملائمة للحرف.pdf",
+      "renderedImageCount": 26
+    },
+    {
+      "title": "??? ??????",
+      "letters": [
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+      ],
+      "worksheetType": "traceLetter",
+      "exerciseTypesSeen": [
+        "traceLetter",
+        "writeLetter"
+      ],
+      "instruction_ar": "??? ??????",
+      "instruction_en": "Color/discover letters in order; handwriting-first equivalent: trace/write the discovered target letters.",
+      "vocab": [],
+      "items": [],
+      "grammar": [],
+      "sentences": [],
+      "notes": "Color-and-discover enrichment. Paper coloring maps to relaxed trace/write tasks per taxonomy; not a primary vocab source.",
+      "confidence": "medium",
+      "signedOff": false,
+      "fileId": "34",
+      "driveFileId": "1QfPrd-6ubMK8SjiAEzk5J_7HWtdn8YnH",
+      "sourceFile": "لون واكتشف- تلوين جميع الحروف بالترتيب لنحصل على صور.pdf",
+      "renderedImageCount": 26
+    },
+    {
+      "title": "????? ??????",
+      "letters": [
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+      ],
+      "worksheetType": "traceLetter",
+      "exerciseTypesSeen": [
+        "traceLetter"
+      ],
+      "instruction_ar": "????? ??????",
+      "instruction_en": "Letter maze; handwriting-first equivalent is relaxed tracing through/over the target letter path.",
+      "vocab": [],
+      "items": [],
+      "grammar": [],
+      "sentences": [],
+      "notes": "34-page maze/enrichment set. Map to no-fail relaxed traceLetter/letterMaze behavior; no vocab/sentences transcribed.",
+      "confidence": "medium",
+      "signedOff": false,
+      "fileId": "35",
+      "driveFileId": "17FZLvugiiMZVeNpyNNgTg5egH9D20lLY",
+      "sourceFile": "متاهة الحروف.pdf",
+      "renderedImageCount": 34
+    },
+    {
+      "fileId": "36",
+      "title": "مفرد مثنى جمع",
+      "kind": "pdf",
+      "letters": [],
+      "worksheetType": "transformWord",
+      "instruction_ar": "حوّل الكلمة من المفرد إلى المثنى إلى الجمع",
+      "instruction_en": "Transform the word from singular to dual to plural",
+      "vocab": [],
+      "items": [],
+      "grammar": [
+        {
+          "singular": "مَقْلَمَةٌ",
+          "dual": "مَقْلَمَتان",
+          "plural": "مَقَالِمُ"
+        },
+        {
+          "singular": "عُلْبَةٌ",
+          "dual": "عُلْبَتان",
+          "plural": "عُلَبٌ"
+        },
+        {
+          "singular": "مَسْطَرَةٌ",
+          "dual": "مَسْطَرَتان",
+          "plural": "مَسَاطِرُ"
+        },
+        {
+          "singular": "دَفْتَرٌ",
+          "dual": "دَفْتَران",
+          "plural": "دَفَاتِرُ"
+        },
+        {
+          "singular": "قَنِينَةٌ",
+          "dual": "قَنِينَتان",
+          "plural": "قَنَانِيُّ"
+        },
+        {
+          "singular": "بِطْريقٌ",
+          "dual": "بِطْريقان",
+          "plural": "بَطَاريقُ"
+        },
+        {
+          "singular": "شَارِعٌ",
+          "dual": "شارِعان",
+          "plural": "شَوارِعُ"
+        },
+        {
+          "singular": "بُرْجٌ",
+          "dual": "بُرْجان",
+          "plural": "أَبْراجٌ"
+        },
+        {
+          "singular": "جَمَلٌ",
+          "dual": "جَمَلان",
+          "plural": "جِمالٌ"
+        },
+        {
+          "singular": "بَيْتٌ",
+          "dual": "بَيْتان",
+          "plural": "بُيوتٌ"
+        },
+        {
+          "singular": "كَأْسٌ",
+          "dual": "كَأْسان",
+          "plural": "كُؤوسٌ"
+        },
+        {
+          "singular": "طَبيبٌ",
+          "dual": "طَبيبان",
+          "plural": "أَطِبّاءُ"
+        },
+        {
+          "singular": "أَرْنَبٌ",
+          "dual": "أَرْنَبان",
+          "plural": "أَرانِبُ"
+        },
+        {
+          "singular": "ثَوْبٌ",
+          "dual": "ثَوْبان",
+          "plural": "أَثْوابٌ"
+        },
+        {
+          "singular": "كُرَةٌ",
+          "dual": "كُرَتان",
+          "plural": "كُراتٌ"
+        },
+        {
+          "singular": "مُقْعَدٌ",
+          "dual": "مُقْعَدان",
+          "plural": "مَقاعِدُ"
+        },
+        {
+          "singular": "ثُعبانٌ",
+          "dual": "ثُعبانان",
+          "plural": "ثَعابينُ"
+        },
+        {
+          "singular": "صوصٌ",
+          "dual": "صوصان",
+          "plural": "صيصانٌ"
+        },
+        {
+          "singular": "مَلِكٌ",
+          "dual": "مَلِكان",
+          "plural": "مُلوكٌ"
+        },
+        {
+          "singular": "عَلَمٌ",
+          "dual": "عَلَمان",
+          "plural": "أَعْلامٌ"
+        },
+        {
+          "singular": "سُلَّمٌ",
+          "dual": "سُلَّمان",
+          "plural": "سَلالِمُ"
+        },
+        {
+          "singular": "سُلْحفاةٌ",
+          "dual": "سُلْحْفَتان",
+          "plural": "سَلاحِفُ"
+        },
+        {
+          "singular": "ضِفْدَعٌ",
+          "dual": "ضِفْدَعان",
+          "plural": "ضَفادِعُ"
+        },
+        {
+          "singular": "نِجْمَةٌ",
+          "dual": "نِجْمَتان",
+          "plural": "نُجومٌ"
+        },
+        {
+          "singular": "فَأْرٌ",
+          "dual": "فَأْران",
+          "plural": "فِئْرانٌ"
+        },
+        {
+          "singular": "وَرَقَةٌ",
+          "dual": "وَرَقَتان",
+          "plural": "أَوْراقٌ"
+        },
+        {
+          "singular": "ثَعْلَبٌ",
+          "dual": "ثَعْلَبان",
+          "plural": "ثَعالِبُ"
+        }
+      ],
+      "sentences": [],
+      "notes": "Worksheet has no explicit printed instruction line; instruction_ar is an inferred gloss of the singular→dual→plural exercise (flag for owner's mother to confirm wording). Structure: pages 1-5 are picture cards showing one/two/many of each object (no text); page 6 = singular word bank (مفرد), page 7 = dual word bank (مثنى), page 8 = plural word bank (جمع). Page 8 (plural) image is low-resolution; plural forms transcribed by matching column position across pages and by standard MSA plurals — verify especially: قَنانِيُّ (qanini), بَطاريق, مَقالِم, مَساطِر. The columns read right-to-left in 4 columns (8+8+8+3 = 27 triples). صوص (chick) / صيصان is colloquial; mother may prefer كَتْكوت/كَتاكيت. Vowel diacritics on duals/plurals partly inferred where the small image was unclear.",
+      "confidence": "medium",
+      "driveFileId": "1boGr7bj3Yx-sGfeslyUOgOdFHcreBF9V",
+      "sourceFile": "مفرد مثنى جمع_241121_081004.pdf",
+      "renderedImageCount": 8,
+      "exerciseTypesSeen": [
+        "transformWord"
+      ],
+      "signedOff": false
+    },
+    {
+      "title": "??? ??? ?????",
+      "letters": [
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+      ],
+      "worksheetType": "teachCard",
+      "exerciseTypesSeen": [
+        "teachCard",
+        "traceLetter",
+        "writeLetter"
+      ],
+      "instruction_ar": "??? ????? ...",
+      "instruction_en": "All-about-the-letter packet: identify, trace/write, and collect examples for each letter.",
+      "vocab": [],
+      "items": [],
+      "grammar": [],
+      "sentences": [],
+      "notes": "30-page all-about-letter packet. Useful source for per-letter presentation sections and possible vocab, but this pass does not promote unlabeled image nouns to signed vocab.",
+      "confidence": "low",
+      "signedOff": false,
+      "fileId": "37",
+      "driveFileId": "1ZwCbgrXKA0WIW7z5WqS0-iUlUGQIn9aN",
+      "sourceFile": "ملف أنا الحرف.pdf",
+      "renderedImageCount": 30
+    },
+    {
+      "title": "?????",
+      "letters": [
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?",
+        "?"
+      ],
+      "worksheetType": "teachCard",
+      "exerciseTypesSeen": [
+        "teachCard",
+        "traceLetter",
+        "writeLetter",
+        "writeWord"
+      ],
+      "instruction_ar": "?????",
+      "instruction_en": "Curriculum/program overview workbook.",
+      "vocab": [],
+      "items": [],
+      "grammar": [],
+      "sentences": [],
+      "notes": "15-page curriculum overview/workbook. Treated as scope/context source rather than a direct exercise bank; needs mother review for any pedagogical sequencing decisions.",
+      "confidence": "low",
+      "signedOff": false,
+      "fileId": "38",
+      "driveFileId": "1Jg4jCZyyWu3FU0dZnVV4qJVVCc5nz3sh",
+      "sourceFile": "منهاج محتلن.pdf",
+      "renderedImageCount": 15
+    },
+    {
+      "fileId": "39",
+      "title": "ن",
+      "kind": "docx",
+      "letters": [
+        "ن"
+      ],
+      "worksheetType": "traceLetter",
+      "exerciseTypesSeen": [
+        "traceLetter",
+        "teachCard"
+      ],
+      "instruction_ar": "الاسم",
+      "instruction_en": "Name (field at top of worksheet). Trace the letter noon following the dotted strokes and arrows.",
+      "vocab": [
+        {
+          "word": "نَحْلة",
+          "gloss": "bee",
+          "image": "bee illustration (m002, m005)"
+        },
+        {
+          "word": "نَخْلة",
+          "gloss": "palm tree",
+          "image": "palm tree illustration (m004)"
+        }
+      ],
+      "items": [
+        {
+          "word": "ن",
+          "activity": "stroke-order demo: isolated noon (bowl + dot above) with directional arrows"
+        },
+        {
+          "word": "ن",
+          "activity": "traceLetter: top row, six dotted isolated noon bowls to trace, arrows guiding stroke direction"
+        },
+        {
+          "word": "نـ",
+          "activity": "traceLetter: bottom row, six dotted initial/medial noon forms on the baseline to trace"
+        },
+        {
+          "word": "نَحْلة",
+          "activity": "teachCard: keyword picture (bee) illustrating noon"
+        },
+        {
+          "word": "نَخْلة",
+          "activity": "teachCard: keyword picture (palm tree) illustrating noon"
+        }
+      ],
+      "grammar": [],
+      "sentences": [],
+      "notes": "Primary worksheet is m002.jpeg (learnwithanas.blogspot.com). m003.wdp is an unviewable Windows Media Photo file - flagged, not read. m001.gif (cherries), m006.jpg (fire, labeled 'Fire' in English) appear to be unrelated/extra clip art not tied to the noon keyword. m004.png shows the word نَخْلة (palm tree) with palm illustration; m002 shows نَحْلة (bee) with bee illustration - both are valid noon keywords from different source pages bundled in this docx. Forms shown: isolated ن and initial/medial نـ. No full sentences present.",
+      "confidence": "high",
+      "driveFileId": "1JyvGijYOY61CgPhaxwqfKbHK9vM1N3Dg",
+      "sourceFile": "ن.docx",
+      "renderedImageCount": 6,
+      "signedOff": false
+    },
+    {
+      "fileId": "40",
+      "title": "وعي صوتي حرف ال ج",
+      "kind": "docx",
+      "letters": [
+        "ج"
+      ],
+      "worksheetType": "writeLetter",
+      "exerciseTypesSeen": [
+        "writeLetter"
+      ],
+      "instruction_ar": "وعي صوتي: حرف الجيم",
+      "instruction_en": "Phonological awareness: the letter Jeem (ج). Identify pictures whose names contain the /j/ sound.",
+      "vocab": [
+        {
+          "word": "جنزير",
+          "gloss": "chain",
+          "confidence": "low"
+        },
+        {
+          "word": "جرذ",
+          "gloss": "rat / rodent",
+          "confidence": "low"
+        },
+        {
+          "word": "جبل",
+          "gloss": "mountain",
+          "confidence": "medium"
+        },
+        {
+          "word": "جزر",
+          "gloss": "carrot",
+          "confidence": "medium"
+        },
+        {
+          "word": "جمل",
+          "gloss": "camel",
+          "confidence": "medium"
+        }
+      ],
+      "items": [
+        {
+          "word": "جنزير",
+          "position": "initial"
+        },
+        {
+          "word": "جرذ",
+          "position": "initial"
+        },
+        {
+          "word": "جبل",
+          "position": "initial"
+        },
+        {
+          "word": "جزر",
+          "position": "initial"
+        },
+        {
+          "word": "جمل",
+          "position": "initial"
+        }
+      ],
+      "grammar": [],
+      "sentences": [],
+      "notes": "Images are coloring-page clip-art line drawings; NO Arabic word labels are printed on any picture, so all Arabic words are inferred from what the picture depicts (not read), hence low/medium confidence. No sound-position markers shown in any image; 'initial' assigned by best-guess of the standard word. Image inventory: m001.jpg = English alphabet page (M/N/O letters with octopus/mouse/newspaper/mailbox/etc.) — decorative/irrelevant clip-art, NOT a ج item, excluded. m002 = chain (جنزير). m003 = giraffe — Arabic زرافة has NO ج (it has ز); likely NOT a ج item or a mis-embedded image — FLAGGED. m004 = rat/rodent (جرذ). m005 = circus elephant — Arabic فيل has NO ج; likely NOT a ج item — FLAGGED. m006 = mountain (جبل). m007 = carrot (جزر). m008 = camel (جمل). No .wdp/.wmf files present in folder. Overall: Arabic text extraction was garbled and no labels visible, so word assignments are inferred from pictures only.",
+      "confidence": "low",
+      "signedOff": false,
+      "driveFileId": "1Iym-nLMZtwrpmVFQqM1zS40RQdlgoDhB",
+      "sourceFile": "وعي صوتي حرف ال ج.docx",
+      "renderedImageCount": 8
+    },
+    {
+      "fileId": "41",
+      "title": "وعي صوتي سجع",
+      "kind": "pdf",
+      "letters": [],
+      "worksheetType": "writeWord",
+      "exerciseTypesSeen": [
+        "connectWord",
+        "fillBlank"
+      ],
+      "instruction_ar": "مدوا خط بين الصورتين التي على نفس الوزن",
+      "instruction_en": "Draw a line between the two pictures that have the same rhyme/weight (sound ending).",
+      "vocab": [],
+      "items": [
+        {
+          "page": "p002",
+          "instruction_ar": "السجع — مدوا خط بين الصورتين التي على نفس الوزن",
+          "leftColumn_pictures": [
+            "كلب",
+            "علم",
+            "نار",
+            "طائرة"
+          ],
+          "rightColumn_pictures": [
+            "قلم",
+            "سيارة",
+            "قلب",
+            "فأر"
+          ],
+          "rhymeGroups": [
+            [
+              "كلب",
+              "قلب"
+            ],
+            [
+              "علم",
+              "قلم"
+            ],
+            [
+              "نار",
+              "فأر"
+            ]
+          ],
+          "note": "Arabic words inferred from pictures, not printed; line-matching by ending sound. كلب/قلب and علم/قلم rhyme strongly; نار/فأر plausible; طائرة/سيارة a remaining pair."
+        },
+        {
+          "page": "p003",
+          "instruction_ar": "السجع — مدوا خط بين الصورتين التي على نفس الوزن",
+          "leftColumn_pictures": [
+            "خروف",
+            "بنت",
+            "جوز هند",
+            "جمل"
+          ],
+          "rightColumn_pictures": [
+            "جبل",
+            "صوف",
+            "فأس",
+            "لوز"
+          ],
+          "rhymeGroups": [
+            [
+              "خروف",
+              "صوف"
+            ],
+            [
+              "جمل",
+              "جبل"
+            ],
+            [
+              "جوز هند",
+              "لوز"
+            ]
+          ],
+          "note": "Inferred picture words. خروف/صوف and جمل/جبل rhyme; جوز/لوز plausible (final sound). Left 'بنت' (girl face) pairing to فأس (pickaxe) is unclear — low confidence on that pair."
+        },
+        {
+          "page": "p004",
+          "instruction_ar": "ضع إشارة ✓ اذا تشابهت الصور بالسجع ( على نفس الوزن )",
+          "worksheetTask": "fillBlank",
+          "checkboxPairs": [
+            [
+              "قلم",
+              "علم"
+            ],
+            [
+              "فستان",
+              "غابة"
+            ],
+            [
+              "بطة",
+              "شجرة"
+            ],
+            [
+              "جبل",
+              "جمل"
+            ],
+            [
+              "قطة",
+              "قمر"
+            ]
+          ],
+          "note": "Checkbox task: mark ✓ if the two pictures rhyme. قلم/علم rhyme (check); جبل/جمل rhyme (check). Others (فستان/غابة, بطة/شجرة, قطة/قمر) do not clearly rhyme. Picture words inferred."
+        },
+        {
+          "page": "p005",
+          "instruction_ar": "مدوا خط بين الصورتين التي على نفس الوزن",
+          "leftColumn_pictures": [
+            "تفاحة",
+            "كتب",
+            "فتاة تصلّي",
+            "فأر",
+            "خيوط متشابكة"
+          ],
+          "rightColumn_pictures": [
+            "منزل/بيت لعب",
+            "تمساح",
+            "طبلة",
+            "فانوس",
+            "جبال"
+          ],
+          "rhymeGroups": [],
+          "note": "Picture identifications uncertain; intended rhyme pairings not confidently readable from images. Left col bottom (tangled threads) and several right-col items ambiguous. Low confidence on this page's pairings."
+        },
+        {
+          "page": "p006",
+          "instruction_ar": "لائم بين الصورتين اللتان لهما نفس الإيقاع أو الوزن :",
+          "leftColumn_pictures": [
+            "بيت",
+            "جرس",
+            "سيارة",
+            "كوب"
+          ],
+          "rightColumn_pictures": [
+            "حصان",
+            "طائرة",
+            "فستان",
+            "زيت"
+          ],
+          "rhymeGroups": [
+            [
+              "بيت",
+              "زيت"
+            ],
+            [
+              "كوب",
+              "ثوب"
+            ]
+          ],
+          "note": "Match pictures with same rhythm/weight. بيت/زيت rhyme clearly. Other intended pairs (جرس, سيارة, كوب vs حصان, طائرة, فستان) inferred; جرس/حصان and كوب could pair variously — uncertain."
+        },
+        {
+          "page": "p007",
+          "instruction_ar": "مد خطا بين صورتين لهما نفس القافية",
+          "leftColumn_pictures": [
+            "رمان",
+            "طائرة ورقية",
+            "شجرة",
+            "قلم",
+            "بلورة/مصباح",
+            "فيل/مظلة"
+          ],
+          "rightColumn_pictures": [
+            "باب",
+            "قلم/صاروخ",
+            "كأس/مصباح",
+            "سهم",
+            "فطر",
+            "كتاب",
+            "ليمون"
+          ],
+          "rhymeGroups": [],
+          "note": "Match two pictures with same rhyme (قافية). Picture identifications and intended pairings not confidently readable; right column has an arrow graphic suggesting a worked example. Low confidence on specific pairs."
+        }
+      ],
+      "grammar": [],
+      "sentences": [],
+      "notes": "Phonological-awareness rhyme (سجع) worksheet, first grade, by د. ناديا أبو طعمة. All printed INSTRUCTIONS are clearly legible and given in real Arabic by sight. The exercises are picture-matching (draw a line / put a check between pictures that rhyme on the same ending/weight); NO Arabic words are printed beside the pictures — every word in leftColumn/rightColumn/rhymeGroups is INFERRED from the drawn picture and is a best-guess identification, not transcribed text. Confidence high on instructions, lower on inferred picture words and intended pairings (esp. p005 and p007). worksheetType set to 'writeWord' as the closest fit (word-level rhyme task), though the child draws lines/checks rather than writing. signedOff:false.",
+      "signedOff": false,
+      "confidence": "medium",
+      "driveFileId": "1DFlnLNYEyrELqdvU6_mW3mYBJaOUA1Ir",
+      "sourceFile": "وعي صوتي سجع.pdf",
+      "renderedImageCount": 7
+    },
+    {
+      "fileId": "42",
+      "title": "وعي صوتي لجميع الحروف",
+      "kind": "pdf",
+      "letters": [
+        "أ",
+        "ب",
+        "ت",
+        "ث",
+        "ج",
+        "ح",
+        "خ",
+        "د",
+        "ذ",
+        "ر",
+        "ز",
+        "س",
+        "ش",
+        "ص",
+        "ض",
+        "ط",
+        "ع",
+        "غ",
+        "ف",
+        "ق",
+        "ك",
+        "ل",
+        "م",
+        "ن",
+        "ه",
+        "و",
+        "ي",
+        "ظ"
+      ],
+      "worksheetType": "writeLetter",
+      "exerciseTypesSeen": [
+        "writeLetter"
+      ],
+      "instruction_ar": "اكتب الحرف الذي تبدأ به كل صورة",
+      "instruction_en": "Write the letter that each picture begins with (phonological awareness: identify the target sound in each pictured word).",
+      "vocab": [
+        {
+          "ar": "رُمّان",
+          "en": "pomegranate"
+        },
+        {
+          "ar": "أناناس",
+          "en": "pineapple"
+        },
+        {
+          "ar": "طائرة",
+          "en": "airplane"
+        },
+        {
+          "ar": "بُرتقال",
+          "en": "orange (fruit)"
+        },
+        {
+          "ar": "قلم",
+          "en": "pen"
+        },
+        {
+          "ar": "هدية",
+          "en": "gift"
+        },
+        {
+          "ar": "شمس",
+          "en": "sun"
+        },
+        {
+          "ar": "حلوى",
+          "en": "candy"
+        },
+        {
+          "ar": "تفاحة",
+          "en": "apple"
+        },
+        {
+          "ar": "زهرة",
+          "en": "flower"
+        },
+        {
+          "ar": "ثوم",
+          "en": "garlic"
+        },
+        {
+          "ar": "نجوم",
+          "en": "stars"
+        },
+        {
+          "ar": "جزر",
+          "en": "carrot"
+        },
+        {
+          "ar": "يد",
+          "en": "hand"
+        },
+        {
+          "ar": "عنب",
+          "en": "grapes"
+        },
+        {
+          "ar": "حقيبة",
+          "en": "schoolbag"
+        },
+        {
+          "ar": "زيتون",
+          "en": "olives"
+        },
+        {
+          "ar": "خبز",
+          "en": "bread"
+        },
+        {
+          "ar": "مصباح",
+          "en": "lightbulb"
+        },
+        {
+          "ar": "مكنسة",
+          "en": "broom"
+        },
+        {
+          "ar": "غسّالة",
+          "en": "washing machine"
+        },
+        {
+          "ar": "دراجة",
+          "en": "bicycle"
+        },
+        {
+          "ar": "ذرة",
+          "en": "corn"
+        },
+        {
+          "ar": "هاتف",
+          "en": "telephone"
+        },
+        {
+          "ar": "ليمون",
+          "en": "lemon"
+        },
+        {
+          "ar": "باذنجان",
+          "en": "eggplant"
+        },
+        {
+          "ar": "سيارة",
+          "en": "car"
+        },
+        {
+          "ar": "موز",
+          "en": "banana"
+        },
+        {
+          "ar": "جريدة",
+          "en": "newspaper"
+        },
+        {
+          "ar": "فراولة",
+          "en": "strawberry"
+        },
+        {
+          "ar": "دلو",
+          "en": "bucket"
+        },
+        {
+          "ar": "كرسي",
+          "en": "chair"
+        },
+        {
+          "ar": "بطاطا",
+          "en": "potato"
+        },
+        {
+          "ar": "ظرف",
+          "en": "envelope"
+        },
+        {
+          "ar": "ورقة",
+          "en": "sheet of paper"
+        },
+        {
+          "ar": "طماطم",
+          "en": "tomato"
+        }
+      ],
+      "items": [
+        {
+          "letter": "أ",
+          "word": "رُمّان",
+          "position": "medial",
+          "note": "pomegranate; alef as internal long vowel"
+        },
+        {
+          "letter": "أ",
+          "word": "أناناس",
+          "position": "initial"
+        },
+        {
+          "letter": "أ",
+          "word": "طائرة",
+          "position": "medial",
+          "note": "airplane; hamza on alef internal"
+        },
+        {
+          "letter": "ب",
+          "word": "بُرتقال",
+          "position": "initial"
+        },
+        {
+          "letter": "ب",
+          "word": "قلم",
+          "position": "none",
+          "note": "pen pictured; no baa — likely a distractor/non-example"
+        },
+        {
+          "letter": "ب",
+          "word": "هدية",
+          "position": "none",
+          "note": "gift pictured; no baa — likely distractor"
+        },
+        {
+          "letter": "ت",
+          "word": "شمس",
+          "position": "none",
+          "note": "sun pictured; no taa — distractor"
+        },
+        {
+          "letter": "ت",
+          "word": "حلوى",
+          "position": "none",
+          "note": "candy pictured; no taa — distractor"
+        },
+        {
+          "letter": "ت",
+          "word": "تفاحة",
+          "position": "initial"
+        },
+        {
+          "letter": "ث",
+          "word": "زهرة",
+          "position": "none",
+          "note": "flower pictured; no thaa — distractor"
+        },
+        {
+          "letter": "ث",
+          "word": "ثوم",
+          "position": "initial",
+          "note": "garlic"
+        },
+        {
+          "letter": "ث",
+          "word": "نجوم",
+          "position": "none",
+          "note": "stars pictured; no thaa — distractor"
+        },
+        {
+          "letter": "ج",
+          "word": "جزر",
+          "position": "initial",
+          "note": "carrot"
+        },
+        {
+          "letter": "ج",
+          "word": "يد",
+          "position": "none",
+          "note": "hand pictured; no jeem — distractor"
+        },
+        {
+          "letter": "ج",
+          "word": "عنب",
+          "position": "none",
+          "note": "grapes pictured; no jeem — distractor"
+        },
+        {
+          "letter": "ح",
+          "word": "حقيبة",
+          "position": "initial",
+          "note": "schoolbag"
+        },
+        {
+          "letter": "ح",
+          "word": "زيتون",
+          "position": "none",
+          "note": "olives pictured; no haa — distractor"
+        },
+        {
+          "letter": "ح",
+          "word": "بُرتقال",
+          "position": "none",
+          "note": "orange pictured; no haa — distractor"
+        },
+        {
+          "letter": "خ",
+          "word": "خبز",
+          "position": "initial",
+          "note": "bread"
+        },
+        {
+          "letter": "خ",
+          "word": "مصباح",
+          "position": "none",
+          "note": "lightbulb pictured; haa not khaa — distractor"
+        },
+        {
+          "letter": "خ",
+          "word": "طائرة",
+          "position": "none",
+          "note": "airplane pictured; no khaa — distractor"
+        },
+        {
+          "letter": "د",
+          "word": "مكنسة",
+          "position": "none",
+          "note": "broom pictured; no daal — distractor"
+        },
+        {
+          "letter": "د",
+          "word": "غسّالة",
+          "position": "none",
+          "note": "washing machine pictured; no daal — distractor"
+        },
+        {
+          "letter": "د",
+          "word": "دراجة",
+          "position": "initial",
+          "note": "bicycle"
+        },
+        {
+          "letter": "ذ",
+          "word": "ذرة",
+          "position": "initial",
+          "note": "corn"
+        },
+        {
+          "letter": "ذ",
+          "word": "زهرة",
+          "position": "none",
+          "note": "flower pictured; no dhaal — distractor"
+        },
+        {
+          "letter": "ذ",
+          "word": "هاتف",
+          "position": "none",
+          "note": "telephone pictured; no dhaal — distractor"
+        },
+        {
+          "letter": "ر",
+          "word": "حقيبة",
+          "position": "none",
+          "note": "schoolbag pictured; no raa — distractor"
+        },
+        {
+          "letter": "ر",
+          "word": "رُمّان",
+          "position": "initial",
+          "note": "pomegranate"
+        },
+        {
+          "letter": "ر",
+          "word": "ليمون",
+          "position": "none",
+          "note": "lemon pictured; no raa — distractor"
+        },
+        {
+          "letter": "ز",
+          "word": "ثوم",
+          "position": "none",
+          "note": "garlic pictured; no zaay — distractor"
+        },
+        {
+          "letter": "ز",
+          "word": "جريدة",
+          "position": "none",
+          "note": "newspaper pictured; no zaay — distractor"
+        },
+        {
+          "letter": "ز",
+          "word": "زيتون",
+          "position": "initial",
+          "note": "olives"
+        },
+        {
+          "letter": "س",
+          "word": "بُرتقال",
+          "position": "none",
+          "note": "orange pictured; no seen — distractor"
+        },
+        {
+          "letter": "س",
+          "word": "باذنجان",
+          "position": "none",
+          "note": "eggplant pictured; no seen — distractor"
+        },
+        {
+          "letter": "س",
+          "word": "سيارة",
+          "position": "initial",
+          "note": "car"
+        },
+        {
+          "letter": "ش",
+          "word": "شمس",
+          "position": "initial",
+          "note": "sun"
+        },
+        {
+          "letter": "ش",
+          "word": "باذنجان",
+          "position": "none",
+          "note": "eggplant pictured; no sheen — distractor"
+        },
+        {
+          "letter": "ش",
+          "word": "طماطم",
+          "position": "none",
+          "note": "tomato pictured; no sheen — distractor"
+        },
+        {
+          "letter": "ص",
+          "word": "حلوى",
+          "position": "none",
+          "note": "candy pictured; no saad — distractor"
+        },
+        {
+          "letter": "ص",
+          "word": "موز",
+          "position": "none",
+          "note": "banana pictured; no saad — distractor"
+        },
+        {
+          "letter": "ص",
+          "word": "جريدة",
+          "position": "none",
+          "note": "newspaper pictured; no saad — distractor"
+        },
+        {
+          "letter": "ض",
+          "word": "هدية",
+          "position": "none",
+          "note": "gift pictured; no daad — distractor"
+        },
+        {
+          "letter": "ض",
+          "word": "تفاحة",
+          "position": "none",
+          "note": "apple pictured; no daad — distractor"
+        },
+        {
+          "letter": "ط",
+          "word": "طائرة",
+          "position": "initial",
+          "note": "airplane"
+        },
+        {
+          "letter": "ط",
+          "word": "أناناس",
+          "position": "none",
+          "note": "pineapple pictured; no taa(emphatic) — distractor"
+        },
+        {
+          "letter": "ط",
+          "word": "سيارة",
+          "position": "none",
+          "note": "car pictured; no emphatic taa — distractor"
+        },
+        {
+          "letter": "ع",
+          "word": "ورقة",
+          "position": "none",
+          "note": "blank paper pictured; no ayn — distractor"
+        },
+        {
+          "letter": "ع",
+          "word": "عنب",
+          "position": "initial",
+          "note": "grapes"
+        },
+        {
+          "letter": "ع",
+          "word": "خبز",
+          "position": "none",
+          "note": "bread pictured; no ayn — distractor"
+        },
+        {
+          "letter": "غ",
+          "word": "دراجة",
+          "position": "none",
+          "note": "bicycle pictured; no ghayn — distractor"
+        },
+        {
+          "letter": "غ",
+          "word": "شمس",
+          "position": "none",
+          "note": "sun pictured; no ghayn — distractor"
+        },
+        {
+          "letter": "غ",
+          "word": "غسّالة",
+          "position": "initial",
+          "note": "washing machine"
+        },
+        {
+          "letter": "ف",
+          "word": "فراولة",
+          "position": "initial",
+          "note": "strawberry"
+        },
+        {
+          "letter": "ف",
+          "word": "هاتف",
+          "position": "final",
+          "note": "telephone"
+        },
+        {
+          "letter": "ف",
+          "word": "دلو",
+          "position": "none",
+          "note": "bucket pictured; no faa — distractor"
+        },
+        {
+          "letter": "ق",
+          "word": "ذرة",
+          "position": "none",
+          "note": "corn pictured; no qaaf — distractor"
+        },
+        {
+          "letter": "ق",
+          "word": "قلم",
+          "position": "initial",
+          "note": "pen"
+        },
+        {
+          "letter": "ق",
+          "word": "نجوم",
+          "position": "none",
+          "note": "stars pictured; no qaaf — distractor"
+        },
+        {
+          "letter": "ك",
+          "word": "حقيبة",
+          "position": "none",
+          "note": "schoolbag pictured; no kaaf — distractor"
+        },
+        {
+          "letter": "ك",
+          "word": "يد",
+          "position": "none",
+          "note": "hand pictured; no kaaf — distractor"
+        },
+        {
+          "letter": "ك",
+          "word": "كرسي",
+          "position": "initial",
+          "note": "chair"
+        },
+        {
+          "letter": "ل",
+          "word": "غسّالة",
+          "position": "medial",
+          "note": "washing machine"
+        },
+        {
+          "letter": "ل",
+          "word": "ليمون",
+          "position": "initial",
+          "note": "lemon"
+        },
+        {
+          "letter": "ل",
+          "word": "ورقة",
+          "position": "none",
+          "note": "blank paper pictured; no laam — distractor"
+        },
+        {
+          "letter": "م",
+          "word": "دلو",
+          "position": "none",
+          "note": "bucket pictured; no meem — distractor"
+        },
+        {
+          "letter": "م",
+          "word": "حلوى",
+          "position": "none",
+          "note": "candy pictured; no meem — distractor"
+        },
+        {
+          "letter": "م",
+          "word": "موز",
+          "position": "initial",
+          "note": "banana"
+        },
+        {
+          "letter": "ن",
+          "word": "طائرة",
+          "position": "none",
+          "note": "airplane pictured; no noon — distractor"
+        },
+        {
+          "letter": "ن",
+          "word": "نجوم",
+          "position": "initial",
+          "note": "stars"
+        },
+        {
+          "letter": "ن",
+          "word": "أناناس",
+          "position": "medial",
+          "note": "pineapple"
+        },
+        {
+          "letter": "ه",
+          "word": "هاتف",
+          "position": "initial",
+          "note": "telephone"
+        },
+        {
+          "letter": "ه",
+          "word": "جزر",
+          "position": "none",
+          "note": "carrot pictured; no haa — distractor"
+        },
+        {
+          "letter": "ه",
+          "word": "كرسي",
+          "position": "none",
+          "note": "chair pictured; no haa — distractor"
+        },
+        {
+          "letter": "و",
+          "word": "بطاطا",
+          "position": "none",
+          "note": "potato pictured; no waaw — distractor"
+        },
+        {
+          "letter": "و",
+          "word": "فراولة",
+          "position": "medial",
+          "note": "strawberry"
+        },
+        {
+          "letter": "و",
+          "word": "ورقة",
+          "position": "initial",
+          "note": "sheet of paper"
+        },
+        {
+          "letter": "ي",
+          "word": "يد",
+          "position": "initial",
+          "note": "hand"
+        },
+        {
+          "letter": "ي",
+          "word": "هدية",
+          "position": "medial",
+          "note": "gift"
+        },
+        {
+          "letter": "ي",
+          "word": "تفاحة",
+          "position": "none",
+          "note": "apple pictured; no yaa — distractor"
+        },
+        {
+          "letter": "ظ",
+          "word": "مصباح",
+          "position": "none",
+          "note": "lightbulb pictured; no zaa — distractor"
+        },
+        {
+          "letter": "ظ",
+          "word": "ظرف",
+          "position": "initial",
+          "note": "envelope"
+        },
+        {
+          "letter": "ظ",
+          "word": "ثوم",
+          "position": "none",
+          "note": "garlic pictured; no zaa — distractor"
+        }
+      ],
+      "grammar": [],
+      "sentences": [],
+      "notes": "Phonological-awareness flashcard set: one card per Arabic letter (28 letters across pages 1-7; page 8 is an answer/label key strip). Each card shows the target letter plus 3 pictures; the child writes/identifies the target letter and decides which pictured word(s) contain its sound. Cards mix correct examples with distractors, so many items carry position 'none' (target sound absent). Word identities were cross-checked against the labeled Arabic key strip on p008 by sight. Some letters (ض, ظ, ك, ل etc.) had a blank picture cell in the card grid, so fewer than 3 picture-words appear for those. Vocabulary read by sight; common kid nouns. Several distractor mappings are inferred (which 3 pictures sit on which card) and could vary; the correct-example word per letter is high confidence, the distractor assignments are medium confidence. p008 dense answer strip Arabic labels partially small — used for confirmation, not all individually legible.",
+      "confidence": "medium",
+      "signedOff": false,
+      "driveFileId": "1qyUSsp_dQuo8HfW4sDur825cbWLjhrlx",
+      "sourceFile": "وعي صوتي لجميع الحروف.pdf",
+      "renderedImageCount": 8
+    }
+  ],
+  "perLetter": [
+    {
+      "letter": "?",
+      "vocab": [],
+      "exerciseTypesSeen": [
+        "writeLetter",
+        "traceLetter",
+        "teachCard",
+        "writeWord",
+        "completeWord",
+        "connectWord",
+        "fillBlank",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [],
+      "introOrderHint": 28,
+      "sourceFiles": [
+        "01",
+        "06",
+        "09",
+        "11",
+        "12",
+        "16",
+        "17",
+        "23",
+        "24",
+        "26",
+        "27",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "37",
+        "38"
+      ]
+    },
+    {
+      "letter": "ا",
+      "vocab": [
+        "أسد",
+        "أرنب",
+        "فأر",
+        "كأس",
+        "فار",
+        "أفعى",
+        "عصا"
+      ],
+      "exerciseTypesSeen": [
+        "teachCard",
+        "traceLetter",
+        "writeLetter",
+        "connectWord",
+        "completeWord",
+        "fillBlank"
+      ],
+      "grammar": [],
+      "sentences": [],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "02",
+        "07"
+      ]
+    },
+    {
+      "letter": "ب",
+      "vocab": [
+        "بط",
+        "بيت",
+        "دب",
+        "بطة",
+        "باب",
+        "بيضة",
+        "بقرة",
+        "برتقال",
+        "شباك",
+        "أرنب",
+        "برج",
+        "بُرتقال",
+        "قلم",
+        "هدية"
+      ],
+      "exerciseTypesSeen": [
+        "teachCard",
+        "traceLetter",
+        "writeLetter",
+        "connectWord",
+        "completeWord",
+        "fillBlank",
+        "writeWord",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "02",
+        "03",
+        "07",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "ت",
+      "vocab": [
+        "تين",
+        "تاج",
+        "تمر",
+        "بنت",
+        "تفاح",
+        "تمساح",
+        "تلفاز",
+        "كتاب",
+        "برتقال",
+        "بيت",
+        "حوت",
+        "تفاحة",
+        "توت",
+        "سمكة",
+        "سيارة",
+        "ساعة",
+        "فأر",
+        "شمس",
+        "حلوى"
+      ],
+      "exerciseTypesSeen": [
+        "teachCard",
+        "traceLetter",
+        "writeLetter",
+        "connectWord",
+        "completeWord",
+        "fillBlank",
+        "writeWord",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "02",
+        "07",
+        "10",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "ث",
+      "vocab": [
+        "ثعلب",
+        "ثوم",
+        "ثعبان",
+        "ثور",
+        "مثلث",
+        "مثمن",
+        "محراث",
+        "زهرة",
+        "نجوم"
+      ],
+      "exerciseTypesSeen": [
+        "teachCard",
+        "traceLetter",
+        "writeLetter",
+        "connectWord",
+        "completeWord",
+        "fillBlank"
+      ],
+      "grammar": [],
+      "sentences": [],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "02",
+        "07",
+        "42"
+      ]
+    },
+    {
+      "letter": "ك",
+      "vocab": [
+        "كرز",
+        "كلب",
+        "مكتوب",
+        "ديك",
+        "شباك",
+        "كُرَة",
+        "كَرَز",
+        "كَنْغَر",
+        "كَنْز",
+        "كَعْكَة",
+        "كِتاب",
+        "كَلْب",
+        "كَأْس",
+        "سَمَكَة",
+        "كُرْسِيّ",
+        "يَكْتُب",
+        "يَضْحَك",
+        "كُوخ",
+        "شُبّاك",
+        "دُكّان",
+        "كمامة",
+        "حقيبة",
+        "يد",
+        "كرسي"
+      ],
+      "exerciseTypesSeen": [
+        "writeLetter",
+        "teachCard",
+        "traceLetter",
+        "circleLetter",
+        "shortVowelForms",
+        "letterPositionTable",
+        "writeWord",
+        "completeWord",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "03",
+        "07",
+        "20",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "ش",
+      "vocab": [
+        "شمس",
+        "شجرة",
+        "مشط",
+        "ريش",
+        "فراش",
+        "قنفذ",
+        "باذنجان",
+        "طماطم"
+      ],
+      "exerciseTypesSeen": [
+        "writeLetter",
+        "teachCard",
+        "writeWord",
+        "completeWord",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "03",
+        "07",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "ح",
+      "vocab": [
+        "حصان",
+        "حمار",
+        "صحن",
+        "تفاح",
+        "ملح",
+        "خروف",
+        "حافلة",
+        "لحم",
+        "بحر",
+        "حمامة",
+        "بلح",
+        "حليب",
+        "مفتاح",
+        "ضحك",
+        "فرح",
+        "حقيبة",
+        "زيتون",
+        "بُرتقال"
+      ],
+      "exerciseTypesSeen": [
+        "writeLetter",
+        "teachCard",
+        "traceLetter",
+        "writeWord",
+        "completeWord",
+        "connectWord",
+        "fillBlank",
+        "colorPicture",
+        "circleLetter",
+        "underlineWord",
+        "identifyPosition",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "03",
+        "07",
+        "18",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "د",
+      "vocab": [
+        "دودة",
+        "دار",
+        "ضفدع",
+        "قرد",
+        "ولد",
+        "أَسَد",
+        "دَجاجَة",
+        "قِرْد",
+        "صَيّاد",
+        "دب",
+        "دِيناصور",
+        "دراجة",
+        "دائِرة",
+        "ديك",
+        "دجاجة",
+        "أسد",
+        "مكنسة",
+        "غسّالة"
+      ],
+      "exerciseTypesSeen": [
+        "writeLetter",
+        "teachCard",
+        "traceLetter",
+        "colorLetter",
+        "findLetter",
+        "circleLetter",
+        "readWord",
+        "writeWithShortVowels",
+        "writeWord",
+        "completeWord",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "03",
+        "07",
+        "19",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "ف",
+      "vocab": [
+        "فراشة",
+        "فنجان",
+        "عصفور",
+        "هاتف",
+        "دف",
+        "قفص",
+        "فراولة",
+        "دلو"
+      ],
+      "exerciseTypesSeen": [
+        "writeLetter",
+        "teachCard",
+        "writeWord",
+        "completeWord",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "03",
+        "07",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "س",
+      "vocab": [
+        "سلحفاة",
+        "سيارة",
+        "أسود",
+        "شمس",
+        "رأس",
+        "بُرتقال",
+        "باذنجان"
+      ],
+      "exerciseTypesSeen": [
+        "writeLetter",
+        "teachCard",
+        "writeWord",
+        "completeWord",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "03",
+        "07",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "م",
+      "vocab": [
+        "موز",
+        "مفتاح",
+        "نمر",
+        "معلم",
+        "نجوم",
+        "مسجد",
+        "دلو",
+        "حلوى"
+      ],
+      "exerciseTypesSeen": [
+        "writeLetter",
+        "teachCard",
+        "writeWord",
+        "completeWord",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "03",
+        "07",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "ل",
+      "vocab": [
+        "ليمون",
+        "قلم",
+        "فيل",
+        "هلال",
+        "لحم",
+        "لسان",
+        "مكواة",
+        "بصل",
+        "غسّالة",
+        "ورقة"
+      ],
+      "exerciseTypesSeen": [
+        "writeLetter",
+        "teachCard",
+        "traceLetter",
+        "writeWord",
+        "completeWord",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "03",
+        "07",
+        "21",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "أ",
+      "vocab": [
+        "أناناس",
+        "أسد",
+        "رُمّان",
+        "طائرة"
+      ],
+      "exerciseTypesSeen": [
+        "writeLetter",
+        "writeWord",
+        "completeWord",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "03",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "ء",
+      "vocab": [
+        "أرنب",
+        "فأر",
+        "ببغاء",
+        "بئر"
+      ],
+      "exerciseTypesSeen": [
+        "teachCard"
+      ],
+      "grammar": [],
+      "sentences": [],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "07"
+      ]
+    },
+    {
+      "letter": "ج",
+      "vocab": [
+        "جمل",
+        "شجرة",
+        "درج",
+        "ثلج",
+        "عجين",
+        "جوز",
+        "دجاج",
+        "نجمة",
+        "مسجد",
+        "برج",
+        "جنزير",
+        "جرذ",
+        "جبل",
+        "جزر",
+        "يد",
+        "عنب"
+      ],
+      "exerciseTypesSeen": [
+        "teachCard",
+        "traceLetter",
+        "writeLetter",
+        "writeWord",
+        "completeWord",
+        "connectWord",
+        "fillBlank",
+        "colorPicture",
+        "circleLetter",
+        "underlineWord",
+        "identifyPosition",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "07",
+        "18",
+        "28",
+        "40",
+        "42"
+      ]
+    },
+    {
+      "letter": "خ",
+      "vocab": [
+        "خروف",
+        "أخضر",
+        "خوخ",
+        "بطيخ",
+        "دخان",
+        "صاروخ",
+        "رغيف",
+        "خبز",
+        "خيمة",
+        "خرج",
+        "صخرة",
+        "كوخ",
+        "مصباح",
+        "طائرة"
+      ],
+      "exerciseTypesSeen": [
+        "teachCard",
+        "traceLetter",
+        "writeLetter",
+        "writeWord",
+        "completeWord",
+        "connectWord",
+        "fillBlank",
+        "colorPicture",
+        "circleLetter",
+        "underlineWord",
+        "identifyPosition",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "07",
+        "18",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "ذ",
+      "vocab": [
+        "ذئب",
+        "حذاء",
+        "جرذ",
+        "قنفذ",
+        "ذبابة",
+        "ذرة",
+        "زهرة",
+        "هاتف"
+      ],
+      "exerciseTypesSeen": [
+        "teachCard",
+        "writeLetter",
+        "writeWord",
+        "completeWord",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "07",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "ر",
+      "vocab": [
+        "رمان",
+        "أزرق",
+        "دور",
+        "بئر",
+        "ريشة",
+        "رجل",
+        "رسالة",
+        "حقيبة",
+        "رُمّان",
+        "ليمون"
+      ],
+      "exerciseTypesSeen": [
+        "teachCard",
+        "writeLetter",
+        "writeWord",
+        "completeWord",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "07",
+        "25",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "ز",
+      "vocab": [
+        "زيتون",
+        "أزرق",
+        "ماعز",
+        "موز",
+        "ثوم",
+        "جريدة"
+      ],
+      "exerciseTypesSeen": [
+        "teachCard",
+        "writeLetter",
+        "writeWord",
+        "completeWord",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "07",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "ص",
+      "vocab": [
+        "صبر",
+        "عصفور",
+        "قفص",
+        "صوص",
+        "صندوق",
+        "حلوى",
+        "موز",
+        "جريدة"
+      ],
+      "exerciseTypesSeen": [
+        "teachCard",
+        "writeLetter",
+        "writeWord",
+        "completeWord",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "07",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "ض",
+      "vocab": [
+        "ضفدع",
+        "أخضر",
+        "بيض",
+        "بعوض",
+        "هدية",
+        "تفاحة"
+      ],
+      "exerciseTypesSeen": [
+        "teachCard",
+        "writeLetter",
+        "writeWord",
+        "completeWord",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "07",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "ط",
+      "vocab": [
+        "طائرة",
+        "بنطلون",
+        "بط",
+        "وطواط",
+        "طبيب",
+        "أناناس",
+        "سيارة"
+      ],
+      "exerciseTypesSeen": [
+        "teachCard",
+        "traceLetter",
+        "writeLetter",
+        "writeWord",
+        "completeWord",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "07",
+        "13",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "ظ",
+      "vocab": [
+        "ظبي",
+        "مظلة",
+        "استيقظ",
+        "محظوظ",
+        "ظرف",
+        "ظفر",
+        "مصباح",
+        "ثوم"
+      ],
+      "exerciseTypesSeen": [
+        "teachCard",
+        "traceLetter",
+        "writeLetter",
+        "writeWord",
+        "completeWord",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "07",
+        "14",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "ع",
+      "vocab": [
+        "عنب",
+        "ساعة",
+        "إصبع",
+        "شموع",
+        "علم",
+        "كوسا",
+        "ورقة",
+        "خبز"
+      ],
+      "exerciseTypesSeen": [
+        "teachCard",
+        "traceLetter",
+        "writeLetter",
+        "writeWord",
+        "completeWord",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "07",
+        "15",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "غ",
+      "vocab": [
+        "غيمة",
+        "كنغر",
+        "صمغ",
+        "دماغ",
+        "دراجة",
+        "شمس",
+        "غسّالة"
+      ],
+      "exerciseTypesSeen": [
+        "teachCard",
+        "writeLetter",
+        "writeWord",
+        "completeWord",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "07",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "ق",
+      "vocab": [
+        "قمر",
+        "مقص",
+        "إبريق",
+        "زورق",
+        "قفاز",
+        "ذرة",
+        "قلم",
+        "نجوم"
+      ],
+      "exerciseTypesSeen": [
+        "teachCard",
+        "writeLetter",
+        "writeWord",
+        "completeWord",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "07",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "ن",
+      "vocab": [
+        "نار",
+        "سفينة",
+        "قن",
+        "حلزون",
+        "نحلة",
+        "حصان",
+        "ليمون",
+        "نَحْلة",
+        "نَخْلة",
+        "طائرة",
+        "نجوم",
+        "أناناس"
+      ],
+      "exerciseTypesSeen": [
+        "teachCard",
+        "writeLetter",
+        "writeWord",
+        "completeWord",
+        "buildSentence",
+        "traceLetter"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "07",
+        "28",
+        "39",
+        "42"
+      ]
+    },
+    {
+      "letter": "ه",
+      "vocab": [
+        "هاتف",
+        "مهرج",
+        "فراشة",
+        "وردة",
+        "هدية",
+        "سهم",
+        "هلال",
+        "وجه",
+        "فهد",
+        "نهر",
+        "هدى",
+        "هرة",
+        "كهف",
+        "مهر",
+        "مهدد",
+        "فواكه",
+        "جزر",
+        "كرسي"
+      ],
+      "exerciseTypesSeen": [
+        "teachCard",
+        "traceLetter",
+        "connectWord",
+        "fillBlank",
+        "writeLetter",
+        "writeWord",
+        "completeWord",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "07",
+        "22",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "و",
+      "vocab": [
+        "وردة",
+        "ليمون",
+        "دلو",
+        "جرو",
+        "بطاطا",
+        "فراولة",
+        "ورقة"
+      ],
+      "exerciseTypesSeen": [
+        "teachCard",
+        "writeLetter",
+        "writeWord",
+        "completeWord",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "07",
+        "28",
+        "42"
+      ]
+    },
+    {
+      "letter": "ي",
+      "vocab": [
+        "يد",
+        "سرير",
+        "كرسي",
+        "جندي",
+        "هدية",
+        "تفاحة"
+      ],
+      "exerciseTypesSeen": [
+        "teachCard",
+        "writeLetter",
+        "writeWord",
+        "completeWord",
+        "buildSentence"
+      ],
+      "grammar": [],
+      "sentences": [
+        "الجمل حيوان يعيش في الصحراء، وهو قادر على أن يتحمل الجوع والعطش.",
+        "الكلب حيوان نافع للإنسان، يساعده في الحراسة والصيد.",
+        "الضفادع تبيض ولا تلد، صوت الضفدع يسمى نقيقا.",
+        "النحلة تحب الزهرة، تأخذ منها الرحيق لتخرج لنا العسل."
+      ],
+      "introOrderHint": null,
+      "sourceFiles": [
+        "07",
+        "28",
+        "42"
+      ]
+    }
+  ]
+}
