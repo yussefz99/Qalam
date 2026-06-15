@@ -152,13 +152,55 @@ class CurriculumRepository {
     try {
       final snap = await _firestore.collection('letters').get();
       if (snap.docs.isNotEmpty) {
-        return snap.docs.map((d) => letterFromFirestore(d.data())).toList();
+        // Backfill `contextualForms` from the bundle when a Firestore letter
+        // doc lacks them. 07-07 authored the per-positional forms into the
+        // bundled letters.json, but the Firestore seed that pushes them up
+        // (07-07 Task 3) is gated on the owner's-mother sign-off — so docs
+        // seeded earlier (Phase 06.1) carry no contextualForms. The bundle
+        // stays the authored source until Firestore is reseeded; splicing the
+        // bundle's contextualForms (already in [x,y]/bundle shape) into the doc
+        // BEFORE the codec lets Letter.fromJson parse them verbatim. Once
+        // Firestore carries them, the doc's own (non-null) forms win and this
+        // backfill is a no-op.
+        final bundleForms = await _bundleContextualFormsById();
+        return snap.docs.map((d) {
+          final data = Map<String, dynamic>.from(d.data());
+          final id = data['id'];
+          if (data['contextualForms'] == null &&
+              id is String &&
+              bundleForms.containsKey(id)) {
+            data['contextualForms'] = bundleForms[id];
+          }
+          return letterFromFirestore(data);
+        }).toList();
       }
     } catch (_) {
       // network/permission/cold-first-run → fall through to the bundle.
     }
     final raw = await rootBundle.loadString('assets/curriculum/letters.json');
     return _parseLettersJson(raw);
+  }
+
+  /// Map of letterId → its bundled `contextualForms` JSON (bundle/`[x,y]`
+  /// shape), for the Firestore backfill above. Defensive: any read/parse
+  /// failure yields an empty map so the backfill simply does nothing.
+  Future<Map<String, dynamic>> _bundleContextualFormsById() async {
+    try {
+      final raw =
+          await rootBundle.loadString('assets/curriculum/letters.json');
+      final letters = (json.decode(raw) as Map<String, dynamic>)['letters']
+          as List<dynamic>;
+      final out = <String, dynamic>{};
+      for (final l in letters) {
+        final m = l as Map<String, dynamic>;
+        final id = m['id'];
+        final cf = m['contextualForms'];
+        if (id is String && cf != null) out[id] = cf;
+      }
+      return out;
+    } catch (_) {
+      return const <String, dynamic>{};
+    }
   }
 
   Future<List<Lesson>> _loadLessonsFromFirestoreOrBundle() async {
