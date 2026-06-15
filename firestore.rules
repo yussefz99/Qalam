@@ -14,6 +14,13 @@ rules_version = '2';
 //         the deny-by-default catch-all blocks any such path. Child data stays
 //         in local Drift only — zero child PII surface in Firestore.
 //
+// Phase 07 — learning engine (Schema v2). The new curriculum collections
+//   words/{wordId}, exercises/{exerciseId}, units/{letterId}
+// INHERIT the same posture as letters/lessons/meta: read-requires-auth +
+// all client writes denied (D-10). They are curriculum content, written only
+// via the admin-SDK tooling; no child data lives in them (D-11 preserved — the
+// deny-by-default catch-all still blocks any child-data path).
+//
 // v2 custom-claim seam: when roles (parent/admin/tutor) arrive, tighten the
 // write rules by uncommenting and adapting the role guard shown inline below.
 // Until then every collection is read-requires-auth + write-denied.
@@ -46,9 +53,34 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Schema v2: words — readable by any signed-in identity; no client writes
+    // (curriculum content, seeded/edited only via the admin-SDK tooling).
+    match /words/{wordId} {
+      allow read: if request.auth != null;
+      // v2 custom-claim seam:
+      //   allow write: if request.auth.token.role == 'admin';
+      allow write: if false;
+    }
+
+    // Schema v2: exercises — same policy as words.
+    match /exercises/{exerciseId} {
+      allow read: if request.auth != null;
+      // v2 custom-claim seam:
+      //   allow write: if request.auth.token.role == 'admin';
+      allow write: if false;
+    }
+
+    // Schema v2: units (per-letter unit config, units/{letterId}) — same policy.
+    match /units/{letterId} {
+      allow read: if request.auth != null;
+      // v2 custom-claim seam:
+      //   allow write: if request.auth.token.role == 'admin';
+      allow write: if false;
+    }
+
     // Deny-by-default catch-all. Any path not explicitly matched above —
     // including any future/accidental child-data path (D-11) — is denied for
-    // both read and write to every client.
+    // both read and write to every client. MUST stay LAST.
     match /{document=**} {
       allow read, write: if false;
     }
