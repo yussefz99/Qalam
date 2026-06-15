@@ -41,9 +41,15 @@ List<Map<String, dynamic>> encodePoints(List<dynamic> pairs) {
 
 /// Decode a list of `{"x": x, "y": y}` maps back to `[x, y]` pairs
 /// (Firestore shape -> JSON/bundle shape). Tolerant of Firestore ints
-/// (e.g. `y == 1`) by casting `num -> double`.
+/// (e.g. `y == 1`) by casting `num -> double`. Also tolerant of points that
+/// are ALREADY in `[x, y]` list form — so a bundle-backfilled contextualForms
+/// subtree (spliced into a Firestore letter doc by the repository when the live
+/// doc predates the forms) passes through untouched instead of throwing.
 List<List<double>> decodePoints(List<dynamic> maps) {
   return maps.map((m) {
+    if (m is List) {
+      return <double>[(m[0] as num).toDouble(), (m[1] as num).toDouble()];
+    }
     final point = m as Map<String, dynamic>;
     return <double>[
       (point['x'] as num).toDouble(),
@@ -73,6 +79,40 @@ Map<String, dynamic> letterToFirestoreMap(Map<String, dynamic> jsonLetter) {
     return stroke;
   }).toList();
 
+  // Schema v2 §2 — the per-positional contextualForms carry their OWN nested
+  // referenceStrokes[i].points arrays, which hit the same no-nested-arrays rule.
+  // Encode each form's strokes too (07-07). Null slots pass through unchanged.
+  if (jsonLetter['contextualForms'] != null) {
+    out['contextualForms'] =
+        _mapContextualFormStrokes(jsonLetter['contextualForms'], encodePoints);
+  }
+
+  return out;
+}
+
+/// Apply [pointFn] (encodePoints / decodePoints) to every stroke's `points` in
+/// a `contextualForms` map ({formName -> Form|null}). Mirrors the Python codec
+/// (`tools/firebase/point_codec.py`) so seed / export / read all agree.
+Map<String, dynamic> _mapContextualFormStrokes(
+  dynamic contextualForms,
+  List<dynamic> Function(List<dynamic>) pointFn,
+) {
+  final forms = contextualForms as Map<String, dynamic>;
+  final out = <String, dynamic>{};
+  forms.forEach((name, form) {
+    if (form == null) {
+      out[name] = null;
+      return;
+    }
+    final formMap = Map<String, dynamic>.from(form as Map<String, dynamic>);
+    final rawStrokes = formMap['referenceStrokes'] as List<dynamic>? ?? [];
+    formMap['referenceStrokes'] = rawStrokes.map((s) {
+      final stroke = Map<String, dynamic>.from(s as Map<String, dynamic>);
+      stroke['points'] = pointFn(stroke['points'] as List<dynamic>? ?? []);
+      return stroke;
+    }).toList();
+    out[name] = formMap;
+  });
   return out;
 }
 
@@ -92,6 +132,13 @@ Letter letterFromFirestore(Map<String, dynamic> doc) {
     stroke['points'] = decodePoints(rawPoints);
     return stroke;
   }).toList();
+
+  // Decode the per-positional contextualForms strokes back to [x,y] (07-07)
+  // before deferring to Letter.fromJson / Form.fromJson, which expect [x,y].
+  if (doc['contextualForms'] != null) {
+    jsonShaped['contextualForms'] =
+        _mapContextualFormStrokes(doc['contextualForms'], decodePoints);
+  }
 
   return Letter.fromJson(jsonShaped);
 }

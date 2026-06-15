@@ -44,23 +44,55 @@ def decode_points(maps):
 # Letter codec — walk referenceStrokes[].points and apply the transform
 # ---------------------------------------------------------------------------
 
+def _map_form_strokes(form, point_fn):
+    """Apply ``point_fn`` (encode_points/decode_points) to every stroke's points in
+    one contextual Form dict. ``None`` (a missing positional slot) passes through."""
+    if form is None:
+        return None
+    return {
+        **form,
+        "referenceStrokes": [
+            {**stroke, "points": point_fn(stroke.get("points", []))}
+            for stroke in form.get("referenceStrokes", [])
+        ],
+    }
+
+
+def _map_contextual_forms(cf, point_fn):
+    """Apply ``point_fn`` to every form's strokes in a ``contextualForms`` map
+    ({formName -> Form|null}). Schema v2 §2 — the per-positional pen paths that
+    07-07 authored onto baa. Mirrors the Dart codec so seed/export/read agree."""
+    return {name: _map_form_strokes(form, point_fn) for name, form in cf.items()}
+
+
 def encode_letter(letter):
-    """Copy a JSON-shaped letter dict, rewriting every stroke's points to {x,y} maps."""
+    """Copy a JSON-shaped letter dict, rewriting every stroke's points to {x,y} maps —
+    both the top-level referenceStrokes AND the nested contextualForms strokes (so
+    Firestore's no-nested-arrays rule is satisfied for the per-positional forms)."""
     out = dict(letter)
     out["referenceStrokes"] = [
         {**stroke, "points": encode_points(stroke.get("points", []))}
         for stroke in letter.get("referenceStrokes", [])
     ]
+    if letter.get("contextualForms") is not None:
+        out["contextualForms"] = _map_contextual_forms(
+            letter["contextualForms"], encode_points
+        )
     return out
 
 
 def decode_letter(doc):
-    """Copy a Firestore-shaped letter dict, rebuilding every stroke's points to [x,y]."""
+    """Copy a Firestore-shaped letter dict, rebuilding every stroke's points to [x,y] —
+    both top-level referenceStrokes AND nested contextualForms strokes."""
     out = dict(doc)
     out["referenceStrokes"] = [
         {**stroke, "points": decode_points(stroke.get("points", []))}
         for stroke in doc.get("referenceStrokes", [])
     ]
+    if doc.get("contextualForms") is not None:
+        out["contextualForms"] = _map_contextual_forms(
+            doc["contextualForms"], decode_points
+        )
     return out
 
 
@@ -72,11 +104,19 @@ def _normalize_points(letter):
     """Coerce every point coordinate to float so an int y (e.g. 1) compares equal
     to its 1.0 round-trip — the transform is lossless in VALUE, not in JSON int/float
     spelling. Mirrors the Dart codec's num->double cast."""
+    def _norm_strokes(strokes):
+        return [
+            {**stroke, "points": [[float(x), float(y)] for x, y in stroke.get("points", [])]}
+            for stroke in strokes
+        ]
+
     out = dict(letter)
-    out["referenceStrokes"] = [
-        {**stroke, "points": [[float(x), float(y)] for x, y in stroke.get("points", [])]}
-        for stroke in letter.get("referenceStrokes", [])
-    ]
+    out["referenceStrokes"] = _norm_strokes(letter.get("referenceStrokes", []))
+    if letter.get("contextualForms") is not None:
+        out["contextualForms"] = {
+            name: (None if form is None else {**form, "referenceStrokes": _norm_strokes(form.get("referenceStrokes", []))})
+            for name, form in letter["contextualForms"].items()
+        }
     return out
 
 
