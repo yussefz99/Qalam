@@ -1,0 +1,21 @@
+{
+  "fileId": "25",
+  "title": "راء وعي صوتي",
+  "kind": "docx",
+  "letters": ["ر"],
+  "worksheetType": "writeLetter",
+  "exerciseTypesSeen": ["writeLetter"],
+  "instruction_ar": "لون الصورة التي تبدأ بالحرف ر",
+  "instruction_en": "Color the picture that begins with the letter raa (ر)",
+  "vocab": ["ريشة", "رجل", "رمان", "رسالة"],
+  "items": [
+    {"word": "ريشة", "position": "initial"},
+    {"word": "رجل", "position": "initial"},
+    {"word": "رمان", "position": "initial"},
+    {"word": "رسالة", "position": "initial"}
+  ],
+  "grammar": [],
+  "sentences": [],
+  "notes": "Phonological-awareness worksheet for letter ر. Content-bearing images: m004.jpg (instruction 'لون الصورة التي تبدأ بالحرف ر' with green ر letter and picture circles: sailboat قارب, man رجل, pillow مخدة, envelope رسالة, pomegranate رمان — child colors those starting with ر) and m001.jpg (composite of 4 labeled pictures: feather ريشة, man رجل, pomegranate رمان, plus one unlabeled curved shape top-right). Word labels in m001 read by sight; m004 picture words (قارب/مخدة/رسالة) inferred from the pictures since they are unlabeled circles. رسالة (envelope) and رمان and رجل are the correct ر-initial answers. m002.jpg is an unrelated English ABC sheet (M/N/O: octopus, newspaper, mouse, oval, needle, mailbox), watermarked superanimy.net — decorative/clip-art filler. m003.jpeg (rat), m005.jpeg (boy face), m006.gif (pomegranate outline), m007.gif (leg) are unlabeled coloring clip-art with no Arabic text. No .wdp/.wmf files present.",
+  "confidence": "medium"
+}

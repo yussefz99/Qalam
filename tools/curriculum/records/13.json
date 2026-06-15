@@ -1,0 +1,21 @@
+{
+  "fileId": "13",
+  "title": "تنقيط حرف الطاء",
+  "kind": "docx",
+  "letters": ["ط"],
+  "worksheetType": "traceLetter",
+  "exerciseTypesSeen": ["traceLetter"],
+  "instruction_ar": "",
+  "instruction_en": "Trace the dotted letter ط (taa). Single-letter dotted-tracing worksheet: a name line (الاسم) at top, a large reference letter and an example picture, the letter shown with stroke-order arrows, then rows of dotted ط to trace over.",
+  "vocab": ["طائرة"],
+  "items": [
+    {"letter": "ط", "word": "طائرة", "activity": "traceLetter — reference: large ط and a picture of an airplane (طائرة, airplane); the example word طائرة is shown with the ط highlighted"},
+    {"letter": "ط", "word": "", "activity": "traceLetter — stroke-order model of ط with directional arrows (dotted start point + arrows)"},
+    {"letter": "ط", "word": "", "activity": "traceLetter — two rows of dotted ط forms to trace over the baseline (left columns plain dotted outline, right columns add stroke-order arrows)"}
+  ],
+  "grammar": [],
+  "sentences": [],
+  "notes": "Single-letter dotted-tracing worksheet for ط (taa). Folder has m001.jpeg (grayscale), m003.jpg (orange-colored, identical layout) and m002.wdp (JPEG-XR, not viewable but a duplicate of the same page by file pattern). No Arabic instruction sentence printed — only the name field (الاسم) heading and the example word طائرة (airplane, matching the airplane illustration). Footer credit: learnwithanas.blogspot.com. Tracing rows show isolated/initial ط form (with the upright stroke) over a baseline; stroke-order arrows indicate write the loop first then the upright stroke. Read by sight; clear.",
+  "confidence": "high",
+  "signedOff": false
+}

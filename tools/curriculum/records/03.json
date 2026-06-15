@@ -1,0 +1,41 @@
+{
+  "fileId": "03",
+  "title": "اختر الصورة المناسبة للحرف",
+  "kind": "pdf",
+  "letters": ["ك", "ش", "ح", "ب", "د", "ف", "س", "م", "ل", "أ"],
+  "worksheetType": "writeLetter",
+  "exerciseTypesSeen": ["writeLetter"],
+  "instruction_ar": "اختر الصورة المناسبة للحرف",
+  "instruction_en": "Choose the picture that matches the letter (the picture whose word begins with that letter).",
+  "vocab": [
+    {"word": "شمس", "gloss": "sun"},
+    {"word": "حصان", "gloss": "horse"},
+    {"word": "بقرة", "gloss": "cow"},
+    {"word": "دودة", "gloss": "worm/caterpillar"},
+    {"word": "فراشة", "gloss": "butterfly"},
+    {"word": "سلحفاة", "gloss": "turtle"},
+    {"word": "كرز", "gloss": "cherry"},
+    {"word": "برتقال", "gloss": "orange"},
+    {"word": "موز", "gloss": "banana"},
+    {"word": "ليمون", "gloss": "lemon"},
+    {"word": "أناناس", "gloss": "pineapple"}
+  ],
+  "items": [
+    {"letter": "ش", "word": "شمس"},
+    {"letter": "ح", "word": "حصان"},
+    {"letter": "ب", "word": "بقرة"},
+    {"letter": "د", "word": "دودة"},
+    {"letter": "ف", "word": "فراشة"},
+    {"letter": "س", "word": "سلحفاة"},
+    {"letter": "ك", "word": "كرز"},
+    {"letter": "ب", "word": "برتقال"},
+    {"letter": "م", "word": "موز"},
+    {"letter": "ل", "word": "ليمون"},
+    {"letter": "أ", "word": "أناناس"}
+  ],
+  "grammar": [],
+  "sentences": [],
+  "notes": "Cut-out matching cards: each card shows one Arabic letter beside a column of 3 small pictures; the child selects the picture whose word begins with the letter. Picture sets repeat across pairs of cards (same 3 images, different target letter), so the intended answer is the one image whose word starts with the card's letter. p001 cards: ك/ش (ball, sun, crab-or-seaweed -> شمس for ش), ح/ب (horse, cat, cow -> حصان/بقرة), د/ف (caterpillar, butterfly, squirrel -> دودة/فراشة). p002 cards: س/ك (turtle, cherry, bread -> سلحفاة/كرز), ب/م (lemon, banana, orange -> برتقال/موز), ل/أ (lemon, pineapple, pear -> ليمون/أناناس). The ك card on p001 and the bread image have no clearly matching answer among their shown pictures (low confidence on those specific pairings). Words inferred from pictures, not printed on the page. p003 is a blank white page (no content).",
+  "confidence": "medium",
+  "signedOff": false
+}

@@ -1,0 +1,29 @@
+{
+  "fileId": "40",
+  "title": "وعي صوتي حرف ال ج",
+  "kind": "docx",
+  "letters": ["ج"],
+  "worksheetType": "writeLetter",
+  "exerciseTypesSeen": ["writeLetter"],
+  "instruction_ar": "وعي صوتي: حرف الجيم",
+  "instruction_en": "Phonological awareness: the letter Jeem (ج). Identify pictures whose names contain the /j/ sound.",
+  "vocab": [
+    {"word": "جنزير", "gloss": "chain", "confidence": "low"},
+    {"word": "جرذ", "gloss": "rat / rodent", "confidence": "low"},
+    {"word": "جبل", "gloss": "mountain", "confidence": "medium"},
+    {"word": "جزر", "gloss": "carrot", "confidence": "medium"},
+    {"word": "جمل", "gloss": "camel", "confidence": "medium"}
+  ],
+  "items": [
+    {"word": "جنزير", "position": "initial"},
+    {"word": "جرذ", "position": "initial"},
+    {"word": "جبل", "position": "initial"},
+    {"word": "جزر", "position": "initial"},
+    {"word": "جمل", "position": "initial"}
+  ],
+  "grammar": [],
+  "sentences": [],
+  "notes": "Images are coloring-page clip-art line drawings; NO Arabic word labels are printed on any picture, so all Arabic words are inferred from what the picture depicts (not read), hence low/medium confidence. No sound-position markers shown in any image; 'initial' assigned by best-guess of the standard word. Image inventory: m001.jpg = English alphabet page (M/N/O letters with octopus/mouse/newspaper/mailbox/etc.) — decorative/irrelevant clip-art, NOT a ج item, excluded. m002 = chain (جنزير). m003 = giraffe — Arabic زرافة has NO ج (it has ز); likely NOT a ج item or a mis-embedded image — FLAGGED. m004 = rat/rodent (جرذ). m005 = circus elephant — Arabic فيل has NO ج; likely NOT a ج item — FLAGGED. m006 = mountain (جبل). m007 = carrot (جزر). m008 = camel (جمل). No .wdp/.wmf files present in folder. Overall: Arabic text extraction was garbled and no labels visible, so word assignments are inferred from pictures only.",
+  "confidence": "low",
+  "signedOff": false
+}

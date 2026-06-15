@@ -1,0 +1,25 @@
+{
+  "fileId": "22",
+  "title": "حرف الهاء",
+  "kind": "docx",
+  "letters": ["ه"],
+  "worksheetType": "traceLetter",
+  "exerciseTypesSeen": ["teachCard", "traceLetter", "connectWord", "fillBlank", "writeLetter"],
+  "instruction_ar": "الاسم: ____   صل غير النقاط واكتب حرف الهاء / ضع دائرة حول الحرف ( هـ / ـهـ / ـه ) / لوّن حرف الهاء / حوّط الصورة التي يحتوي اسمها على الحرف (هـ) ولوّنها",
+  "instruction_en": "Name: ____  Connect the dots and write the letter Haa / Circle the form ( هـ / ـهـ / ـه ) / Color the Haa letter (sort by color) / Circle the pictures whose name contains the letter Haa, and color them.",
+  "vocab": ["هدية", "هاتف", "سهم", "هلال", "وجه", "فهد", "نهر", "هدى", "هرة", "كهف", "مهر", "مهدد"],
+  "items": [
+    {"word": "هدية", "activity": "teachCard", "detail": "Letter header card (m006 / m013): large gray isolated ه shown for tracing, with a gift illustration (هدية, 'gift') to color, the key word «هدية» printed, and a single initial form «هـ» marked with a start-dot and directional arrows showing stroke order."},
+    {"word": "هـ", "activity": "traceLetter", "detail": "Dotted tracing grid (on m006/m013 teach card and on p002): rows of the dotted initial/isolated haa to trace, with grey directional arrows indicating right-to-left stroke direction; later columns add arrows, earlier ones are blank outline."},
+    {"word": "هـ", "activity": "writeLetter", "detail": "p002 top: 5 rows, instruction «صل غير النقاط واكتب حرف الهاء» — connect the dotted haa shapes then write the letter freehand on the baseline."},
+    {"word": "هـ / ـهـ / ـه", "activity": "fillBlank", "detail": "p002 middle: «ضع دائرة حول الحرف ( هـ / ـهـ / ـه )» — circle the correct form of haa (initial / medial / final) within the word bank below."},
+    {"word": "word bank", "activity": "connectWord", "detail": "p002 bottom word bank (two rows) of haa words for the circle/identify task: Row1 — مهدد، هاتف، سهم، هلال، وجه، فهد ; Row2 — هدية، نهر، هدى، هرة، كهف، مهر. Forms span initial (هاتف، هلال، هدية، هدى، هرة), medial (سهم، نهر، كهف، مهر، مهدد، فهد), and final (وجه)."},
+    {"word": "letter sort", "activity": "writeLetter", "detail": "p001: color-by-letter sorting sheet — instruction approx «لوّن حرف الهاء بالأحمر ...» (color the haa forms one color, distractor letters غ/ض/ظ other colors). Picture rows: phone (هاتف), cloud, frog (ضفدع), envelope (ظرف), boy's face — each tagged with a letter (هـ/ـهـ/ـه vs غ، ض، ظ) to identify and color."},
+    {"word": "picture circle", "activity": "connectWord", "detail": "p003: «حوّط الصورة التي يحتوي اسمها على الحرف (هـ) ولوّنها» — circle the pictures whose name contains haa, then color. 3x3 grid: phone (هاتف), monkey, crescent moon (هلال), tiger/zebra, large ه letter, gift (هدية), arrow (سهم), pyramid (هرم), carrot (جزر)."}
+  ],
+  "grammar": [],
+  "sentences": [],
+  "notes": "m007.wdp and m010.wdp are HD Photo (.wdp) format and could NOT be viewed/rendered — need separate conversion to confirm contents. No .wmf present. m006 and m013 are the same gift/هدية teach card (duplicate; m013 is a lower-res copy). Loose embedded clip-art (m001/m002/m015 phone, m003 frog, m004 envelope, m005 boy face, m008 monkey, m009 moon, m011 pyramid, m012 carrot, m014 hoopoe-bird) are vocabulary/coloring art for the p001-p003 picture exercises; several (frog, envelope, monkey, carrot) do NOT contain haa and serve as distractors or generic art. Header school name on p001-p003 read by sight as «مدرسة بن سعيد الابتدائية» (medium confidence). Word bank on p002 read by sight; «مهدد» and «مهر» are lower confidence (small print). p001 color-instruction distractor list (which color for which letter) is small print — medium confidence; distractor letters identified as غ/ض/ظ. Inferred picture-words (هرم pyramid, جزر carrot, هلال moon, سهم arrow) named by sight of the illustration.",
+  "confidence": "medium",
+  "signedOff": false
+}

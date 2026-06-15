@@ -1,0 +1,53 @@
+{
+  "fileId": "20",
+  "title": "حرف الكاف",
+  "kind": "docx",
+  "letters": ["ك"],
+  "worksheetType": "traceLetter",
+  "exerciseTypesSeen": [
+    "traceLetter",
+    "writeLetter",
+    "teachCard",
+    "circleLetter",
+    "shortVowelForms",
+    "letterPositionTable"
+  ],
+  "instruction_ar": "صغيري أكتب حرف الكاف",
+  "instruction_en": "My little one, write the letter kaaf",
+  "vocab": [
+    { "word": "كُرَة", "en": "ball" },
+    { "word": "كَرَز", "en": "cherry" },
+    { "word": "كَنْغَر", "en": "kangaroo" },
+    { "word": "كَنْز", "en": "treasure" },
+    { "word": "كَعْكَة", "en": "cake" },
+    { "word": "كِتاب", "en": "book" },
+    { "word": "كَلْب", "en": "dog" },
+    { "word": "كَأْس", "en": "cup / trophy" },
+    { "word": "سَمَكَة", "en": "fish" },
+    { "word": "كُرْسِيّ", "en": "chair" },
+    { "word": "يَكْتُب", "en": "he writes" },
+    { "word": "يَضْحَك", "en": "he laughs" },
+    { "word": "كُوخ", "en": "hut" },
+    { "word": "شُبّاك", "en": "window" },
+    { "word": "دُكّان", "en": "shop" }
+  ],
+  "items": [
+    { "word": "كُرَة", "activity": "teachCard - color the letter and picture (ball)" },
+    { "word": "كَرَز", "activity": "teachCard - color the picture and letter (cherries)" },
+    { "word": "كَنْغَر", "activity": "teachCard - color the picture and letter (kangaroo)" },
+    { "word": "كَنْز", "activity": "teachCard - short vowels (fatha) forms of kaaf shown around treasure chest" },
+    { "word": "كَعْكَة", "activity": "teachCard - picture card with letter ك (cake)" },
+    { "word": "كِتاب", "activity": "teachCard - picture card with letter ك (book)" },
+    { "word": "كَنْغَر", "activity": "teachCard - picture card with letter ك (kangaroo)" },
+    { "word": "ك", "activity": "traceLetter - dotted isolated forms grid; example كَلْب (dog)" },
+    { "word": "ك", "activity": "traceLetter - large model letter then dotted trace rows; instruction صغيري أكتب حرف الكاف" },
+    { "word": "ك", "activity": "traceLetter - dotted grid with header pictures كُرَة / كَرَز" },
+    { "word": "كَلْب / كَأْس / سَمَكَة", "activity": "letterPositionTable - mark position of ك in each word (dog, cup, fish)" },
+    { "word": "ك", "activity": "writeLetter / letterPositionTable - forms table (منفرد/بداية/وسط/نهاية) with examples كُرْسِيّ، يَكْتُب، يَضْحَك; trace rows for ك ك ـكـ ـك" },
+    { "word": "ك", "activity": "circleLetter - circle every letter ك among many letters; instruction قِف بالتلوين الأحمر على كل حرف (ك)" }
+  ],
+  "grammar": [],
+  "sentences": [],
+  "notes": "16 images total; 12 PNG read by sight, 4 unviewable (.wmf: m005, m006, m015, m016) - flagged and skipped. Worksheet teaches letter kaaf (ك). m001 = large stroke-order trace letter (kaaf with arrows). m002 = circle/color-all-kaaf activity among scattered letters (instruction read by sight: 'put red color on every kaaf', medium confidence on exact wording). m003 = intro teach page with كُرَة, كَرَز, كَنْغَر; bottom row lists example words بداية حرف الكاف: كَلْب كَوْخ كُرْسِيّ شُبّاك دُكّان كَعْكَة. m004 = short-vowel (fatha) forms of kaaf around treasure with word كَنْز. m007-m009 = picture flashcards (كَعْكَة، كِتاب، كَنْغَر). m010 = trace grid, example كَلْب. m011-m012 = trace practice sheets. m013 = letter-position table cards (سمكة، كأس، كلب). m014 = twinkl forms/position table + trace rows with examples كرسي، يكتب، يضحك. Forms shown across worksheet: isolated ك, initial كـ, medial ـكـ, final ـك. Vowel diacritics on some vocab inferred from standard spelling - medium confidence on exact harakat.",
+  "confidence": "medium"
+}

@@ -1,0 +1,21 @@
+{
+  "fileId": "15",
+  "title": "تنقيط حرف العين",
+  "kind": "docx",
+  "letters": ["ع"],
+  "worksheetType": "traceLetter",
+  "exerciseTypesSeen": ["traceLetter"],
+  "instruction_ar": "",
+  "instruction_en": "Trace the dotted letter ع (ayn). Single-letter dotted-tracing worksheet: a name line (الاسم) at top, a large reference letter and an example picture, the letter shown with stroke-order arrows, then rows of dotted ع to trace over.",
+  "vocab": ["عنب"],
+  "items": [
+    {"letter": "ع", "word": "عنب", "activity": "traceLetter — reference: large ع (green) and a picture of a bunch of grapes (عنب, grapes); the example word عنب is shown with the ع highlighted"},
+    {"letter": "ع", "word": "", "activity": "traceLetter — stroke-order model of ع with directional arrows (dotted start point + arrows)"},
+    {"letter": "ع", "word": "", "activity": "traceLetter — two rows of dotted ع forms to trace over the baseline (top row larger isolated/initial ع, bottom row smaller; right columns add stroke-order arrows)"}
+  ],
+  "grammar": [],
+  "sentences": [],
+  "notes": "Single-letter dotted-tracing worksheet for ع (ayn). Folder has m001.jpeg (with green reference letter and orange stroke arrows) and m002.wdp (JPEG-XR, not viewable). No Arabic instruction sentence printed — only the name field (الاسم) heading and the example word عنب (grapes, matching the grapes illustration). Footer credit: learnwithanas.blogspot.com. Tracing rows show the open-headed ع form over a baseline; arrows indicate the head/hook first. Read by sight; clear.",
+  "confidence": "high",
+  "signedOff": false
+}

@@ -1,0 +1,25 @@
+{
+  "fileId": "39",
+  "title": "ن",
+  "kind": "docx",
+  "letters": ["ن"],
+  "worksheetType": "traceLetter",
+  "exerciseTypesSeen": ["traceLetter", "teachCard"],
+  "instruction_ar": "الاسم",
+  "instruction_en": "Name (field at top of worksheet). Trace the letter noon following the dotted strokes and arrows.",
+  "vocab": [
+    { "word": "نَحْلة", "gloss": "bee", "image": "bee illustration (m002, m005)" },
+    { "word": "نَخْلة", "gloss": "palm tree", "image": "palm tree illustration (m004)" }
+  ],
+  "items": [
+    { "word": "ن", "activity": "stroke-order demo: isolated noon (bowl + dot above) with directional arrows" },
+    { "word": "ن", "activity": "traceLetter: top row, six dotted isolated noon bowls to trace, arrows guiding stroke direction" },
+    { "word": "نـ", "activity": "traceLetter: bottom row, six dotted initial/medial noon forms on the baseline to trace" },
+    { "word": "نَحْلة", "activity": "teachCard: keyword picture (bee) illustrating noon" },
+    { "word": "نَخْلة", "activity": "teachCard: keyword picture (palm tree) illustrating noon" }
+  ],
+  "grammar": [],
+  "sentences": [],
+  "notes": "Primary worksheet is m002.jpeg (learnwithanas.blogspot.com). m003.wdp is an unviewable Windows Media Photo file - flagged, not read. m001.gif (cherries), m006.jpg (fire, labeled 'Fire' in English) appear to be unrelated/extra clip art not tied to the noon keyword. m004.png shows the word نَخْلة (palm tree) with palm illustration; m002 shows نَحْلة (bee) with bee illustration - both are valid noon keywords from different source pages bundled in this docx. Forms shown: isolated ن and initial/medial نـ. No full sentences present.",
+  "confidence": "high"
+}
