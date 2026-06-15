@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qalam — The Letter Baa (ب) · Letter Unit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800&family=Noto+Naskh+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="unit.css">
+</head>
+<body>
+<div id="fit">
+  <div class="stage" data-screen-label="Baa Letter Unit">
+
+    <!-- ===== APP BAR ===== -->
+    <div class="appbar">
+      <button class="iconbtn" id="backBtn" aria-label="Back">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+      </button>
+      <div class="kid">
+        <div class="av">L</div>
+        <div><div class="nm">Layla</div><div class="gr">Grade 3</div></div>
+      </div>
+
+      <div class="unitwrap">
+        <div class="unitlbl">Letter Unit <span class="g" dir="rtl">ب</span></div>
+        <div class="ribbon" id="ribbon"></div>
+      </div>
+
+      <button class="iconbtn" id="closeBtn" aria-label="Close unit">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+      </button>
+    </div>
+
+    <!-- ===== BODY ===== -->
+    <div class="body">
+      <!-- LEFT: tutor -->
+      <div class="tutor">
+        <div class="mascot-box" id="mascotBox"></div>
+        <div class="tutor-id"><div class="nm">Qalam</div><div class="role">Your Writing Tutor</div></div>
+        <div class="speech" id="speech"></div>
+        <div class="sound" id="soundBox">
+          <div class="lbl">Sound</div>
+          <div class="row">
+            <div class="glyph" dir="rtl">بَـ</div>
+            <div class="rom">“baa” — <b>buh</b></div>
+            <button class="hearbtn" id="soundHear" aria-label="Hear the sound">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path><path d="M19 5a9 9 0 0 1 0 14"></path></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: activity -->
+      <div class="activity">
+        <div class="headrow">
+          <div class="eyebrow" id="eyebrow"></div>
+          <div class="headline" id="headline"></div>
+        </div>
+        <div class="scene" id="scene"></div>
+        <div class="actions" id="actions"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="unit.js"></script>
+</body>
+</html>

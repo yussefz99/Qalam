@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: 06.1-04 executed on main; 06.1-03 and 06.1-05 remain
+status: executing
 stopped_at: "Completed 06.1-04 (Firestore curriculum repository). Firestore-first read + bundle fallback + validator + .withFirestore seam GREEN; 7 fake_cloud_firestore tests pass, offline-first preserved, API unchanged. Next: 06.1-05 (Firestore rules + device verify); 06.1-03 (Python seed/export) also pending."
-last_updated: "2026-06-14T19:47:04.716Z"
-last_activity: 2026-06-14
+last_updated: "2026-06-15T11:20:47.754Z"
+last_activity: 2026-06-15 -- Phase 07 execution started
 progress:
   total_phases: 14
   completed_phases: 10
-  total_plans: 52
+  total_plans: 59
   completed_plans: 51
   percent: 71
 ---
@@ -21,16 +21,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
-**Current focus:** Phase 06.1 — firebase-curriculum-backend
+**Current focus:** Phase 07 — learning-engine-letter-unit-built-to-the-claude-design-proto
 
 ## Current Position
 
-Phase: 09
-Plan: Not started
+Phase: 07 (learning-engine-letter-unit-built-to-the-claude-design-proto) — EXECUTING
+Plan: 1 of 7
 Phase: 09 (parent-dashboard) — 3/3 complete, verification human_needed (device UAT)
 Phase: 05 (profiles-onboarding) — 4/4 plans complete, verification human_needed (device UAT)
-Status: 06.1-04 executed on main; 06.1-03 and 06.1-05 remain
-Last activity: 2026-06-14
+Status: Executing Phase 07
+Last activity: 2026-06-15 -- Phase 07 execution started
 
 Progress: [█████░░░░░] 54% (7 of 13 tracked phases complete)
 <!-- reconciled 2026-06-11: 13 tracked phases (integer 1-10 + inserted 02.1/02.1.1/03.1). Complete: 1, 2, 02.1, 02.1.1, 3, 03.1, 5. Phase 4 in progress (5/6, 04-06 deferred). Evidence: every plan in those phases has a SUMMARY file; scorer + curriculum repo + models exist in lib/. -->

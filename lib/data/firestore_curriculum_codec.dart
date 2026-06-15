@@ -1,5 +1,8 @@
+import '../models/exercise.dart';
 import '../models/letter.dart';
+import '../models/letter_unit.dart';
 import '../models/lesson.dart';
+import '../models/word.dart';
 
 /// Shared Firestore curriculum codec — the spine that crosses the Firestore
 /// boundary in BOTH directions (D-06 / D-08).
@@ -134,4 +137,33 @@ List<String> metaToleranceRampFromFirestore(Map<String, dynamic> doc) {
     return raw.whereType<String>().toList();
   }
   return <String>[];
+}
+
+// ---------------------------------------------------------------------------
+// Schema v2 codecs — exercises / words / units (SCHEMA-V2.md §4)
+// ---------------------------------------------------------------------------
+//
+// Unlike `letters`, an Exercise/Word/Unit document carries NO nested `[x,y]`
+// point arrays at its top level — the pen-path strokes live on
+// `Letter.contextualForms` and cross the boundary via `letterFromFirestore`.
+// So these three readers are near-identity copies that simply defer to the
+// model `fromJson`, mirroring `lessonFromFirestore`. They exist for symmetry
+// and so the repository's Firestore-read path has one consistent codec seam.
+
+/// Read a Firestore `exercises/{id}` document map into an [Exercise],
+/// deferring to `Exercise.fromJson` (PromptPart polymorphism, structured
+/// Check parse, null teachCard fields — all preserved).
+Exercise exerciseFromFirestore(Map<String, dynamic> doc) {
+  return Exercise.fromJson(Map<String, dynamic>.from(doc));
+}
+
+/// Read a Firestore `words/{id}` document map into a [Word].
+Word wordFromFirestore(Map<String, dynamic> doc) {
+  return Word.fromJson(Map<String, dynamic>.from(doc));
+}
+
+/// Read a Firestore `units/{letterId}` document map into a [LetterUnit]
+/// (sections + their ordered exercise-id lists preserved verbatim).
+LetterUnit unitFromFirestore(Map<String, dynamic> doc) {
+  return LetterUnit.fromJson(Map<String, dynamic>.from(doc));
 }

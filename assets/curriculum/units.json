@@ -1,0 +1,61 @@
+{
+  "_meta": {
+    "title": "Letter Unit baa (ب) — bundled-seed LetterUnit (Schema v2 #8)",
+    "source": "Section ordering per docs/design/prototypes/letter-unit-baa/SCHEMA-BINDINGS.md §B and SCHEMA-V2.md §2 LetterUnit.",
+    "sections": "meet · watchTrace · forms · words · listenWrite · mastery (fixed order). The 6th 'mastery' section is the quiet unit star — no separate exercise config (anti-gamification: one star at true mastery).",
+    "fallbackRole": "Bundled-seed fallback read by CurriculumRepository.getUnit(letterId) when Firestore is empty."
+  },
+  "units": [
+    {
+      "letterId": "baa",
+      "sections": [
+        {
+          "id": "meet",
+          "exercises": [ "baa.teachCard.meet" ]
+        },
+        {
+          "id": "watchTrace",
+          "exercises": [
+            "baa.traceLetter.isolated",
+            "baa.traceLetter.initial",
+            "baa.traceLetter.medial"
+          ]
+        },
+        {
+          "id": "forms",
+          "exercises": [
+            "baa.writeLetter.fromSound",
+            "baa.writeLetter.fromPicture",
+            "baa.writeLetter.writeForm"
+          ]
+        },
+        {
+          "id": "words",
+          "exercises": [
+            "baa.writeWord.dictation",
+            "baa.writeWord.copy",
+            "baa.writeWord.picture",
+            "baa.connectWord.baab",
+            "baa.connectWord.kitaab",
+            "baa.completeWord.middle"
+          ]
+        },
+        {
+          "id": "listenWrite",
+          "exercises": [
+            "baa.transformWord.dual",
+            "baa.transformWord.plural",
+            "baa.transformWord.opposite",
+            "baa.fillBlank.adjective",
+            "baa.buildSentence.hear",
+            "baa.buildSentence.picture"
+          ]
+        },
+        {
+          "id": "mastery",
+          "exercises": []
+        }
+      ]
+    }
+  ]
+}
