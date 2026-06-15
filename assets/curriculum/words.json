@@ -1,0 +1,34 @@
+{
+  "_meta": {
+    "title": "baa-family vocab — bundled-seed Word configs (Schema v2)",
+    "source": "Drafted from the prototype WORDS array (prototype/letter-unit/unit.js): باب/بطة/حليب.",
+    "signedOff": "drafts — audio/image ids are placeholders; recordings & art are an owner deliverable. Plan 07-07 seeds Firestore + the owner's mother signs off.",
+    "fallbackRole": "Bundled-seed fallback read by CurriculumRepository.getWords() when Firestore is empty."
+  },
+  "words": [
+    {
+      "id": "baab",
+      "text": "باب",
+      "audio": "word.baab",
+      "image": "img.door",
+      "gloss": { "en": "door" },
+      "letters": [ "baa", "alif", "baa" ]
+    },
+    {
+      "id": "batta",
+      "text": "بطة",
+      "audio": "word.batta",
+      "image": "img.duck",
+      "gloss": { "en": "duck" },
+      "letters": [ "baa", "taa_marbuta" ]
+    },
+    {
+      "id": "haliib",
+      "text": "حليب",
+      "audio": "word.haliib",
+      "image": "img.milk",
+      "gloss": { "en": "milk" },
+      "letters": [ "haa", "laam", "yaa", "baa" ]
+    }
+  ]
+}
