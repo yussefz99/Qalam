@@ -95,6 +95,12 @@ Widget _build({required ProgressionSnapshot snapshot, String? highlight}) {
           ),
         ),
       ),
+      GoRoute(
+        path: '/unit',
+        builder: (context, state) => Scaffold(
+          body: Text('Unit ${state.uri.queryParameters['letter'] ?? '<none>'}'),
+        ),
+      ),
     ],
   );
 
@@ -254,15 +260,17 @@ void main() {
     //   jeem onwards → genuinely locked (lesson_05 requires lesson_04)
     ProgressionSnapshot scenario() => _snapshot('lesson_03', {'taa'});
 
-    testWidgets('complete node tap → /practice?lesson=<its lesson> (Test 4)',
+    testWidgets('complete node tap → its Letter Unit (taa, Phase 8) (Test 4)',
         (WidgetTester tester) async {
       await _pumpJourney(tester, _build(snapshot: scenario()));
 
       expect(_nodeWidget(tester, 'ت').state, JourneyNodeState.complete);
       await _tapNode(tester, 'ت');
 
-      expect(find.text('Practice lesson_03'), findsOneWidget,
-          reason: 'a complete node must replay ITS OWN lesson (D-12).');
+      // Phase 8: the first three letters (alif/baa/taa) open their full Letter
+      // Unit; a complete one replays its own unit.
+      expect(find.text('Unit taa'), findsOneWidget,
+          reason: 'a complete first-3 node replays ITS OWN Letter Unit.');
     });
 
     testWidgets('current node tap → today\'s lesson (Test 5)',
@@ -286,8 +294,9 @@ void main() {
           reason: 'skipped-before-start alif keeps the future visual (D-07).');
 
       await _tapNode(tester, 'ا');
-      expect(find.text('Practice lesson_01'), findsOneWidget,
-          reason: 'skipped-but-unlocked letters are revisitable (D-05/D-07).');
+      expect(find.text('Unit alif'), findsOneWidget,
+          reason: 'skipped-but-unlocked alif is revisitable and (Phase 8) opens '
+              'its Letter Unit.');
     });
 
     testWidgets(

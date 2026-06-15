@@ -627,6 +627,930 @@
       "check": null,
       "feedback": null,
       "signedOff": true
+    },
+    {
+      "id": "taa.teachCard.meet",
+      "type": "teachCard",
+      "skill": "comprehension",
+      "_note": "SUPPORT section: PromptHeader only, no WriteSurface.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "This card just teaches — the sound and the shapes."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.taa"
+        },
+        {
+          "kind": "image",
+          "imageId": "img.crown",
+          "caption": "تاج · taaj"
+        },
+        {
+          "kind": "forms",
+          "char": "ت",
+          "forms": [
+            "isolated",
+            "initial",
+            "medial",
+            "final"
+          ]
+        }
+      ],
+      "surface": null,
+      "expected": null,
+      "check": null,
+      "feedback": null,
+      "signedOff": true
+    },
+    {
+      "id": "taa.traceLetter.isolated",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Sweep the boat, then two dots on top."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.taa"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "isolated",
+        "demo": true
+      },
+      "expected": {
+        "glyph": {
+          "char": "ت",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "Beautiful — smooth and clean. أحسنت!",
+        "shallowBowl": "A little more curve — try again, slower.",
+        "noDot": "Good shape — now the dots."
+      },
+      "signedOff": true
+    },
+    {
+      "id": "taa.traceLetter.initial",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "The starting taa — flat and low, two dots on top."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.taa"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "initial",
+        "demo": true
+      },
+      "expected": {
+        "glyph": {
+          "char": "ت",
+          "form": "initial"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "Beautiful — smooth and clean. أحسنت!",
+        "shallowBowl": "A little more curve — try again, slower.",
+        "noDot": "Good shape — now the dots."
+      },
+      "signedOff": true
+    },
+    {
+      "id": "taa.traceLetter.medial",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "A little tooth in the middle, two dots above."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.taa"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "medial",
+        "demo": true
+      },
+      "expected": {
+        "glyph": {
+          "char": "ت",
+          "form": "medial"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "Beautiful — smooth and clean. أحسنت!",
+        "shallowBowl": "A little more curve — try again, slower.",
+        "noDot": "Good shape — now the dots."
+      },
+      "signedOff": true
+    },
+    {
+      "id": "taa.writeLetter.fromSound",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen, then write the letter the word starts with."
+        },
+        {
+          "kind": "audio",
+          "audioId": "word.taaj"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ت",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongLetter": "Listen again — which letter makes that sound?"
+      },
+      "signedOff": true
+    },
+    {
+      "id": "taa.writeLetter.fromPicture",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the letter this picture's word starts with."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.crown",
+          "caption": "تاج"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ت",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongLetter": "Listen again — which letter makes that sound?"
+      },
+      "signedOff": true
+    },
+    {
+      "id": "taa.writeLetter.writeForm",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write taa in its isolated form."
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ت",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongLetter": "Listen again — which letter makes that sound?"
+      },
+      "signedOff": true
+    },
+    {
+      "id": "taa.writeWord.dictation",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen and write the whole word."
+        },
+        {
+          "kind": "audio",
+          "audioId": "word.taaj"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "تاج"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "تاج — from memory. Real writing! أحسنت!",
+        "incomplete": "Look again and write all of its letters.",
+        "wrongWord": "That's a different word — look at the picture and try again."
+      },
+      "signedOff": true
+    },
+    {
+      "id": "taa.writeWord.copy",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Copy the word."
+        },
+        {
+          "kind": "text",
+          "text": "توت"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "توت"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "توت — from memory. Real writing! أحسنت!",
+        "incomplete": "Look again and write all of its letters.",
+        "wrongWord": "That's a different word — look at the picture and try again."
+      },
+      "signedOff": true
+    },
+    {
+      "id": "taa.writeWord.picture",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the word for the picture."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.house",
+          "caption": "بيت"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "بيت"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "بيت — from memory. Real writing! أحسنت!",
+        "incomplete": "Look again and write all of its letters.",
+        "wrongWord": "That's a different word — look at the picture and try again."
+      },
+      "signedOff": true
+    },
+    {
+      "id": "taa.connectWord.taaj",
+      "type": "connectWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Join the letters into one connected word."
+        },
+        {
+          "kind": "text",
+          "text": "ت  ا  ج"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "تاج"
+        }
+      },
+      "check": "sequence+joinContinuity",
+      "feedback": {
+        "pass": "تاج — joined beautifully. أحسنت!",
+        "lifted": "Keep the letters joined — one flowing word, no lifts."
+      },
+      "signedOff": true
+    },
+    {
+      "id": "taa.connectWord.bayt",
+      "type": "connectWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Join the letters into one connected word."
+        },
+        {
+          "kind": "text",
+          "text": "ب  ي  ت"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "بيت"
+        }
+      },
+      "check": "sequence+joinContinuity",
+      "feedback": {
+        "pass": "بيت — joined beautifully. أحسنت!",
+        "lifted": "Keep the letters joined — one flowing word, no lifts."
+      },
+      "signedOff": true
+    },
+    {
+      "id": "taa.completeWord.middle",
+      "type": "completeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Fill in the missing taa to finish the word."
+        },
+        {
+          "kind": "text",
+          "text": "توت"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "word": {
+          "text": "توت"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "Complete! أحسنت!",
+        "incomplete": "Fill in the missing letter to finish the word."
+      },
+      "signedOff": true
+    },
+    {
+      "id": "taa.transformWord.dual",
+      "type": "transformWord",
+      "skill": "grammar",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "One becomes two. Write the dual of تاج."
+        },
+        {
+          "kind": "rule",
+          "label": "Dual · مثنى"
+        },
+        {
+          "kind": "text",
+          "text": "تاج"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "تاجان"
+        }
+      },
+      "check": "sequence+transformRule",
+      "feedback": {
+        "pass": "تاجان — أحسنت!",
+        "missingEnding": "Add the ending: تاجان."
+      },
+      "signedOff": true
+    },
+    {
+      "id": "taa.transformWord.plural",
+      "type": "transformWord",
+      "skill": "grammar",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the plural of بيت."
+        },
+        {
+          "kind": "rule",
+          "label": "Plural · جمع"
+        },
+        {
+          "kind": "text",
+          "text": "بيت"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "بيوت"
+        }
+      },
+      "check": "sequence+transformRule",
+      "feedback": {
+        "pass": "بيوت — أحسنت!",
+        "missingEnding": "Add the ending: بيوت."
+      },
+      "signedOff": true
+    },
+    {
+      "id": "taa.transformWord.opposite",
+      "type": "transformWord",
+      "skill": "grammar",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the opposite of تحت."
+        },
+        {
+          "kind": "rule",
+          "label": "Opposite · ضد"
+        },
+        {
+          "kind": "text",
+          "text": "تحت"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "فوق"
+        }
+      },
+      "check": "sequence+transformRule",
+      "feedback": {
+        "pass": "فوق — أحسنت!",
+        "missingEnding": "Add the ending: فوق."
+      },
+      "signedOff": true
+    },
+    {
+      "id": "taa.fillBlank.adjective",
+      "type": "fillBlank",
+      "skill": "vocabulary",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the word that completes the sentence."
+        },
+        {
+          "kind": "text",
+          "text": "تاج"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "تاج"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "Yes! أحسنت!",
+        "wrongWord": "Read the sentence again and pick the word that fits."
+      },
+      "signedOff": true
+    },
+    {
+      "id": "taa.buildSentence.hear",
+      "type": "buildSentence",
+      "skill": "syntax",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen to the sentence, then write it in order."
+        },
+        {
+          "kind": "audio",
+          "audioId": "sentence.attaaj-jamiil"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "sentence"
+      },
+      "expected": {
+        "words": [
+          "التاجُ",
+          "جميل"
+        ]
+      },
+      "check": "order+sequence",
+      "feedback": {
+        "pass": "التاجُ جميل — a whole sentence! أحسنت!",
+        "wrongOrder": "Keep the words in order: التاجُ جميل."
+      },
+      "signedOff": true
+    },
+    {
+      "id": "taa.buildSentence.picture",
+      "type": "buildSentence",
+      "skill": "syntax",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the sentence for the picture, word by word."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.house",
+          "caption": "بيت"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "sentence"
+      },
+      "expected": {
+        "words": [
+          "البيتُ",
+          "كبير"
+        ]
+      },
+      "check": "order+sequence",
+      "feedback": {
+        "pass": "البيتُ كبير — a whole sentence! أحسنت!",
+        "wrongOrder": "Keep the words in order: البيتُ كبير."
+      },
+      "signedOff": true
+    },
+    {
+      "id": "alif.teachCard.meet",
+      "type": "teachCard",
+      "skill": "comprehension",
+      "_note": "SUPPORT section: PromptHeader only, no WriteSurface.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "This card just teaches — the sound and the shapes."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.alif"
+        },
+        {
+          "kind": "image",
+          "imageId": "img.lion",
+          "caption": "أسد · asad"
+        },
+        {
+          "kind": "forms",
+          "char": "ا",
+          "forms": [
+            "isolated",
+            "initial",
+            "medial",
+            "final"
+          ]
+        }
+      ],
+      "surface": null,
+      "expected": null,
+      "check": null,
+      "feedback": null,
+      "signedOff": true
+    },
+    {
+      "id": "alif.traceLetter.isolated",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "One clean line down — top to bottom."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.alif"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "isolated",
+        "demo": true
+      },
+      "expected": {
+        "glyph": {
+          "char": "ا",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "Beautiful — smooth and clean. أحسنت!",
+        "shallowBowl": "A little more curve — try again, slower.",
+        "noDot": "Good shape — now the dots."
+      },
+      "signedOff": true
+    },
+    {
+      "id": "alif.writeLetter.fromSound",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen, then write the letter the word starts with."
+        },
+        {
+          "kind": "audio",
+          "audioId": "word.asad"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ا",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongLetter": "Listen again — which letter makes that sound?"
+      },
+      "signedOff": true
+    },
+    {
+      "id": "alif.writeLetter.writeForm",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write alif — one tall, straight line."
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ا",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongLetter": "Listen again — which letter makes that sound?"
+      },
+      "signedOff": true
+    },
+    {
+      "id": "alif.writeWord.dictation",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen and write the whole word."
+        },
+        {
+          "kind": "audio",
+          "audioId": "word.asad"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "أسد"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "أسد — from memory. Real writing! أحسنت!",
+        "incomplete": "Look again and write all of its letters.",
+        "wrongWord": "That's a different word — look at the picture and try again."
+      },
+      "signedOff": true
+    },
+    {
+      "id": "alif.writeWord.copy",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Copy the word."
+        },
+        {
+          "kind": "text",
+          "text": "أم"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "أم"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "أم — from memory. Real writing! أحسنت!",
+        "incomplete": "Look again and write all of its letters.",
+        "wrongWord": "That's a different word — look at the picture and try again."
+      },
+      "signedOff": true
+    },
+    {
+      "id": "alif.writeWord.picture",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the word for the picture."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.door",
+          "caption": "باب"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "باب"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "باب — from memory. Real writing! أحسنت!",
+        "incomplete": "Look again and write all of its letters.",
+        "wrongWord": "That's a different word — look at the picture and try again."
+      },
+      "signedOff": true
+    },
+    {
+      "id": "alif.connectWord.baab",
+      "type": "connectWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Join the letters into one connected word."
+        },
+        {
+          "kind": "text",
+          "text": "ب  ا  ب"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "باب"
+        }
+      },
+      "check": "sequence+joinContinuity",
+      "feedback": {
+        "pass": "باب — joined beautifully. أحسنت!",
+        "lifted": "Keep the letters joined — one flowing word, no lifts."
+      },
+      "signedOff": true
+    },
+    {
+      "id": "alif.transformWord.dual",
+      "type": "transformWord",
+      "skill": "grammar",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "One becomes two. Write the dual of أسد."
+        },
+        {
+          "kind": "rule",
+          "label": "Dual · مثنى"
+        },
+        {
+          "kind": "text",
+          "text": "أسد"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "أسدان"
+        }
+      },
+      "check": "sequence+transformRule",
+      "feedback": {
+        "pass": "أسدان — أحسنت!",
+        "missingEnding": "Add the ending: أسدان."
+      },
+      "signedOff": true
+    },
+    {
+      "id": "alif.buildSentence.hear",
+      "type": "buildSentence",
+      "skill": "syntax",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen to the sentence, then write it in order."
+        },
+        {
+          "kind": "audio",
+          "audioId": "sentence.alasad-kabiir"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "sentence"
+      },
+      "expected": {
+        "words": [
+          "الأسدُ",
+          "كبير"
+        ]
+      },
+      "check": "order+sequence",
+      "feedback": {
+        "pass": "الأسدُ كبير — a whole sentence! أحسنت!",
+        "wrongOrder": "Keep the words in order: الأسدُ كبير."
+      },
+      "signedOff": true
     }
   ]
 }

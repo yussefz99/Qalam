@@ -11,24 +11,111 @@
       "text": "باب",
       "audio": "word.baab",
       "image": "img.door",
-      "gloss": { "en": "door" },
-      "letters": [ "baa", "alif", "baa" ]
+      "gloss": {
+        "en": "door"
+      },
+      "letters": [
+        "baa",
+        "alif",
+        "baa"
+      ]
     },
     {
       "id": "batta",
       "text": "بطة",
       "audio": "word.batta",
       "image": "img.duck",
-      "gloss": { "en": "duck" },
-      "letters": [ "baa", "taa_marbuta" ]
+      "gloss": {
+        "en": "duck"
+      },
+      "letters": [
+        "baa",
+        "taa_marbuta"
+      ]
     },
     {
       "id": "haliib",
       "text": "حليب",
       "audio": "word.haliib",
       "image": "img.milk",
-      "gloss": { "en": "milk" },
-      "letters": [ "haa", "laam", "yaa", "baa" ]
+      "gloss": {
+        "en": "milk"
+      },
+      "letters": [
+        "haa",
+        "laam",
+        "yaa",
+        "baa"
+      ]
+    },
+    {
+      "id": "taaj",
+      "text": "تاج",
+      "audio": "word.taaj",
+      "image": "img.crown",
+      "gloss": {
+        "en": "crown"
+      },
+      "letters": [
+        "taa",
+        "alif",
+        "jeem"
+      ]
+    },
+    {
+      "id": "tuut",
+      "text": "توت",
+      "audio": "word.tuut",
+      "image": "img.berries",
+      "gloss": {
+        "en": "berries"
+      },
+      "letters": [
+        "taa",
+        "waw",
+        "taa"
+      ]
+    },
+    {
+      "id": "bayt",
+      "text": "بيت",
+      "audio": "word.bayt",
+      "image": "img.house",
+      "gloss": {
+        "en": "house"
+      },
+      "letters": [
+        "baa",
+        "yaa",
+        "taa"
+      ]
+    },
+    {
+      "id": "asad",
+      "text": "أسد",
+      "audio": "word.asad",
+      "image": "img.lion",
+      "gloss": {
+        "en": "lion"
+      },
+      "letters": [
+        "alif",
+        "seen",
+        "daal"
+      ]
+    },
+    {
+      "id": "umm",
+      "text": "أم",
+      "audio": "word.umm",
+      "image": "img.mother",
+      "gloss": {
+        "en": "mother"
+      },
+      "letters": [
+        "alif",
+        "meem"
+      ]
     }
   ]
 }

@@ -684,7 +684,8 @@ class _TodaysLessonCardReader extends ConsumerWidget {
               // `/practice` loop. Every OTHER letter keeps its existing
               // `/practice?lesson=` path until its unit is built — alif's
               // start is untouched. (Deep-link reuse, SC#5.)
-              route: data.letter.id == 'baa'
+              // Phase 8 demo: the first three letters have full Letter Units.
+              route: const {'alif', 'baa', 'taa'}.contains(data.letter.id)
                   ? '/unit?letter=${data.letter.id}'
                   : '/practice?lesson=${data.lessonId}',
             );

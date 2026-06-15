@@ -51,9 +51,14 @@ void main() {
       );
     });
 
-    test('an unknown audioId resolves to null (nothing to play)', () {
-      expect(AssetLetterAudioPlayer.audioAssetFor('does.not.exist'), isNull);
-      expect(AssetLetterAudioPlayer.audioAssetFor('word.haliib'), isNull);
+    test('an unmapped dotted audioId resolves by convention (Phase 8)', () {
+      // Unmapped dotted ids resolve to assets/audio/<id>.mp3 so new letters'
+      // clips play without map maintenance; a missing file degrades to silence
+      // at play time (see playLetter test below), never a thrown error.
+      expect(AssetLetterAudioPlayer.audioAssetFor('word.haliib'),
+          'assets/audio/word.haliib.mp3');
+      expect(AssetLetterAudioPlayer.audioAssetFor('snd.taa'),
+          'assets/audio/snd.taa.mp3');
     });
 
     test('empty / whitespace / foreign-path inputs resolve to null', () {
