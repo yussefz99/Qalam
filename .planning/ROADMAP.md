@@ -431,7 +431,7 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3 — shares app_en.arb with 07-05)*
 
-- [ ] 07-06-PLAN.md — Sections 4-6: Words + Listen & Write (recall gate) + Mastery (one quiet star) + LetterUnit shell (R→L ribbon, resume-aware) + /unit route + home/journey deep-links (CUR-01 / S1-06; SC#1/#2/#5)
+- [x] 07-06-PLAN.md — Sections 4-6: Words + Listen & Write (recall gate) + Mastery (one quiet star) + LetterUnit shell (R→L ribbon, resume-aware) + /unit route + home/journey deep-links (CUR-01 / S1-06; SC#1/#2/#5)
 
 **Wave 5** *(blocked on Wave 4 — human-gated)*
 
@@ -540,7 +540,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 5. Profiles & Onboarding | 4/4 | Complete | - |
 | 6. Lesson Progression & Home | 10/10 | Complete   | 2026-06-14 |
 | 06.1 Firebase Curriculum Backend (INSERTED) | 5/5 | Complete    | 2026-06-14 |
-| 7. Learning Engine & Letter Unit | 5/7 | In Progress|  |
+| 7. Learning Engine & Letter Unit | 6/7 | In Progress|  |
 | 8. Full Curriculum & All Question Types | 0/TBD | Not started | - |
 | 9. Parent Dashboard | 3/3 | Complete    | 2026-06-13 |
 | 10. Offline Hardening & Release | 0/TBD | Not started | - |
