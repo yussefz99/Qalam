@@ -70,6 +70,114 @@
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "contextualForms": {
+        "isolated": {
+          "referenceStrokes": [
+            {
+              "order": 1,
+              "label": "vertical_stroke",
+              "type": "line",
+              "points": [
+                [
+                  0.5,
+                  0.191
+                ],
+                [
+                  0.5,
+                  0.33
+                ],
+                [
+                  0.5,
+                  0.5
+                ],
+                [
+                  0.5,
+                  0.67
+                ],
+                [
+                  0.501,
+                  0.798
+                ]
+              ],
+              "direction": "topToBottom"
+            }
+          ],
+          "commonMistakes": [
+            {
+              "id": "not_straight",
+              "check": "notStraight",
+              "feedback": "Keep alif straight and tall — one clean line down. Try again."
+            },
+            {
+              "id": "too_short",
+              "check": "tooShort",
+              "feedback": "Make it taller — alif reaches from the top line to the bottom."
+            },
+            {
+              "id": "leaning",
+              "check": "leaning",
+              "feedback": "A little straighter — alif stands up tall, it doesn't lean."
+            }
+          ],
+          "tolerances": {
+            "preset": "normal"
+          }
+        },
+        "initial": null,
+        "medial": null,
+        "final": {
+          "referenceStrokes": [
+            {
+              "order": 1,
+              "label": "vertical_stroke",
+              "type": "line",
+              "points": [
+                [
+                  0.5,
+                  0.191
+                ],
+                [
+                  0.5,
+                  0.33
+                ],
+                [
+                  0.5,
+                  0.5
+                ],
+                [
+                  0.5,
+                  0.67
+                ],
+                [
+                  0.501,
+                  0.798
+                ]
+              ],
+              "direction": "topToBottom"
+            }
+          ],
+          "commonMistakes": [
+            {
+              "id": "not_straight",
+              "check": "notStraight",
+              "feedback": "Keep alif straight and tall — one clean line down. Try again."
+            },
+            {
+              "id": "too_short",
+              "check": "tooShort",
+              "feedback": "Make it taller — alif reaches from the top line to the bottom."
+            },
+            {
+              "id": "leaning",
+              "check": "leaning",
+              "feedback": "A little straighter — alif stands up tall, it doesn't lean."
+            }
+          ],
+          "tolerances": {
+            "preset": "normal"
+          }
+        }
       }
     },
     {
@@ -180,7 +288,7 @@
         }
       ],
       "mistakesStatus": "authored",
-      "signedOff": false,
+      "signedOff": true,
       "tolerances": {
         "preset": "normal"
       },
@@ -197,18 +305,54 @@
               "label": "bowl",
               "type": "curve",
               "points": [
-                [0.608, 0.447],
-                [0.619, 0.486],
-                [0.62, 0.524],
-                [0.594, 0.552],
-                [0.551, 0.565],
-                [0.511, 0.569],
-                [0.474, 0.57],
-                [0.436, 0.566],
-                [0.407, 0.559],
-                [0.386, 0.53],
-                [0.381, 0.498],
-                [0.382, 0.46]
+                [
+                  0.608,
+                  0.447
+                ],
+                [
+                  0.619,
+                  0.486
+                ],
+                [
+                  0.62,
+                  0.524
+                ],
+                [
+                  0.594,
+                  0.552
+                ],
+                [
+                  0.551,
+                  0.565
+                ],
+                [
+                  0.511,
+                  0.569
+                ],
+                [
+                  0.474,
+                  0.57
+                ],
+                [
+                  0.436,
+                  0.566
+                ],
+                [
+                  0.407,
+                  0.559
+                ],
+                [
+                  0.386,
+                  0.53
+                ],
+                [
+                  0.381,
+                  0.498
+                ],
+                [
+                  0.382,
+                  0.46
+                ]
               ],
               "direction": "rightToLeft"
             },
@@ -217,7 +361,10 @@
               "label": "dot",
               "type": "dot",
               "points": [
-                [0.498, 0.644]
+                [
+                  0.498,
+                  0.644
+                ]
               ],
               "direction": "tap"
             }
@@ -255,14 +402,38 @@
               "label": "head",
               "type": "curve",
               "points": [
-                [0.74, 0.5],
-                [0.7, 0.535],
-                [0.64, 0.555],
-                [0.57, 0.561],
-                [0.49, 0.561],
-                [0.41, 0.557],
-                [0.34, 0.55],
-                [0.28, 0.547]
+                [
+                  0.74,
+                  0.5
+                ],
+                [
+                  0.7,
+                  0.535
+                ],
+                [
+                  0.64,
+                  0.555
+                ],
+                [
+                  0.57,
+                  0.561
+                ],
+                [
+                  0.49,
+                  0.561
+                ],
+                [
+                  0.41,
+                  0.557
+                ],
+                [
+                  0.34,
+                  0.55
+                ],
+                [
+                  0.28,
+                  0.547
+                ]
               ],
               "direction": "rightToLeft"
             },
@@ -271,7 +442,10 @@
               "label": "dot",
               "type": "dot",
               "points": [
-                [0.52, 0.7]
+                [
+                  0.52,
+                  0.7
+                ]
               ],
               "direction": "tap"
             }
@@ -309,14 +483,38 @@
               "label": "tooth",
               "type": "curve",
               "points": [
-                [0.8, 0.55],
-                [0.72, 0.5],
-                [0.63, 0.455],
-                [0.55, 0.44],
-                [0.47, 0.455],
-                [0.38, 0.5],
-                [0.3, 0.545],
-                [0.22, 0.55]
+                [
+                  0.8,
+                  0.55
+                ],
+                [
+                  0.72,
+                  0.5
+                ],
+                [
+                  0.63,
+                  0.455
+                ],
+                [
+                  0.55,
+                  0.44
+                ],
+                [
+                  0.47,
+                  0.455
+                ],
+                [
+                  0.38,
+                  0.5
+                ],
+                [
+                  0.3,
+                  0.545
+                ],
+                [
+                  0.22,
+                  0.55
+                ]
               ],
               "direction": "rightToLeft"
             },
@@ -325,7 +523,10 @@
               "label": "dot",
               "type": "dot",
               "points": [
-                [0.5, 0.74]
+                [
+                  0.5,
+                  0.74
+                ]
               ],
               "direction": "tap"
             }
@@ -363,16 +564,46 @@
               "label": "bowl_tail",
               "type": "curve",
               "points": [
-                [0.78, 0.46],
-                [0.75, 0.5],
-                [0.7, 0.55],
-                [0.63, 0.59],
-                [0.54, 0.605],
-                [0.45, 0.6],
-                [0.37, 0.58],
-                [0.3, 0.55],
-                [0.25, 0.51],
-                [0.22, 0.47]
+                [
+                  0.78,
+                  0.46
+                ],
+                [
+                  0.75,
+                  0.5
+                ],
+                [
+                  0.7,
+                  0.55
+                ],
+                [
+                  0.63,
+                  0.59
+                ],
+                [
+                  0.54,
+                  0.605
+                ],
+                [
+                  0.45,
+                  0.6
+                ],
+                [
+                  0.37,
+                  0.58
+                ],
+                [
+                  0.3,
+                  0.55
+                ],
+                [
+                  0.25,
+                  0.51
+                ],
+                [
+                  0.22,
+                  0.47
+                ]
               ],
               "direction": "rightToLeft"
             },
@@ -381,7 +612,10 @@
               "label": "dot",
               "type": "dot",
               "points": [
-                [0.48, 0.78]
+                [
+                  0.48,
+                  0.78
+                ]
               ],
               "direction": "tap"
             }
@@ -522,13 +756,411 @@
         }
       ],
       "mistakesStatus": "authored",
-      "signedOff": false,
+      "signedOff": true,
       "tolerances": {
         "preset": "normal"
       },
       "audio": {
         "letter": null,
         "examples": []
+      },
+      "contextualForms": {
+        "isolated": {
+          "referenceStrokes": [
+            {
+              "order": 1,
+              "label": "bowl",
+              "type": "curve",
+              "points": [
+                [
+                  0.608,
+                  0.447
+                ],
+                [
+                  0.619,
+                  0.486
+                ],
+                [
+                  0.62,
+                  0.524
+                ],
+                [
+                  0.594,
+                  0.552
+                ],
+                [
+                  0.551,
+                  0.565
+                ],
+                [
+                  0.511,
+                  0.569
+                ],
+                [
+                  0.474,
+                  0.57
+                ],
+                [
+                  0.436,
+                  0.566
+                ],
+                [
+                  0.407,
+                  0.559
+                ],
+                [
+                  0.386,
+                  0.53
+                ],
+                [
+                  0.381,
+                  0.498
+                ],
+                [
+                  0.382,
+                  0.46
+                ]
+              ],
+              "direction": "rightToLeft"
+            },
+            {
+              "order": 2,
+              "label": "dot1",
+              "type": "dot",
+              "points": [
+                [
+                  0.44,
+                  0.327
+                ]
+              ],
+              "direction": "tap"
+            },
+            {
+              "order": 3,
+              "label": "dot2",
+              "type": "dot",
+              "points": [
+                [
+                  0.56,
+                  0.327
+                ]
+              ],
+              "direction": "tap"
+            }
+          ],
+          "commonMistakes": [
+            {
+              "id": "shallow_bowl",
+              "check": "bowlTooShallow",
+              "feedback": "Your taa needs a deeper boat at the bottom — try again, slower."
+            },
+            {
+              "id": "one_dot",
+              "check": "dotCountWrong",
+              "feedback": "Taa has TWO dots, not one — add the second dot on top."
+            },
+            {
+              "id": "dots_below",
+              "check": "dotPositionWrong",
+              "feedback": "Taa's two dots go ABOVE the boat, not below. Move them up."
+            },
+            {
+              "id": "wrong_stroke_order",
+              "check": "strokeOrderWrong",
+              "feedback": "Draw the boat first, then add the two dots on top."
+            }
+          ],
+          "tolerances": {
+            "preset": "normal"
+          }
+        },
+        "initial": {
+          "referenceStrokes": [
+            {
+              "order": 1,
+              "label": "head",
+              "type": "curve",
+              "points": [
+                [
+                  0.74,
+                  0.5
+                ],
+                [
+                  0.7,
+                  0.535
+                ],
+                [
+                  0.64,
+                  0.555
+                ],
+                [
+                  0.57,
+                  0.561
+                ],
+                [
+                  0.49,
+                  0.561
+                ],
+                [
+                  0.41,
+                  0.557
+                ],
+                [
+                  0.34,
+                  0.55
+                ],
+                [
+                  0.28,
+                  0.547
+                ]
+              ],
+              "direction": "rightToLeft"
+            },
+            {
+              "order": 2,
+              "label": "dot1",
+              "type": "dot",
+              "points": [
+                [
+                  0.45,
+                  0.38
+                ]
+              ],
+              "direction": "tap"
+            },
+            {
+              "order": 3,
+              "label": "dot2",
+              "type": "dot",
+              "points": [
+                [
+                  0.57,
+                  0.38
+                ]
+              ],
+              "direction": "tap"
+            }
+          ],
+          "commonMistakes": [
+            {
+              "id": "shallow_bowl",
+              "check": "bowlTooShallow",
+              "feedback": "Your taa needs a deeper boat at the bottom — try again, slower."
+            },
+            {
+              "id": "one_dot",
+              "check": "dotCountWrong",
+              "feedback": "Taa has TWO dots, not one — add the second dot on top."
+            },
+            {
+              "id": "dots_below",
+              "check": "dotPositionWrong",
+              "feedback": "Taa's two dots go ABOVE the boat, not below. Move them up."
+            },
+            {
+              "id": "wrong_stroke_order",
+              "check": "strokeOrderWrong",
+              "feedback": "Draw the boat first, then add the two dots on top."
+            }
+          ],
+          "tolerances": {
+            "preset": "normal"
+          }
+        },
+        "medial": {
+          "referenceStrokes": [
+            {
+              "order": 1,
+              "label": "tooth",
+              "type": "curve",
+              "points": [
+                [
+                  0.8,
+                  0.55
+                ],
+                [
+                  0.72,
+                  0.5
+                ],
+                [
+                  0.63,
+                  0.455
+                ],
+                [
+                  0.55,
+                  0.44
+                ],
+                [
+                  0.47,
+                  0.455
+                ],
+                [
+                  0.38,
+                  0.5
+                ],
+                [
+                  0.3,
+                  0.545
+                ],
+                [
+                  0.22,
+                  0.55
+                ]
+              ],
+              "direction": "rightToLeft"
+            },
+            {
+              "order": 2,
+              "label": "dot1",
+              "type": "dot",
+              "points": [
+                [
+                  0.45,
+                  0.32
+                ]
+              ],
+              "direction": "tap"
+            },
+            {
+              "order": 3,
+              "label": "dot2",
+              "type": "dot",
+              "points": [
+                [
+                  0.57,
+                  0.32
+                ]
+              ],
+              "direction": "tap"
+            }
+          ],
+          "commonMistakes": [
+            {
+              "id": "shallow_bowl",
+              "check": "bowlTooShallow",
+              "feedback": "Your taa needs a deeper boat at the bottom — try again, slower."
+            },
+            {
+              "id": "one_dot",
+              "check": "dotCountWrong",
+              "feedback": "Taa has TWO dots, not one — add the second dot on top."
+            },
+            {
+              "id": "dots_below",
+              "check": "dotPositionWrong",
+              "feedback": "Taa's two dots go ABOVE the boat, not below. Move them up."
+            },
+            {
+              "id": "wrong_stroke_order",
+              "check": "strokeOrderWrong",
+              "feedback": "Draw the boat first, then add the two dots on top."
+            }
+          ],
+          "tolerances": {
+            "preset": "normal"
+          }
+        },
+        "final": {
+          "referenceStrokes": [
+            {
+              "order": 1,
+              "label": "bowl_tail",
+              "type": "curve",
+              "points": [
+                [
+                  0.78,
+                  0.46
+                ],
+                [
+                  0.75,
+                  0.5
+                ],
+                [
+                  0.7,
+                  0.55
+                ],
+                [
+                  0.63,
+                  0.59
+                ],
+                [
+                  0.54,
+                  0.605
+                ],
+                [
+                  0.45,
+                  0.6
+                ],
+                [
+                  0.37,
+                  0.58
+                ],
+                [
+                  0.3,
+                  0.55
+                ],
+                [
+                  0.25,
+                  0.51
+                ],
+                [
+                  0.22,
+                  0.47
+                ]
+              ],
+              "direction": "rightToLeft"
+            },
+            {
+              "order": 2,
+              "label": "dot1",
+              "type": "dot",
+              "points": [
+                [
+                  0.44,
+                  0.34
+                ]
+              ],
+              "direction": "tap"
+            },
+            {
+              "order": 3,
+              "label": "dot2",
+              "type": "dot",
+              "points": [
+                [
+                  0.56,
+                  0.34
+                ]
+              ],
+              "direction": "tap"
+            }
+          ],
+          "commonMistakes": [
+            {
+              "id": "shallow_bowl",
+              "check": "bowlTooShallow",
+              "feedback": "Your taa needs a deeper boat at the bottom — try again, slower."
+            },
+            {
+              "id": "one_dot",
+              "check": "dotCountWrong",
+              "feedback": "Taa has TWO dots, not one — add the second dot on top."
+            },
+            {
+              "id": "dots_below",
+              "check": "dotPositionWrong",
+              "feedback": "Taa's two dots go ABOVE the boat, not below. Move them up."
+            },
+            {
+              "id": "wrong_stroke_order",
+              "check": "strokeOrderWrong",
+              "feedback": "Draw the boat first, then add the two dots on top."
+            }
+          ],
+          "tolerances": {
+            "preset": "normal"
+          }
+        }
       }
     },
     {

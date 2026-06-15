@@ -39,11 +39,12 @@ void main() {
     expect(empty, isEmpty, reason: 'Letters with no strokes: $empty');
   });
 
-  test('only signed-off letters claim signedOff: true (alif so far)', () {
+  test('only signed-off letters claim signedOff: true (alif + baa so far)', () {
     final signed = letters.where((l) => l.signedOff).map((l) => l.id).toList();
-    expect(signed, ['alif'],
+    expect(signed, ['alif', 'baa', 'taa'],
         reason:
-            'Only alif is signed off; baa-family + full alphabet are DRAFT '
-            '(signedOff:false) until the owner\'s mother signs off. Got: $signed');
+            'alif, baa and taa are signed off (Phase 8 demo, owner authorised 2026-06-15); the '
+            'rest of the alphabet stays DRAFT (signedOff:false) until signed off. '
+            'Got: $signed');
   });
 }

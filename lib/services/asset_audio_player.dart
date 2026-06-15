@@ -84,6 +84,12 @@ class AssetLetterAudioPlayer implements LetterAudioPlayer {
     // (rather than an id) still plays. Scoped to our audio dir so we never try
     // to play an arbitrary asset.
     if (value.startsWith('$_audioDir/')) return value;
+    // Convention fallback (Phase 8): an unmapped dotted audioId (e.g. `snd.taa`,
+    // `word.taaj`) resolves to `assets/audio/<id>.mp3`. If the file is absent the
+    // player swallows the error and degrades to silence — never blocks the child.
+    if (RegExp(r'^[a-z]+(\.[A-Za-z0-9-]+)+$').hasMatch(value)) {
+      return '$_audioDir/$value.mp3';
+    }
     return null;
   }
 

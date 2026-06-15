@@ -394,10 +394,15 @@ class _JourneyScreenState extends ConsumerState<JourneyScreen>
     final lessonId = snapshot.lessonIdByLetterId[letter.id];
     final unlocked =
         lessonId != null && snapshot.unlockedLessonIds.contains(lessonId);
+    // Phase 8 demo: the first three letters (alif/baa/taa) have full Letter
+    // Units and are always reachable, so the demo can open any of them directly
+    // without grinding the unlock chain. (Other letters keep the S1-09 gate.)
+    const demoLetters = {'alif', 'baa', 'taa'};
     final tappable = lessonId != null &&
         (state == JourneyNodeState.complete ||
             state == JourneyNodeState.current ||
-            (state == JourneyNodeState.future && unlocked));
+            (state == JourneyNodeState.future && unlocked) ||
+            demoLetters.contains(letter.id));
     // D-15: only the highlighted node's badge gets the settle animation —
     // and only when it actually started (complete-node allowlist).
     final settling = _settleStarted && letter.id == widget.highlightId;
@@ -410,13 +415,12 @@ class _JourneyScreenState extends ConsumerState<JourneyScreen>
         state: state,
         starSettleScale: settling ? _settleScale : null,
         starSettleOpacity: settling ? _settleOpacity : null,
-        // Plan 07-06: baa's node opens its full 6-section Letter Unit
-        // (`/unit?letter=baa`); every other letter keeps its existing
-        // `/practice?lesson=` path until its unit is built. Deep-link reuse
-        // (SC#5) — the journey nav is otherwise unchanged.
+        // Phase 8 demo: the first three letters (alif/baa/taa) open their full
+        // Letter Units; every other letter keeps the existing `/practice?lesson=`
+        // path until its unit is built. Deep-link reuse (SC#5).
         onTap: tappable
             ? () => context.go(
-                  letter.id == 'baa'
+                  const {'alif', 'baa', 'taa'}.contains(letter.id)
                       ? '/unit?letter=${letter.id}'
                       : '/practice?lesson=$lessonId',
                 )

@@ -92,31 +92,37 @@ void main() {
   });
 
   group('Schema v2 repository — bundled-seed fallback (empty Firestore)', () {
-    test('getExercises() returns the 19 bundled baa configs as typed Exercises',
+    test('getExercises() returns the bundled baa+taa+alif configs as Exercises',
         () async {
       final db = FakeFirebaseFirestore(); // nothing seeded → bundle fallback
       final repo = CurriculumRepository.withFirestore(db);
 
       final exercises = await repo.getExercises();
 
-      expect(exercises, hasLength(19));
+      // Phase 8 demo: baa (19) + taa (19) + alif (10).
+      expect(exercises, hasLength(48));
       expect(exercises, everyElement(isA<Exercise>()));
-      // The bundled seed ships unsigned (content TBD).
-      expect(exercises.every((e) => e.signedOff == false), isTrue);
+      // All three demo letters' configs are signed off.
+      expect(exercises.every((e) => e.signedOff == true), isTrue);
+      expect(exercises.map((e) => e.id),
+          containsAll(['baa.teachCard.meet', 'taa.teachCard.meet', 'alif.teachCard.meet']));
       // The teachCard config parses with null assessed fields.
       final teachCard = exercises.firstWhere((e) => e.type == 'teachCard');
       expect(teachCard.surface, isNull);
       expect(teachCard.check, isNull);
     });
 
-    test('getWords() returns the 3 bundled baa-family vocab words', () async {
+    test('getWords() returns the bundled vocab for the three demo letters',
+        () async {
       final db = FakeFirebaseFirestore();
       final repo = CurriculumRepository.withFirestore(db);
 
       final words = await repo.getWords();
 
-      expect(words, hasLength(3));
-      expect(words.map((w) => w.text), containsAll(['باب', 'بطة', 'حليب']));
+      // baa (باب/بطة/حليب) + taa (تاج/توت/بيت) + alif (أسد/أم); باب shared.
+      expect(words, hasLength(8));
+      expect(words.map((w) => w.text),
+          containsAll(['باب', 'بطة', 'حليب', 'تاج', 'توت', 'بيت', 'أسد', 'أم']));
     });
 
     test('getUnit("baa").sections has the 6 sections in order', () async {

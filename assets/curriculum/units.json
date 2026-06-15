@@ -11,7 +11,9 @@
       "sections": [
         {
           "id": "meet",
-          "exercises": [ "baa.teachCard.meet" ]
+          "exercises": [
+            "baa.teachCard.meet"
+          ]
         },
         {
           "id": "watchTrace",
@@ -49,6 +51,103 @@
             "baa.fillBlank.adjective",
             "baa.buildSentence.hear",
             "baa.buildSentence.picture"
+          ]
+        },
+        {
+          "id": "mastery",
+          "exercises": []
+        }
+      ]
+    },
+    {
+      "letterId": "taa",
+      "sections": [
+        {
+          "id": "meet",
+          "exercises": [
+            "taa.teachCard.meet"
+          ]
+        },
+        {
+          "id": "watchTrace",
+          "exercises": [
+            "taa.traceLetter.isolated",
+            "taa.traceLetter.initial",
+            "taa.traceLetter.medial"
+          ]
+        },
+        {
+          "id": "forms",
+          "exercises": [
+            "taa.writeLetter.fromSound",
+            "taa.writeLetter.fromPicture",
+            "taa.writeLetter.writeForm"
+          ]
+        },
+        {
+          "id": "words",
+          "exercises": [
+            "taa.writeWord.dictation",
+            "taa.writeWord.copy",
+            "taa.writeWord.picture",
+            "taa.connectWord.taaj",
+            "taa.connectWord.bayt",
+            "taa.completeWord.middle"
+          ]
+        },
+        {
+          "id": "listenWrite",
+          "exercises": [
+            "taa.transformWord.dual",
+            "taa.transformWord.plural",
+            "taa.transformWord.opposite",
+            "taa.fillBlank.adjective",
+            "taa.buildSentence.hear",
+            "taa.buildSentence.picture"
+          ]
+        },
+        {
+          "id": "mastery",
+          "exercises": []
+        }
+      ]
+    },
+    {
+      "letterId": "alif",
+      "sections": [
+        {
+          "id": "meet",
+          "exercises": [
+            "alif.teachCard.meet"
+          ]
+        },
+        {
+          "id": "watchTrace",
+          "exercises": [
+            "alif.traceLetter.isolated"
+          ]
+        },
+        {
+          "id": "forms",
+          "exercises": [
+            "alif.writeLetter.fromSound",
+            "alif.writeLetter.writeForm"
+          ]
+        },
+        {
+          "id": "words",
+          "exercises": [
+            "alif.writeWord.dictation",
+            "alif.writeWord.copy",
+            "alif.writeWord.picture",
+            "alif.connectWord.baab"
+          ]
+        },
+        {
+          "id": "listenWrite",
+          "exercises": [
+            "alif.transformWord.dual",
+            "alif.buildSentence.hear"
           ]
         },
         {

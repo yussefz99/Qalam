@@ -240,7 +240,7 @@ void main() {
     // Test 2: card tap navigates with the lesson query param (S1-01)
     // -----------------------------------------------------------------------
     testWidgets(
-        'lesson card tap navigates to /practice?lesson=lesson_01 (Test 2)',
+        'lesson card tap navigates to alif\'s Letter Unit (Phase 8) (Test 2)',
         (WidgetTester tester) async {
       final router = _makeRouter();
       await tester.pumpWidget(_buildHome(router: router));
@@ -253,12 +253,14 @@ void main() {
       await tester.tap(cardFinder);
       await tester.pumpAndSettle();
 
-      expect(find.text('Practice Screen'), findsOneWidget,
-          reason: 'Tapping the lesson card must navigate to /practice.');
+      // Phase 8: alif (today's first letter) now has a full Letter Unit, so the
+      // card opens /unit?letter=alif instead of the thin /practice loop.
+      expect(find.text('Letter Unit Screen'), findsOneWidget,
+          reason: 'Tapping today\'s lesson opens the Letter Unit.');
       expect(
         _location(router),
-        '/practice?lesson=lesson_01',
-        reason: 'the Start is always parameterized with today\'s lesson id.',
+        '/unit?letter=alif',
+        reason: 'the first-3 letters deep-link into their Letter Unit.',
       );
     });
 
@@ -514,7 +516,8 @@ void main() {
 
       await tester.tap(find.byKey(const Key('todaysLessonCard')));
       await tester.pumpAndSettle();
-      expect(_location(router), '/practice?lesson=lesson_01',
+      // Phase 8: alif has a Letter Unit, so even the degraded card opens it.
+      expect(_location(router), '/unit?letter=alif',
           reason: 'the child always has a working Start (T-06-08).');
     });
 
