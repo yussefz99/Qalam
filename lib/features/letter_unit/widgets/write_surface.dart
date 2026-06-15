@@ -30,6 +30,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/exercise_engine/check_result.dart';
 import '../../../core/exercise_engine/exercise_validator.dart';
+import '../../../core/recognition/handwriting_recognizer.dart';
 import '../../../core/recognition/ml_kit_recognizer.dart';
 import '../../../models/exercise.dart';
 import '../../../models/letter.dart';
@@ -106,6 +107,12 @@ class _WriteSurfaceState extends ConsumerState<WriteSurface> {
   Timer? _demoTimer;
   static const Duration _demoDuration = Duration(milliseconds: 2400);
 
+  /// One reused word recogniser (creating/closing one per attempt churns native
+  /// resources and can hang the "thinking" beat). Lazily created, closed once on
+  /// dispose. Recognition is wrapped in a timeout so it NEVER blocks forever.
+  MlKitRecognizer? _recognizer;
+  static const Duration _recognizeTimeout = Duration(seconds: 8);
+
   void _playDemo() {
     _demoTimer?.cancel();
     setState(() => _demoVisible = true);
@@ -117,6 +124,7 @@ class _WriteSurfaceState extends ConsumerState<WriteSurface> {
   @override
   void dispose() {
     _demoTimer?.cancel();
+    _recognizer?.close(); // fire-and-forget native cleanup
     super.dispose();
   }
 
@@ -166,13 +174,21 @@ class _WriteSurfaceState extends ConsumerState<WriteSurface> {
     String? writtenWord;
     if (spec.check?.base == 'sequence' &&
         ref.read(modelDownloadServiceProvider).isReady) {
-      final recognizer = MlKitRecognizer();
+      _recognizer ??= MlKitRecognizer();
+      RecognitionResult res = const RecognitionResult();
       try {
-        final res = await recognizer.identify(pixelStrokes);
-        writtenWord = (res.topCandidate ?? '').trim();
-      } finally {
-        await recognizer.close();
+        res = await _recognizer!.identify(pixelStrokes).timeout(
+              _recognizeTimeout,
+              onTimeout: () => const RecognitionResult(),
+            );
+      } catch (_) {
+        // Any recognition failure → no opinion; never hang or throw out of the
+        // validation handler (which would leave the tutor stuck on "thinking").
+        res = const RecognitionResult();
       }
+      // Model ready but unreadable/timed-out → '' so the validator records a
+      // miss rather than a blind pass.
+      writtenWord = (res.topCandidate ?? '').trim();
     }
 
     final result = await validateExercise(
