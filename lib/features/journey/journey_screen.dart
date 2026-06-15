@@ -410,8 +410,16 @@ class _JourneyScreenState extends ConsumerState<JourneyScreen>
         state: state,
         starSettleScale: settling ? _settleScale : null,
         starSettleOpacity: settling ? _settleOpacity : null,
+        // Plan 07-06: baa's node opens its full 6-section Letter Unit
+        // (`/unit?letter=baa`); every other letter keeps its existing
+        // `/practice?lesson=` path until its unit is built. Deep-link reuse
+        // (SC#5) — the journey nav is otherwise unchanged.
         onTap: tappable
-            ? () => context.go('/practice?lesson=$lessonId')
+            ? () => context.go(
+                  letter.id == 'baa'
+                      ? '/unit?letter=${letter.id}'
+                      : '/practice?lesson=$lessonId',
+                )
             : null,
       ),
     );

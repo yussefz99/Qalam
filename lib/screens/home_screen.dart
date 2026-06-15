@@ -679,7 +679,14 @@ class _TodaysLessonCardReader extends ConsumerWidget {
               glyphAlpha: 0.25 + 0.75 * fraction,
               glyphSemantics: l10n?.homeInkFillSemantics(reps, total) ??
                   '$reps of $total clean reps',
-              route: '/practice?lesson=${data.lessonId}',
+              // Plan 07-06: baa has a full 6-section Letter Unit, so its
+              // today-card opens `/unit?letter=baa` instead of the thin
+              // `/practice` loop. Every OTHER letter keeps its existing
+              // `/practice?lesson=` path until its unit is built — alif's
+              // start is untouched. (Deep-link reuse, SC#5.)
+              route: data.letter.id == 'baa'
+                  ? '/unit?letter=${data.letter.id}'
+                  : '/practice?lesson=${data.lessonId}',
             );
           },
           // Loading: blank glyph + blank title, no spinner chrome (UI-SPEC —
