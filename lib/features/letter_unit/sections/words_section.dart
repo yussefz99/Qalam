@@ -26,6 +26,7 @@ import '../../../models/exercise.dart';
 import '../../../models/letter.dart';
 import '../../../models/word.dart';
 import '../../../providers/audio_providers.dart';
+import '../../../services/asset_image_resolver.dart';
 import '../../../theme/qalam_tokens.dart';
 import '../../../theme/text_styles.dart';
 import '../widgets/exercise_scaffold.dart';
@@ -306,9 +307,13 @@ class WordCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // .pic — the hatched illustration stub (art is Plan 07-07).
+                // .pic — the real illustration when its imageId resolves to a
+                // bundled asset; the hatched stub otherwise (silent degrade).
                 Expanded(
-                  child: _PicStub(caption: word.image ?? word.id),
+                  child: _PicStub(
+                    imageId: word.image,
+                    caption: word.image ?? word.id,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 // .wd — the Arabic word with its baa runs highlighted teal.
@@ -416,23 +421,51 @@ class _HighlightedWord extends StatelessWidget {
   }
 }
 
-/// The hatched illustration stub (real art is Plan 07-07's content job).
+/// `.pic` — the word card's illustration. Renders the REAL art when [imageId]
+/// resolves to a bundled `assets/images/` asset (via [AssetImageResolver]);
+/// otherwise the original hatched stub (the [caption] in a raised chip).
+///
+/// SILENT-DEGRADE (mirrors the audio seam + prompt_header's _ImagePart): an
+/// unmapped imageId resolves to null → the stub; a mapped-but-unloadable file
+/// hits `Image.asset`'s errorBuilder, which reuses the SAME stub. A missing
+/// picture never throws and never blocks tracing.
 class _PicStub extends StatelessWidget {
-  const _PicStub({required this.caption});
+  const _PicStub({required this.caption, this.imageId});
 
+  /// The word's Schema-v2 imageId (e.g. `img.door`), or null when the word has
+  /// no picture. Resolved to a bundled asset path; null → render the stub.
+  final String? imageId;
   final String caption;
 
   @override
   Widget build(BuildContext context) {
+    final String? assetPath =
+        imageId == null ? null : AssetImageResolver.imageAssetFor(imageId!);
     return Container(
       constraints: const BoxConstraints(minHeight: 96),
+      clipBehavior: assetPath == null ? Clip.none : Clip.antiAlias,
       decoration: BoxDecoration(
         color: QalamTokens.softAqua,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: QalamTokens.aquaEdge),
       ),
       alignment: Alignment.center,
-      child: Container(
+      child: assetPath == null
+          ? _stubChip()
+          : Image.asset(
+              assetPath,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+              errorBuilder: (context, error, stack) => _stubChip(),
+            ),
+    );
+  }
+
+  /// The original hatched chip — the caption text in a raised rounded box.
+  /// Shared by the no-image branch and the load-error fallback so degrade looks
+  /// identical whether the id is unmapped or the file fails to load.
+  Widget _stubChip() => Container(
         padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
         decoration: BoxDecoration(
           color: QalamTokens.surfaceRaised.withValues(alpha: 0.82),
@@ -445,9 +478,7 @@ class _PicStub extends StatelessWidget {
             color: QalamTokens.fgMuted,
           ),
         ),
-      ),
-    );
-  }
+      );
 }
 
 /// `.wordcard .play` — the round offline Play button on a word card.

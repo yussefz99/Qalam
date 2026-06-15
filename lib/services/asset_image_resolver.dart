@@ -37,14 +37,25 @@ class AssetImageResolver {
 
   /// imageId → asset path under [_imageDir], for the baa Letter Unit.
   ///
-  /// EXACTLY the three EXERCISE-CONFIGS imageIds the baa unit references
-  /// (`img.door` باب "door", `img.duck` بطة "duck", `img.big-door` the
-  /// البابُ كبير "the door is big" sentence scene), each keyed to its on-disk
-  /// `.webp` file. Add a new entry (and its file) to wire another illustration.
+  /// The imageIds the baa unit references across its content
+  /// (`assets/curriculum/words.json` + `exercises.json`):
+  ///   • `img.door`     باب "door"  — words grid + writeWord/teachCard prompts
+  ///   • `img.duck`     بطة "duck"  — words grid + writeLetter prompt
+  ///   • `img.milk`     حليب "milk" — words grid  (ART PENDING, see below)
+  ///   • `img.big-door`            — the البابُ كبير "the door is big" scene
+  ///
+  /// Each is keyed to its on-disk `.webp`. Add a new entry (and its file) to
+  /// wire another illustration. PLACEHOLDER-SWAPPABLE: an entry may be mapped
+  /// before its file exists — `img.milk` has no committed art yet, so it
+  /// resolves to a path that fails to load and silently degrades to the hatched
+  /// stub (mirrors assets/audio/README.md's "NOT YET RECORDED" `word.haliib`).
+  /// Dropping `img.milk.webp` into `assets/images/` later renders it with no
+  /// code change.
   static const Map<String, String> _imageIdToAsset = <String, String>{
     'img.door': '$_imageDir/img.door.webp',
     'img.duck': '$_imageDir/img.duck.webp',
     'img.big-door': '$_imageDir/img.big-door.webp',
+    'img.milk': '$_imageDir/img.milk.webp', // ART PENDING — degrades to stub
   };
 
   /// Pure resolver: maps an [imageId] to a bundled asset path, or null when

@@ -33,6 +33,17 @@ void main() {
       );
     });
 
+    test('img.milk maps even though its art is not committed yet '
+        '(placeholder-swappable; degrades to stub until the file lands)', () {
+      // The Words-with-Baa grid references img.milk (حليب). Mapping it before
+      // the .webp exists means dropping the file in later needs no code change;
+      // _PicStub silently shows the stub via Image.asset errorBuilder until then.
+      expect(
+        AssetImageResolver.imageAssetFor('img.milk'),
+        'assets/images/img.milk.webp',
+      );
+    });
+
     test('a raw assets/images path passes through unchanged', () {
       expect(
         AssetImageResolver.imageAssetFor('assets/images/img.door.webp'),
