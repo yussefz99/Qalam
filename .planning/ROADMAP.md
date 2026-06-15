@@ -32,8 +32,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 4: Scoring Quality & Calibration** - The scorer rejects wrong-order/sloppy work and accepts good-faith child attempts, with per-letter tolerances calibrated against real child samples with the owner's mother.
 - [ ] **Phase 5: Profiles & Onboarding** - A parent creates a local child profile (name + grade), and the child picks an avatar and nickname on first open.
 - [x] **Phase 6: Lesson Progression & Home** - On open the child sees today's prepared lesson with one Start; the next lesson unlocks only after passing the current one. (completed 2026-06-13)
-- [ ] **Phase 7: Full Curriculum & Pronunciation Audio** - The complete 28-letter + words curriculum is authored and signed off, and the child can hear bundled pronunciation for each letter and word.
-- [ ] **Phase 8: Sentence-Building & Grammar Exercises** - The child completes handwriting-first sentence-building and level-appropriate grammar exercises drawn from the curriculum.
+- [ ] **Phase 7: Learning Engine & Letter Unit** - Build the production learning engine + multi-section Letter Unit, pixel-faithful to the Claude Design prototype and driven by Curriculum Schema v2 on Firestore, proven end-to-end on baa (5 reusable components, every exercise from config, audio, one star).
+- [ ] **Phase 8: Full Curriculum & All Question Types** - Author all 28 letters (forms, vocab, audio) + all question configs (grammar + sentence-building) into the engine as Schema v2 data, batched behind the owner's-mother sign-off → full v1 content-complete.
 - [x] **Phase 9: Parent Dashboard** - A parent enters a PIN and sees a read-only view of the child's completed lessons and scores. (completed 2026-06-13)
 - [ ] **Phase 10: Offline Hardening & Release** - Every flow works airplane-mode on a fresh install, the ML Kit model is fetched-once-and-cached, and child data stays minimal and private.
 
@@ -384,35 +384,69 @@ Plans:
 
 - [x] 06.1-05-PLAN.md — firestore.rules (read-requires-auth, client-writes-denied, v2 claim seam) + deploy + Rules-Playground verify (SC#5; D-10/10a/11)
 
-### Phase 7: Full Curriculum & Pronunciation Audio
+### Phase 7: Learning Engine & Letter Unit (built to the Claude Design prototype)
 
-**Goal**: The complete curriculum — all 28 letters plus words, in the owner's mother's intro order, with full stroke specs, tolerances, and common mistakes — is authored, validated, and signed off, replacing the seed; and the child can tap to hear bundled pre-recorded pronunciation for each letter and word, fully offline.
+**Goal**: Build the production learning engine and the multi-section **Letter Unit**, implemented
+**pixel-faithful to the Claude Design prototype** and driven by **Curriculum Schema v2** in Firestore
+(extending Phase 06.1). Deliver the full experience end-to-end for **baa**: the 6-section unit
+(Meet → Watch & trace → Forms → Words → Listen & write → Mastery), the **5 reusable components**
+(ExerciseScaffold, PromptHeader, WriteSurface, FeedbackPanel, ProgressRibbon), every exercise type
+rendered from config, real on-device scoring, pronunciation audio, and one quiet star.
+
+**⚠ HARD CONSTRAINT (owner, 2026-06-15):** implement the Claude Design prototype
+(`docs/design/prototypes/letter-unit-baa/`) **EXACTLY as delivered** — no restyling, no design
+changes, no anti-gamification or other "corrections" to the prototype's surfaces. The **prototype +
+Schema v2 are the locked contracts.** Build new surfaces to match the prototype's HTML/CSS 1:1; for
+surfaces the prototype matched to existing widgets (trace canvas, stroke animation, celebration,
+mascot), reuse those widgets. Be smart: the engine is data-driven, so a new question is a new config,
+never new UI.
+
 **Mode:** mvp
-**Depends on**: Phase 2 (schema), Phase 4 (scorer applies to all letters)
-**Requirements**: CUR-01, S1-06
+**Depends on**: Phase 06.1 (Firebase/Firestore + curriculum backend), Phase 3 (trace/scoring/celebration widgets), Phase 4 (scorer)
+**Requirements**: CUR-01 (engine + baa), S1-06 (pronunciation audio)
 **Success Criteria** (what must be TRUE):
 
-  1. All 28 letters (plus words content) load from the curriculum data with full forms, reference stroke paths, stroke order, intro order, clean-reps-to-advance, per-letter tolerances, and 3–4 common mistakes each.
-  2. No silently-fake pedagogy ships: every entry is the owner's-mother's spec or explicitly marked placeholder, and the full set carries her sign-off.
-  3. The child can tap a letter or word and hear its correct pre-recorded pronunciation, working offline, with no TTS.
+  1. The app renders the baa Letter Unit **pixel-faithful to the prototype** — the 6 sections, navigable, RTL, landscape — assembled from the 5 reusable components.
+  2. Every exercise is **data-driven from a Schema v2 `Exercise` config** (the 19 baa configs load and render through the same components; a new question = a new config, no new UI).
+  3. Schema v2 (forms + vocab + exercises + unit) lives in Firestore extending 06.1; the app reads it **live + offline** (bundled-seed fallback) via `CurriculumRepository`.
+  4. **baa is end-to-end real:** all its contextual forms authored + owner's-mother signed off, vocab + pronunciation audio play offline, on-device geometric scoring + authored feedback, one quiet star at mastery.
+  5. The journey map and home deep-link into the resume-aware unit (reusing existing nav).
 
 **Plans**: TBD
-**Research hint**: yes — completing the full reference-path content for all 28 letters depends on the format resolved in Phase 2; if coordinate paths must be authored, this is where the bulk of that content work lands, gated by the owner's-mother sign-off.
+**Canonical refs (MUST read before planning/implementing):**
+- `docs/design/prototypes/letter-unit-baa/` — **the visual contract; implement EXACTLY** (HANDOFF.md, COMPONENTS.md, SCHEMA-BINDINGS.md, EXERCISE-CONFIGS.json, TOKENS.md, `prototype/` HTML/CSS/JS).
+- `.planning/research/learning-experience/SCHEMA-V2.md` — the locked data schema.
+- `.planning/research/learning-experience/COMPONENT-SYSTEM.md` — the 5-component architecture.
+- The Phase 06.1 plans — the Firestore/`CurriculumRepository` seam this extends.
+**UI hint**: yes — implement the prototype exactly; **no new design work**.
+**Research hint**: no — design + schema are locked (prototype + Schema v2). Plan directly.
 
-### Phase 8: Sentence-Building & Grammar Exercises
+### Phase 8: Full Curriculum & All Question Types
 
-**Goal**: The child can complete handwriting-first sentence-building exercises (showing how Arabic words connect to form meaning) and level-appropriate grammar exercises, with all content authored in the curriculum — never reduced to tap-one-of-four.
+**Goal**: Pour the complete curriculum into the Phase 7 engine — all **28 letters** (4 contextual
+forms where they exist, vocab, pronunciation audio, common mistakes) and **all question/exercise
+configs** (incl. grammar transforms مفرد/مثنى/جمع · opposites, and sentence-building) — each authored
+as **Schema v2 data** and **signed off in batches by the owner's mother** — so the full v1 learning
+experience is content-complete. New question kinds are new configs over the Phase 7 components.
+
+**⚠ HARD CONSTRAINT:** same as Phase 7 — all surfaces use the existing components built to the Claude
+Design prototype; content is added **as data only, no design changes**. Handwriting-first throughout
+(the child writes; never tap-one-of-four).
+
 **Mode:** mvp
-**Depends on**: Phase 3 (handwriting interaction), Phase 7 (exercise content)
-**Requirements**: S1-07, S1-08
+**Depends on**: Phase 7 (the engine + components + Schema v2)
+**Requirements**: CUR-01 (full), S1-07 (sentence-building), S1-08 (grammar)
 **Success Criteria** (what must be TRUE):
 
-  1. The child can complete a sentence-building exercise using a handwriting-first interaction, with content drawn from the curriculum.
-  2. The child can complete a grammar exercise appropriate to their progression level, authored in the curriculum (not invented in code).
-  3. Neither exercise type degrades into multiple-choice tap-the-answer (the anti-product).
+  1. All 28 letters authored (4 forms where they exist — non-connectors ا د ذ ر ز و are isolated+final only — vocab, audio, common mistakes), loaded from Firestore; every entry the owner's-mother's spec or explicitly marked placeholder; the full set signed off.
+  2. All exercise types present as curriculum data — traceLetter / writeLetter / writeWord / connectWord / completeWord / transformWord (grammar) / fillBlank / buildSentence — drawn from the curriculum, rendered by the Phase 7 components.
+  3. Sentence-building and grammar are handwriting-first (the child writes), never multiple-choice tap-the-answer (the anti-product).
+  4. Every letter unit is reachable and progression works across the full curriculum.
 
 **Plans**: TBD
-**UI hint**: yes
+**Canonical refs**: same as Phase 7 (`docs/design/prototypes/letter-unit-baa/` + `SCHEMA-V2.md` + `COMPONENT-SYSTEM.md`).
+**UI hint**: no new design — reuse the Phase 7 components.
+**Research hint**: no — locked. Content authoring is gated by the owner's-mother sign-off.
 
 ### Phase 9: Parent Dashboard
 
@@ -480,8 +514,8 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 5. Profiles & Onboarding | 4/4 | Complete | - |
 | 6. Lesson Progression & Home | 10/10 | Complete   | 2026-06-14 |
 | 06.1 Firebase Curriculum Backend (INSERTED) | 5/5 | Complete    | 2026-06-14 |
-| 7. Full Curriculum & Pronunciation Audio | 0/TBD | Not started | - |
-| 8. Sentence-Building & Grammar Exercises | 0/TBD | Not started | - |
+| 7. Learning Engine & Letter Unit | 0/TBD | Not started | - |
+| 8. Full Curriculum & All Question Types | 0/TBD | Not started | - |
 | 9. Parent Dashboard | 3/3 | Complete    | 2026-06-13 |
 | 10. Offline Hardening & Release | 0/TBD | Not started | - |
 
