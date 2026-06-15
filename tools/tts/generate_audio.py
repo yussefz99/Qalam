@@ -75,6 +75,14 @@ def synth_say(text, out: pathlib.Path):
 
 
 def main() -> int:
+    # Windows consoles default to a non-UTF-8 codepage (e.g. cp1255) that can't
+    # encode the ✓/✗ status glyphs or the Arabic text we echo — make stdout/err
+    # UTF-8 so the script is portable without a PYTHONIOENCODING workaround.
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8")
+        except Exception:
+            pass
     _load_env()
     if "--list-voices" in sys.argv:
         list_voices(); return 0

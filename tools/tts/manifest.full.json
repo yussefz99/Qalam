@@ -1,0 +1,158 @@
+[
+  {
+    "id": "snd.alif",
+    "text": "اَ"
+  },
+  {
+    "id": "snd.baa",
+    "text": "بَ"
+  },
+  {
+    "id": "snd.taa",
+    "text": "تَ"
+  },
+  {
+    "id": "snd.thaa",
+    "text": "ثَ"
+  },
+  {
+    "id": "snd.jeem",
+    "text": "جَ"
+  },
+  {
+    "id": "snd.haa_c",
+    "text": "حَ"
+  },
+  {
+    "id": "snd.khaa",
+    "text": "خَ"
+  },
+  {
+    "id": "snd.daal",
+    "text": "دَ"
+  },
+  {
+    "id": "snd.dhaal",
+    "text": "ذَ"
+  },
+  {
+    "id": "snd.raa",
+    "text": "رَ"
+  },
+  {
+    "id": "snd.zaay",
+    "text": "زَ"
+  },
+  {
+    "id": "snd.seen",
+    "text": "سَ"
+  },
+  {
+    "id": "snd.sheen",
+    "text": "شَ"
+  },
+  {
+    "id": "snd.saad",
+    "text": "صَ"
+  },
+  {
+    "id": "snd.daad",
+    "text": "ضَ"
+  },
+  {
+    "id": "snd.taa_h",
+    "text": "طَ"
+  },
+  {
+    "id": "snd.zhaa",
+    "text": "ظَ"
+  },
+  {
+    "id": "snd.ayn",
+    "text": "عَ"
+  },
+  {
+    "id": "snd.ghayn",
+    "text": "غَ"
+  },
+  {
+    "id": "snd.faa",
+    "text": "فَ"
+  },
+  {
+    "id": "snd.qaaf",
+    "text": "قَ"
+  },
+  {
+    "id": "snd.kaaf",
+    "text": "كَ"
+  },
+  {
+    "id": "snd.laam",
+    "text": "لَ"
+  },
+  {
+    "id": "snd.meem",
+    "text": "مَ"
+  },
+  {
+    "id": "snd.noon",
+    "text": "نَ"
+  },
+  {
+    "id": "snd.haa_f",
+    "text": "هَ"
+  },
+  {
+    "id": "snd.waaw",
+    "text": "وَ"
+  },
+  {
+    "id": "snd.yaa",
+    "text": "يَ"
+  },
+  {
+    "id": "word.baab",
+    "text": "باب"
+  },
+  {
+    "id": "word.batta",
+    "text": "بطة"
+  },
+  {
+    "id": "word.haliib",
+    "text": "حليب"
+  },
+  {
+    "id": "word.taaj",
+    "text": "تاج"
+  },
+  {
+    "id": "word.tuut",
+    "text": "توت"
+  },
+  {
+    "id": "word.bayt",
+    "text": "بيت"
+  },
+  {
+    "id": "word.asad",
+    "text": "أسد"
+  },
+  {
+    "id": "word.umm",
+    "text": "أم"
+  },
+  {
+    "id": "sentence.albaab-kabiir",
+    "text": "البابُ كبير"
+  },
+  {
+    "id": "sentence.attaaj-jamiil",
+    "text": "التاجُ جميل"
+  },
+  {
+    "id": "sentence.alasad-kabiir",
+    "text": "الأسدُ كبير"
+  }
+]
