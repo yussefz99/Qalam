@@ -3,6 +3,14 @@
 Found by running the app on the Pixel Tablet emulator. Forms data now loads
 (Part A backfill worked — #4 "working now"). Remaining = UI/interaction bugs.
 
+## STATUS (2026-06-15) — code fixes landed; NOT yet device-verified
+- ✅ Shared root (duplicate Hear + overlap + blocked Clear/Next): ListenCard overlay removed.
+- ✅ #2a two Hears on Meet; ✅ #2b white box under mascot; ✅ #3a/#3b trace Hear/Clear;
+  ✅ #3c demo persists → now one-shot on Watch-me; ✅ #4 Forms Clear/Next; ✅ #5 Words Continue.
+- ⚠️ #1 home "ghost" = the SPEC'd D-09 ink-fill (next letter at 0.25 alpha, 0 reps). Left as-is —
+  changing the ramp is an owner design call (a UI-SPEC test enforces 0.5 at 1/3 reps).
+- ⏳ STILL TO DO: verify all of the above on the emulator (widget tests pass, not device-proven).
+
 ## SHARED ROOT (hits Meet / Trace / Forms / Words — fix once in the engine)
 - **Duplicate "Hear" button.** Every section shows TWO hear buttons. Cause: the
   section adds its own `ListenCard` AND the engine scaffold/prompt header renders
