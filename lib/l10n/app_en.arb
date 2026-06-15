@@ -909,5 +909,110 @@
   "exerciseTeachCardHint": "Nothing to write — this card teaches.",
   "@exerciseTeachCardHint": {
     "description": "Phase 7 Letter-Unit ExerciseScaffold teachCard hint shown in place of the write hint when there is no surface to grade (surface==null)."
+  },
+
+  "wordsKick": "Words with Baa",
+  "@wordsKick": {
+    "description": "Plan 07-06 Words section (Section 4) eyebrow — the three baa vocab words."
+  },
+
+  "wordsPlay": "Play",
+  "@wordsPlay": {
+    "description": "Plan 07-06 Words section — the round Play button on a word card (plays the word clip offline)."
+  },
+
+  "wordsTapToTrace": "Tap to trace",
+  "@wordsTapToTrace": {
+    "description": "Plan 07-06 Words section — the call-to-action tag on an untraced word card."
+  },
+
+  "wordsTraced": "Traced",
+  "@wordsTraced": {
+    "description": "Plan 07-06 Words section — the tag on a word card the child has already traced."
+  },
+
+  "wordsBackToWords": "Back to words",
+  "@wordsBackToWords": {
+    "description": "Plan 07-06 Words section — the quiet CTA that returns from a word's trace surface to the three-card grid."
+  },
+
+  "wordsListenLabel": "Listen",
+  "@wordsListenLabel": {
+    "description": "Plan 07-06 Words section — the Listen side card label on a word's trace surface."
+  },
+
+  "wordsListenPlay": "Play word",
+  "@wordsListenPlay": {
+    "description": "Plan 07-06 Words section — the offline Play button label on a word's Listen side card."
+  },
+
+  "wordsHint": "Trace at least one word to go on.",
+  "@wordsHint": {
+    "description": "Plan 07-06 Words section — the gating hint (trace one word to advance)."
+  },
+
+  "listenWriteKick": "Listen & Write",
+  "@listenWriteKick": {
+    "description": "Plan 07-06 Listen & Write section (Section 5) eyebrow — the recall gate."
+  },
+
+  "listenWriteWordTab": "Write the word",
+  "@listenWriteWordTab": {
+    "description": "Plan 07-06 Listen & Write — the toggle tab selecting the write-the-whole-word recall task."
+  },
+
+  "listenWriteFirstLetterTab": "First letter",
+  "@listenWriteFirstLetterTab": {
+    "description": "Plan 07-06 Listen & Write — the toggle tab selecting the write-the-first-letter (phonological awareness) task."
+  },
+
+  "listenWriteWordTask": "Listen, then write the whole word.",
+  "@listenWriteWordTask": {
+    "description": "Plan 07-06 Listen & Write — the task line for the write-the-word mode."
+  },
+
+  "listenWriteWordSub": "Dictation — from memory, no guide.",
+  "@listenWriteWordSub": {
+    "description": "Plan 07-06 Listen & Write — the sub line under the write-the-word task."
+  },
+
+  "listenWriteLetterTask": "Listen. Write the letter the word starts with.",
+  "@listenWriteLetterTask": {
+    "description": "Plan 07-06 Listen & Write — the task line for the first-letter mode."
+  },
+
+  "listenWriteLetterSub": "Phonological awareness — hear → first letter.",
+  "@listenWriteLetterSub": {
+    "description": "Plan 07-06 Listen & Write — the sub line under the first-letter task."
+  },
+
+  "listenWritePlayWord": "Play the word",
+  "@listenWritePlayWord": {
+    "description": "Plan 07-06 Listen & Write — the big offline Play button label."
+  },
+
+  "listenWriteNoGuide": "No guide · from memory",
+  "@listenWriteNoGuide": {
+    "description": "Plan 07-06 Listen & Write — the badge over the recall surface (no dotted guide; write from memory)."
+  },
+
+  "letterUnitLabel": "Letter Unit",
+  "@letterUnitLabel": {
+    "description": "Plan 07-06 LetterUnit shell — the app-bar unit label (followed by the letter glyph)."
+  },
+
+  "letterUnitBack": "Back",
+  "@letterUnitBack": {
+    "description": "Plan 07-06 LetterUnit shell — the app-bar back icon button label (a11y)."
+  },
+
+  "letterUnitClose": "Close unit",
+  "@letterUnitClose": {
+    "description": "Plan 07-06 LetterUnit shell — the app-bar close icon button label (a11y)."
+  },
+
+  "letterUnitPreparing": "Getting your letter ready…",
+  "@letterUnitPreparing": {
+    "description": "Plan 07-06 LetterUnit shell — the calm panel shown while the unit loads or when the letter is not yet available (never a raw error to the child)."
   }
 }
