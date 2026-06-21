@@ -23,6 +23,41 @@ through the hand. The warm AI tutor voice (the product's eventual signature) lay
 in the next milestone; v1 must make the **handwriting-first learning loop** genuinely
 good on its own.
 
+## Current Milestone: v2.0 AI Tutor (Technion build)
+
+**Goal:** Turn the fixed-order drill into a dynamic, **grounded** AI agent-tutor on one
+letter family (**baa**) — the model reasons, coaches, and chooses which exercise to show,
+but every factual claim about the child's writing is pinned to the deterministic geometry
+scorer. The scorer owns pass/fail + the star; the agent owns the words. This is the fastest
+path to a working, grounded, demoable tutor for the Technion meeting — not the full v2.
+
+**Target features:**
+- A swappable **`TutorBrain`** abstraction with three backends: **AuthoredFallback** (the
+  offline floor — mother-signed-off coaching lines, zero model, fully offline + grounded),
+  **GeminiBrain** (cloud via Firebase AI Logic + App Check; the key never ships in the
+  client; degrades to the fallback offline), and **GemmaBrain** (on-device, experimental).
+- The **grounding invariant**, enforced in code: the scorer owns the verdict, the agent
+  never overrides it; and **only derived, non-PII facts** (a `mistakeId` enum, struggle
+  tags, `letterId`) ever cross the network — never raw strokes, never the nickname/PII.
+- **Dynamic, grounded exercise selection** over baa's existing 19 Schema-v2 configs — the
+  agent reasons about the child's recent mistakes; the curriculum rails the choices.
+- **Presence + voice** (streamed/TTS coaching within a real latency budget; the millisecond
+  stroke reflex stays local), and an **eval harness** promoted to a regression gate.
+
+**Approach:** the riskiest unknowns ship as **spikes first** (GenUI+native-canvas kill-shot ·
+full-path latency/presence · a 3-way Authored-vs-Gemini-vs-Gemma Arabic+grounding bake-off),
+then a grounded vertical slice (brain spine → dynamic selection → presence + eval + harden).
+
+**Key context — reversals (recorded, like 06.1 reversed "no Firebase"):** the tutor now runs
+**client-side** (Decided said "never") on **Gemini/Gemma, not Claude** — but the
+"API key never in the client" rule is **preserved** via Firebase AI Logic + App Check.
+On-device Gemma is pulled forward from DEFER **only as a bake-off candidate**, off the
+critical path; the AuthoredFallback floor keeps the app fully offline + grounded with no
+model loaded, so offline-first (PLAT-01) holds without depending on an on-device model.
+
+**Deferred (out of this milestone):** a server-side A2UI brain + its framework (ADK/Genkit/
+custom; **not** Pydantic AI), model routing, child-voice STT, the parent analytics dashboard.
+
 ## Milestones
 
 - **v1 — Core Learning Loop (this milestone, ~one semester):** the owner's **Sprint 1**.
@@ -158,6 +193,12 @@ good on its own.
 | Design system (`docs/design/kit/`) is the visual source of truth | Owner built a full kit in Claude Design (tokens, fonts, UI kit, screens); English/LTR chrome, Arabic RTL islands, Western numerals | ✓ Good |
 | Handwriting recognition = ML Kit Digital Ink, on-device | Validated by owner's own testing; no network round-trip | ✓ Good |
 | Riverpod for state management | Project standard; BLoC/GetX rejected | — Pending |
+| **v2.0:** Tutor runs **client-side** (reverses Decided "never client-side") | Technion build: fastest path to a grounded demoable tutor, no server | — Pending |
+| **v2.0:** Brain = **Gemini (cloud) / Gemma (on-device)**, not Claude | Client-side needs an on-device/Firebase-proxied model; Claude has no client story here | — Pending |
+| **v2.0:** API key still never in client — Firebase AI Logic + App Check | Preserves the original key-safety rule despite the client-side reversal | — Pending |
+| **v2.0:** `TutorBrain` interface; AuthoredFallback is the offline floor | Keeps app fully offline + grounded with zero model; Gemini/Gemma swap in behind it | — Pending |
+| **v2.0:** Scorer owns the verdict; only derived non-PII facts cross the network | Grounding + child-safety invariant, enforced by guard/test | — Pending |
+| **v2.0:** On-device Gemma pulled forward as a **bake-off candidate only** | Small-model Arabic is unproven; measure it, don't bet the demo on it | — Pending |
 
 ## Evolution
 
@@ -177,4 +218,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-30 after initialization*
+*Last updated: 2026-06-21 after starting milestone v2.0 (AI Tutor — Technion build)*

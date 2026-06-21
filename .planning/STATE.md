@@ -1,17 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: milestone
-status: executing
-stopped_at: "Completed 06.1-04 (Firestore curriculum repository). Firestore-first read + bundle fallback + validator + .withFirestore seam GREEN; 7 fake_cloud_firestore tests pass, offline-first preserved, API unchanged. Next: 06.1-05 (Firestore rules + device verify); 06.1-03 (Python seed/export) also pending."
-last_updated: "2026-06-15T11:20:47.754Z"
-last_activity: 2026-06-15 -- Phase 07 execution started
+milestone: v2.0
+milestone_name: AI Tutor (Technion build)
+status: planning
+last_updated: "2026-06-21T13:54:37.474Z"
+last_activity: 2026-06-21
 progress:
-  total_phases: 14
-  completed_phases: 10
-  total_plans: 59
-  completed_plans: 51
-  percent: 71
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -25,16 +24,10 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 
 ## Current Position
 
-Phase: 07 (learning-engine-letter-unit-built-to-the-claude-design-proto) — EXECUTING
-Plan: 1 of 7
-Phase: 09 (parent-dashboard) — 3/3 complete, verification human_needed (device UAT)
-Phase: 05 (profiles-onboarding) — 4/4 plans complete, verification human_needed (device UAT)
-Status: Executing Phase 07
-Last activity: 2026-06-15 - Completed quick task 260615-tqu: wire baa-unit vocab illustrations into the app
-
-Progress: [█████░░░░░] 54% (7 of 13 tracked phases complete)
-<!-- reconciled 2026-06-11: 13 tracked phases (integer 1-10 + inserted 02.1/02.1.1/03.1). Complete: 1, 2, 02.1, 02.1.1, 3, 03.1, 5. Phase 4 in progress (5/6, 04-06 deferred). Evidence: every plan in those phases has a SUMMARY file; scorer + curriculum repo + models exist in lib/. -->
-<!-- Of the 10 INTEGER milestone phases, 4 are complete (1, 2, 3, 5); Phase 4 is 5/6. -->
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-06-21 — Milestone v2.0 started
 
 ## Performance Metrics
 
