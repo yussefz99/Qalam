@@ -128,10 +128,19 @@ class _SpikeHarnessScreenState extends State<SpikeHarnessScreen> {
         ),
       ),
       body: SafeArea(
-        child: switch (_arm) {
-          SpikeArm.embedded => _buildEmbeddedArm(context),
-          SpikeArm.standalone => _buildStandaloneArm(),
-        },
+        // IndexedStack keeps BOTH arms mounted at once; the toggle only changes
+        // which is visible. So switching [A]<->[B] no longer unmounts a canvas —
+        // each arm KEEPS its ink/State across switches, and you can draw on [A],
+        // flip to [B] and back, and your trace is still there. The earlier
+        // reset-on-switch was just the two separate canvases unmounting (a harness
+        // artifact), NOT GenUI tearing the canvas down.
+        child: IndexedStack(
+          index: _arm == SpikeArm.embedded ? 0 : 1,
+          children: <Widget>[
+            _buildEmbeddedArm(context),
+            _buildStandaloneArm(),
+          ],
+        ),
       ),
       // Spike-only kill-shot probe: forces a model-driven surface UPDATE (fresh
       // coaching line) WITHOUT switching arms — tests whether the embedded canvas
