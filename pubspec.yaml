@@ -60,7 +60,7 @@ dependencies:
   # mismatched majors. firebase_core init + DefaultFirebaseOptions wired in
   # main.dart; firebase_auth = anonymous-at-launch identity (no child PII, D-09b);
   # cloud_firestore is the live curriculum source-of-truth (used from Plan 02 on).
-  firebase_core: ^4.10.0          # Firebase app init (qalam-app-bd7d0)
+  firebase_core: ^4.11.0          # Firebase app init (qalam-app-bd7d0)
   cloud_firestore: ^6.5.0         # live curriculum reads + offline persistence (D-03)
   firebase_auth: ^6.5.2           # anonymous sign-in + linkWithCredential seam (D-09c)
   # Offline pronunciation playback (S1-06). Plays BUNDLED Flutter assets via
@@ -69,6 +69,8 @@ dependencies:
   # audioplayers, latest stable 6.x — long-standing verified-publisher package on
   # pub.dev. Exact resolved version recorded in 07-02-SUMMARY.md + assets/audio/README.md.
   audioplayers: ^6.5.0
+  genui: ^0.9.2
+  firebase_ai: ^3.13.0
 
 dev_dependencies:
   flutter_test:
