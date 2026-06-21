@@ -613,7 +613,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1)*
 
-- [ ] 11-02-PLAN.md — The A/B harness: read installed genui source, present_activity CatalogItem hosting StrokeCanvas under a stable key (mixed tree), Gemini Flash A2UI transport, embedded-vs-standalone toggle target (SC-1; D-03/D-04/D-11/D-12)
+- [x] 11-02-PLAN.md — The A/B harness: read installed genui source, present_activity CatalogItem hosting StrokeCanvas under a stable key (mixed tree), Gemini Flash A2UI transport, embedded-vs-standalone toggle target (SC-1; D-03/D-04/D-11/D-12)
 
 **Wave 3** *(blocked on Wave 2)*
 
@@ -730,7 +730,7 @@ Spikes first, then the grounded vertical slice: 11 → 12 → 13 → 14 → 15 �
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 11. SPIKE — GenUI catalog + native stylus canvas | 1/3 | In Progress|  |
+| 11. SPIKE — GenUI catalog + native stylus canvas | 2/3 | In Progress|  |
 | 12. SPIKE — full-path latency & presence budget | 0/TBD | Not started | - |
 | 13. SPIKE — 3-way bake-off (grounding + Arabic) | 0/TBD | Not started | - |
 | 14. BUILD — TutorBrain spine + grounding invariant | 0/TBD | Not started | - |

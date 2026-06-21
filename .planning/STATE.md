@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
 stopped_at: Completed 11-01-PLAN.md (Tasks 1-2 done; Task 3 pending human console action)
-last_updated: "2026-06-21T15:17:04.156Z"
+last_updated: "2026-06-21T15:34:51.241Z"
 last_activity: 2026-06-21
 progress:
   total_phases: 20
   completed_phases: 11
   total_plans: 62
-  completed_plans: 59
+  completed_plans: 60
   percent: 55
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 11 (spike-genui-catalog-native-stylus-canvas-kill-shot) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 Last activity: 2026-06-21
 Next: /gsd-plan-phase 11
@@ -81,6 +81,7 @@ Next: /gsd-plan-phase 11
 | Phase 06.1 P04 | ~20min | 2 tasks | 5 files |
 | Phase 06.1 P05 | ~10min | 2 tasks | 4 files |
 | Phase 11 P01 | 13min | 2 tasks | 6 files |
+| Phase 11 P02 | 9min | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -145,6 +146,8 @@ Recent decisions affecting current work:
 - [Phase ?]: [06.1-05]: Firestore security rules DEPLOYED to qalam-app-bd7d0. letters/lessons/meta read-requires-auth (request.auth != null, anonymous OK from Plan 01); ALL client writes denied (allow write: if false — content written only via Plan 03 admin SDK). Deny-by-default catch-all (match /{document=**}) is the child-safety backstop: NO child-data collection match exists (D-11, zero child PII surface in Firestore). Commented per-collection v2 custom-claim seam (request.auth.token.role == admin) keeps role-tightening a deliberate uncomment (D-10); App-Check-compatible by construction (D-10a). firebase.json firestore.rules target merged into flutterfire config (flutter block preserved); .firebaserc default = qalam-app-bd7d0. firebase deploy --only firestore:rules compiled + released clean. Rules Playground 5-check verification documented in test/firestore/rules.test.md as PENDING server-side human check (non-blocking; deploy is the autonomous deliverable).
 - [Phase 11]: [11-01]: Installed live genui ^0.9.2 + firebase_ai ^3.13.0 (firebase_core bumped ^4.10.0->^4.11.0, firebase_auth auto-resolved 6.5.3, firebase_app_check 0.4.5 transitive); flutter_genui (discontinued, replacedBy genui) provably ABSENT via the package guard. Resolved known-good set recorded for Phase 14 (Pitfall 4). genui_catalog left uninstalled (optional, defer to Plan 02).
 - [Phase 11]: [11-01]: baa fixture COPIES letters.json read-only (Q1) — lib/spike_genui/fixtures/baa_reference.dart imports only StrokeSpec, no curriculum loader/Firestore/Drift. Two guards wired as flutter_test and green: package-correctness + SC-4 durable-layers git-diff (TUTOR-01). Task 3 (Firebase AI Logic console enable on qalam-app-bd7d0) recorded as PENDING HUMAN ACTION — console-only, no CLI path, no human in this autonomous session; NOT blocked because Plan 02 needs only the installed packages + fixture, not the live backend (backend only needed at Plan-03 device runtime). App Check unenforced in throwaway scope (D-13) — must not carry to Phase 14.
+- [Phase 11]: [11-02]: Spike GenUI render widget is Surface (not GenUiSurface); data accessor is itemContext.data as JsonMap + BoundString (genui 0.9.2 verified)
+- [Phase 11]: Spike A2UI transport: A2uiTransportAdapter onSend -> generateContentStream -> addChunk; FirebaseAI.googleAI Flash, never firebase_vertex_ai
 
 ### Pending Todos
 
@@ -180,6 +183,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-21T15:17:04.150Z
+Last session: 2026-06-21T15:34:22.506Z
 Stopped at: Completed 11-01-PLAN.md (Tasks 1-2 done; Task 3 pending human console action)
 Resume files: .planning/phases/06.1-firebase-curriculum-backend/06.1-05-PLAN.md (next), .planning/phases/06.1-firebase-curriculum-backend/06.1-03-PLAN.md (pending), .planning/phases/06.1-firebase-curriculum-backend/06.1-04-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
