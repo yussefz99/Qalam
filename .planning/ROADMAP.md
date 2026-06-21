@@ -605,7 +605,20 @@ native and real-time (no per-stroke network round-trip, no rendering lag).
   3. A **GATE decision is recorded**: keep GenUI, OR fall back to **raw `firebase_ai` function-calling driving our native widgets directly (drop GenUI)** — and Phase 14 is told which architecture to build.
   4. Either way, the durable layers (canvas, scorer, curriculum) are confirmed unchanged — the spike touches no production canvas/scorer/curriculum code.
 
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+
+**Wave 1**
+
+- [ ] 11-01-PLAN.md — Install genui (not flutter_genui) + firebase_ai + firebase_core bump; SC-4 durable-diff guard + correct-package guard; baa read-only fixture; Firebase AI Logic console enable (SC-4; D-09/D-10/D-13)
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [ ] 11-02-PLAN.md — The A/B harness: read installed genui source, present_activity CatalogItem hosting StrokeCanvas under a stable key (mixed tree), Gemini Flash A2UI transport, embedded-vs-standalone toggle target (SC-1; D-03/D-04/D-11/D-12)
+
+**Wave 3** *(blocked on Wave 2)*
+
+- [ ] 11-03-PLAN.md — On-device A/B on a real Pixel Tablet (feel-based, D-06), write SPIKE-FINDINGS verdict + GATE keep|drop, package via /gsd:spike-wrap-up for Phase 14 (SC-2/SC-3; D-05/D-06/D-08/D-13)
 **Research hint**: yes — riskiest unknown of the milestone (the kill-shot). The whole architecture branches on this result; spend the iteration to reach a confident GATE decision, not a guess.
 
 #### Phase 12: SPIKE — full-path latency & presence budget (Pixel Tablet)
