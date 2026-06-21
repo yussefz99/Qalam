@@ -1,4 +1,8 @@
-# Requirements: Qalam — v1 Core Learning Loop
+# Requirements: Qalam
+
+> Spans milestones. **v1 — Core Learning Loop** (below) is the shipped/in-flight base.
+> **v2.0 — AI Tutor (Technion build)** is the **current milestone**; its requirements
+> and traceability are in their own sections further down.
 
 **Defined:** 2026-05-30
 **Core Value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
@@ -61,9 +65,66 @@ CUR-/PLAT- IDs.
 - [x] **PLAT-03**: The experience stays not-points-chasing and on-brand (per `docs/design/kit/`)
   - *Accept:* no running star totals, no weekly tallies, no streaks, no badges, no confetti spam, no timed tests, no over-praise of sloppy work; feedback is specific, not generic "Oops, try again". The **Qalam mascot is the tutor's persona** (in), and **mastery stars** + a dignified per-mastery celebration + the journey map are in. Visuals follow the design system tokens (gold = rewards-only, coral not red, no emoji/unicode pseudo-icons)
 
-## v2 Requirements
+## v2.0 Requirements (AI Tutor — Technion build) — CURRENT MILESTONE
 
-Deferred to the next milestone (owner's **Sprint 2 — Qalam AI Tutor**). Tracked, not in this roadmap.
+The client-side, grounded AI agent-tutor, proven on one letter family (**baa**). A demo-scoped
+slice of the full Sprint-2 AI Tutor: the server brain, placement exam, voice-in (STT), and
+parent analytics remain deferred (see Future Requirements). New REQ-IDs below; phases continue
+numbering from the v1 roadmap (start at Phase 11). Traceability filled by the v2.0 roadmap.
+
+### Tutor Brain & Agent
+
+- [ ] **TUTOR-01**: A child's tutor is driven by a swappable `TutorBrain` with three backends (Authored / Gemini / Gemma), selected without changing the durable canvas/scorer/curriculum layers
+  - *Accept:* the backend is chosen behind one interface; durable layers carry zero GenUI/A2UI/firebase_ai imports; swapping the backend changes no widget or scorer code
+- [ ] **TUTOR-02**: The tutor works fully offline with no model loaded — the `AuthoredFallback` floor coaches from the owner's-mother signed-off lines
+  - *Accept:* airplane-mode, zero model: every coaching moment still shows a grounded, correctly-Arabic authored line; the practice/trace loop never blocks
+- [ ] **TUTOR-03**: When online, the `GeminiBrain` (Firebase AI Logic + App Check) provides the adaptive coaching, and auto-degrades to the floor on offline/timeout
+  - *Accept:* the Gemini API key never ships in the client (proxied + App-Check-gated); a network failure or timeout silently falls back to authored lines, never a dead end
+- [ ] **TUTOR-04**: An on-device `GemmaBrain` backend exists behind the same interface as an evaluated candidate
+  - *Accept:* GemmaBrain runs on-device via flutter_gemma/MediaPipe; its adoption is gated by the spike bake-off, not assumed; it is never on the demo's critical path
+- [ ] **TUTOR-05**: The agent acts only through ACTION tools (`present_activity`, `say`, `give_hint`, `advance`); the geometry verdict and learner state are injected as FACTS, never exposed as tools
+  - *Accept:* tools are actions; facts (mistakeId, struggles, letterId, current section) arrive in the model's context; the model cannot "ask" for a verdict or fabricate one
+
+### Grounding & Child-Safety
+
+- [ ] **GROUND-01**: The scorer owns pass/fail and the star; the agent may rephrase or coach but can never override or contradict the verdict
+  - *Accept:* the pass/fail + star is decided by the deterministic scorer at the `ExerciseController` seam; the agent only supplies the displayed line; no agent path can flip a fail to a pass
+- [ ] **GROUND-02**: Only derived, non-PII facts (mistakeId, struggle tags, letterId) ever cross the network — never raw strokes, never nickname/PII — enforced automatically
+  - *Accept:* a guard/test fails the build if raw stroke coordinates or any PII field can reach the network payload
+- [ ] **GROUND-03**: Grounding faithfulness is measurable — the harness detects any model claim that contradicts the geometry
+  - *Accept:* given a fixed scorer verdict, the harness flags coaching that praises a failed stroke or names the wrong fix; a faithfulness rate is reported
+
+### Dynamic Teaching
+
+- [ ] **DYN-01**: The agent selects the next exercise from baa's authored configs, reasoning about the child's recent mistakes; the curriculum rails the choices
+  - *Accept:* the agent can only pick valid, signed-off baa configs; its choice visibly responds to recent mistakeIds/struggles, not a fixed order
+- [ ] **DYN-02**: The dynamic, resume-aware flow replaces the fixed section walk for the baa unit end-to-end
+  - *Accept:* entering the baa unit runs the agent-driven flow (not `LetterUnitController`'s static sequence); resume still works; one quiet star at mastery
+
+### Presence & Voice
+
+- [ ] **PRES-01**: The tutor feels present — coordination stays within a defined latency budget on a real Pixel Tablet, and the millisecond stroke reflex stays local
+  - *Accept:* a written budget for stroke→scorer→agent→render→first-TTS is met on-device; instant stroke feedback/nudges never route through the agent
+- [ ] **PRES-02**: The tutor speaks — streamed/TTS coaching plays at the right moments and degrades gracefully offline
+  - *Accept:* coaching is spoken (or streamed) on pass/miss; offline/timeout falls back to text without breaking the flow
+
+### Evaluation
+
+- [ ] **EVAL-01**: An eval harness scores tutor quality on grounding faithfulness + Arabic coaching register against a labeled set
+  - *Accept:* a reusable harness runs the brain over labeled (verdict, learner-state) cases and scores never-contradicts-geometry, names-the-specific-fix, register-for-a-5-10-year-old, correct-Arabic
+- [ ] **EVAL-02**: The harness runs as a regression gate that catches tutor-quality regressions before they ship
+  - *Accept:* the harness runs in CI (or a documented pre-merge step) and fails on a regression below threshold
+
+### Demo Readiness
+
+- [ ] **DEMO-01**: The baa AI-tutor path is demo-hardened for the live Technion meeting
+  - *Accept:* no dead ends or stuck states; graceful offline/timeout fallback to authored lines; stable on the Pixel-Tablet build end-to-end (Home/Journey → baa unit → mastery star)
+
+## Future Requirements (full AI Tutor — deferred beyond the Technion build)
+
+The remaining Sprint-2 scope, **not** in the v2.0 roadmap. The Technion build is a client-side,
+demo-scoped slice; these bring in the server-side A2UI brain + its framework, cloud sync, and
+the second adaptation timescale.
 
 ### AI Tutor & Adaptation
 
