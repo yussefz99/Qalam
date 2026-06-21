@@ -1,16 +1,17 @@
 ---
 gsd_state_version: 1.0
 milestone: v2.0
-milestone_name: AI Tutor (Technion build)
+milestone_name: — AI Tutor
 status: planning
-last_updated: "2026-06-21T13:54:37.474Z"
-last_activity: 2026-06-21
+stopped_at: Phase 11 context gathered
+last_updated: "2026-06-21T14:19:52.071Z"
+last_activity: 2026-06-21 — v2.0 roadmap appended (Phases 11–16); 14/14 requirements mapped
 progress:
-  total_phases: 6
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  total_phases: 20
+  completed_phases: 11
+  total_plans: 59
+  completed_plans: 58
+  percent: 55
 ---
 
 # Project State
@@ -175,6 +176,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-14T19:43:44.744Z
-Stopped at: Completed 06.1-04 (Firestore curriculum repository). Firestore-first read + bundle fallback + validator + .withFirestore seam GREEN; 7 fake_cloud_firestore tests pass, offline-first preserved, API unchanged. Next: 06.1-05 (Firestore rules + device verify); 06.1-03 (Python seed/export) also pending.
+Last session: 2026-06-21T14:19:52.062Z
+Stopped at: Phase 11 context gathered
 Resume files: .planning/phases/06.1-firebase-curriculum-backend/06.1-05-PLAN.md (next), .planning/phases/06.1-firebase-curriculum-backend/06.1-03-PLAN.md (pending), .planning/phases/06.1-firebase-curriculum-backend/06.1-04-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
