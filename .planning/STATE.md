@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
-stopped_at: Phase 11 context gathered
-last_updated: "2026-06-21T14:52:47.110Z"
-last_activity: 2026-06-21 -- Phase 11 planning complete
+stopped_at: Completed 11-01-PLAN.md (Tasks 1-2 done; Task 3 pending human console action)
+last_updated: "2026-06-21T15:17:04.156Z"
+last_activity: 2026-06-21
 progress:
   total_phases: 20
   completed_phases: 11
   total_plans: 62
-  completed_plans: 58
+  completed_plans: 59
   percent: 55
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
-**Current focus:** Phase 11 — SPIKE: GenUI catalog + native stylus canvas (kill-shot) — first phase of milestone v2.0
+**Current focus:** Phase 11 — spike-genui-catalog-native-stylus-canvas-kill-shot
 
 ## Current Position
 
-Phase: Phase 11 — SPIKE: GenUI catalog + native stylus canvas (kill-shot)
-Plan: — (not yet planned)
+Phase: 11 (spike-genui-catalog-native-stylus-canvas-kill-shot) — EXECUTING
+Plan: 2 of 3
 Status: Ready to execute
-Last activity: 2026-06-21 -- Phase 11 planning complete
+Last activity: 2026-06-21
 Next: /gsd-plan-phase 11
 
 ## Performance Metrics
@@ -80,6 +80,7 @@ Next: /gsd-plan-phase 11
 | Phase 06.1 P02 | ~9min | 2 tasks | 3 files |
 | Phase 06.1 P04 | ~20min | 2 tasks | 5 files |
 | Phase 06.1 P05 | ~10min | 2 tasks | 4 files |
+| Phase 11 P01 | 13min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -142,6 +143,8 @@ Recent decisions affecting current work:
 - [Phase 06.1]: [06.1-04]: Firestore curriculum repository GREEN. CurriculumRepository now reads letters/lessons/ramp Firestore-first via a one-shot .get() (NOT .snapshots() — Pitfall 2), maps docs through the Plan-02 codec, and falls back to the bundled assets/curriculum/*.json on empty/throwing Firestore (cold-first-run floor, D-01/D-02). validateReferenceStrokes runs over WHICHEVER source won; a closed-loop stroke throws and is never cached, never reaches the scorer (D-05, T-06.1-10). New .withFirestore(FirebaseFirestore) test-injection seam (fake_cloud_firestore 4.1.1, resolved clean vs cloud_firestore 6.5.0); .fromStrings preserved unchanged with FirebaseFirestore.instance held LAZILY so bundle/JSON tests stay network-free AND Firebase-free. Ramp source order: meta/toleranceRamp doc -> bundle defaultToleranceRamp -> decided default, defensive never-throws (D-07/Pitfall 5). Read once-at-boot into the kept-alive cache; practice path never blocks (D-03/PLAT-01). All six getter signatures unchanged. 7 fake_cloud_firestore tests + 28 bundle tests GREEN; full suite 394 passed / 4 known pre-existing out-of-scope failures (alif-reference + mastery golden). Rule-2 fix: gitignore extended to *adminsdk*.json (admin-SDK key was unmatched by existing patterns). 06.1-03 (Python seed/export) + 06.1-05 (rules + device verify) remain.
 - [Phase ?]: [Phase 06.1]: [06.1-02]: Firestore curriculum codec GREEN. Shared point transform solves the nested-array landmine (D-06) once, mirrored in Dart (firestore_curriculum_codec.dart) and Python (point_codec.py) so seed/export/read agree. Dart codec is PURE (no cloud_firestore import, unit-testable without Firebase) and DEFERS to Letter.fromJson/Lesson.fromJson (re-shapes only points). Round-trip parity proven (D-08): alif deep-equals bundle; skeleton survives empty referenceStrokes plus signedOff false (Pitfall 6); defaultToleranceRamp survives the meta/toleranceRamp doc (collection meta, doc toleranceRamp, field ramp; D-07 resolves Research Q4, Pitfall 5). num to double / float on decode so a Firestore int round-trips. Python self-check asserts identity over all 28 letters. 6 Dart tests plus Python self-check GREEN; full suite 387 passed / 4 known pre-existing failures (no regressions).
 - [Phase ?]: [06.1-05]: Firestore security rules DEPLOYED to qalam-app-bd7d0. letters/lessons/meta read-requires-auth (request.auth != null, anonymous OK from Plan 01); ALL client writes denied (allow write: if false — content written only via Plan 03 admin SDK). Deny-by-default catch-all (match /{document=**}) is the child-safety backstop: NO child-data collection match exists (D-11, zero child PII surface in Firestore). Commented per-collection v2 custom-claim seam (request.auth.token.role == admin) keeps role-tightening a deliberate uncomment (D-10); App-Check-compatible by construction (D-10a). firebase.json firestore.rules target merged into flutterfire config (flutter block preserved); .firebaserc default = qalam-app-bd7d0. firebase deploy --only firestore:rules compiled + released clean. Rules Playground 5-check verification documented in test/firestore/rules.test.md as PENDING server-side human check (non-blocking; deploy is the autonomous deliverable).
+- [Phase 11]: [11-01]: Installed live genui ^0.9.2 + firebase_ai ^3.13.0 (firebase_core bumped ^4.10.0->^4.11.0, firebase_auth auto-resolved 6.5.3, firebase_app_check 0.4.5 transitive); flutter_genui (discontinued, replacedBy genui) provably ABSENT via the package guard. Resolved known-good set recorded for Phase 14 (Pitfall 4). genui_catalog left uninstalled (optional, defer to Plan 02).
+- [Phase 11]: [11-01]: baa fixture COPIES letters.json read-only (Q1) — lib/spike_genui/fixtures/baa_reference.dart imports only StrokeSpec, no curriculum loader/Firestore/Drift. Two guards wired as flutter_test and green: package-correctness + SC-4 durable-layers git-diff (TUTOR-01). Task 3 (Firebase AI Logic console enable on qalam-app-bd7d0) recorded as PENDING HUMAN ACTION — console-only, no CLI path, no human in this autonomous session; NOT blocked because Plan 02 needs only the installed packages + fixture, not the live backend (backend only needed at Plan-03 device runtime). App Check unenforced in throwaway scope (D-13) — must not carry to Phase 14.
 
 ### Pending Todos
 
@@ -155,6 +158,7 @@ None yet.
 - **Offline / one-time model download (open question, Phase 10):** verify on a fresh, no-network install.
 - ~~**Phase 2 sign-off gate:**~~ CLOSED — alif signedOff: true, 1 referenceStroke (64 pts), 3 commonMistakes authored. Phase 3 is unblocked.
 - Phase 04 plan 04-06 (baa-family sign-off) DEFERRED — blocked on real-world resources: requires a real Android tablet + the owner's mother + real children to author/label/sign off baa/taa/thaa and tune per-letter tolerances on real samples (cannot be done on emulator, per plan note). Plans 04-01..04-05 complete. Re-run /gsd:execute-phase 4 when resources available to finish 04-06 and complete the phase.
+- [Phase 11][11-01] PENDING HUMAN ACTION (Task 3, gate=blocking): Enable Firebase AI Logic (Gemini Developer API) on project qalam-app-bd7d0 in the Firebase Console (Build -> AI Logic -> Get started). Console-only, no CLI. Blocks Plan 03 device A/B model call; does NOT block Plan 02 (code authoring + flutter analyze). Resume signal: 'enabled' or 'blocked: <reason>'.
 
 ### Quick Tasks Completed
 
@@ -176,6 +180,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-21T14:19:52.062Z
-Stopped at: Phase 11 context gathered
+Last session: 2026-06-21T15:17:04.150Z
+Stopped at: Completed 11-01-PLAN.md (Tasks 1-2 done; Task 3 pending human console action)
 Resume files: .planning/phases/06.1-firebase-curriculum-backend/06.1-05-PLAN.md (next), .planning/phases/06.1-firebase-curriculum-backend/06.1-03-PLAN.md (pending), .planning/phases/06.1-firebase-curriculum-backend/06.1-04-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)

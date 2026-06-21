@@ -553,7 +553,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 
 **Totals:** 7 of 13 tracked phases complete (54%); 33 of 34 plans complete (only 04-06 deferred).
 
-
 ---
 
 ## Milestone v2.0 — AI Tutor (Technion build)
@@ -610,7 +609,7 @@ Plans:
 
 **Wave 1**
 
-- [ ] 11-01-PLAN.md — Install genui (not flutter_genui) + firebase_ai + firebase_core bump; SC-4 durable-diff guard + correct-package guard; baa read-only fixture; Firebase AI Logic console enable (SC-4; D-09/D-10/D-13)
+- [x] 11-01-PLAN.md — Install genui (not flutter_genui) + firebase_ai + firebase_core bump; SC-4 durable-diff guard + correct-package guard; baa read-only fixture; Firebase AI Logic console enable (SC-4; D-09/D-10/D-13)
 
 **Wave 2** *(blocked on Wave 1)*
 
@@ -619,6 +618,7 @@ Plans:
 **Wave 3** *(blocked on Wave 2)*
 
 - [ ] 11-03-PLAN.md — On-device A/B on a real Pixel Tablet (feel-based, D-06), write SPIKE-FINDINGS verdict + GATE keep|drop, package via /gsd:spike-wrap-up for Phase 14 (SC-2/SC-3; D-05/D-06/D-08/D-13)
+
 **Research hint**: yes — riskiest unknown of the milestone (the kill-shot). The whole architecture branches on this result; spend the iteration to reach a confident GATE decision, not a guess.
 
 #### Phase 12: SPIKE — full-path latency & presence budget (Pixel Tablet)
@@ -730,7 +730,7 @@ Spikes first, then the grounded vertical slice: 11 → 12 → 13 → 14 → 15 �
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 11. SPIKE — GenUI catalog + native stylus canvas | 0/TBD | Not started | - |
+| 11. SPIKE — GenUI catalog + native stylus canvas | 1/3 | In Progress|  |
 | 12. SPIKE — full-path latency & presence budget | 0/TBD | Not started | - |
 | 13. SPIKE — 3-way bake-off (grounding + Arabic) | 0/TBD | Not started | - |
 | 14. BUILD — TutorBrain spine + grounding invariant | 0/TBD | Not started | - |
