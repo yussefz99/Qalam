@@ -191,6 +191,44 @@ Which phase covers which requirement. Each v1 requirement maps to exactly one ph
 - Mapped to phases: 15 ✓
 - Unmapped: 0 ✓
 
+## v2.0 Traceability (AI Tutor — Technion build)
+
+Which phase covers which v2.0 requirement. Each v2.0 requirement maps to exactly one phase.
+Phases 11–13 are **spikes** — de-risking investigations that own **no requirement by design**
+(their findings feed the build phases via the GATE/decision/harness noted below).
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| TUTOR-01 | Phase 14 — TutorBrain spine + grounding invariant | Pending |
+| TUTOR-02 | Phase 14 — TutorBrain spine + grounding invariant | Pending |
+| TUTOR-03 | Phase 14 — TutorBrain spine + grounding invariant | Pending |
+| TUTOR-04 | Phase 14 — TutorBrain spine + grounding invariant | Pending |
+| TUTOR-05 | Phase 14 — TutorBrain spine + grounding invariant | Pending |
+| GROUND-01 | Phase 14 — TutorBrain spine + grounding invariant | Pending |
+| GROUND-02 | Phase 14 — TutorBrain spine + grounding invariant | Pending |
+| DYN-01 | Phase 15 — Dynamic grounded exercise selection on baa | Pending |
+| DYN-02 | Phase 15 — Dynamic grounded exercise selection on baa | Pending |
+| GROUND-03 | Phase 15 — Dynamic grounded exercise selection on baa | Pending |
+| PRES-01 | Phase 16 — Presence + voice + eval gate + demo-harden | Pending |
+| PRES-02 | Phase 16 — Presence + voice + eval gate + demo-harden | Pending |
+| EVAL-01 | Phase 16 — Presence + voice + eval gate + demo-harden | Pending |
+| EVAL-02 | Phase 16 — Presence + voice + eval gate + demo-harden | Pending |
+| DEMO-01 | Phase 16 — Presence + voice + eval gate + demo-harden | Pending |
+
+**Spike → build linkages (spikes own no REQ-IDs):**
+
+- **Phase 11 (SPIKE)** — GenUI-vs-native-canvas kill-shot. Output: the GATE (keep GenUI vs drop to raw firebase_ai) that decides the architecture **Phase 14** builds.
+- **Phase 12 (SPIKE)** — full-path latency/presence on Pixel Tablet. Output: the written latency budget + model/transport choice **PRES-01** is measured against in **Phase 16**.
+- **Phase 13 (SPIKE)** — Authored vs Gemini vs Gemma bake-off on grounding + Arabic. Output: the seed harness promoted to the **EVAL-01/EVAL-02** gate, the first **GROUND-03** faithfulness method, and the **TUTOR-04** Gemma-adoption decision (finalized in Phase 16).
+
+**Coverage:**
+
+- v2.0 requirements: 14 total (TUTOR-01..05, GROUND-01..03, DYN-01..02, PRES-01..02, EVAL-01..02, DEMO-01)
+- Mapped to phases (14–16): 14 ✓
+- Each mapped exactly once: ✓ (Phase 14 → 7, Phase 15 → 3, Phase 16 → 4 = 14 ✓)
+- Unmapped: 0 ✓
+- Spikes (11–13) owning no requirement, by design: ✓
+
 ---
 *Requirements defined: 2026-05-30*
-*Last updated: 2026-05-30 after roadmap creation (traceability populated)*
+*Last updated: 2026-06-21 after v2.0 roadmap creation (v2.0 traceability populated; v1 traceability untouched)*

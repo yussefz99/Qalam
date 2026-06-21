@@ -552,3 +552,176 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 10. Offline Hardening & Release | 0/TBD | Not started | - |
 
 **Totals:** 7 of 13 tracked phases complete (54%); 33 of 34 plans complete (only 04-06 deferred).
+
+
+---
+
+## Milestone v2.0 — AI Tutor (Technion build)
+
+### Overview
+
+v2.0 turns the fixed-order baa drill into a **dynamic, grounded AI agent-tutor** on one
+letter family (**baa**), reusing the v1 durable layers (StrokeCanvas/WriteSurface, the
+geometric scorer, Schema-v2 curriculum) untouched. The model reasons, coaches, and chooses
+which exercise to show next — but **every factual claim about the child's writing is pinned to
+the deterministic geometry scorer**: the scorer owns pass/fail + the star, the agent owns the
+words. The "API key never in the client" rule is preserved via Firebase AI Logic + App Check;
+only derived non-PII facts ever cross the network; and an `AuthoredFallback` floor keeps the
+whole loop fully offline + grounded with zero model loaded.
+
+This roadmap is **spikes-first by deliberate design**: the three riskiest unknowns — (1) can a
+GenUI catalog host a real-time native stylus canvas, (2) does the full on-device stroke→agent→
+TTS path stay within a presence budget, and (3) can a small/cloud model actually coach grounded,
+correct, age-appropriate Arabic — are de-risked up front, each ending in a written
+decision/GATE, before any production code commits to an architecture. Then a grounded vertical
+slice builds the brain spine, dynamic selection on baa, and presence + voice + the eval gate +
+demo-hardening. The spikes (Phases 11–13) own **no requirements** by design — they are
+investigations whose findings choose the path the build phases (14–16) then execute.
+
+### Phases
+
+- [ ] **Phase 11: SPIKE — GenUI catalog + native stylus canvas (kill-shot)** - Prove (or refute) a GenUI core catalog driven by a local firebase_ai function-calling loop can host the real-time native StrokeCanvas via a present_activity tool; GATE to a raw firebase_ai-drives-native-widgets fallback if it can't.
+- [ ] **Phase 12: SPIKE — full-path latency & presence budget (Pixel Tablet)** - Measure the real on-device stroke→scorer→agent→render→first-TTS path on a Pixel Tablet across Gemini Flash / Flash-Lite / Live API + Gemma; produce a written latency budget and the model/transport choice.
+- [ ] **Phase 13: SPIKE — 3-way bake-off (Authored vs Gemini vs Gemma) on grounding + Arabic** - Score AuthoredFallback vs GeminiBrain vs Gemma-on-device on grounding faithfulness + Arabic register over one harness; the data decides whether fully-offline Gemma is viable. Seeds the eval harness.
+- [ ] **Phase 14: BUILD — TutorBrain spine + grounding invariant** - The swappable TutorBrain interface + AuthoredFallback floor + GeminiBrain + GemmaBrain stub, the 4 ACTION tools with FACTS injected, the scorer-owns-verdict seam at ExerciseController, and the non-PII-facts network guard — durable layers stay free of GenUI/firebase_ai types.
+- [ ] **Phase 15: BUILD — dynamic grounded exercise selection on baa** - Replace LetterUnitController's fixed walk with agent-driven present_activity selection over baa's 19 Schema-v2 configs, reasoning about recent mistakes; the curriculum rails the choices; resume-aware; one quiet star at mastery; first-measure grounding faithfulness.
+- [ ] **Phase 16: BUILD — presence + voice + eval gate + demo-harden** - Streamed/TTS coaching within the Phase-12 budget (reflex stays local), the Phase-13 harness promoted to a regression gate, the baa AI-tutor path demo-hardened on the Pixel Tablet, and the Gemma-adoption decision finalized.
+
+### Phase Details
+
+#### Phase 11: SPIKE — GenUI catalog + native stylus canvas (kill-shot)
+
+**Goal**: Prove (or refute) that the GenUI **core catalog** driven by a local `firebase_ai`
+function-calling loop can host a **real-time NATIVE stylus canvas** (the existing
+StrokeCanvas/WriteSurface) via a `present_activity` tool, with the stylus path staying
+native and real-time (no per-stroke network round-trip, no rendering lag).
+**Mode**: spike
+**Depends on**: v1 Phase 7 (the WriteSurface/StrokeCanvas + ExerciseController seam this must host)
+**Requirements**: none (architecture-decision spike — owns no requirement by design)
+**Success Criteria** (what must be TRUE):
+
+  1. A throwaway harness shows a `firebase_ai` function-calling loop calling a `present_activity` tool that renders the **real native StrokeCanvas/WriteSurface**, and a child can trace baa on it with the stroke path staying native and real-time (visibly no per-stroke lag).
+  2. There is a written, evidence-backed verdict on whether the GenUI core catalog can cleanly host that real-time native canvas — pass or fail stated explicitly, with what was observed.
+  3. A **GATE decision is recorded**: keep GenUI, OR fall back to **raw `firebase_ai` function-calling driving our native widgets directly (drop GenUI)** — and Phase 14 is told which architecture to build.
+  4. Either way, the durable layers (canvas, scorer, curriculum) are confirmed unchanged — the spike touches no production canvas/scorer/curriculum code.
+
+**Plans**: TBD
+**Research hint**: yes — riskiest unknown of the milestone (the kill-shot). The whole architecture branches on this result; spend the iteration to reach a confident GATE decision, not a guess.
+
+#### Phase 12: SPIKE — full-path latency & presence budget (Pixel Tablet)
+
+**Goal**: Measure the **real on-device full-path latency** — stroke → scorer → agent → render →
+first-TTS — on a **Pixel Tablet**, comparing Gemini Flash vs Flash-Lite vs the Live API, plus
+Gemma's on-device footprint/latency; then produce a written latency budget and the model/transport
+choice, confirming the "two clocks" split (the millisecond stroke reflex stays local) feels present.
+**Mode**: spike
+**Depends on**: v1 Phase 7 (the scorer + canvas timings this measures against), Phase 11 (the agent-loop transport whose latency is being measured)
+**Requirements**: none (measurement spike — feeds PRES-01; owns no requirement by design)
+**Success Criteria** (what must be TRUE):
+
+  1. The full stroke→scorer→agent→render→first-TTS path is measured **on a real Pixel Tablet** (not emulator/dev) with numbers recorded for Gemini Flash, Flash-Lite, and the Live API, plus Gemma's on-device footprint/latency.
+  2. A **written latency budget** exists that names the acceptable delay for each segment and shows the local stroke reflex stays local (never routes through the agent) — confirming the "two clocks" split feels present.
+  3. A **model + transport choice is recorded** for the build phases, justified by the measured numbers, with explicit headroom for the demo build.
+
+**Plans**: TBD
+**Research hint**: yes — presence is felt, not specified; numbers must come from the real device. The chosen model/transport here is a hard input to Phase 16's presence/voice work.
+
+#### Phase 13: SPIKE — 3-way bake-off (Authored vs Gemini vs Gemma) on grounding + Arabic
+
+**Goal**: On ONE grounding+Arabic-register harness, score **AuthoredFallback** (baseline) vs
+**GeminiBrain** vs **Gemma-on-device** for: never-contradicts-geometry, names-the-specific-fix,
+register-for-a-5-10-year-old, and correct-Arabic — so the **data** decides whether Gemma's
+fully-offline ideal is viable. The harness built here seeds the v2.0 eval harness.
+**Mode**: spike
+**Depends on**: v1 Phase 7 (the signed-off baa content + scorer the cases are built from)
+**Requirements**: none (decision spike — feeds EVAL-01, GROUND-03, and the TUTOR-04 Gemma decision; owns no requirement by design)
+**Success Criteria** (what must be TRUE):
+
+  1. A single labeled harness scores all three brains (AuthoredFallback baseline, GeminiBrain, Gemma-on-device) on never-contradicts-geometry, names-the-specific-fix, register-for-a-5-10-year-old, and correct-Arabic, with comparable per-brain scores reported.
+  2. A **written verdict on Gemma viability** is recorded — whether the fully-offline on-device ideal is good enough on grounding + Arabic, or stays an experimental-only candidate — feeding the TUTOR-04 adoption decision finalized in Phase 16.
+  3. The harness is **reusable** — it is the seed of the Phase 16 regression gate (EVAL-01/EVAL-02), not a throwaway, and the labeled (verdict, learner-state) case format is documented.
+
+**Plans**: TBD
+**Research hint**: yes — small-model Arabic + grounding is unproven; this is where the Gemma bet is tested with evidence, off the demo's critical path. The labeled set authored here is reused by Phase 16's gate.
+
+#### Phase 14: BUILD — TutorBrain spine + grounding invariant
+
+**Goal**: Build the swappable **`TutorBrain`** interface with the **AuthoredFallback** floor (offline,
+zero-model, mother-signed-off lines), the **GeminiBrain** (Firebase AI Logic + App Check), and a
+**GemmaBrain** stub behind the same interface; expose the **4 ACTION tools** (`present_activity`,
+`say`, `give_hint`, `advance`) with FACTS injected as context (not tools); wire the "agent owns the
+line, scorer owns pass/fail + star" seam at the existing `ExerciseController`; and enforce the
+non-PII-facts network guard — all while keeping the durable layers free of GenUI/A2UI/firebase_ai types.
+**Mode**: mvp
+**Depends on**: Phase 11 (the GATE: GenUI vs raw firebase_ai — which architecture this spine is built on), v1 Phase 7 (the ExerciseController seam + scorer this wires to)
+**Requirements**: TUTOR-01, TUTOR-02, TUTOR-03, TUTOR-04, TUTOR-05, GROUND-01, GROUND-02
+**Success Criteria** (what must be TRUE):
+
+  1. One `TutorBrain` interface hosts three swappable backends — AuthoredFallback, GeminiBrain, GemmaBrain (stub OK) — and swapping the backend changes no canvas, scorer, or curriculum code; the durable layers carry zero GenUI/A2UI/firebase_ai imports (TUTOR-01, TUTOR-04).
+  2. In airplane mode with no model loaded, every coaching moment still shows a grounded, correctly-Arabic AuthoredFallback line and the trace loop never blocks; online, GeminiBrain coaches and auto-degrades to the floor on timeout/offline, with the Gemini key never in the client (App-Check-gated) (TUTOR-02, TUTOR-03).
+  3. The agent acts only through the 4 ACTION tools (`present_activity`, `say`, `give_hint`, `advance`); the geometry verdict and learner state arrive as injected FACTS (mistakeId, struggles, letterId, section) — the model cannot request or fabricate a verdict (TUTOR-05).
+  4. The pass/fail + star is decided by the deterministic scorer at the `ExerciseController` seam and no agent path can flip a fail to a pass; the agent only supplies the displayed line (GROUND-01).
+  5. A guard/test fails the build if raw stroke coordinates or any PII field (nickname/PII) can reach the network payload — only derived non-PII facts cross (GROUND-02).
+
+**Plans**: TBD
+**UI hint**: yes
+**Research hint**: no — the architecture is decided by the Phase 11 GATE; this phase executes it.
+
+#### Phase 15: BUILD — dynamic grounded exercise selection on baa
+
+**Goal**: Replace `LetterUnitController`'s fixed section walk with **agent-driven `present_activity`
+selection** over baa's existing **19 Schema-v2 configs**, reasoning about the child's recent
+mistakeIds/struggle tags (injected facts); the **curriculum rails the choices** (only valid,
+signed-off baa configs are selectable); the flow is **resume-aware** and ends in **one quiet star**
+at mastery; and grounding faithfulness is enforced and first-measured here.
+**Mode**: mvp
+**Depends on**: Phase 14 (the TutorBrain spine + ACTION tools + grounding seam), Phase 13 (the grounding-faithfulness harness this first-measures with), v1 Phase 7 (the 19 signed-off baa configs + LetterUnit)
+**Requirements**: DYN-01, DYN-02, GROUND-03
+**Success Criteria** (what must be TRUE):
+
+  1. Entering the baa unit runs the **agent-driven flow** (not `LetterUnitController`'s static sequence); the agent picks the next exercise via `present_activity` from baa's 19 configs, and its choice visibly responds to recent mistakeIds/struggles rather than a fixed order (DYN-01, DYN-02).
+  2. The agent can select **only valid, signed-off baa configs** — the curriculum rails the choices; an invalid or unsigned config can never be presented (DYN-01).
+  3. The dynamic flow is **resume-aware** (re-entering resumes correctly) and ends in **one quiet star** at mastery — no streaks, totals, or extra stars (DYN-02).
+  4. Grounding faithfulness is **measurable and enforced** here — given a fixed scorer verdict, the harness flags any coaching that praises a failed stroke or names the wrong fix, and a faithfulness rate is reported (GROUND-03).
+
+**Plans**: TBD
+**UI hint**: yes
+**Research hint**: no — runs on the Phase 13 harness + the Phase 14 spine; no new unknowns.
+
+#### Phase 16: BUILD — presence + voice + eval gate + demo-harden
+
+**Goal**: Make the tutor **feel present** — streamed/TTS coaching that plays at the right moments
+within the **Phase-12 latency budget** while the millisecond stroke reflex stays local; **promote
+the Phase-13 harness into a regression gate** that catches tutor-quality regressions before they
+ship; **demo-harden** the baa AI-tutor path (no dead ends, graceful offline/timeout fallback to
+authored lines) on the **Pixel-Tablet build**; and **finalize the Gemma-adoption decision** from
+the bake-off.
+**Mode**: mvp
+**Depends on**: Phase 15 (the dynamic grounded baa flow being voiced + hardened), Phase 12 (the latency budget + model/transport choice met here), Phase 13 (the harness promoted to the gate; the Gemma verdict finalized here)
+**Requirements**: PRES-01, PRES-02, EVAL-01, EVAL-02, DEMO-01
+**Success Criteria** (what must be TRUE):
+
+  1. Coaching is **spoken/streamed** on pass/miss and degrades gracefully to text on offline/timeout without breaking the flow (PRES-02); the stroke→scorer→agent→render→first-TTS path **meets the written Phase-12 budget** on a real Pixel Tablet and instant stroke feedback never routes through the agent (PRES-01).
+  2. The **eval harness scores** tutor quality (never-contradicts-geometry, names-the-specific-fix, register-for-a-5-10-year-old, correct-Arabic) against the labeled set (EVAL-01) and **runs as a regression gate** (CI or a documented pre-merge step) that fails on a regression below threshold (EVAL-02).
+  3. The baa AI-tutor path is **demo-hardened** end-to-end on the Pixel-Tablet build — Home/Journey → baa unit → mastery star, with no dead ends or stuck states and graceful offline/timeout fallback to authored lines (DEMO-01).
+  4. The **Gemma-adoption decision is finalized** from the Phase-13 bake-off and recorded (adopt as a real backend vs keep experimental-only, never on the demo's critical path) (closes the TUTOR-04 decision).
+
+**Plans**: TBD
+**UI hint**: yes
+**Research hint**: no — presence numbers come from Phase 12; the gate harness from Phase 13. This phase integrates and hardens.
+
+### Progress (v2.0)
+
+**Execution Order:**
+Spikes first, then the grounded vertical slice: 11 → 12 → 13 → 14 → 15 → 16
+
+| Phase | Plans Complete | Status | Completed |
+|-------|----------------|--------|-----------|
+| 11. SPIKE — GenUI catalog + native stylus canvas | 0/TBD | Not started | - |
+| 12. SPIKE — full-path latency & presence budget | 0/TBD | Not started | - |
+| 13. SPIKE — 3-way bake-off (grounding + Arabic) | 0/TBD | Not started | - |
+| 14. BUILD — TutorBrain spine + grounding invariant | 0/TBD | Not started | - |
+| 15. BUILD — dynamic grounded exercise selection on baa | 0/TBD | Not started | - |
+| 16. BUILD — presence + voice + eval gate + demo-harden | 0/TBD | Not started | - |
+
+**Coverage:** all 14 v2.0 requirements mapped across Phases 14–16; the three spikes (11–13) own no requirements by design. See REQUIREMENTS.md → v2.0 Traceability.
