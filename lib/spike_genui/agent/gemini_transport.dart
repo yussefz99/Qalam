@@ -116,6 +116,28 @@ class GeminiTransport {
     }
   }
 
+  /// Spike-only kill-shot probe: ask the model to push a FRESH present_activity
+  /// (a genuine surface UPDATE), simulating the tutor changing its coaching line
+  /// mid-session. This is the decision-relevant test — if the embedded canvas State
+  /// (and the child's in-progress ink) does NOT survive this model-driven surface
+  /// update, GenUI cannot host the live canvas (Pitfall 1 -> DROP). Sends ONLY text
+  /// + letterId (T-11-03) — never strokes, never PII.
+  Future<void> nudge() async {
+    debugPrint('[spike] NUDGE — requesting a model coaching update (surface update)');
+    try {
+      await _conversation.sendRequest(
+        genui.ChatMessage.user(
+          'The child is mid-trace on letterId "$kSpikeLetterId". Update the '
+          'present_activity coaching line with fresh, specific encouragement for '
+          'the SAME tracing activity.',
+        ),
+      );
+    } catch (error, stack) {
+      debugPrint('[spike] nudge failed: $error\n$stack');
+      onDrop?.call(error);
+    }
+  }
+
   /// The transport onSend: collect text/interaction from the GenUI message, send it
   /// to Gemini, and stream the response back into the A2UI parser via addChunk.
   ///

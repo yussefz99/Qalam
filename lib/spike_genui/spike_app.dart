@@ -133,6 +133,16 @@ class _SpikeHarnessScreenState extends State<SpikeHarnessScreen> {
           SpikeArm.standalone => _buildStandaloneArm(),
         },
       ),
+      // Spike-only kill-shot probe: forces a model-driven surface UPDATE (fresh
+      // coaching line) WITHOUT switching arms — tests whether the embedded canvas
+      // State + the child's in-progress ink survive a real tutor-loop update.
+      floatingActionButton: _arm == SpikeArm.embedded
+          ? FloatingActionButton.extended(
+              onPressed: () => _transport.nudge(),
+              icon: const Icon(Icons.refresh),
+              label: const Text('Nudge coaching'),
+            )
+          : null,
     );
   }
 

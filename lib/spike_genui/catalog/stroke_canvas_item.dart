@@ -34,12 +34,19 @@ import 'package:qalam/features/practice/widgets/stroke_canvas.dart';
 import '../fixtures/baa_reference.dart';
 import '../agent/present_activity_tool.dart';
 
-/// Stable identity for the embedded canvas. Constant across every GenUI surface
-/// rebuild so _StrokeCanvasState survives (Pitfall 1 mitigation — the whole spike
-/// turns on this key). A changing/absent key would reset the ink mid-trace.
-const ValueKey<String> kEmbeddedCanvasKey = ValueKey<String>(
-  'spike-embedded-canvas',
-);
+/// Stable identity for the embedded canvas.
+///
+/// RUNTIME FINDING (Pixel Tablet emulator, 2026-06-21): a plain ValueKey did NOT
+/// preserve the canvas State across GenUI's self-initiated Surface rebuilds. GenUI
+/// rebuilds the surface subtree from a fresh widget, and a ValueKey only preserves
+/// State among siblings of the SAME parent — so the canvas State was disposed +
+/// recreated on every rebuild (Pitfall 1), even with the key correctly placed.
+///
+/// A GlobalKey DOES survive reparenting/rebuilds (Flutter moves the existing Element
+/// + State to the new location). This is the salvage experiment: if the embedded
+/// canvas State now survives GenUI's rebuilds under a GlobalKey, GenUI is keepable;
+/// if DISPOSE still fires on every rebuild, that is decisive drop evidence.
+final GlobalKey kEmbeddedCanvasKey = GlobalKey();
 
 /// Typed view over the AI-generated `present_activity` component data.
 ///
@@ -137,7 +144,8 @@ class _InstrumentedCanvasState extends State<_InstrumentedCanvas> {
     super.initState();
     debugPrint(
       '[spike] embedded canvas State CREATED for "${widget.letterId}" '
-      '(key=$kEmbeddedCanvasKey) — fresh ink surface',
+      '(GlobalKey=$kEmbeddedCanvasKey) — fresh ink surface; should fire ONCE if '
+      'the GlobalKey preserves State across GenUI rebuilds',
     );
   }
 
@@ -145,8 +153,8 @@ class _InstrumentedCanvasState extends State<_InstrumentedCanvas> {
   void dispose() {
     debugPrint(
       '[spike] embedded canvas State DISPOSED for "${widget.letterId}" '
-      '(key=$kEmbeddedCanvasKey) — if this fires mid-trace, GenUI tore the '
-      'canvas down (Pitfall 1 -> DROP evidence)',
+      '(GlobalKey=$kEmbeddedCanvasKey) — if this fires on a GenUI rebuild (not an '
+      'arm switch), even a GlobalKey did not save the canvas (Pitfall 1 -> DROP)',
     );
     super.dispose();
   }

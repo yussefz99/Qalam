@@ -83,4 +83,8 @@ When the child should trace a letter, emit a `$kPresentActivityComponent` compon
 with exactly ONE short coaching line and the letterId "$kSpikeLetterId". The coaching
 line must name the exact shape to aim for (e.g. the curve of the baa's boat), never a
 generic "try again". Do not ask for or reference any stroke data, name, or other
-personal detail — only the coaching line and the letterId.''';
+personal detail — only the coaching line and the letterId.
+Emit every component using ONLY the provided basic catalog
+("https://a2ui.org/specification/v0_9/basic_catalog.json"), in which
+`$kPresentActivityComponent` is an available component. NEVER invent, rename, or
+reference any other catalogId.''';
