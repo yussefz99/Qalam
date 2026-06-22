@@ -33,6 +33,22 @@ logger = logging.getLogger("qalam.tutor.main")
 # Per-request graph budget. A slow model returns fast so the client degrades (G5).
 _TIMEOUT_SECONDS = float(os.environ.get("COACH_TIMEOUT_SECONDS", "8"))
 
+# Wire-key normalization (the single response casing contract). Internally the nodes
+# keep the tool's snake_case arg names (the G4 guard reads `letter_id`); on the wire we
+# emit camelCase so CoachOut.args matches the camelCase request DTO (TutorFactsIn) and the
+# Dart client's `_parseCoachOut` (coachingLine/letterId). Without this, a `present_activity`
+# line parses null on the client → empty → silent degrade to the floor.
+_WIRE_ARG_KEYS = {
+    "letter_id": "letterId",
+    "coaching_line": "coachingLine",
+    "next_exercise_id": "nextExerciseId",
+}
+
+
+def _to_wire_args(args: dict) -> dict:
+    """Rename known snake_case decision-arg keys to their camelCase wire form."""
+    return {_WIRE_ARG_KEYS.get(k, k): v for k, v in (args or {}).items()}
+
 app = FastAPI(title="Qalam Tutor Server", version="0.1.0")
 
 
@@ -94,7 +110,7 @@ async def coach(
     decision = result.get("decision") or {}
     return CoachOut(
         toolName=decision.get("name", "say"),
-        args=decision.get("args", {}),
+        args=_to_wire_args(decision.get("args", {})),
         source="agent",
         grounded=bool(result.get("grounded", True)),
     )

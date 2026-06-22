@@ -187,3 +187,30 @@ async def test_advance_on_pass_is_allowed(client, monkeypatch):
     body = resp.json()
     assert body["toolName"] == "advance"
     assert body["grounded"] is True
+
+
+# --- 3. The present_activity wire contract is camelCase (matches the Dart client). ---
+
+
+async def test_present_activity_args_are_camelcase_on_the_wire(client, monkeypatch):
+    """The coach tool emits snake_case param names (`letter_id`/`coaching_line`); the WIRE
+    must expose them camelCase (`letterId`/`coachingLine`) so the Dart client's _parseCoachOut
+    reads them — otherwise a present_activity line parses null and silently degrades to the floor.
+    `baa` is an authored id, so the G4 curriculum guard does NOT rewrite this to `say`.
+    """
+    _patch_coach(
+        monkeypatch,
+        [{"name": "present_activity", "args": {"letter_id": "baa", "coaching_line": "Let's try the boat again."}}],
+    )
+
+    resp = await client.post("/coach", json=ENLARGED_PASS_FACTS, headers=VALID_AUTH_HEADERS)
+
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["toolName"] == "present_activity"
+    # camelCase on the wire (the single response casing contract) ...
+    assert body["args"]["letterId"] == "baa"
+    assert body["args"]["coachingLine"] == "Let's try the boat again."
+    # ... and the internal snake_case keys must NOT leak onto the wire.
+    assert "letter_id" not in body["args"]
+    assert "coaching_line" not in body["args"]
