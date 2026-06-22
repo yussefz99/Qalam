@@ -22,6 +22,7 @@ from fastapi.responses import JSONResponse
 
 from app.auth import verify_caller
 from app.graph import build_graph
+from app.nodes import StructuredOutputError
 from app.schema import CoachOut, TutorFactsIn
 
 logger = logging.getLogger("qalam.tutor.main")
@@ -70,7 +71,13 @@ async def coach(
         )
     except HTTPException:
         raise
-    except Exception as exc:  # any model/graph error -> structured 503 -> client AuthoredFallback
+    except StructuredOutputError as exc:  # retries exhausted / curriculum guard -> degrade (G5/D9)
+        logger.warning("coach graph failed closed (%s); client degrades to AuthoredFallback.", exc)
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="coach_degraded",
+        )
+    except Exception as exc:  # any other model/graph error -> structured 503 -> client AuthoredFallback
         logger.exception("coach graph failed: %s", type(exc).__name__)
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
