@@ -1,0 +1,43 @@
+[project]
+name = "qalam-tutor-server"
+version = "0.1.0"
+description = "Qalam server-side LangGraph tutor agent (Phase 14). FastAPI on Cloud Run: POST /coach + GET /healthz, Firebase ID-token + App Check gated, minimal one-node grounding graph."
+requires-python = ">=3.12"
+readme = "README.md"
+
+# Pinned ranges per 14-AI-SPEC §3 "Installation" (pin the resolved versions at build;
+# the exact resolved set is recorded in README.md). All packages verified GA on PyPI.
+dependencies = [
+    # Core graph runtime + the LangChain v1 model layer (init_chat_model lives here)
+    "langgraph>=1.2,<2",
+    "langchain>=1.0,<2",
+    # Per-node provider clients (model-agnostic routing needs BOTH)
+    "langchain-anthropic>=1.0,<2",        # Claude Haiku / Sonnet
+    "langchain-google-genai>=3.0,<5",     # Gemini Flash / Pro (latest GA is 4.x; AI-SPEC said <4, widened to <5)
+    # Server transport + structured output
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "pydantic>=2.9,<3",
+    "sse-starlette>=2.1",
+    # Caller verification (Firebase ID token + App Check)
+    "firebase-admin>=7.0,<8",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+    "httpx>=0.27",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+markers = [
+    "code: deterministic, model-free check — gates every PR (14-AI-SPEC §5 CI leg 1)",
+]
+
+# This is a deployed application, not a distributed library: do not build/install the
+# project itself into the venv (uv installs only the dependencies). The Dockerfile copies
+# the `app/` package directly. Avoids a build-backend step entirely.
+[tool.uv]
+package = false

@@ -1,0 +1,12 @@
+# Python tutor-server — never commit the venv, real secrets, or caches.
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/

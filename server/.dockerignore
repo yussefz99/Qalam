@@ -1,0 +1,16 @@
+# Keep the image lean and secret-free (14-AI-SPEC §3 — keys/tests never in the image).
+tests/
+.env
+.env.*
+*.env
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.venv/
+venv/
+.uv/
+uv.lock
+README.md
+.dockerignore
+Dockerfile
