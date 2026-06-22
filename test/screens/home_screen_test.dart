@@ -300,8 +300,15 @@ void main() {
 
       expect(find.text('Journey'), findsOneWidget,
           reason: '"Journey" nav label must be visible.');
-      expect(find.text('Parent'), findsOneWidget,
-          reason: '"Parent" nav label must be visible.');
+      // Parent is a grown-ups control: an adult-and-child glyph carries the
+      // meaning, so the word "Parent" is intentionally NOT written (the icon
+      // is self-explanatory). It stays reachable by its stable key, and a
+      // screen reader still announces it via its Semantics label.
+      expect(find.byKey(const Key('parentNavItem')), findsOneWidget,
+          reason: 'The Parent grown-ups control must be present in the rail.');
+      expect(find.text('Parent'), findsNothing,
+          reason: 'The grown-ups control speaks through its icon — no written '
+              '"Parent" word in the rail.');
 
       // No "Coming soon" anywhere — both Journey and Parent are now live.
       expect(
@@ -322,7 +329,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Parent now navigates to /parent (the PIN gate guards it downstream).
-      await tester.tap(find.text('Parent'));
+      await tester.tap(find.byKey(const Key('parentNavItem')));
       await tester.pumpAndSettle();
       expect(_location(router), '/parent',
           reason: 'Tapping Parent must navigate to /parent (S1-11).');

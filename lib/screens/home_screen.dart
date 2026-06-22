@@ -99,6 +99,7 @@ class _HomeNavRail extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 120,
+      height: double.infinity,
       decoration: BoxDecoration(
         color: QalamColors.surface,
         border: Border(
@@ -108,6 +109,7 @@ class _HomeNavRail extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: QalamSpace.space8),
       child: Column(
         children: <Widget>[
+          // Kid-facing items live at the top of the rail.
           // Home — active.
           _NavItem(
             iconAsset: 'assets/icons/qalam-nib.svg',
@@ -125,14 +127,25 @@ class _HomeNavRail extends StatelessWidget {
             isLocked: false,
             onTap: () => context.go('/journey'),
           ),
-          const SizedBox(height: QalamSpace.space4),
+          // Push the grown-ups control to the foot of the rail — set apart
+          // from the child's own items, the way a teacher's desk sits at the
+          // side of the room.
+          const Spacer(),
+          // Hairline separating the child's area from the grown-up corner.
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: QalamSpace.space3,
+              vertical: QalamSpace.space4,
+            ),
+            child: Divider(height: 1, thickness: 1, color: QalamColors.border),
+          ),
           // Parent — unlocked in Phase 9: routes to the PIN-gated /parent area.
-          // A non-lock glyph (A-02: lock.svg is never shipped for this item).
-          _NavItem(
-            iconAsset: 'assets/icons/ink-drop.svg',
+          // Deliberately styled UNLIKE the kid items: a bordered grown-up
+          // control with a "For grown-ups" caption, so a child reads it as
+          // "not for me" at a glance. A non-lock glyph (A-02: lock.svg is
+          // never shipped for this item).
+          _ParentNavItem(
             label: l10n?.navParent ?? 'Parent',
-            isActive: false,
-            isLocked: false,
             onTap: () => context.go('/parent'),
           ),
         ],
@@ -187,6 +200,64 @@ class _NavItem extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The grown-ups-only entry point at the foot of the rail.
+///
+/// Intentionally NOT a `_NavItem`: where the child's Home/Journey items are
+/// big, glyph-forward tap targets, this is a calmer bordered control with a
+/// muted icon and a small "For grown-ups" caption. The different shape is the
+/// signal — a child reads it as "not mine" without needing to be told. The PIN
+/// gate behind `/parent` is the real boundary; this is just the honest door.
+/// (A-02: no lock glyph is ever shipped for this item.)
+class _ParentNavItem extends StatelessWidget {
+  const _ParentNavItem({required this.label, this.onTap});
+
+  final String label;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: QalamSpace.space3),
+      child: Semantics(
+        // The icon carries the meaning now; the screen reader still needs words.
+        label: '$label area — for grown-ups',
+        button: true,
+        child: GestureDetector(
+          key: const Key('parentNavItem'),
+          onTap: onTap,
+          behavior: HitTestBehavior.opaque,
+          child: Container(
+            // Square-ish so the two-figure glyph sits comfortably; a full,
+            // unhurried tap target for an adult thumb.
+            constraints: const BoxConstraints(
+              minHeight: QalamTargets.targetMin,
+            ),
+            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(
+              vertical: QalamSpace.space3,
+              horizontal: QalamSpace.space2,
+            ),
+            decoration: BoxDecoration(
+              color: QalamColors.bgDeep,
+              borderRadius: BorderRadius.circular(QalamRadii.lg),
+              border: Border.all(color: QalamColors.border, width: 1),
+            ),
+            child: ExcludeSemantics(
+              // The adult-and-child figure reads as "grown-ups" on its own —
+              // no written "Parent" needed. (A-02: never a lock glyph.)
+              child: _SafeSvgIcon(
+                asset: 'assets/icons/parent.svg',
+                size: QalamSpace.space10,
+                color: QalamColors.fgMuted,
+              ),
+            ),
           ),
         ),
       ),
