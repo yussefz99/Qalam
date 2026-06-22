@@ -20,6 +20,7 @@ RUN uv pip install --system --no-cache \
     "langchain>=1.0,<2" \
     "langchain-anthropic>=1.0,<2" \
     "langchain-google-genai>=3.0,<5" \
+    "langchain-google-vertexai>=3.0,<4" \
     "fastapi>=0.115" \
     "uvicorn[standard]>=0.32" \
     "pydantic>=2.9,<3" \

@@ -60,31 +60,34 @@ def with_structured_retry(
         except ValidationError as exc:
             last_error = exc
             logger.warning(
-                "structured-output retry: node=%s model=%s attempt=%d/%d error=%s",
+                "structured-output retry: node=%s model=%s attempt=%d/%d error=%s msg=%s",
                 node,
                 model_id,
                 attempt + 1,
                 _MAX_RETRIES + 1,
                 type(exc).__name__,
+                str(exc)[:300],
             )
         except StructuredOutputError:
             raise
         except Exception as exc:  # any other parse failure is also a soft, retryable failure
             last_error = exc
             logger.warning(
-                "structured-output retry: node=%s model=%s attempt=%d/%d error=%s",
+                "structured-output retry: node=%s model=%s attempt=%d/%d error=%s msg=%s",
                 node,
                 model_id,
                 attempt + 1,
                 _MAX_RETRIES + 1,
                 type(exc).__name__,
+                str(exc)[:300],
             )
 
     logger.error(
-        "structured-output FAILED CLOSED: node=%s model=%s after %d attempts; degrading to fallback.",
+        "structured-output FAILED CLOSED: node=%s model=%s after %d attempts (%s); degrading to fallback.",
         node,
         model_id,
         _MAX_RETRIES + 1,
+        f"{type(last_error).__name__}: {str(last_error)[:300]}" if last_error else "no error",
     )
     raise StructuredOutputError(
         f"{node} structured output failed after {_MAX_RETRIES + 1} attempts"
