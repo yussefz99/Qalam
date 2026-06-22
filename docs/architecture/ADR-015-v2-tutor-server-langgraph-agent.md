@@ -1,6 +1,6 @@
 # ADR-015: v2 AI-Tutor — server-side LangGraph agent, model-agnostic per-task routing
 
-**Status:** Accepted (owner, 2026-06-22)
+**Status:** Topology + requirements ACCEPTED (owner, 2026-06-22); **framework + per-task models are NOT yet decided** — they go through `/gsd:ai-integration-phase` → `AI-SPEC.md` (interactive scored framework-selection). The LangGraph/model choices below are **candidate inputs to that selection, not the verdict.** This ADR will be finalized once the AI-SPEC lands.
 **Supersedes:** ADR-014's **topology** decision (client-only). Everything else in ADR-014 — the
 grounding invariant, the 4 ACTION tools, FACTS-in/ACTIONS-out, the `TutorBrain` seam, and the
 `AuthoredFallback` offline floor — **remains in force**.
@@ -38,8 +38,13 @@ API** — a deliberate, simple transport contract (this is *not* a "shallow agen
 *behind* the boundary). The brain's API keys live in server secrets, never in the client; App
 Check gates the client→server calls.
 
-### 2. Framework — LangGraph
-**LangGraph** is the orchestration framework:
+### 2. Framework — CANDIDATES (selected via /gsd:ai-integration-phase → AI-SPEC.md, not pre-decided here)
+The hard requirements the selector must honor: **model-agnostic**, supports **per-task model
+routing**, **stateful/checkpointed** (for the planning loop + future durable memory), Python,
+deployable to Cloud Run. Leading candidate going in is **LangGraph** (below), with Google ADK as
+the model-agnostic-via-LiteLLM alternative — but the scored matrix decides.
+
+**LangGraph** (candidate) — the orchestration framework profile:
 - **Model-agnostic** — each graph node binds its own model (required for per-task routing, §3).
 - **Stateful, checkpointed graph** — the natural home for the planning loop *and* for durable
   cross-session state when that future arrives (the checkpointer → a store).
