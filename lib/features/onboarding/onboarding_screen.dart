@@ -23,6 +23,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../l10n/app_localizations.dart';
@@ -71,7 +72,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     setState(() => _submitting = true);
 
     final lessonId = resolveStartingLessonId(grade);
-    await ref.read(childProfileRepositoryProvider).create(
+    await ref
+        .read(childProfileRepositoryProvider)
+        .create(
           nicknameId: nicknameId,
           avatarId: avatarId,
           grade: grade,
@@ -104,80 +107,112 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 720),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: QalamColors.surface,
-                    borderRadius: BorderRadius.circular(QalamRadii.xl),
-                    border: Border.all(color: QalamColors.border),
-                    boxShadow: QalamShadows.shadowMd,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(QalamSpace.space5),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        // Heading / warm prompt.
-                        Text(
-                          l10n?.onboardingTitle ?? 'Let\'s set up your learner',
-                          style: QalamTextStyles.heading,
-                        ),
-                        const SizedBox(height: QalamSpace.space2),
-                        Text(
-                          l10n?.onboardingSubtitle ??
-                              'Pick a grade, an avatar, and a nickname.',
-                          style: QalamTextStyles.body,
-                        ),
-                        const SizedBox(height: QalamSpace.space5),
-
-                        // 1. Grade (the parent's pick).
-                        Text(
-                          l10n?.onboardingGradePrompt ?? 'Grade',
-                          style: QalamTextStyles.label,
-                        ),
-                        const SizedBox(height: QalamSpace.space3),
-                        GradeChips(
-                          selected: _grade,
-                          onSelected: (g) => setState(() => _grade = g),
-                        ),
-                        const SizedBox(height: QalamSpace.space5),
-
-                        // 2. Avatar (the child's pick).
-                        Text(
-                          l10n?.onboardingAvatarPrompt ?? 'Pick your avatar',
-                          style: QalamTextStyles.label,
-                        ),
-                        const SizedBox(height: QalamSpace.space3),
-                        AvatarGrid(
-                          selected: _avatarId,
-                          onSelected: (a) => setState(() => _avatarId = a),
-                        ),
-                        const SizedBox(height: QalamSpace.space5),
-
-                        // 3. Nickname (the child's pick).
-                        Text(
-                          l10n?.onboardingNicknamePrompt ?? 'Pick your nickname',
-                          style: QalamTextStyles.label,
-                        ),
-                        const SizedBox(height: QalamSpace.space3),
-                        NicknameGrid(
-                          selected: _nicknameId,
-                          onSelected: (n) => setState(() => _nicknameId = n),
-                        ),
-                        const SizedBox(height: QalamSpace.space5),
-
-                        // 4. "Let's go" CTA — ink-teal pill (no gold), enabled
-                        // only when all three selections are made.
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: _LetsGoButton(
-                            label: l10n?.onboardingSubmit ?? 'Let\'s go',
-                            enabled: _isComplete && !_submitting,
-                            buttonShadow: qalam.buttonShadow,
-                            onTap: _submit,
+                child: _OnboardingEntrance(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: QalamColors.surface,
+                      borderRadius: BorderRadius.circular(QalamRadii.xl),
+                      border: Border.all(color: QalamColors.border),
+                      boxShadow: QalamShadows.shadowMd,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(QalamSpace.space5),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          // Mascot welcome — Qalam (the tutor's persona) greets
+                          // the child on the very first screen, tying onboarding
+                          // to the rest of the app. Leading-mascot Row mirrors the
+                          // home greeting; graceful SizedBox fallback if the asset
+                          // is missing.
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              SvgPicture.asset(
+                                'assets/mascot/qalam-idle.svg',
+                                width: QalamSpace.space16,
+                                height: QalamSpace.space16,
+                                semanticsLabel: 'Qalam',
+                                placeholderBuilder: (_) => const SizedBox(
+                                  width: QalamSpace.space16,
+                                  height: QalamSpace.space16,
+                                ),
+                              ),
+                              const SizedBox(width: QalamSpace.space5),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Text(
+                                      l10n?.onboardingTitle ??
+                                          'Let\'s set up your learner',
+                                      style: QalamTextStyles.heading,
+                                    ),
+                                    const SizedBox(height: QalamSpace.space2),
+                                    Text(
+                                      l10n?.onboardingSubtitle ??
+                                          'Pick a grade, an avatar, and a nickname.',
+                                      style: QalamTextStyles.body,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: QalamSpace.space5),
+
+                          // 1. Grade (the parent's pick).
+                          Text(
+                            l10n?.onboardingGradePrompt ?? 'Grade',
+                            style: QalamTextStyles.label,
+                          ),
+                          const SizedBox(height: QalamSpace.space3),
+                          GradeChips(
+                            selected: _grade,
+                            onSelected: (g) => setState(() => _grade = g),
+                          ),
+                          const SizedBox(height: QalamSpace.space5),
+
+                          // 2. Avatar (the child's pick).
+                          Text(
+                            l10n?.onboardingAvatarPrompt ?? 'Pick your avatar',
+                            style: QalamTextStyles.label,
+                          ),
+                          const SizedBox(height: QalamSpace.space3),
+                          AvatarGrid(
+                            selected: _avatarId,
+                            onSelected: (a) => setState(() => _avatarId = a),
+                          ),
+                          const SizedBox(height: QalamSpace.space5),
+
+                          // 3. Nickname (the child's pick).
+                          Text(
+                            l10n?.onboardingNicknamePrompt ??
+                                'Pick your nickname',
+                            style: QalamTextStyles.label,
+                          ),
+                          const SizedBox(height: QalamSpace.space3),
+                          NicknameGrid(
+                            selected: _nicknameId,
+                            onSelected: (n) => setState(() => _nicknameId = n),
+                          ),
+                          const SizedBox(height: QalamSpace.space5),
+
+                          // 4. "Let's go" CTA — ink-teal pill (no gold), enabled
+                          // only when all three selections are made.
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: _LetsGoButton(
+                              label: l10n?.onboardingSubmit ?? 'Let\'s go',
+                              enabled: _isComplete && !_submitting,
+                              buttonShadow: qalam.buttonShadow,
+                              onTap: _submit,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -240,6 +275,76 @@ class _LetsGoButton extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Gentle first-impression entrance: the setup card fades in while sliding up
+/// ~24px (QalamSpace.space6) — `easeOutQuart` over `durSlow` (420ms) — so the
+/// child's very first screen settles in warmly instead of popping onscreen
+/// (mirrors home's prepared-desk beat).
+///
+/// Plays ONCE per arrival; the one-shot decision lives in this State so a parent
+/// rebuild never replays it. Reduced motion (`MediaQuery.disableAnimations`)
+/// skips the controller and renders fully settled immediately.
+class _OnboardingEntrance extends StatefulWidget {
+  const _OnboardingEntrance({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_OnboardingEntrance> createState() => _OnboardingEntranceState();
+}
+
+class _OnboardingEntranceState extends State<_OnboardingEntrance>
+    with SingleTickerProviderStateMixin {
+  AnimationController? _controller;
+  Animation<double>? _progress;
+  bool _played = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_played) return; // once per arrival
+    _played = true;
+    if (MediaQuery.of(context).disableAnimations) return; // settled at once
+    final controller = AnimationController(
+      vsync: this,
+      duration: QalamMotion.durSlow,
+    );
+    _controller = controller;
+    _progress = CurvedAnimation(
+      parent: controller,
+      curve: QalamMotion.easeOutQuart,
+    );
+    controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = _progress;
+    if (progress == null) return widget.child; // reduced motion: settled
+    return AnimatedBuilder(
+      animation: progress,
+      builder: (BuildContext context, Widget? child) {
+        final double v = progress.value;
+        return Opacity(
+          key: const Key('onboardingCardEntranceFade'),
+          opacity: v,
+          child: Transform.translate(
+            // Slide up ~24px as the card settles.
+            offset: Offset(0, QalamSpace.space6 * (1 - v)),
+            child: child,
+          ),
+        );
+      },
+      child: widget.child,
     );
   }
 }
