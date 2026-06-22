@@ -676,7 +676,22 @@ non-PII-facts network guard — all while keeping the durable layers free of Gen
   4. The pass/fail + star is decided by the deterministic scorer at the `ExerciseController` seam and no agent path can flip a fail to a pass; the agent only supplies the displayed line (GROUND-01).
   5. A guard/test fails the build if raw stroke coordinates or any PII field (nickname/PII) can reach the network payload — only derived non-PII facts cross (GROUND-02).
 
-**Plans**: TBD
+**Plans**: 4 plans
+Plans:
+
+**Wave 1**
+
+- [ ] 14-01-PLAN.md — TutorBrain seam + TutorFacts/TutorDecision + non-PII chokepoint builder + AuthoredFallback floor + native dispatcher, wired into ExerciseController → grounded OFFLINE tutor end-to-end (TUTOR-01/02/05, GROUND-01)
+
+**Wave 2** *(blocked on 14-01)*
+
+- [ ] 14-02-PLAN.md — autonomous:false — GeminiBrain firebase_ai function-calling loop (FunctionCallingConfig.any({4}), FACTS-as-text, non-streamed) + App Check enforced + router + auto-degrade to AuthoredFallback; spike packages removed (TUTOR-03)
+- [ ] 14-03-PLAN.md — the grounding guards: build-failing non-PII payload test (GROUND-02) + durable-layers-no-forbidden-imports guard (TUTOR-01)
+
+**Wave 3** *(blocked on 14-01, 14-02)*
+
+- [ ] 14-04-PLAN.md — GemmaBrain experimental stub behind the same interface + router experimental branch (never on the critical path) (TUTOR-04)
+
 **UI hint**: yes
 **Research hint**: no — the architecture is decided by the Phase 11 GATE; this phase executes it.
 
@@ -733,7 +748,7 @@ Spikes first, then the grounded vertical slice: 11 → 12 → 13 → 14 → 15 �
 | 11. SPIKE — GenUI catalog + native stylus canvas | 3/3 | Complete    | 2026-06-22 |
 | 12. SPIKE — full-path latency & presence budget | 0/TBD | Not started | - |
 | 13. SPIKE — 3-way bake-off (grounding + Arabic) | 0/TBD | Not started | - |
-| 14. BUILD — TutorBrain spine + grounding invariant | 0/TBD | Not started | - |
+| 14. BUILD — TutorBrain spine + grounding invariant | 0/4 | Planned | - |
 | 15. BUILD — dynamic grounded exercise selection on baa | 0/TBD | Not started | - |
 | 16. BUILD — presence + voice + eval gate + demo-harden | 0/TBD | Not started | - |
 
