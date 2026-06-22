@@ -30,7 +30,7 @@ Plan: 1 of 7
 Phase: 09 (parent-dashboard) — 3/3 complete, verification human_needed (device UAT)
 Phase: 05 (profiles-onboarding) — 4/4 plans complete, verification human_needed (device UAT)
 Status: Executing Phase 07
-Last activity: 2026-06-22 - Completed quick task 260622-pal: parent accounts LIVE (spike → wired feature; owner override)
+Last activity: 2026-06-22 - Completed quick task 260622-pux: parent-area UX + 2 dialog crash fixes (device-verified)
 
 Progress: [█████░░░░░] 54% (7 of 13 tracked phases complete)
 <!-- reconciled 2026-06-11: 13 tracked phases (integer 1-10 + inserted 02.1/02.1.1/03.1). Complete: 1, 2, 02.1, 02.1.1, 3, 03.1, 5. Phase 4 in progress (5/6, 04-06 deferred). Evidence: every plan in those phases has a SUMMARY file; scorer + curriculum repo + models exist in lib/. -->
@@ -174,6 +174,7 @@ None yet.
 | 260622-onb | Polish onboarding screen: Qalam mascot welcome header (leading-mascot Row, home-greeting idiom) + reduced-motion-safe one-shot card entrance (fade + slide-up, durSlow/easeOutQuart). Flow/data/safety invariants untouched | 2026-06-22 | c716383 | [260622-onb-polish-onboarding-mascot-entrance](./quick/260622-onb-polish-onboarding-mascot-entrance/) |
 | 260622-pas | v2 spike: UI-only parent-account auth prototype screen (sign in/up toggle, email+password, teal CTA, inert "Continue with Google") on hidden /dev/parent-auth + PARENTAUTH launch flag. NOT wired to Firebase/AuthService/parent-gate/child-data — inert CTAs; account-linking (D-09c) deferred pending owner sign-off | 2026-06-22 | af575fe | [260622-pas-parent-auth-spike-v2](./quick/260622-pas-parent-auth-spike-v2/) |
 | 260622-pal | Parent accounts LIVE (owner override): promoted the 260622-pas spike into a wired feature — real Email/Password + Google parent sign-in/up via AuthService (anonymous→permanent linking D-09c, parent-friendly errors, signOut restores anon), auth_providers + AuthGate, ParentAuthScreen replaces the dev spike, router /auth front-door gate (auth→profile), account-scoped Drift DB (sha256-per-UID file). Children still never log in (D-09b). 533 tests pass | 2026-06-22 | bad0811 | [260622-pal-parent-accounts-live](./quick/260622-pal-parent-accounts-live/) |
+| 260622-pux | Parent-area UX fixes + 2 crash fixes (device-verified): (1) fix dialog `TextEditingController`-after-dispose crash in BOTH the Forgot-PIN recovery dialog and the Settings edit-learner dialog — controllers were disposed right after `Navigator.pop` while the dialog animated out, so the close frame used a disposed controller (on-device `_dependents.isEmpty` assertion); each dialog now OWNS its controller in a real stateful widget (`_PinRecoveryDialog` / `_EditLearnerDialog`), disposed in `State.dispose` after the route exits. (2) `appDatabaseProvider` scoped to a stable `accountDatabaseId` so a token refresh (reauthenticate) no longer rebuilds/closes the DB. (3) Settings redesign: email-first Account card, ACCOUNT/LEARNER/PARENT sections, wired the inert "Parent Area" row to /parent, removed dead Sound/Hand rows, dropped duplicate AppBar title. (4) PIN-gate back-to-home button (commonBack). 2 regression tests added | 2026-06-22 | e4f217d, 3719e65, ffe8e9d | (no quick dir) |
 
 ## Deferred Items
 
