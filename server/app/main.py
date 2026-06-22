@@ -117,9 +117,10 @@ async def coach(
     # Observability: the exact line the child sees (Section 7). Lets us confirm a real
     # online coaching turn vs the client's offline floor without a device probe.
     _line = out.args.get("text") or out.args.get("coachingLine") or ""
-    logger.info(
-        "coach decision: passed=%s tool=%s grounded=%s line=%r",
+    logger.warning(
+        "coach decision: passed=%s mistakeId=%s tool=%s grounded=%s line=%r",
         facts_in.passed,
+        facts_in.mistakeId,
         out.toolName,
         out.grounded,
         _line[:200],
