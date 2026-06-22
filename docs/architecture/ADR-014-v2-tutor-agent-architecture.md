@@ -3,7 +3,7 @@
 
 # ADR-014: v2 AI-Tutor Agent Architecture & Topology
 
-**Status:** Accepted (owner, 2026-06-22)
+**Status:** Topology SUPERSEDED by [ADR-015](ADR-015-v2-tutor-server-langgraph-agent.md) (owner, 2026-06-22) — the agent now runs **server-side on a LangGraph framework**, not client-only, after the agent's scope grew from "one coaching line" to a capable analyze/plan agent. **Everything else here still holds:** the grounding invariant, the 4 ACTION tools, FACTS-in/ACTIONS-out, the `TutorBrain` seam, and the `AuthoredFallback` offline floor. Read ADR-015 for the current topology + framework.
 **Date:** 2026-06-22
 **Deciders:** Owner (final call on pedagogy/product), with flutter-expert + ai-engineer input
 **Supersedes/affects:** Phase 11 spike findings (genui drop holds); reshapes Phase 14 plan; constrains Phases 12/13/16.
