@@ -25,11 +25,11 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 
 ## Current Position
 
-Phase: 14 (build-tutorbrain-spine-grounding-invariant) — EXECUTING
-Plan: 1 of 4
-Status: Executing Phase 14
-Last activity: 2026-06-22 -- Phase 14 execution started
-Next: /gsd-plan-phase 11
+Phase: 14 (build-tutorbrain-spine-grounding-invariant) — CODE-COMPLETE + VERIFIED (5/5 criteria); AWAITING HUMAN UAT
+Plan: 4 of 4 (all SUMMARYs landed)
+Status: Code on branch gsd/phase-14-tutorbrain; server deployed (Cloud Run rev qalam-tutor-00003-7gv). 3 human-verify gates pending in 14-HUMAN-UAT.md: (1) on-device online coaching + offline floor, (2) Firebase App Check Play-Integrity registration, (3) AUTHORED_BAA_IDS curriculum sign-off. Provider keys are placeholders — add real Anthropic key before the device test.
+Last activity: 2026-06-22 -- Phase 14 finalized: built+merged 4 plans, deployed server, verified deploy gate, fixed present_activity seam (5fecd3b), verification + UAT persisted
+Next: human UAT (run app with --dart-define=TUTOR_BASE_URL=<service URL>), then /gsd-verify-work 14 → mark complete; then /gsd-plan-phase 15
 
 ## Performance Metrics
 
