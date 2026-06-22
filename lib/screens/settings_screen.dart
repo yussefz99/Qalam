@@ -1,14 +1,9 @@
-// SettingsScreen — the parent-area placeholder shell (plan 01-03).
+// SettingsScreen — the grown-up settings screen.
 //
-// Phase 1 ships ONLY a parchment placeholder: the Settings heading/body plus a
-// few inert placeholder rows. There is NO real settings behavior and — by design
-// — NO PIN gate.
-//
-// ROUTING SEAM (P9): the future grown-up area lives behind a PIN-gated
-// `/parent/*` branch. That branch is built in P9, NOT now. The router
-// (lib/router/app_router.dart) carries the commented redirect seam; this screen
-// marks where the "Parent Area" entry row will eventually route. Do NOT build
-// the PIN gate, the parent routes, or any auth here.
+// Grouped into ACCOUNT (signed-in email + sign out), LEARNER (edit the child's
+// avatar/nickname), and PARENT (opens the PIN-gated /parent area). The
+// edit-learner dialog OWNS its controller (_EditLearnerDialog) so it survives
+// its own close animation.
 //
 // All copy via gen-l10n; semantic tokens only; no emoji, no pseudo-icons (D-13).
 
@@ -77,7 +72,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         // No title — the body carries the single "Settings" heading.
         leading: IconButton(
           key: const Key('settingsHomeButton'),
-          tooltip: 'Back to Home',
+          tooltip: l10n.settingsBackHome,
           onPressed: () => context.go('/'),
           icon: const Icon(Icons.home_outlined),
         ),
@@ -96,33 +91,35 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   const SizedBox(height: QalamSpace.space6),
 
                   // ACCOUNT — first, per request. Email + sign out grouped.
-                  const _SectionLabel('ACCOUNT'),
+                  _SectionLabel(l10n.settingsSectionAccount),
                   const SizedBox(height: QalamSpace.space3),
                   _AccountCard(
-                    email: user?.email ?? 'Signed in account',
+                    email: user?.email ?? l10n.settingsAccountFallback,
+                    signedInLabel: l10n.settingsSignedIn,
+                    signOutLabel: l10n.settingsSignOut,
                     signingOut: _signingOut,
                     onSignOut: _signOut,
                   ),
                   const SizedBox(height: QalamSpace.space6),
 
                   // LEARNER — the child's profile (working action).
-                  const _SectionLabel('LEARNER'),
+                  _SectionLabel(l10n.settingsSectionLearner),
                   const SizedBox(height: QalamSpace.space3),
                   _ActionRow(
                     rowKey: const Key('settingsEditLearner'),
                     icon: Icons.person_outline,
-                    label: 'Edit learner profile',
+                    label: l10n.settingsEditLearner,
                     onTap: _editLearner,
                   ),
                   const SizedBox(height: QalamSpace.space6),
 
                   // PARENT — routes to the real PIN-gated /parent area (P9).
-                  const _SectionLabel('PARENT'),
+                  _SectionLabel(l10n.settingsSectionParent),
                   const SizedBox(height: QalamSpace.space3),
                   _ActionRow(
                     rowKey: const Key('settingsParentArea'),
                     icon: Icons.lock_outline,
-                    label: 'Parent Area',
+                    label: l10n.settingsParentArea,
                     onTap: () => context.go('/parent'),
                   ),
                 ],
@@ -179,15 +176,16 @@ class _EditLearnerDialogState extends State<_EditLearnerDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l10n = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: const Text('Edit learner profile'),
+      title: Text(l10n.settingsEditLearner),
       content: SizedBox(
         width: 520,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const Text('Choose an avatar'),
+            Text(l10n.editLearnerChooseAvatar),
             const SizedBox(height: QalamSpace.space3),
             Wrap(
               spacing: QalamSpace.space3,
@@ -223,7 +221,9 @@ class _EditLearnerDialogState extends State<_EditLearnerDialog> {
               key: const Key('editLearnerNickname'),
               controller: _nickname,
               maxLength: 16,
-              decoration: const InputDecoration(labelText: 'Nickname'),
+              decoration: InputDecoration(
+                labelText: l10n.editLearnerNicknameLabel,
+              ),
             ),
           ],
         ),
@@ -231,12 +231,12 @@ class _EditLearnerDialogState extends State<_EditLearnerDialog> {
       actions: <Widget>[
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
+          child: Text(l10n.commonCancel),
         ),
         FilledButton(
           key: const Key('saveLearnerProfile'),
           onPressed: _save,
-          child: const Text('Save'),
+          child: Text(l10n.commonSave),
         ),
       ],
     );
@@ -244,6 +244,7 @@ class _EditLearnerDialogState extends State<_EditLearnerDialog> {
 }
 
 /// A small uppercase group heading (eyebrow), mirroring the Home card eyebrows.
+/// Uppercasing is presentational — the l10n string is stored natural-case.
 class _SectionLabel extends StatelessWidget {
   const _SectionLabel(this.text);
 
@@ -252,7 +253,7 @@ class _SectionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      text,
+      text.toUpperCase(),
       style: QalamTextStyles.label.copyWith(
         color: QalamColors.fgMuted,
         letterSpacing: 1.2,
@@ -265,11 +266,15 @@ class _SectionLabel extends StatelessWidget {
 class _AccountCard extends StatelessWidget {
   const _AccountCard({
     required this.email,
+    required this.signedInLabel,
+    required this.signOutLabel,
     required this.signingOut,
     required this.onSignOut,
   });
 
   final String email;
+  final String signedInLabel;
+  final String signOutLabel;
   final bool signingOut;
   final VoidCallback onSignOut;
 
@@ -312,7 +317,7 @@ class _AccountCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Signed in',
+                      signedInLabel,
                       style: QalamTextStyles.label.copyWith(
                         color: QalamColors.fgMuted,
                       ),
@@ -335,7 +340,7 @@ class _AccountCard extends StatelessWidget {
                       height: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Sign out'),
+                  : Text(signOutLabel),
             ),
           ),
         ],
