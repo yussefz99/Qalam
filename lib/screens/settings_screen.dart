@@ -48,85 +48,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Future<void> _editLearner() async {
     final profile = await ref.read(childProfileProvider.future);
     if (profile == null || !mounted) return;
-    var avatarId = profile.avatarId;
-    final nickname = TextEditingController(text: profile.nicknameId);
-    final saved = await showDialog<bool>(
+    // The dialog OWNS its nickname controller (see _EditLearnerDialog) so the
+    // controller lives until the route's exit animation completes — disposing it
+    // here crashed the close frame ("TextEditingController used after being
+    // disposed" → the on-device `_dependents.isEmpty` assertion). It returns the
+    // chosen values; the repository write happens here.
+    final result = await showDialog<({String nicknameId, String avatarId})>(
       context: context,
-      builder: (dialogContext) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Edit learner profile'),
-          content: SizedBox(
-            width: 520,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Choose an avatar'),
-                const SizedBox(height: QalamSpace.space3),
-                Wrap(
-                  spacing: QalamSpace.space3,
-                  children: [
-                    for (final id in kAvatarIds)
-                      GestureDetector(
-                        key: Key('edit_$id'),
-                        onTap: () => setDialogState(() => avatarId = id),
-                        child: Container(
-                          width: QalamTargets.targetMin,
-                          height: QalamTargets.targetMin,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: QalamColors.bg,
-                            border: Border.all(
-                              color: avatarId == id
-                                  ? QalamColors.primary
-                                  : QalamColors.border,
-                              width: avatarId == id ? 3 : 1,
-                            ),
-                          ),
-                          clipBehavior: Clip.antiAlias,
-                          child: Image.asset(
-                            'assets/avatars/$id.png',
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: QalamSpace.space5),
-                TextField(
-                  key: const Key('editLearnerNickname'),
-                  controller: nickname,
-                  maxLength: 16,
-                  decoration: const InputDecoration(labelText: 'Nickname'),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext, false),
-              child: const Text('Cancel'),
-            ),
-            FilledButton(
-              key: const Key('saveLearnerProfile'),
-              onPressed: () {
-                final value = nickname.text.trim();
-                if (value.runes.length >= 2 && value.runes.length <= 16) {
-                  Navigator.pop(dialogContext, true);
-                }
-              },
-              child: const Text('Save'),
-            ),
-          ],
-        ),
+      builder: (_) => _EditLearnerDialog(
+        initialNickname: profile.nicknameId,
+        initialAvatarId: profile.avatarId,
       ),
     );
-    final value = nickname.text.trim();
-    nickname.dispose();
-    if (saved != true) return;
+    if (result == null || !mounted) return;
     await ref
         .read(childProfileRepositoryProvider)
-        .update(nicknameId: value, avatarId: avatarId);
+        .update(nicknameId: result.nicknameId, avatarId: result.avatarId);
     ref.invalidate(childProfileProvider);
   }
 
@@ -137,7 +74,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.settings),
+        // No title — the body carries the single "Settings" heading.
         leading: IconButton(
           key: const Key('settingsHomeButton'),
           tooltip: 'Back to Home',
@@ -156,47 +93,37 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text(l10n.settings, style: QalamTextStyles.heading),
-                  const SizedBox(height: QalamSpace.space4),
-                  Text(
-                    l10n.settingsPlaceholderBody,
-                    style: QalamTextStyles.body,
-                  ),
-                  const SizedBox(height: QalamSpace.space8),
+                  const SizedBox(height: QalamSpace.space6),
 
-                  // Inert placeholder rows — no behavior in Phase 1.
-                  const _PlaceholderRow(label: 'Sound'),
-                  const _PlaceholderRow(label: 'Hand (Left / Right)'),
-                  // SEAM: the "Parent Area" row will route to the PIN-gated
-                  // `/parent/*` branch in P9. Left inert here on purpose — do NOT
-                  // wire navigation or build the PIN gate now (see app_router.dart).
-                  const _PlaceholderRow(label: 'Parent Area'),
+                  // ACCOUNT — first, per request. Email + sign out grouped.
+                  const _SectionLabel('ACCOUNT'),
+                  const SizedBox(height: QalamSpace.space3),
+                  _AccountCard(
+                    email: user?.email ?? 'Signed in account',
+                    signingOut: _signingOut,
+                    onSignOut: _signOut,
+                  ),
+                  const SizedBox(height: QalamSpace.space6),
+
+                  // LEARNER — the child's profile (working action).
+                  const _SectionLabel('LEARNER'),
+                  const SizedBox(height: QalamSpace.space3),
                   _ActionRow(
                     rowKey: const Key('settingsEditLearner'),
-                    icon: Icons.face_retouching_natural,
+                    icon: Icons.person_outline,
                     label: 'Edit learner profile',
                     onTap: _editLearner,
                   ),
-                  const SizedBox(height: QalamSpace.space5),
-                  Text(
-                    user?.email ?? 'Signed in account',
-                    key: const Key('settingsAccountEmail'),
-                    style: QalamTextStyles.body,
-                  ),
+                  const SizedBox(height: QalamSpace.space6),
+
+                  // PARENT — routes to the real PIN-gated /parent area (P9).
+                  const _SectionLabel('PARENT'),
                   const SizedBox(height: QalamSpace.space3),
-                  SizedBox(
-                    width: double.infinity,
-                    height: QalamTargets.targetMin,
-                    child: OutlinedButton(
-                      key: const Key('settingsSignOut'),
-                      onPressed: _signingOut ? null : _signOut,
-                      child: _signingOut
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Text('Sign out'),
-                    ),
+                  _ActionRow(
+                    rowKey: const Key('settingsParentArea'),
+                    icon: Icons.lock_outline,
+                    label: 'Parent Area',
+                    onTap: () => context.go('/parent'),
                   ),
                 ],
               ),
@@ -208,28 +135,211 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 }
 
-/// A single inert settings row on a soft-aqua surface (placeholder only).
-class _PlaceholderRow extends StatelessWidget {
-  const _PlaceholderRow({required this.label});
+/// The Edit-learner dialog. A real stateful widget so it OWNS its nickname
+/// controller: Flutter disposes the State only AFTER the dialog route's exit
+/// animation completes, so the controller is never used after disposal (the bug
+/// that crashed the close frame). It pops the chosen (nicknameId, avatarId); the
+/// caller performs the repository write.
+class _EditLearnerDialog extends StatefulWidget {
+  const _EditLearnerDialog({
+    required this.initialNickname,
+    required this.initialAvatarId,
+  });
 
-  final String label;
+  final String initialNickname;
+  final String initialAvatarId;
+
+  @override
+  State<_EditLearnerDialog> createState() => _EditLearnerDialogState();
+}
+
+class _EditLearnerDialogState extends State<_EditLearnerDialog> {
+  late final TextEditingController _nickname;
+  late String _avatarId;
+
+  @override
+  void initState() {
+    super.initState();
+    _nickname = TextEditingController(text: widget.initialNickname);
+    _avatarId = widget.initialAvatarId;
+  }
+
+  @override
+  void dispose() {
+    _nickname.dispose();
+    super.dispose();
+  }
+
+  void _save() {
+    final value = _nickname.text.trim();
+    if (value.runes.length >= 2 && value.runes.length <= 16) {
+      Navigator.pop(context, (nicknameId: value, avatarId: _avatarId));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Edit learner profile'),
+      content: SizedBox(
+        width: 520,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Text('Choose an avatar'),
+            const SizedBox(height: QalamSpace.space3),
+            Wrap(
+              spacing: QalamSpace.space3,
+              children: <Widget>[
+                for (final id in kAvatarIds)
+                  GestureDetector(
+                    key: Key('edit_$id'),
+                    onTap: () => setState(() => _avatarId = id),
+                    child: Container(
+                      width: QalamTargets.targetMin,
+                      height: QalamTargets.targetMin,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: QalamColors.bg,
+                        border: Border.all(
+                          color: _avatarId == id
+                              ? QalamColors.primary
+                              : QalamColors.border,
+                          width: _avatarId == id ? 3 : 1,
+                        ),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: Image.asset(
+                        'assets/avatars/$id.png',
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: QalamSpace.space5),
+            TextField(
+              key: const Key('editLearnerNickname'),
+              controller: _nickname,
+              maxLength: 16,
+              decoration: const InputDecoration(labelText: 'Nickname'),
+            ),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          key: const Key('saveLearnerProfile'),
+          onPressed: _save,
+          child: const Text('Save'),
+        ),
+      ],
+    );
+  }
+}
+
+/// A small uppercase group heading (eyebrow), mirroring the Home card eyebrows.
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: QalamTextStyles.label.copyWith(
+        color: QalamColors.fgMuted,
+        letterSpacing: 1.2,
+      ),
+    );
+  }
+}
+
+/// Account group — the signed-in email (first) with the Sign out action.
+class _AccountCard extends StatelessWidget {
+  const _AccountCard({
+    required this.email,
+    required this.signingOut,
+    required this.onSignOut,
+  });
+
+  final String email;
+  final bool signingOut;
+  final VoidCallback onSignOut;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.only(bottom: QalamSpace.space3),
-      constraints: const BoxConstraints(minHeight: QalamTargets.targetMin),
-      padding: const EdgeInsets.symmetric(
-        horizontal: QalamSpace.space5,
-        vertical: QalamSpace.space4,
-      ),
+      padding: const EdgeInsets.all(QalamSpace.space5),
       decoration: BoxDecoration(
-        color: QalamColors.surface, // soft-aqua
+        color: QalamColors.surface,
         borderRadius: BorderRadius.circular(QalamRadii.lg),
       ),
-      alignment: AlignmentDirectional.centerStart,
-      child: Text(label, style: QalamTextStyles.body),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Container(
+                width: QalamTargets.targetMin,
+                height: QalamTargets.targetMin,
+                decoration: const BoxDecoration(
+                  color: QalamColors.bg,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.account_circle_outlined,
+                  color: QalamColors.primary,
+                ),
+              ),
+              const SizedBox(width: QalamSpace.space4),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      email,
+                      key: const Key('settingsAccountEmail'),
+                      style: QalamTextStyles.body.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      'Signed in',
+                      style: QalamTextStyles.label.copyWith(
+                        color: QalamColors.fgMuted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: QalamSpace.space5),
+          SizedBox(
+            width: double.infinity,
+            height: QalamTargets.targetMin,
+            child: OutlinedButton(
+              key: const Key('settingsSignOut'),
+              onPressed: signingOut ? null : onSignOut,
+              child: signingOut
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('Sign out'),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
