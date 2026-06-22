@@ -564,27 +564,29 @@ letter family (**baa**), reusing the v1 durable layers (StrokeCanvas/WriteSurfac
 geometric scorer, Schema-v2 curriculum) untouched. The model reasons, coaches, and chooses
 which exercise to show next — but **every factual claim about the child's writing is pinned to
 the deterministic geometry scorer**: the scorer owns pass/fail + the star, the agent owns the
-words. The "API key never in the client" rule is preserved via Firebase AI Logic + App Check;
-only derived non-PII facts ever cross the network; and an `AuthoredFallback` floor keeps the
-whole loop fully offline + grounded with zero model loaded.
+words. The tutor runs as a **server-side LangGraph agent on Cloud Run** (ADR-015 + the Phase-14
+AI-SPEC): model keys live in **Secret Manager** (never the client), client→server is gated by a
+**Firebase ID token + App Check**, only derived non-PII facts ever cross the network, and an
+`AuthoredFallback` floor keeps the whole loop offline + grounded with zero model.
 
-This roadmap is **spikes-first by deliberate design**: the three riskiest unknowns — (1) can a
-GenUI catalog host a real-time native stylus canvas, (2) does the full on-device stroke→agent→
-TTS path stay within a presence budget, and (3) can a small/cloud model actually coach grounded,
-correct, age-appropriate Arabic — are de-risked up front, each ending in a written
-decision/GATE, before any production code commits to an architecture. Then a grounded vertical
-slice builds the brain spine, dynamic selection on baa, and presence + voice + the eval gate +
-demo-hardening. The spikes (Phases 11–13) own **no requirements** by design — they are
-investigations whose findings choose the path the build phases (14–16) then execute.
+The architecture is **decided up front** in ADR-014/ADR-015 + the AI-SPEC, not left to a spike:
+Phase 11's kill-shot GATE refuted GenUI-hosting (**GATE: drop**), and the capable-agent topology
+re-evaluation landed on the server-side LangGraph design (framework chosen by a scored matrix —
+LangGraph). So the order is **build the spine first (Phase 14), then de-risk on the deployed
+system**: Phase 12 measures the real client→Cloud Run→model round-trip against a presence budget,
+and Phase 13 builds the eval harness + settles the coach-node model (Claude vs Gemini) — both now
+follow the build because they measure/score the *deployed* server. Then dynamic grounded selection
+(15) and presence + voice + the eval gate + demo-hardening (16). Phases 12/13 own **no
+requirements** by design — investigations that tune the deployed system.
 
 ### Phases
 
 - [x] **Phase 11: SPIKE — GenUI catalog + native stylus canvas (kill-shot)** - Prove (or refute) a GenUI core catalog driven by a local firebase_ai function-calling loop can host the real-time native StrokeCanvas via a present_activity tool; GATE to a raw firebase_ai-drives-native-widgets fallback if it can't. (completed 2026-06-22)
-- [ ] **Phase 12: SPIKE — full-path latency & presence budget (Pixel Tablet)** - Measure the real on-device stroke→scorer→agent→render→first-TTS path on a Pixel Tablet across Gemini Flash / Flash-Lite / Live API + Gemma; produce a written latency budget and the model/transport choice.
-- [ ] **Phase 13: SPIKE — 3-way bake-off (Authored vs Gemini vs Gemma) on grounding + Arabic** - Score AuthoredFallback vs GeminiBrain vs Gemma-on-device on grounding faithfulness + Arabic register over one harness; the data decides whether fully-offline Gemma is viable. Seeds the eval harness.
-- [ ] **Phase 14: BUILD — TutorBrain spine + grounding invariant** - The swappable TutorBrain interface + AuthoredFallback floor + GeminiBrain + GemmaBrain stub, the 4 ACTION tools with FACTS injected, the scorer-owns-verdict seam at ExerciseController, and the non-PII-facts network guard — durable layers stay free of GenUI/firebase_ai types.
-- [ ] **Phase 15: BUILD — dynamic grounded exercise selection on baa** - Replace LetterUnitController's fixed walk with agent-driven present_activity selection over baa's 19 Schema-v2 configs, reasoning about recent mistakes; the curriculum rails the choices; resume-aware; one quiet star at mastery; first-measure grounding faithfulness.
-- [ ] **Phase 16: BUILD — presence + voice + eval gate + demo-harden** - Streamed/TTS coaching within the Phase-12 budget (reflex stays local), the Phase-13 harness promoted to a regression gate, the baa AI-tutor path demo-hardened on the Pixel Tablet, and the Gemma-adoption decision finalized.
+- [ ] **Phase 12: SPIKE — full-path latency & presence budget (Pixel Tablet)** - Measure the real stroke→scorer→**client→Cloud Run server→model→back**→render→first-TTS path on a Pixel Tablet (incl. Cloud Run cold-start) across the server's per-node models (Claude Haiku/Sonnet, Gemini Flash/Pro); produce a written latency budget + the per-node model/transport choice and the cold-start mitigation.
+- [ ] **Phase 13: SPIKE — eval harness + Claude-vs-Gemini coach bake-off (grounding + Arabic)** - Build the AI-SPEC grounding+Arabic eval harness and score the LangGraph server's **coach node on Claude vs Gemini** (+ the AuthoredFallback baseline) for never-contradicts-geometry, names-the-fix, register, and correct-Arabic; the data picks the coach-node model. Seeds the Phase-16 gate. (On-device Gemma deferred — offline floor is AuthoredFallback.)
+- [ ] **Phase 14: BUILD — TutorBrain spine + grounding invariant** - The server-side **LangGraph** tutoring agent on Cloud Run (analyze→plan→coach, per-node models, 4 ACTION tools, FACTS-as-text) + the Flutter `RemoteAgentBrain` + `AuthoredFallback` floor + the scorer-owns-verdict seam at ExerciseController + the non-PII request-body guard — durable layers stay free of agent/framework imports. (ADR-015 + 14-AI-SPEC.md.)
+- [ ] **Phase 15: BUILD — dynamic grounded exercise selection on baa** - The server agent's **plan node** drives `present_activity` selection over baa's 19 Schema-v2 configs (reasoning about recent mistakes); the curriculum rails the choices; resume-aware; one quiet star at mastery; first-measure grounding faithfulness.
+- [ ] **Phase 16: BUILD — presence + voice + eval gate + demo-harden** - Server-**streamed/TTS** coaching within the Phase-12 budget (reflex stays local), the Phase-13 harness promoted to a regression gate, the baa AI-tutor path (client + Cloud Run server) demo-hardened on the Pixel Tablet, and the per-node model choices finalized.
 
 ### Phase Details
 
@@ -623,39 +625,33 @@ Plans:
 
 #### Phase 12: SPIKE — full-path latency & presence budget (Pixel Tablet)
 
-**Goal**: Measure the **real on-device full-path latency** — stroke → scorer → agent → render →
-first-TTS — on a **Pixel Tablet**, comparing Gemini Flash vs Flash-Lite vs the Live API, plus
-Gemma's on-device footprint/latency; then produce a written latency budget and the model/transport
-choice, confirming the "two clocks" split (the millisecond stroke reflex stays local) feels present.
+**Goal**: Measure the **real full-path latency** — stroke → scorer → **client → Cloud Run server → model → back** → render → first-TTS — on a **Pixel Tablet**, including **Cloud Run cold-start** and the network hop, across the server's per-node models (Claude Haiku/Sonnet, Gemini Flash/Pro); then produce a written latency budget, the per-node model/transport choice, and the cold-start mitigation (e.g. session-start warm-up ping), confirming the "two clocks" split (the millisecond stroke reflex stays local, never routes through the server) feels present.
 **Mode**: spike
-**Depends on**: v1 Phase 7 (the scorer + canvas timings this measures against), Phase 11 (the agent-loop transport whose latency is being measured)
+**Depends on**: v1 Phase 7 (the scorer + canvas timings this measures against), Phase 14 (the deployed LangGraph server whose round-trip latency is being measured) + ADR-015
 **Requirements**: none (measurement spike — feeds PRES-01; owns no requirement by design)
 **Success Criteria** (what must be TRUE):
 
-  1. The full stroke→scorer→agent→render→first-TTS path is measured **on a real Pixel Tablet** (not emulator/dev) with numbers recorded for Gemini Flash, Flash-Lite, and the Live API, plus Gemma's on-device footprint/latency.
+  1. The full stroke→scorer→client→server→model→back→render→first-TTS path is measured **on a real Pixel Tablet** (not emulator/dev), with numbers recorded per server node-model (Claude Haiku/Sonnet, Gemini Flash/Pro) and the **Cloud Run cold-start vs warm** delta called out.
   2. A **written latency budget** exists that names the acceptable delay for each segment and shows the local stroke reflex stays local (never routes through the agent) — confirming the "two clocks" split feels present.
   3. A **model + transport choice is recorded** for the build phases, justified by the measured numbers, with explicit headroom for the demo build.
 
 **Plans**: TBD
 **Research hint**: yes — presence is felt, not specified; numbers must come from the real device. The chosen model/transport here is a hard input to Phase 16's presence/voice work.
 
-#### Phase 13: SPIKE — 3-way bake-off (Authored vs Gemini vs Gemma) on grounding + Arabic
+#### Phase 13: SPIKE — eval harness + Claude-vs-Gemini coach bake-off (grounding + Arabic)
 
-**Goal**: On ONE grounding+Arabic-register harness, score **AuthoredFallback** (baseline) vs
-**GeminiBrain** vs **Gemma-on-device** for: never-contradicts-geometry, names-the-specific-fix,
-register-for-a-5-10-year-old, and correct-Arabic — so the **data** decides whether Gemma's
-fully-offline ideal is viable. The harness built here seeds the v2.0 eval harness.
+**Goal**: Build the AI-SPEC grounding+Arabic-register **eval harness** and use it to score the LangGraph server's **coach node on Claude vs Gemini** (plus the **AuthoredFallback** baseline) for: never-contradicts-geometry, names-the-specific-fix, register-for-a-5-10-year-old, and correct-Arabic — so the **data** picks the coach-node model. The harness built here seeds the Phase-16 regression gate. (On-device Gemma is deferred — the offline floor is AuthoredFallback; a Gemma backend can slot into the swappable seam in a later milestone.)
 **Mode**: spike
-**Depends on**: v1 Phase 7 (the signed-off baa content + scorer the cases are built from)
-**Requirements**: none (decision spike — feeds EVAL-01, GROUND-03, and the TUTOR-04 Gemma decision; owns no requirement by design)
+**Depends on**: Phase 14 (the deployed LangGraph server whose coach node is scored), v1 Phase 7 (the signed-off baa content + scorer the cases are built from), 14-AI-SPEC.md §5 (the eval dimensions/rubrics)
+**Requirements**: none (decision spike — feeds EVAL-01, GROUND-03, and the per-node model choice; owns no requirement by design)
 **Success Criteria** (what must be TRUE):
 
-  1. A single labeled harness scores all three brains (AuthoredFallback baseline, GeminiBrain, Gemma-on-device) on never-contradicts-geometry, names-the-specific-fix, register-for-a-5-10-year-old, and correct-Arabic, with comparable per-brain scores reported.
-  2. A **written verdict on Gemma viability** is recorded — whether the fully-offline on-device ideal is good enough on grounding + Arabic, or stays an experimental-only candidate — feeding the TUTOR-04 adoption decision finalized in Phase 16.
+  1. A single labeled harness scores the coach node on **Claude vs Gemini** (plus the AuthoredFallback baseline) on never-contradicts-geometry, names-the-specific-fix, register-for-a-5-10-year-old, and correct-Arabic, with comparable per-model scores reported.
+  2. A **written verdict on the coach-node model** is recorded (Claude vs Gemini for Arabic register + grounding), feeding the per-node model choice finalized in Phase 16. (On-device Gemma stays deferred/experimental — not on the demo path.)
   3. The harness is **reusable** — it is the seed of the Phase 16 regression gate (EVAL-01/EVAL-02), not a throwaway, and the labeled (verdict, learner-state) case format is documented.
 
 **Plans**: TBD
-**Research hint**: yes — small-model Arabic + grounding is unproven; this is where the Gemma bet is tested with evidence, off the demo's critical path. The labeled set authored here is reused by Phase 16's gate.
+**Research hint**: yes — Arabic register + grounding faithfulness is where the coach-node model choice (Claude vs Gemini) must be settled with evidence, off the demo's critical path. The labeled set authored here is reused by Phase 16's gate.
 
 #### Phase 14: BUILD — TutorBrain spine + grounding invariant
 
@@ -692,9 +688,9 @@ Plans:
 
 #### Phase 15: BUILD — dynamic grounded exercise selection on baa
 
-**Goal**: Replace `LetterUnitController`'s fixed section walk with **agent-driven `present_activity`
-selection** over baa's existing **19 Schema-v2 configs**, reasoning about the child's recent
-mistakeIds/struggle tags (injected facts); the **curriculum rails the choices** (only valid,
+**Goal**: Replace `LetterUnitController`'s fixed section walk with the **server agent's plan node
+driving `present_activity` selection** over baa's existing **19 Schema-v2 configs**, reasoning about
+the child's recent mistakeIds/struggle tags (the FACTS sent to the server); the **curriculum rails the choices** (only valid,
 signed-off baa configs are selectable); the flow is **resume-aware** and ends in **one quiet star**
 at mastery; and grounding faithfulness is enforced and first-measured here.
 **Mode**: mvp
@@ -713,12 +709,12 @@ at mastery; and grounding faithfulness is enforced and first-measured here.
 
 #### Phase 16: BUILD — presence + voice + eval gate + demo-harden
 
-**Goal**: Make the tutor **feel present** — streamed/TTS coaching that plays at the right moments
-within the **Phase-12 latency budget** while the millisecond stroke reflex stays local; **promote
-the Phase-13 harness into a regression gate** that catches tutor-quality regressions before they
-ship; **demo-harden** the baa AI-tutor path (no dead ends, graceful offline/timeout fallback to
-authored lines) on the **Pixel-Tablet build**; and **finalize the Gemma-adoption decision** from
-the bake-off.
+**Goal**: Make the tutor **feel present** — **server-streamed/TTS** coaching that plays at the right
+moments within the **Phase-12 latency budget** while the millisecond stroke reflex stays local;
+**promote the Phase-13 harness into a regression gate** that catches tutor-quality regressions
+before they ship; **demo-harden** the baa AI-tutor path (client + Cloud Run server; no dead ends,
+graceful offline/timeout fallback to the authored floor) on the **Pixel-Tablet build**; and
+**finalize the per-node model choices** (analyze/plan/coach) from the Phase-13 bake-off.
 **Mode**: mvp
 **Depends on**: Phase 15 (the dynamic grounded baa flow being voiced + hardened), Phase 12 (the latency budget + model/transport choice met here), Phase 13 (the harness promoted to the gate; the Gemma verdict finalized here)
 **Requirements**: PRES-01, PRES-02, EVAL-01, EVAL-02, DEMO-01
@@ -727,7 +723,7 @@ the bake-off.
   1. Coaching is **spoken/streamed** on pass/miss and degrades gracefully to text on offline/timeout without breaking the flow (PRES-02); the stroke→scorer→agent→render→first-TTS path **meets the written Phase-12 budget** on a real Pixel Tablet and instant stroke feedback never routes through the agent (PRES-01).
   2. The **eval harness scores** tutor quality (never-contradicts-geometry, names-the-specific-fix, register-for-a-5-10-year-old, correct-Arabic) against the labeled set (EVAL-01) and **runs as a regression gate** (CI or a documented pre-merge step) that fails on a regression below threshold (EVAL-02).
   3. The baa AI-tutor path is **demo-hardened** end-to-end on the Pixel-Tablet build — Home/Journey → baa unit → mastery star, with no dead ends or stuck states and graceful offline/timeout fallback to authored lines (DEMO-01).
-  4. The **Gemma-adoption decision is finalized** from the Phase-13 bake-off and recorded (adopt as a real backend vs keep experimental-only, never on the demo's critical path) (closes the TUTOR-04 decision).
+  4. The **per-node model choices are finalized** (analyze / plan / coach) from the Phase-13 bake-off and recorded (e.g. coach = Claude vs Gemini for Arabic register). On-device Gemma stays deferred/experimental — never on the demo's critical path; the swappable seam keeps a future Gemma backend possible (the TUTOR-04 "swappable candidate" intent is met by the seam, with on-device Gemma a later-milestone option).
 
 **Plans**: TBD
 **UI hint**: yes
@@ -736,7 +732,7 @@ the bake-off.
 ### Progress (v2.0)
 
 **Execution Order:**
-Spikes first, then the grounded vertical slice: 11 → 12 → 13 → 14 → 15 → 16
+11 (GATE, done) → **14 (build the server-side LangGraph spine)** → 12 (measure the deployed round-trip latency) → 13 (eval harness + coach-node model bake-off) → 15 (dynamic selection) → 16 (presence/voice/eval-gate/demo). The latency + eval spikes (12/13) now follow the build because they measure/score the **deployed** server (ADR-015) — the architecture decision moved from a pre-build spike to ADR-014/015 + the AI-SPEC.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|

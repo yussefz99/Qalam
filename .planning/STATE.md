@@ -4,12 +4,12 @@ milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
 stopped_at: Completed 11-01-PLAN.md (Tasks 1-2 done; Task 3 pending human console action)
-last_updated: "2026-06-22T10:33:03.615Z"
-last_activity: 2026-06-22
+last_updated: "2026-06-22T10:58:37.089Z"
+last_activity: 2026-06-22 -- Phase 14 execution started
 progress:
   total_phases: 20
   completed_phases: 12
-  total_plans: 62
+  total_plans: 66
   completed_plans: 61
   percent: 60
 ---
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
-**Current focus:** Phase 11 — spike-genui-catalog-native-stylus-canvas-kill-shot
+**Current focus:** Phase 14 — build-tutorbrain-spine-grounding-invariant
 
 ## Current Position
 
-Phase: 12
-Plan: Not started
-Status: Ready to execute
-Last activity: 2026-06-22
+Phase: 14 (build-tutorbrain-spine-grounding-invariant) — EXECUTING
+Plan: 1 of 4
+Status: Executing Phase 14
+Last activity: 2026-06-22 -- Phase 14 execution started
 Next: /gsd-plan-phase 11
 
 ## Performance Metrics
