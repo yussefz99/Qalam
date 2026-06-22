@@ -764,6 +764,10 @@
   "@commonDone": {
     "description": "Shared exit/confirm CTA label — 'Done' (Button/24px). Phase 9 dashboard exit returns to child Home and RELOCKS the Parent Area (D-07)."
   },
+  "commonBack": "Back",
+  "@commonBack": {
+    "description": "Shared back-navigation label/tooltip — 'Back'. Used by the Parent Area PIN-gate AppBar back button that returns to child Home (the gate stays locked)."
+  },
   "promptPlay": "Play",
   "@promptPlay": {
     "description": "Phase 7 Letter-Unit PromptHeader — label on the teal audio play button (.pp-audio). The child taps to hear the prompt sound."

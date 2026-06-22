@@ -21,6 +21,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../data/app_database.dart';
 import '../../l10n/app_localizations.dart';
@@ -211,64 +212,16 @@ class _ParentPinGateState extends ConsumerState<ParentPinGate>
   }
 
   Future<void> _recoverPin() async {
-    final password = TextEditingController();
-    String? error;
+    // The dialog OWNS its password controller (see _PinRecoveryDialog) so the
+    // controller lives until the route's exit animation fully completes. Creating
+    // and disposing the controller here instead crashed the close-animation frame
+    // ("TextEditingController used after being disposed" → the on-device
+    // `_dependents.isEmpty` assertion), because the dialog's TextField rebuilds
+    // mid-exit and still references the controller.
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (dialogContext) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Reset Parent PIN'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Enter your account password to confirm this is the parent.',
-              ),
-              const SizedBox(height: QalamSpace.space4),
-              TextField(
-                key: const Key('pinRecoveryPassword'),
-                controller: password,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Account password',
-                ),
-              ),
-              if (error != null) ...[
-                const SizedBox(height: QalamSpace.space3),
-                Text(
-                  error!,
-                  style: const TextStyle(color: QalamColors.warnSoft),
-                ),
-              ],
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext, false),
-              child: const Text('Cancel'),
-            ),
-            FilledButton(
-              key: const Key('confirmPinRecovery'),
-              onPressed: () async {
-                try {
-                  await ref
-                      .read(authServiceProvider)
-                      .reauthenticateWithPassword(password.text);
-                  if (dialogContext.mounted) {
-                    Navigator.pop(dialogContext, true);
-                  }
-                } on AuthFailure catch (e) {
-                  setDialogState(() => error = e.message);
-                }
-              },
-              child: const Text('Verify and reset'),
-            ),
-          ],
-        ),
-      ),
+      builder: (_) => const _PinRecoveryDialog(),
     );
-    password.dispose();
     if (confirmed != true || !mounted) return;
     await _pin.resetPin(_db);
     if (!mounted) return;
@@ -290,6 +243,15 @@ class _ParentPinGateState extends ConsumerState<ParentPinGate>
       appBar: AppBar(
         backgroundColor: QalamColors.bg,
         elevation: 0,
+        leading: IconButton(
+          key: const Key('parentGateBackHome'),
+          icon: const Icon(Icons.arrow_back),
+          color: QalamColors.fg,
+          tooltip: l10n.commonBack,
+          // Leave the parent area without unlocking. The gate stays LOCKED
+          // (it only unlocks on a correct PIN), so re-entry re-prompts.
+          onPressed: () => context.go('/'),
+        ),
         title: Text(l10n.parentTitle, style: QalamTextStyles.heading),
       ),
       body: Center(
@@ -392,6 +354,91 @@ class _ParentPinGateState extends ConsumerState<ParentPinGate>
               : l10n.commonContinue,
           enabled: !locked,
           onTap: _submit,
+        ),
+      ],
+    );
+  }
+}
+
+/// The Forgot-PIN recovery dialog. A real stateful widget so it OWNS its
+/// password controller: Flutter disposes the State only AFTER the dialog route's
+/// exit animation completes, so the controller is never used after disposal
+/// (the bug that crashed the close frame). Verifies the parent via account
+/// reauthentication, then pops `true` to authorise the PIN reset.
+class _PinRecoveryDialog extends ConsumerStatefulWidget {
+  const _PinRecoveryDialog();
+
+  @override
+  ConsumerState<_PinRecoveryDialog> createState() => _PinRecoveryDialogState();
+}
+
+class _PinRecoveryDialogState extends ConsumerState<_PinRecoveryDialog> {
+  final TextEditingController _password = TextEditingController();
+  String? _error;
+  bool _verifying = false;
+
+  @override
+  void dispose() {
+    _password.dispose();
+    super.dispose();
+  }
+
+  Future<void> _verify() async {
+    if (_verifying) return;
+    setState(() {
+      _verifying = true;
+      _error = null;
+    });
+    try {
+      await ref
+          .read(authServiceProvider)
+          .reauthenticateWithPassword(_password.text);
+      if (mounted) Navigator.pop(context, true);
+    } on AuthFailure catch (e) {
+      if (mounted) setState(() => _error = e.message);
+    } catch (_) {
+      if (mounted) {
+        setState(() => _error = 'Something went wrong. Please try again.');
+      }
+    } finally {
+      if (mounted) setState(() => _verifying = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Reset Parent PIN'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Text(
+            'Enter your account password to confirm this is the parent.',
+          ),
+          const SizedBox(height: QalamSpace.space4),
+          TextField(
+            key: const Key('pinRecoveryPassword'),
+            controller: _password,
+            obscureText: true,
+            enabled: !_verifying,
+            decoration: const InputDecoration(labelText: 'Account password'),
+          ),
+          if (_error != null) ...<Widget>[
+            const SizedBox(height: QalamSpace.space3),
+            Text(_error!, style: const TextStyle(color: QalamColors.warnSoft)),
+          ],
+        ],
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: _verifying ? null : () => Navigator.pop(context, false),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          key: const Key('confirmPinRecovery'),
+          onPressed: _verifying ? null : _verify,
+          child: const Text('Verify and reset'),
         ),
       ],
     );
