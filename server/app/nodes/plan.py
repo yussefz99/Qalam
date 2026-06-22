@@ -52,7 +52,9 @@ class Plan(BaseModel):
 
 def _structured_plan(facts: dict, insight: dict) -> Plan:
     """One structured plan invocation — bind the model and parse a Plan."""
-    model = build_plan_model().with_structured_output(Plan)
+    # json_mode = Gemini native controlled generation (responseSchema); reliable where the
+    # default function_calling extraction returned empty on gemini-2.5-flash.
+    model = build_plan_model().with_structured_output(Plan, method="json_mode")
     return model.invoke(
         [
             SystemMessage(content=PLAN_PROMPT),  # cache-stable curriculum prefix

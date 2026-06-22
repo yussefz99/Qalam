@@ -41,6 +41,19 @@ COACH_TEMPERATURE = float(os.environ.get("COACH_TEMPERATURE", "0.5"))
 COACH_MAX_TOKENS = int(os.environ.get("COACH_MAX_TOKENS", "256"))
 
 
+def _provider_kwargs(provider: str) -> dict:
+    """Provider-specific construction kwargs.
+
+    On `google_vertexai` the Gemini 2.5 models default to *thinking* mode, which both slows the
+    call (a child-facing latency cost) and was observed to break `with_structured_output` (the
+    structured reply came back empty). `thinking_budget=0` disables it — fast, deterministic, and
+    structured output lands. Verified live at the Phase-14 deploy. Other providers get nothing.
+    """
+    if provider == "google_vertexai":
+        return {"thinking_budget": 0}
+    return {}
+
+
 def build_analyze_model():
     """Build the analyze model (structured-output, deterministic). Lazy import — no key at import."""
     from langchain.chat_models import init_chat_model
@@ -50,6 +63,7 @@ def build_analyze_model():
         model_provider=ANALYZE_MODEL_PROVIDER,
         temperature=ANALYZE_TEMPERATURE,
         max_tokens=ANALYZE_MAX_TOKENS,  # never unbounded (4b.3)
+        **_provider_kwargs(ANALYZE_MODEL_PROVIDER),
     )
 
 
@@ -62,6 +76,7 @@ def build_plan_model():
         model_provider=PLAN_MODEL_PROVIDER,
         temperature=PLAN_TEMPERATURE,
         max_tokens=PLAN_MAX_TOKENS,
+        **_provider_kwargs(PLAN_MODEL_PROVIDER),
     )
 
 
@@ -78,4 +93,5 @@ def build_coach_model():
         model_provider=COACH_MODEL_PROVIDER,
         temperature=COACH_TEMPERATURE,
         max_tokens=COACH_MAX_TOKENS,
+        **_provider_kwargs(COACH_MODEL_PROVIDER),
     )

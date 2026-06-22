@@ -40,7 +40,7 @@ class _FakeModel:
     def __init__(self, obj):
         self._obj = obj
 
-    def with_structured_output(self, _schema):
+    def with_structured_output(self, _schema, method=None):
         return _FakeStructured(self._obj)
 
 

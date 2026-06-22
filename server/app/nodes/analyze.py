@@ -43,7 +43,10 @@ class Insight(BaseModel):
 
 def _structured_analyze(facts: dict) -> Insight:
     """One structured analyze invocation — bind the model and parse an Insight."""
-    model = build_analyze_model().with_structured_output(Insight)
+    # json_mode = Gemini native controlled generation (responseSchema). The default
+    # (function_calling) extraction came back empty on gemini-2.5-flash; json_mode lands
+    # reliably. Harmless on other providers that support json_mode.
+    model = build_analyze_model().with_structured_output(Insight, method="json_mode")
     return model.invoke(
         [
             SystemMessage(content=ANALYZE_PROMPT),

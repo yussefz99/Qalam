@@ -50,7 +50,7 @@ class _FakeAnalyzeModel:
     def __init__(self, insight):
         self._insight = insight
 
-    def with_structured_output(self, _schema):
+    def with_structured_output(self, _schema, method=None):
         return _FakeStructured(self._insight)
 
 
@@ -58,7 +58,7 @@ class _FakePlanModel:
     def __init__(self, plan):
         self._plan = plan
 
-    def with_structured_output(self, _schema):
+    def with_structured_output(self, _schema, method=None):
         return _FakeStructured(self._plan)
 
 
