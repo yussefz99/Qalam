@@ -25,6 +25,10 @@ import '../../../models/exercise.dart';
 import '../../../models/letter.dart';
 import '../../../theme/qalam_tokens.dart';
 import '../../../theme/text_styles.dart';
+import '../../../tutor/tutor_decision.dart';
+import '../../../tutor/tutor_facts.dart';
+import '../../../tutor/tutor_facts_builder.dart';
+import '../../../tutor/tutor_providers.dart';
 import '../../../widgets/qalam_mascot.dart';
 import '../../practice/widgets/stroke_canvas.dart';
 import '../exercise_controller.dart';
@@ -116,6 +120,13 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
   /// Done is the submit trigger write-mode exercises had no way to fire).
   final StrokeCanvasController _canvasController = StrokeCanvasController();
 
+  /// The non-PII session trajectory + recent mistakes accumulated across attempts
+  /// of THIS exercise — fed into the chokepoint [buildTutorFacts] so the capable
+  /// agent reasons over the session, not just the last attempt. Holds only
+  /// derived records ({passed, mistakeId, section}); never raw strokes (GROUND-02).
+  final List<AttemptFact> _trajectory = [];
+  final List<String> _recentMistakes = [];
+
   bool get _isTeachCard => widget.exercise.surface == null;
 
   @override
@@ -124,20 +135,75 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
     // Load the controller for this exercise on first build.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(exerciseControllerProvider.notifier).load(widget.exercise);
+      // Clear any stale agent line from a prior exercise.
+      ref.read(tutorLineProvider.notifier).clear();
     });
   }
 
   void _onValidating() =>
       ref.read(exerciseControllerProvider.notifier).think();
 
-  void _onResult(CheckResult result) =>
-      ref.read(exerciseControllerProvider.notifier).applyResult(result);
+  /// Apply a scored verdict. GROUND-01: `ExerciseController.applyResult` runs
+  /// FIRST and unchanged — it owns pass/fail + the authored verdict line. ONLY
+  /// AFTER that do we ask the tutor brain for a (possibly richer) coaching line
+  /// and route it into [tutorLineProvider]. The brain can never flip the verdict.
+  void _onResult(CheckResult result) {
+    // 1) The scorer's verdict — first, unchanged (GROUND-01).
+    ref.read(exerciseControllerProvider.notifier).applyResult(result);
+
+    // 2) Accumulate the non-PII session trajectory (derived records only). The
+    // section id is the exercise's template `type` (e.g. 'traceLetter'), falling
+    // back to its broad `skill` when no template label is authored.
+    final section = widget.exercise.type ?? widget.exercise.skill;
+    _trajectory.add(AttemptFact(
+      passed: result.passed,
+      mistakeId: result.mistakeId,
+      section: section,
+    ));
+    if (!result.passed && result.mistakeId != null) {
+      _recentMistakes.insert(0, result.mistakeId!);
+    }
+
+    // 3) Build the non-PII FACTS via the chokepoint and ask the brain.
+    final facts = buildTutorFacts(
+      letterId: widget.letter.id,
+      section: section,
+      result: result,
+      recentMistakes: List<String>.unmodifiable(_recentMistakes),
+      trajectory: List<AttemptFact>.unmodifiable(_trajectory),
+    );
+    final brain = ref.read(tutorBrainFactoryProvider)(
+      widget.exercise.feedback ?? const <String, String>{},
+    );
+    brain.next(facts).then((decision) {
+      if (!mounted) return;
+      // 4) Route the agent's line into the tutor-owned channel. On an empty line
+      // (the floor had nothing authored) leave it null so the verdict-side line
+      // shows.
+      final line = _lineOf(decision);
+      ref.read(tutorLineProvider.notifier).set(line.isNotEmpty ? line : null);
+    }).catchError((_) {
+      // The brain never throws, but be defensive: on any error clear the agent
+      // line so the verdict-side authored line is the floor.
+      if (mounted) ref.read(tutorLineProvider.notifier).clear();
+    });
+  }
+
+  /// Pull the spoken line out of whichever ACTION shape the brain returned.
+  String _lineOf(TutorDecision d) => switch (d) {
+        Say(:final text) => text,
+        PresentActivity(:final coachingLine) => coachingLine,
+        _ => '',
+      };
 
   /// Clear the child's ink AND reset the mascot/feedback — the Clear / Try-again
   /// CTAs. (Previously only the controller reset, so the drawing stayed put.)
   void _clear() {
     _canvasController.clear();
     ref.read(exerciseControllerProvider.notifier).reset();
+    // Drop any agent line so the cleared idle state shows the prompt, not a
+    // stale coaching bubble.
+    ref.read(tutorLineProvider.notifier).clear();
   }
 
   /// Submit what's drawn for scoring — the Done CTA. Essential for write-mode
@@ -288,14 +354,21 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
 }
 
 /// The left tutor column: mascot + id + speech bubble (toned by the result).
-class _TutorColumn extends StatelessWidget {
+///
+/// A [ConsumerWidget] so it can read [tutorLineProvider] — the tutor-owned
+/// coaching-line channel the scaffold writes the brain's line into. The bubble
+/// TONE + mascot pose still come from the verdict-driven [ExerciseController]
+/// (GROUND-01: the scorer owns the verdict); ONLY the bubble TEXT is replaced by
+/// the agent's line when one is present.
+class _TutorColumn extends ConsumerWidget {
   const _TutorColumn({required this.state, required this.strings});
 
   final ExerciseState state;
   final ExerciseScaffoldStrings strings;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final agentLine = ref.watch(tutorLineProvider);
     final tone = state.tone;
     final Color bubbleBg = switch (tone) {
       ExerciseTone.coral => QalamTokens.coralTint,
@@ -308,7 +381,7 @@ class _TutorColumn extends StatelessWidget {
       ExerciseTone.neutral => QalamTokens.aquaEdge,
     };
     final bool toned = tone != ExerciseTone.neutral;
-    final String bubbleText = _bubbleText();
+    final String bubbleText = _bubbleText(agentLine);
     // Hide the speech bubble entirely when there's nothing to say (e.g. a
     // teachCard idle with no line) — an empty bubble read as a stray "white box
     // under the mascot" (owner bug #2b). It returns the moment a verdict lands.
@@ -374,7 +447,7 @@ class _TutorColumn extends StatelessWidget {
                 const SizedBox(height: 5),
               ],
               Text(
-                _bubbleText(),
+                bubbleText,
                 style: QalamTextStyles.button.copyWith(
                   fontSize: 16, // .ex-speech font-size:16px
                   fontWeight: FontWeight.w500,
@@ -390,11 +463,17 @@ class _TutorColumn extends StatelessWidget {
     );
   }
 
-  /// The bubble carries the prompt's `say` line in idle, and the verdict line on
-  /// a pass/fix (the prototype's `tutorAndFeedback` html). Empty → nothing.
-  String _bubbleText() {
+  /// The bubble carries the prompt's `say` line in idle, and on a pass/fix the
+  /// AGENT's coaching line when one is present ([tutorLineProvider]), falling
+  /// back to the verdict-side authored line (the prototype's `tutorAndFeedback`
+  /// html). The agent supplies only the WORDS; the verdict/tone is the scorer's
+  /// (GROUND-01). Empty → nothing.
+  String _bubbleText(String? agentLine) {
     if (state.phase == ExercisePhase.pass ||
         state.phase == ExercisePhase.fix) {
+      // Prefer the agent's line on a verdict; degrade to the authored verdict
+      // line (the floor) when no agent line is set.
+      if (agentLine != null && agentLine.trim().isNotEmpty) return agentLine;
       return state.line;
     }
     return state.line; // idle line set by the host via the controller, if any.

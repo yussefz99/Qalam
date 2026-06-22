@@ -29,20 +29,49 @@ abstract final class TutorTool {
   static const Set<String> all = {presentActivity, say, giveHint, advance};
 }
 
+/// The capable agent's optional next-exercise INTENT, riding alongside an ACTION
+/// (Plan 14-03 / ADR-015 §Seam impact). It is a SUGGESTION, never a verdict: the
+/// scorer still gates whether a section may advance (GROUND-01). All fields are
+/// optional so the offline floor (which never plans) can omit it entirely.
+class TutorPlan {
+  const TutorPlan({this.nextExerciseId, this.intent, this.rationale});
+
+  /// The exercise id the agent suggests next, if any.
+  final String? nextExerciseId;
+
+  /// A short intent label (e.g. `advance`, `reinforce`, `revisit`).
+  final String? intent;
+
+  /// A one-line, non-PII rationale (e.g. "two clean reps on traceLetter").
+  final String? rationale;
+}
+
 /// One ACTION the tutor chose. Sealed: the dispatcher's `switch` is exhaustive
 /// over exactly these four subtypes, and the analyzer enforces that no fifth
 /// shape can be added without updating every consumer.
+///
+/// A decision MAY carry an optional [plan] (the capable agent's next-exercise
+/// intent). The ACTION-shape set stays CLOSED — the plan is a payload on the same
+/// four shapes, not a fifth action (GROUND-01).
 sealed class TutorDecision {
-  const TutorDecision();
+  const TutorDecision({this.plan});
 
   /// The ACTION tool this decision corresponds to — always one of [TutorTool].
   String get toolName;
+
+  /// The capable agent's optional next-exercise intent; null on the offline
+  /// floor and whenever the agent did not propose a plan.
+  final TutorPlan? plan;
 }
 
 /// `present_activity{coachingLine, letterId}` — show/refresh the current activity
 /// for [letterId] while speaking [coachingLine]. The grounded coaching line.
 final class PresentActivity extends TutorDecision {
-  const PresentActivity({required this.coachingLine, required this.letterId});
+  const PresentActivity({
+    required this.coachingLine,
+    required this.letterId,
+    super.plan,
+  });
 
   final String coachingLine;
   final String letterId;
@@ -53,7 +82,7 @@ final class PresentActivity extends TutorDecision {
 
 /// `say{text}` — speak a single coaching line, no activity change.
 final class Say extends TutorDecision {
-  const Say(this.text);
+  const Say(this.text, {super.plan});
 
   final String text;
 
@@ -63,7 +92,7 @@ final class Say extends TutorDecision {
 
 /// `give_hint{}` — surface the next authored hint for the current activity.
 final class GiveHint extends TutorDecision {
-  const GiveHint();
+  const GiveHint({super.plan});
 
   @override
   String get toolName => TutorTool.giveHint;
@@ -72,7 +101,7 @@ final class GiveHint extends TutorDecision {
 /// `advance{}` — move to the next exercise. (The scorer still gates whether a
 /// section may advance; this is the agent REQUESTING it, never overriding it.)
 final class Advance extends TutorDecision {
-  const Advance();
+  const Advance({super.plan});
 
   @override
   String get toolName => TutorTool.advance;

@@ -76,6 +76,8 @@ dependencies:
   # it is promoted to a direct dependency. Pinned to the already-resolved transitive
   # version so no other package moves. Remove when the spike is deleted.
   json_schema_builder: ^0.1.5
+  firebase_app_check: ^0.4.5
+  http: ^1.6.0
 
 dev_dependencies:
   flutter_test:
