@@ -1,6 +1,6 @@
 # ADR-015: v2 AI-Tutor — server-side LangGraph agent, model-agnostic per-task routing
 
-**Status:** Topology + requirements ACCEPTED (owner, 2026-06-22); **framework + per-task models are NOT yet decided** — they go through `/gsd:ai-integration-phase` → `AI-SPEC.md` (interactive scored framework-selection). The LangGraph/model choices below are **candidate inputs to that selection, not the verdict.** This ADR will be finalized once the AI-SPEC lands.
+**Status:** ACCEPTED (owner, 2026-06-22). Topology + requirements accepted directly; **framework confirmed = LangGraph** via the scored decision matrix in [`14-AI-SPEC.md`](../../.planning/phases/14-build-tutorbrain-spine-grounding-invariant/14-AI-SPEC.md) §2 (`gsd-framework-selector`: LangGraph 69 vs Google ADK 52 — ADK is the documented fallback). Per-task model routing (analyze / plan / coach) is locked in shape; the exact model per node stays eval-tunable (see AI-SPEC §4–§5). The AI-SPEC is the detailed implementation + evaluation contract; this ADR is the decision record.
 **Supersedes:** ADR-014's **topology** decision (client-only). Everything else in ADR-014 — the
 grounding invariant, the 4 ACTION tools, FACTS-in/ACTIONS-out, the `TutorBrain` seam, and the
 `AuthoredFallback` offline floor — **remains in force**.
@@ -38,13 +38,10 @@ API** — a deliberate, simple transport contract (this is *not* a "shallow agen
 *behind* the boundary). The brain's API keys live in server secrets, never in the client; App
 Check gates the client→server calls.
 
-### 2. Framework — CANDIDATES (selected via /gsd:ai-integration-phase → AI-SPEC.md, not pre-decided here)
-The hard requirements the selector must honor: **model-agnostic**, supports **per-task model
-routing**, **stateful/checkpointed** (for the planning loop + future durable memory), Python,
-deployable to Cloud Run. Leading candidate going in is **LangGraph** (below), with Google ADK as
-the model-agnostic-via-LiteLLM alternative — but the scored matrix decides.
-
-**LangGraph** (candidate) — the orchestration framework profile:
+### 2. Framework — LangGraph (CONFIRMED via scored matrix; see 14-AI-SPEC.md §2)
+Selected by `gsd-framework-selector` against the hard requirements (model-agnostic, per-task
+model routing, stateful/checkpointed, Python, Cloud Run): **LangGraph 69 vs Google ADK 52.**
+ADK is the documented fallback if LangGraph's graph scaffolding proves too heavy. Why LangGraph:
 - **Model-agnostic** — each graph node binds its own model (required for per-task routing, §3).
 - **Stateful, checkpointed graph** — the natural home for the planning loop *and* for durable
   cross-session state when that future arrives (the checkpointer → a store).
