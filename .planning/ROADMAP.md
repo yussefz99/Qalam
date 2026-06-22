@@ -584,7 +584,7 @@ requirements** by design — investigations that tune the deployed system.
 - [x] **Phase 11: SPIKE — GenUI catalog + native stylus canvas (kill-shot)** - Prove (or refute) a GenUI core catalog driven by a local firebase_ai function-calling loop can host the real-time native StrokeCanvas via a present_activity tool; GATE to a raw firebase_ai-drives-native-widgets fallback if it can't. (completed 2026-06-22)
 - [ ] **Phase 12: SPIKE — full-path latency & presence budget (Pixel Tablet)** - Measure the real stroke→scorer→**client→Cloud Run server→model→back**→render→first-TTS path on a Pixel Tablet (incl. Cloud Run cold-start) across the server's per-node models (Claude Haiku/Sonnet, Gemini Flash/Pro); produce a written latency budget + the per-node model/transport choice and the cold-start mitigation.
 - [ ] **Phase 13: SPIKE — eval harness + Claude-vs-Gemini coach bake-off (grounding + Arabic)** - Build the AI-SPEC grounding+Arabic eval harness and score the LangGraph server's **coach node on Claude vs Gemini** (+ the AuthoredFallback baseline) for never-contradicts-geometry, names-the-fix, register, and correct-Arabic; the data picks the coach-node model. Seeds the Phase-16 gate. (On-device Gemma deferred — offline floor is AuthoredFallback.)
-- [ ] **Phase 14: BUILD — TutorBrain spine + grounding invariant** - The server-side **LangGraph** tutoring agent on Cloud Run (analyze→plan→coach, per-node models, 4 ACTION tools, FACTS-as-text) + the Flutter `RemoteAgentBrain` + `AuthoredFallback` floor + the scorer-owns-verdict seam at ExerciseController + the non-PII request-body guard — durable layers stay free of agent/framework imports. (ADR-015 + 14-AI-SPEC.md.)
+- [x] **Phase 14: BUILD — TutorBrain spine + grounding invariant** - The server-side **LangGraph** tutoring agent on Cloud Run (analyze→plan→coach, per-node models, 4 ACTION tools, FACTS-as-text) + the Flutter `RemoteAgentBrain` + `AuthoredFallback` floor + the scorer-owns-verdict seam at ExerciseController + the non-PII request-body guard — durable layers stay free of agent/framework imports. (ADR-015 + 14-AI-SPEC.md.) (completed 2026-06-22)
 - [ ] **Phase 15: BUILD — dynamic grounded exercise selection on baa** - The server agent's **plan node** drives `present_activity` selection over baa's 19 Schema-v2 configs (reasoning about recent mistakes); the curriculum rails the choices; resume-aware; one quiet star at mastery; first-measure grounding faithfulness.
 - [ ] **Phase 16: BUILD — presence + voice + eval gate + demo-harden** - Server-**streamed/TTS** coaching within the Phase-12 budget (reflex stays local), the Phase-13 harness promoted to a regression gate, the baa AI-tutor path (client + Cloud Run server) demo-hardened on the Pixel Tablet, and the per-node model choices finalized.
 
@@ -672,16 +672,16 @@ Plans:
 
 **Wave 1**
 
-- [ ] 14-01-PLAN.md — SERVER: scaffold the Python LangGraph `server/` sub-project — FastAPI app + minimal one-node graph + POST /coach (tool_choice="any") + GET /healthz + Firebase-ID-token & App-Check verify + Secret-Manager keys + Cloud Run deploy → a grounded coach line end-to-end (TUTOR-03 partial, TUTOR-05)
+- [x] 14-01-PLAN.md — SERVER: scaffold the Python LangGraph `server/` sub-project — FastAPI app + minimal one-node graph + POST /coach (tool_choice="any") + GET /healthz + Firebase-ID-token & App-Check verify + Secret-Manager keys + Cloud Run deploy → a grounded coach line end-to-end (TUTOR-03 partial, TUTOR-05)
 
 **Wave 2** *(blocked on 14-01 — both depend on the 14-01 server DTO contract; no file overlap between them)*
 
-- [ ] 14-02-PLAN.md — SERVER: the grounded agent graph — analyze→plan→coach StateGraph + conditional edge + per-node model routing (model-agnostic) + the 4 ACTION tools (tool_choice="any") + FACTS-as-text + server-side grounding (no verdict tool; advance-on-fail impossible; curriculum guard) + bounded retry (TUTOR-05, GROUND-01)
-- [ ] 14-03-PLAN.md — autonomous:false — CLIENT: RemoteAgentBrain (calls the server with ID token + App Check, auto-degrades to AuthoredFallback) + reshape TutorFacts(trajectory+learner model)/TutorDecision(plan) + route via the single tutorBrainFactoryProvider + wire the line into exercise_scaffold (ExerciseController untouched) (TUTOR-01, TUTOR-02, TUTOR-03)
+- [x] 14-02-PLAN.md — SERVER: the grounded agent graph — analyze→plan→coach StateGraph + conditional edge + per-node model routing (model-agnostic) + the 4 ACTION tools (tool_choice="any") + FACTS-as-text + server-side grounding (no verdict tool; advance-on-fail impossible; curriculum guard) + bounded retry (TUTOR-05, GROUND-01)
+- [x] 14-03-PLAN.md — autonomous:false — CLIENT: RemoteAgentBrain (calls the server with ID token + App Check, auto-degrades to AuthoredFallback) + reshape TutorFacts(trajectory+learner model)/TutorDecision(plan) + route via the single tutorBrainFactoryProvider + wire the line into exercise_scaffold (ExerciseController untouched) (TUTOR-01, TUTOR-02, TUTOR-03)
 
 **Wave 3** *(blocked on 14-02, 14-03)*
 
-- [ ] 14-04-PLAN.md — GUARDS: build-failing non-PII payload test on BOTH the client payload and the server request body (GROUND-02) + durable-layers-no-agent/framework/network-imports guard (TUTOR-04) + AuthoredFallback offline-floor coverage for every baa coaching moment (TUTOR-01, TUTOR-02)
+- [x] 14-04-PLAN.md — GUARDS: build-failing non-PII payload test on BOTH the client payload and the server request body (GROUND-02) + durable-layers-no-agent/framework/network-imports guard (TUTOR-04) + AuthoredFallback offline-floor coverage for every baa coaching moment (TUTOR-01, TUTOR-02)
 
 **UI hint**: yes
 **Research hint**: no — the architecture is decided by the Phase 11 GATE; this phase executes it.
@@ -739,7 +739,7 @@ graceful offline/timeout fallback to the authored floor) on the **Pixel-Tablet b
 | 11. SPIKE — GenUI catalog + native stylus canvas | 3/3 | Complete    | 2026-06-22 |
 | 12. SPIKE — full-path latency & presence budget | 0/TBD | Not started | - |
 | 13. SPIKE — 3-way bake-off (grounding + Arabic) | 0/TBD | Not started | - |
-| 14. BUILD — TutorBrain spine + grounding invariant | 0/4 | Planned | - |
+| 14. BUILD — TutorBrain spine + grounding invariant | 4/4 | Complete   | 2026-06-22 |
 | 15. BUILD — dynamic grounded exercise selection on baa | 0/TBD | Not started | - |
 | 16. BUILD — presence + voice + eval gate + demo-harden | 0/TBD | Not started | - |
 
