@@ -671,21 +671,21 @@ fully-offline ideal is viable. The harness built here seeds the v2.0 eval harnes
   4. The pass/fail + star is decided by the deterministic scorer at the `ExerciseController` seam and no agent path can flip a fail to a pass; the agent only supplies the displayed line (GROUND-01).
   5. A guard/test fails the build if raw stroke coordinates or any PII field (nickname/PII) can reach the network payload — only derived non-PII facts cross (GROUND-02).
 
-**Plans**: 4 plans
+**Plans**: 4 plans (RE-PLANNED 2026-06-22 against ADR-015 server-side LangGraph — supersedes the prior client-only plan set)
 Plans:
 
 **Wave 1**
 
-- [ ] 14-01-PLAN.md — TutorBrain seam + TutorFacts/TutorDecision + non-PII chokepoint builder + AuthoredFallback floor + native dispatcher, wired into ExerciseController → grounded OFFLINE tutor end-to-end (TUTOR-01/02/05, GROUND-01)
+- [ ] 14-01-PLAN.md — SERVER: scaffold the Python LangGraph `server/` sub-project — FastAPI app + minimal one-node graph + POST /coach (tool_choice="any") + GET /healthz + Firebase-ID-token & App-Check verify + Secret-Manager keys + Cloud Run deploy → a grounded coach line end-to-end (TUTOR-03 partial, TUTOR-05)
 
-**Wave 2** *(blocked on 14-01)*
+**Wave 2** *(blocked on 14-01 — both depend on the 14-01 server DTO contract; no file overlap between them)*
 
-- [ ] 14-02-PLAN.md — autonomous:false — GeminiBrain firebase_ai function-calling loop (FunctionCallingConfig.any({4}), FACTS-as-text, non-streamed) + App Check enforced + router + auto-degrade to AuthoredFallback; spike packages removed (TUTOR-03)
-- [ ] 14-03-PLAN.md — the grounding guards: build-failing non-PII payload test (GROUND-02) + durable-layers-no-forbidden-imports guard (TUTOR-01)
+- [ ] 14-02-PLAN.md — SERVER: the grounded agent graph — analyze→plan→coach StateGraph + conditional edge + per-node model routing (model-agnostic) + the 4 ACTION tools (tool_choice="any") + FACTS-as-text + server-side grounding (no verdict tool; advance-on-fail impossible; curriculum guard) + bounded retry (TUTOR-05, GROUND-01)
+- [ ] 14-03-PLAN.md — autonomous:false — CLIENT: RemoteAgentBrain (calls the server with ID token + App Check, auto-degrades to AuthoredFallback) + reshape TutorFacts(trajectory+learner model)/TutorDecision(plan) + route via the single tutorBrainFactoryProvider + wire the line into exercise_scaffold (ExerciseController untouched) (TUTOR-01, TUTOR-02, TUTOR-03)
 
-**Wave 3** *(blocked on 14-01, 14-02)*
+**Wave 3** *(blocked on 14-02, 14-03)*
 
-- [ ] 14-04-PLAN.md — GemmaBrain experimental stub behind the same interface + router experimental branch (never on the critical path) (TUTOR-04)
+- [ ] 14-04-PLAN.md — GUARDS: build-failing non-PII payload test on BOTH the client payload and the server request body (GROUND-02) + durable-layers-no-agent/framework/network-imports guard (TUTOR-04) + AuthoredFallback offline-floor coverage for every baa coaching moment (TUTOR-01, TUTOR-02)
 
 **UI hint**: yes
 **Research hint**: no — the architecture is decided by the Phase 11 GATE; this phase executes it.
