@@ -171,6 +171,7 @@ None yet.
 | 260607-pr1 | Practice screen three-zone Trace/ShowFix/ShowPraise tutor redesign + Hear-the-letter (UI-only; scorer/state-machine/persistence untouched) | 2026-06-07 | 8f8eb56 | [practice-redesign spec](../docs/design/practice-redesign/) |
 | 260615-tqu | Wire baa-unit vocab illustrations into the app: bundle assets/images/, add imageId→asset resolver (mirrors audio seam) + provider, render Image.asset in _ImagePart with silent-degrade hatched-stub fallback | 2026-06-15 | 2cff97e | [260615-tqu-wire-baa-unit-vocab-illustrations-into-t](./quick/260615-tqu-wire-baa-unit-vocab-illustrations-into-t/) |
 | 260622-onb | Polish onboarding screen: Qalam mascot welcome header (leading-mascot Row, home-greeting idiom) + reduced-motion-safe one-shot card entrance (fade + slide-up, durSlow/easeOutQuart). Flow/data/safety invariants untouched | 2026-06-22 | c716383 | [260622-onb-polish-onboarding-mascot-entrance](./quick/260622-onb-polish-onboarding-mascot-entrance/) |
+| 260622-pas | v2 spike: UI-only parent-account auth prototype screen (sign in/up toggle, email+password, teal CTA, inert "Continue with Google") on hidden /dev/parent-auth + PARENTAUTH launch flag. NOT wired to Firebase/AuthService/parent-gate/child-data — inert CTAs; account-linking (D-09c) deferred pending owner sign-off | 2026-06-22 | af575fe | [260622-pas-parent-auth-spike-v2](./quick/260622-pas-parent-auth-spike-v2/) |
 
 ## Deferred Items
 
