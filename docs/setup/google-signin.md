@@ -54,22 +54,28 @@ The `"client_id"` on that `client_type: 3` entry (ends in
 
 ## 4. Run with the Web client id
 
+The current Web client id (the `client_type: 3` entry in google-services.json) is:
+
 ```
-flutter run --dart-define=GOOGLE_SERVER_CLIENT_ID=<web_client_id>.apps.googleusercontent.com
+718707208086-j5denc0b3bre2dneprmm75qefqqr3p50.apps.googleusercontent.com
+```
+
+Easiest: in VS Code's Run panel pick **"Qalam (Google sign-in)"** — it passes the
+flag for you (see `.vscode/launch.json`). Or from the terminal:
+
+```
+flutter run --dart-define=GOOGLE_SERVER_CLIENT_ID=718707208086-j5denc0b3bre2dneprmm75qefqqr3p50.apps.googleusercontent.com
 ```
 
 For release builds, pass the same `--dart-define` to `flutter build apk`.
-
-> Tip: to avoid retyping, you can keep it in a gitignored file and run with
-> `--dart-define-from-file=dart_defines.json` (`{ "GOOGLE_SERVER_CLIENT_ID": "..." }`).
 
 ---
 
 ## Checklist
 
-- [ ] Debug SHA-1 added to Firebase
+- [x] Debug SHA-1 added to Firebase
 - [ ] (later) Release SHA-1 added to Firebase
-- [ ] Google provider enabled in Authentication
-- [ ] Fresh google-services.json committed (has a `client_type: 3` entry)
-- [ ] `GOOGLE_SERVER_CLIENT_ID` passed at run/build time
+- [x] Google provider enabled in Authentication
+- [x] Fresh google-services.json committed (has a `client_type: 3` entry)
+- [x] `GOOGLE_SERVER_CLIENT_ID` wired into `.vscode/launch.json`
 - [ ] Verified on device: "Continue with Google" signs in / links the account

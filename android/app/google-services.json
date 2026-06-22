@@ -12,7 +12,20 @@
           "package_name": "com.technion.qalam"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "718707208086-ct6ljcqodbpk6lve0i3qbntvrugu9spt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.technion.qalam",
+            "certificate_hash": "2808053d440bb856bd1ea32f2547189496abf818"
+          }
+        },
+        {
+          "client_id": "718707208086-j5denc0b3bre2dneprmm75qefqqr3p50.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBmroX2mBg-rO9tbMlvphdOXYLhOjyugK0"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "718707208086-j5denc0b3bre2dneprmm75qefqqr3p50.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
