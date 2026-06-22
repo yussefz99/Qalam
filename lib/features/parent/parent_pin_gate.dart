@@ -25,6 +25,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/app_database.dart';
 import '../../l10n/app_localizations.dart';
 import '../../providers/parent_providers.dart';
+import '../../providers/auth_providers.dart';
+import '../../services/auth_service.dart';
 import '../../theme/colors.dart';
 import '../../theme/dimens.dart';
 import '../../theme/text_styles.dart';
@@ -208,6 +210,77 @@ class _ParentPinGateState extends ConsumerState<ParentPinGate>
     }
   }
 
+  Future<void> _recoverPin() async {
+    final password = TextEditingController();
+    String? error;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('Reset Parent PIN'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Enter your account password to confirm this is the parent.',
+              ),
+              const SizedBox(height: QalamSpace.space4),
+              TextField(
+                key: const Key('pinRecoveryPassword'),
+                controller: password,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Account password',
+                ),
+              ),
+              if (error != null) ...[
+                const SizedBox(height: QalamSpace.space3),
+                Text(
+                  error!,
+                  style: const TextStyle(color: QalamColors.warnSoft),
+                ),
+              ],
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              key: const Key('confirmPinRecovery'),
+              onPressed: () async {
+                try {
+                  await ref
+                      .read(authServiceProvider)
+                      .reauthenticateWithPassword(password.text);
+                  if (dialogContext.mounted) {
+                    Navigator.pop(dialogContext, true);
+                  }
+                } on AuthFailure catch (e) {
+                  setDialogState(() => error = e.message);
+                }
+              },
+              child: const Text('Verify and reset'),
+            ),
+          ],
+        ),
+      ),
+    );
+    password.dispose();
+    if (confirmed != true || !mounted) return;
+    await _pin.resetPin(_db);
+    if (!mounted) return;
+    setState(() {
+      _mode = _GateMode.create;
+      _error = null;
+      _cooldownSeconds = 0;
+      _firstEntry = '';
+    });
+    _clearField();
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -294,6 +367,14 @@ class _ParentPinGateState extends ConsumerState<ParentPinGate>
           Text(
             l10n.parentPinCooldown(_cooldownSeconds),
             style: QalamTextStyles.body.copyWith(color: QalamColors.fgMuted),
+          ),
+        ],
+        if (_mode == _GateMode.enter) ...[
+          const SizedBox(height: QalamSpace.space3),
+          TextButton(
+            key: const Key('forgotParentPin'),
+            onPressed: _recoverPin,
+            child: const Text('Forgot Parent PIN?'),
           ),
         ],
         if (_mode == _GateMode.create ||

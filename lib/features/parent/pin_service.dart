@@ -124,8 +124,7 @@ class PinService {
   /// Record one wrong attempt. On the [_maxFailures]-th consecutive failure,
   /// persist a lockUntil = now + [_cooldown] and reset the window counter.
   Future<void> registerFailure(AppDatabase db) async {
-    final n =
-        (int.tryParse(await db.getSetting(keyFailCount) ?? '0') ?? 0) + 1;
+    final n = (int.tryParse(await db.getSetting(keyFailCount) ?? '0') ?? 0) + 1;
     await db.setSetting(keyFailCount, '$n');
     if (n >= _maxFailures) {
       final until = DateTime.now().add(_cooldown).millisecondsSinceEpoch;
@@ -139,6 +138,13 @@ class PinService {
   Future<void> registerSuccess(AppDatabase db) async {
     await db.setSetting(keyFailCount, '0');
     await db.setSetting(keyLockUntil, '0');
+  }
+
+  Future<void> resetPin(AppDatabase db) async {
+    await db.deleteSetting(keyHash);
+    await db.deleteSetting(keySalt);
+    await db.deleteSetting(keyFailCount);
+    await db.deleteSetting(keyLockUntil);
   }
 }
 

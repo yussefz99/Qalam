@@ -33,7 +33,7 @@ import 'package:qalam/providers/profile_providers.dart';
 /// A test double that records the single profile create() without touching Drift.
 class _RecordingRepository implements ChildProfileRepository {
   ({String nicknameId, String avatarId, String grade, String startingLessonId})?
-      lastCreated;
+  lastCreated;
 
   @override
   Future<bool> hasProfile() async => lastCreated != null;
@@ -56,6 +56,12 @@ class _RecordingRepository implements ChildProfileRepository {
     );
     return 1;
   }
+
+  @override
+  Future<void> update({
+    required String nicknameId,
+    required String avatarId,
+  }) async {}
 }
 
 Widget _buildWithRouter({required ChildProfileRepository repo}) {
@@ -89,68 +95,86 @@ Widget _buildWithRouter({required ChildProfileRepository repo}) {
 void main() {
   group('OnboardingScreen (S1-03)', () {
     // -----------------------------------------------------------------------
-    // Test 1: NO free-text widget anywhere — no keyboard, no real-name leak.
+    // Test 1: bounded private custom nickname input.
     // -----------------------------------------------------------------------
-    testWidgets('renders no free-text input widgets (S1-03)',
-        (WidgetTester tester) async {
+    testWidgets('renders a bounded custom nickname field', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(_buildWithRouter(repo: _RecordingRepository()));
       await tester.pumpAndSettle();
 
-      expect(find.byType(TextField), findsNothing,
-          reason: 'no TextField allowed on onboarding (S1-03)');
-      expect(find.byType(TextFormField), findsNothing,
-          reason: 'no TextFormField allowed on onboarding (S1-03)');
-      expect(find.byType(EditableText), findsNothing,
-          reason: 'no keyboard/EditableText surface allowed (S1-03)');
+      final finder = find.byKey(const Key('onboardingNicknameField'));
+      expect(finder, findsOneWidget);
+      expect(tester.widget<TextField>(finder).maxLength, 16);
+      expect(find.text('Grade'), findsNothing);
+      expect(find.byType(Image), findsNWidgets(6));
     });
 
     // -----------------------------------------------------------------------
     // Test 2: back navigation is blocked (PopScope canPop:false).
     // -----------------------------------------------------------------------
-    testWidgets('blocks back navigation with PopScope(canPop: false)',
-        (WidgetTester tester) async {
+    testWidgets('blocks back navigation with PopScope(canPop: false)', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(_buildWithRouter(repo: _RecordingRepository()));
       await tester.pumpAndSettle();
 
       final popScope = tester.widget<PopScope>(find.byType(PopScope));
-      expect(popScope.canPop, isFalse,
-          reason: 'the child must not be able to skip onboarding via back');
+      expect(
+        popScope.canPop,
+        isFalse,
+        reason: 'the child must not be able to skip onboarding via back',
+      );
     });
 
     // -----------------------------------------------------------------------
     // Test 3: full happy path persists a fixed-set profile and lands on Home.
     // -----------------------------------------------------------------------
-    testWidgets(
-        'tapping avatar + nickname + grade then "Let\'s go" persists and navigates Home',
-        (WidgetTester tester) async {
+    testWidgets('choosing avatar + nickname persists and navigates Home', (
+      WidgetTester tester,
+    ) async {
       final repo = _RecordingRepository();
       await tester.pumpWidget(_buildWithRouter(repo: repo));
       await tester.pumpAndSettle();
 
       // Each fixed-set cell carries a stable Key (mirrors todaysLessonCard).
-      await tester.tap(find.byKey(const Key('grade_kg')));
-      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('avatar_avatar_1')));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('nickname_nick_star')));
+      await tester.enterText(
+        find.byKey(const Key('onboardingNicknameField')),
+        'نور',
+      );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byKey(const Key('onboardingSubmit')));
+      final submit = find.byKey(const Key('onboardingSubmit'));
+      await tester.ensureVisible(submit);
+      await tester.pumpAndSettle();
+      await tester.tap(submit);
       await tester.pumpAndSettle();
 
-      // The fixed-set selection was persisted (no free text ever involved).
-      expect(repo.lastCreated, isNotNull,
-          reason: '"Let\'s go" must persist the selected profile');
+      // The private custom nickname is persisted with the account profile.
+      expect(
+        repo.lastCreated,
+        isNotNull,
+        reason: '"Let\'s go" must persist the selected profile',
+      );
       expect(repo.lastCreated!.grade, 'kg');
       expect(repo.lastCreated!.avatarId, 'avatar_1');
-      expect(repo.lastCreated!.nicknameId, 'nick_star');
-      expect(repo.lastCreated!.startingLessonId, 'lesson_01',
-          reason: 'grade kg resolves to the default starting LESSON id '
-              '(S1-02; lesson-id namespace, Plan 06-02)');
+      expect(repo.lastCreated!.nicknameId, 'نور');
+      expect(
+        repo.lastCreated!.startingLessonId,
+        'lesson_01',
+        reason:
+            'grade kg resolves to the default starting LESSON id '
+            '(S1-02; lesson-id namespace, Plan 06-02)',
+      );
 
       // Navigation lands on Home.
-      expect(find.text('Home Stub'), findsOneWidget,
-          reason: 'after submit the child lands on Home');
+      expect(
+        find.text('Home Stub'),
+        findsOneWidget,
+        reason: 'after submit the child lands on Home',
+      );
     });
   });
 }

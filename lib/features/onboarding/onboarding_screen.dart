@@ -22,6 +22,7 @@
 // invalidate(childProfileProvider) (Home re-reads), then context.go('/').
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -35,8 +36,6 @@ import '../../theme/dimens.dart';
 import '../../theme/text_styles.dart';
 import 'onboarding_data.dart';
 import 'widgets/avatar_grid.dart';
-import 'widgets/grade_chips.dart';
-import 'widgets/nickname_grid.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -47,27 +46,36 @@ class OnboardingScreen extends ConsumerStatefulWidget {
 
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   // The three in-progress selections (all taps; no free-text state anywhere).
-  String? _grade;
   String? _avatarId;
-  String? _nicknameId;
+  final TextEditingController _nickname = TextEditingController();
   bool _submitting = false;
 
-  bool get _isComplete =>
-      _grade != null && _avatarId != null && _nicknameId != null;
+  String? get _validNickname {
+    final value = _nickname.text.trim();
+    return value.runes.length >= 2 && value.runes.length <= 16 ? value : null;
+  }
+
+  bool get _isComplete => _avatarId != null && _validNickname != null;
+
+  @override
+  void dispose() {
+    _nickname.dispose();
+    super.dispose();
+  }
 
   Future<void> _submit() async {
     if (!_isComplete || _submitting) return;
 
-    final grade = _grade!;
+    const grade = 'kg';
     final avatarId = _avatarId!;
-    final nicknameId = _nicknameId!;
+    final nicknameId = _validNickname!;
 
     // Defence-in-depth (T-05-02): only members of the fixed sets may persist,
     // even though the UI can only ever produce in-set values.
-    final validGrade = kGradeKeys.contains(grade);
     final validAvatar = kAvatarIds.contains(avatarId);
-    final validNickname = kNicknames.any((n) => n.id == nicknameId);
-    if (!validGrade || !validAvatar || !validNickname) return;
+    final validNickname =
+        nicknameId.runes.length >= 2 && nicknameId.runes.length <= 16;
+    if (!validAvatar || !validNickname) return;
 
     setState(() => _submitting = true);
 
@@ -146,14 +154,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
                                     Text(
-                                      l10n?.onboardingTitle ??
-                                          'Let\'s set up your learner',
+                                      'Who\'s learning with Qalam?',
                                       style: QalamTextStyles.heading,
                                     ),
                                     const SizedBox(height: QalamSpace.space2),
                                     Text(
-                                      l10n?.onboardingSubtitle ??
-                                          'Pick a grade, an avatar, and a nickname.',
+                                      'Create a private learning profile together.',
                                       style: QalamTextStyles.body,
                                     ),
                                   ],
@@ -163,19 +169,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           ),
                           const SizedBox(height: QalamSpace.space5),
 
-                          // 1. Grade (the parent's pick).
-                          Text(
-                            l10n?.onboardingGradePrompt ?? 'Grade',
-                            style: QalamTextStyles.label,
+                          const _StepLabel(
+                            number: '1',
+                            title: 'For your learner',
+                            subtitle: 'Pick a character',
                           ),
                           const SizedBox(height: QalamSpace.space3),
-                          GradeChips(
-                            selected: _grade,
-                            onSelected: (g) => setState(() => _grade = g),
-                          ),
-                          const SizedBox(height: QalamSpace.space5),
-
-                          // 2. Avatar (the child's pick).
                           Text(
                             l10n?.onboardingAvatarPrompt ?? 'Pick your avatar',
                             style: QalamTextStyles.label,
@@ -187,29 +186,78 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           ),
                           const SizedBox(height: QalamSpace.space5),
 
-                          // 3. Nickname (the child's pick).
-                          Text(
-                            l10n?.onboardingNicknamePrompt ??
-                                'Pick your nickname',
-                            style: QalamTextStyles.label,
+                          const _StepLabel(
+                            number: '2',
+                            title: 'Choose a nickname',
+                            subtitle: 'Use any short name in Arabic or English',
                           ),
                           const SizedBox(height: QalamSpace.space3),
-                          NicknameGrid(
-                            selected: _nicknameId,
-                            onSelected: (n) => setState(() => _nicknameId = n),
+                          TextField(
+                            key: const Key('onboardingNicknameField'),
+                            controller: _nickname,
+                            maxLength: 16,
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(16),
+                              FilteringTextInputFormatter.deny(
+                                RegExp(r'[\r\n\t]'),
+                              ),
+                            ],
+                            onChanged: (_) => setState(() {}),
+                            textInputAction: TextInputAction.done,
+                            style: QalamTextStyles.body,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: QalamColors.bg,
+                              hintText: 'Example: نور or Sami',
+                              counterText: '',
+                              prefixIcon: const Icon(
+                                Icons.edit_rounded,
+                                color: QalamColors.primary,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(
+                                  QalamRadii.lg,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(
+                                  QalamRadii.lg,
+                                ),
+                                borderSide: const BorderSide(
+                                  color: QalamColors.primary,
+                                  width: 2,
+                                ),
+                              ),
+                            ),
                           ),
                           const SizedBox(height: QalamSpace.space5),
 
-                          // 4. "Let's go" CTA — ink-teal pill (no gold), enabled
-                          // only when all three selections are made.
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: _LetsGoButton(
-                              label: l10n?.onboardingSubmit ?? 'Let\'s go',
-                              enabled: _isComplete && !_submitting,
-                              buttonShadow: qalam.buttonShadow,
-                              onTap: _submit,
-                            ),
+                          _LearnerPreview(
+                            avatarId: _avatarId,
+                            nickname: _validNickname,
+                          ),
+                          const SizedBox(height: QalamSpace.space5),
+
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'The nickname stays private inside this account.',
+                                  style: QalamTextStyles.label.copyWith(
+                                    color: QalamColors.fgMuted,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: QalamSpace.space4),
+                              _LetsGoButton(
+                                label: _isComplete
+                                    ? 'Start learning'
+                                    : 'Choose an avatar and nickname',
+                                enabled: _isComplete && !_submitting,
+                                buttonShadow: qalam.buttonShadow,
+                                onTap: _submit,
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -220,6 +268,112 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _StepLabel extends StatelessWidget {
+  const _StepLabel({
+    required this.number,
+    required this.title,
+    required this.subtitle,
+  });
+
+  final String number;
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: QalamSpace.space8,
+          height: QalamSpace.space8,
+          alignment: Alignment.center,
+          decoration: const BoxDecoration(
+            color: QalamColors.primary,
+            shape: BoxShape.circle,
+          ),
+          child: Text(
+            number,
+            style: QalamTextStyles.label.copyWith(
+              color: QalamColors.fgOnPrimary,
+            ),
+          ),
+        ),
+        const SizedBox(width: QalamSpace.space3),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: QalamTextStyles.button),
+            Text(
+              subtitle,
+              style: QalamTextStyles.label.copyWith(color: QalamColors.fgMuted),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _LearnerPreview extends StatelessWidget {
+  const _LearnerPreview({required this.avatarId, required this.nickname});
+
+  final String? avatarId;
+  final String? nickname;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      key: const Key('onboardingLearnerPreview'),
+      duration: QalamMotion.durBase,
+      width: double.infinity,
+      padding: const EdgeInsets.all(QalamSpace.space4),
+      decoration: BoxDecoration(
+        color: QalamColors.primaryTint,
+        borderRadius: BorderRadius.circular(QalamRadii.lg),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: QalamTargets.targetMin,
+            height: QalamTargets.targetMin,
+            decoration: BoxDecoration(
+              color: QalamColors.surface,
+              shape: BoxShape.circle,
+              border: Border.all(color: QalamColors.primary),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: avatarId == null
+                ? Center(child: Text('?', style: QalamTextStyles.heading))
+                : Padding(
+                    padding: const EdgeInsets.all(QalamSpace.space1),
+                    child: Image.asset(
+                      'assets/avatars/$avatarId.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+          ),
+          const SizedBox(width: QalamSpace.space4),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Learner preview', style: QalamTextStyles.label),
+                const SizedBox(height: QalamSpace.space1),
+                Text(
+                  nickname ?? 'Your nickname will appear here',
+                  style: QalamTextStyles.heading,
+                ),
+              ],
+            ),
+          ),
+          if (avatarId != null && nickname != null)
+            const Icon(Icons.check_circle, color: QalamColors.success),
+        ],
       ),
     );
   }

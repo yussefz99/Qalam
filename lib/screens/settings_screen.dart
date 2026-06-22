@@ -13,21 +13,138 @@
 // All copy via gen-l10n; semantic tokens only; no emoji, no pseudo-icons (D-13).
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../l10n/app_localizations.dart';
+import '../providers/auth_providers.dart';
+import '../providers/profile_providers.dart';
+import '../data/child_profile_repository.dart';
+import '../features/onboarding/onboarding_data.dart';
 import '../theme/colors.dart';
 import '../theme/dimens.dart';
 import '../theme/text_styles.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
+
+  @override
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  bool _signingOut = false;
+
+  Future<void> _signOut() async {
+    if (_signingOut) return;
+    setState(() => _signingOut = true);
+    try {
+      await ref.read(authServiceProvider).signOut();
+    } finally {
+      if (mounted) setState(() => _signingOut = false);
+    }
+  }
+
+  Future<void> _editLearner() async {
+    final profile = await ref.read(childProfileProvider.future);
+    if (profile == null || !mounted) return;
+    var avatarId = profile.avatarId;
+    final nickname = TextEditingController(text: profile.nicknameId);
+    final saved = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('Edit learner profile'),
+          content: SizedBox(
+            width: 520,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Choose an avatar'),
+                const SizedBox(height: QalamSpace.space3),
+                Wrap(
+                  spacing: QalamSpace.space3,
+                  children: [
+                    for (final id in kAvatarIds)
+                      GestureDetector(
+                        key: Key('edit_$id'),
+                        onTap: () => setDialogState(() => avatarId = id),
+                        child: Container(
+                          width: QalamTargets.targetMin,
+                          height: QalamTargets.targetMin,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: QalamColors.bg,
+                            border: Border.all(
+                              color: avatarId == id
+                                  ? QalamColors.primary
+                                  : QalamColors.border,
+                              width: avatarId == id ? 3 : 1,
+                            ),
+                          ),
+                          clipBehavior: Clip.antiAlias,
+                          child: Image.asset(
+                            'assets/avatars/$id.png',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: QalamSpace.space5),
+                TextField(
+                  key: const Key('editLearnerNickname'),
+                  controller: nickname,
+                  maxLength: 16,
+                  decoration: const InputDecoration(labelText: 'Nickname'),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              key: const Key('saveLearnerProfile'),
+              onPressed: () {
+                final value = nickname.text.trim();
+                if (value.runes.length >= 2 && value.runes.length <= 16) {
+                  Navigator.pop(dialogContext, true);
+                }
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        ),
+      ),
+    );
+    final value = nickname.text.trim();
+    nickname.dispose();
+    if (saved != true) return;
+    await ref
+        .read(childProfileRepositoryProvider)
+        .update(nicknameId: value, avatarId: avatarId);
+    ref.invalidate(childProfileProvider);
+  }
 
   @override
   Widget build(BuildContext context) {
     final AppLocalizations l10n = AppLocalizations.of(context)!;
+    final user = ref.watch(authStateProvider).asData?.value;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.settings)),
+      appBar: AppBar(
+        title: Text(l10n.settings),
+        leading: IconButton(
+          key: const Key('settingsHomeButton'),
+          tooltip: 'Back to Home',
+          onPressed: () => context.go('/'),
+          icon: const Icon(Icons.home_outlined),
+        ),
+      ),
       body: Center(
         child: SingleChildScrollView(
           child: ConstrainedBox(
@@ -53,6 +170,34 @@ class SettingsScreen extends StatelessWidget {
                   // `/parent/*` branch in P9. Left inert here on purpose — do NOT
                   // wire navigation or build the PIN gate now (see app_router.dart).
                   const _PlaceholderRow(label: 'Parent Area'),
+                  _ActionRow(
+                    rowKey: const Key('settingsEditLearner'),
+                    icon: Icons.face_retouching_natural,
+                    label: 'Edit learner profile',
+                    onTap: _editLearner,
+                  ),
+                  const SizedBox(height: QalamSpace.space5),
+                  Text(
+                    user?.email ?? 'Signed in account',
+                    key: const Key('settingsAccountEmail'),
+                    style: QalamTextStyles.body,
+                  ),
+                  const SizedBox(height: QalamSpace.space3),
+                  SizedBox(
+                    width: double.infinity,
+                    height: QalamTargets.targetMin,
+                    child: OutlinedButton(
+                      key: const Key('settingsSignOut'),
+                      onPressed: _signingOut ? null : _signOut,
+                      child: _signingOut
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Text('Sign out'),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -85,6 +230,38 @@ class _PlaceholderRow extends StatelessWidget {
       ),
       alignment: AlignmentDirectional.centerStart,
       child: Text(label, style: QalamTextStyles.body),
+    );
+  }
+}
+
+class _ActionRow extends StatelessWidget {
+  const _ActionRow({
+    required this.rowKey,
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final Key rowKey;
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: QalamSpace.space3),
+      child: ListTile(
+        key: rowKey,
+        onTap: onTap,
+        tileColor: QalamColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(QalamRadii.lg),
+        ),
+        leading: Icon(icon, color: QalamColors.primary),
+        title: Text(label, style: QalamTextStyles.body),
+        trailing: const Icon(Icons.chevron_right_rounded),
+      ),
     );
   }
 }

@@ -69,6 +69,7 @@ dependencies:
   # audioplayers, latest stable 6.x — long-standing verified-publisher package on
   # pub.dev. Exact resolved version recorded in 07-02-SUMMARY.md + assets/audio/README.md.
   audioplayers: ^6.5.0
+  google_sign_in: ^7.2.0
 
 dev_dependencies:
   flutter_test:
@@ -105,6 +106,7 @@ flutter:
 
   assets:
     - assets/audio/
+    - assets/avatars/
     - assets/curriculum/
     - assets/fonts/
     - assets/icons/

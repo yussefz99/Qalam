@@ -10,12 +10,13 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../dev/authoring_screen.dart';
 import '../dev/glyph_audit_screen.dart';
-import '../dev/parent_auth_spike_screen.dart';
 import '../features/journey/journey_screen.dart';
 import '../features/letter_unit/letter_unit_screen.dart';
 import '../features/onboarding/onboarding_screen.dart';
+import '../providers/auth_providers.dart';
 import '../providers/parent_providers.dart';
 import '../providers/profile_providers.dart';
+import '../screens/parent_auth_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/parent_dashboard_screen.dart';
 import '../features/practice/practice_screen.dart';
@@ -30,13 +31,6 @@ part 'app_router.g.dart';
 /// Home → Watch → Trace → Feedback → Celebration loop is tappable for a demo.
 const bool kDemoMode = bool.fromEnvironment('DEMO');
 
-/// Compile-time flag that boots straight into the v2 parent-auth PROTOTYPE so it
-/// can be viewed on a tablet without a profile. Off by default. Pass
-/// `--dart-define=PARENTAUTH=true` to launch at `/dev/parent-auth` and bypass the
-/// onboarding gate (same escape-hatch idiom as `kDemoMode`). For demos only — the
-/// screen is still a UI-only prototype with no real auth.
-const bool kParentAuthSpike = bool.fromEnvironment('PARENTAUTH');
-
 /// App router, exposed as a Riverpod-codegen provider (Riverpod-only — D-11).
 @Riverpod(keepAlive: true)
 GoRouter appRouter(Ref ref) {
@@ -45,32 +39,44 @@ GoRouter appRouter(Ref ref) {
   // Used both as the redirect source AND as refreshListenable so the redirect
   // re-runs the instant the gate flips (RESEARCH Pattern 3).
   final gate = ref.watch(onboardingGateProvider);
+  final authGate = ref.watch(authGateProvider);
   // The parent-area gate (D-07 per-entry). Merged into refreshListenable so the
   // router re-runs the instant the gate flips lock↔unlock; the '/parent' widget
   // itself is the access boundary (RESEARCH Pattern 3 — no redirect for it).
   final parentGate = ref.watch(parentGateProvider);
 
   return GoRouter(
-    initialLocation: kDemoMode
-        ? '/demo/home'
-        : kParentAuthSpike
-            ? '/dev/parent-auth'
-            : '/',
+    initialLocation: kDemoMode ? '/demo/home' : '/',
     // Re-run redirects when either gate flips (onboarding write / parent
     // lock-unlock). Merged listenable — no second redirect rule for /parent.
-    refreshListenable: Listenable.merge(<Listenable>[gate, parentGate]),
+    refreshListenable: Listenable.merge(<Listenable>[
+      authGate,
+      gate,
+      parentGate,
+    ]),
     // SYNCHRONOUS redirect — NEVER await Drift here (Pitfall 2). The gate flag is
     // read once at boot; both rules below are present to prevent a redirect loop
     // (Pitfall 1): no-profile pins /onboarding; has-profile bounces off it.
     redirect: (context, state) {
       if (kDemoMode) return null; // the demo walkthrough bypasses the gate
-      if (kParentAuthSpike) return null; // the spike-view flag bypasses the gate
+      final onAuth = state.matchedLocation == '/auth';
       final onOnboarding = state.matchedLocation == '/onboarding';
+
+      // A real account is the front door to the whole application. Firebase's
+      // anonymous boot identity is deliberately NOT sufficient.
+      if (!authGate.signedIn) return onAuth ? null : '/auth';
+
+      // Once authenticated, child setup is the second mandatory gate.
+      if (onAuth) return gate.hasProfile ? '/' : '/onboarding';
       if (!gate.hasProfile && !onOnboarding) return '/onboarding';
       if (gate.hasProfile && onOnboarding) return '/';
       return null;
     },
     routes: <RouteBase>[
+      GoRoute(
+        path: '/auth',
+        builder: (context, state) => const ParentAuthScreen(),
+      ),
       GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
       // First-launch onboarding (S1-02 / S1-03). Reachable only via the gate; the
       // child cannot back out (PopScope) and cannot skip (redirect).
@@ -141,15 +147,6 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: '/dev/authoring',
         builder: (context, state) => const AuthoringScreen(),
-      ),
-      // DEV SEAM — v2 parent-account auth PROTOTYPE (quick task 260622-pas).
-      // Reachable only by typing this route; NOT surfaced in any nav. UI-only:
-      // no Firebase/AuthService, no parent-gate wiring, no child data — the
-      // CTAs are inert. Real anonymous→permanent linking (D-09c) is a separate
-      // follow-up pending owner sign-off; the v1 runtime stays anonymous-only.
-      GoRoute(
-        path: '/dev/parent-auth',
-        builder: (context, state) => const ParentAuthSpikeScreen(),
       ),
       // DEMO WALKTHROUGH — the phase-02.1.1 presentation route group (DP-03).
       // Six ordered, tappable demo screens (Home → Watch → Trace →

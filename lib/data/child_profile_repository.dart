@@ -31,13 +31,15 @@ class ChildProfileRepository {
     required String avatarId,
     required String grade,
     required String startingLessonId,
-  }) =>
-      _db.createProfile(
-        nicknameId: nicknameId,
-        avatarId: avatarId,
-        grade: grade,
-        startingLessonId: startingLessonId,
-      );
+  }) => _db.createProfile(
+    nicknameId: nicknameId,
+    avatarId: avatarId,
+    grade: grade,
+    startingLessonId: startingLessonId,
+  );
+
+  Future<void> update({required String nicknameId, required String avatarId}) =>
+      _db.updateProfile(nicknameId: nicknameId, avatarId: avatarId);
 }
 
 /// Riverpod provider for [ChildProfileRepository] — keepAlive mirrors the
