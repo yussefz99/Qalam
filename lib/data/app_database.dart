@@ -313,15 +313,31 @@ LazyDatabase _openAccountConnection(String accountId) {
   });
 }
 
-/// Riverpod-codegen provider exposing the app database (Riverpod-only — D-11).
+/// The stable account-identity key for the local database — the uid for a real
+/// (non-anonymous) account, else a shared `signed-out-guest` namespace.
+///
+/// This recomputes on every `authStateProvider` (`userChanges()`) emission, but
+/// because it returns a plain String, Riverpod only NOTIFIES [appDatabase] when
+/// the value actually changes (`==`). A plain token refresh that keeps the same
+/// uid — e.g. the Forgot-PIN `reauthenticateWithPassword` step — therefore does
+/// NOT churn the database. Watching `authStateProvider` directly here would
+/// recreate (and `close()`) the DB on that refresh, tearing down the live DB and
+/// its Drift `.watch()` streams mid-interaction and crashing the widget tree
+/// (`_dependents.isEmpty`).
 @Riverpod(keepAlive: true)
-AppDatabase appDatabase(Ref ref) {
+String accountDatabaseId(Ref ref) {
   final authState = ref.watch(authStateProvider);
   final user =
       authState.asData?.value ?? ref.read(authServiceProvider).currentUser;
-  final accountId = user != null && !user.isAnonymous
-      ? user.uid
-      : 'signed-out-guest';
+  return user != null && !user.isAnonymous ? user.uid : 'signed-out-guest';
+}
+
+/// Riverpod-codegen provider exposing the app database (Riverpod-only — D-11).
+/// Rebuilds ONLY when [accountDatabaseId] changes (account identity), never on a
+/// bare token refresh — see that provider's note.
+@Riverpod(keepAlive: true)
+AppDatabase appDatabase(Ref ref) {
+  final accountId = ref.watch(accountDatabaseIdProvider);
   final db = AppDatabase.forAccount(accountId);
   ref.onDispose(db.close);
   return db;
