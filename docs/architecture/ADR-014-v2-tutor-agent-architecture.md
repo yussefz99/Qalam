@@ -3,7 +3,7 @@
 
 # ADR-014: v2 AI-Tutor Agent Architecture & Topology
 
-**Status:** Proposed
+**Status:** Accepted (owner, 2026-06-22)
 **Date:** 2026-06-22
 **Deciders:** Owner (final call on pedagogy/product), with flutter-expert + ai-engineer input
 **Supersedes/affects:** Phase 11 spike findings (genui drop holds); reshapes Phase 14 plan; constrains Phases 12/13/16.

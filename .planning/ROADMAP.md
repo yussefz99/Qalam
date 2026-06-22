@@ -579,7 +579,7 @@ investigations whose findings choose the path the build phases (14–16) then ex
 
 ### Phases
 
-- [ ] **Phase 11: SPIKE — GenUI catalog + native stylus canvas (kill-shot)** - Prove (or refute) a GenUI core catalog driven by a local firebase_ai function-calling loop can host the real-time native StrokeCanvas via a present_activity tool; GATE to a raw firebase_ai-drives-native-widgets fallback if it can't.
+- [x] **Phase 11: SPIKE — GenUI catalog + native stylus canvas (kill-shot)** - Prove (or refute) a GenUI core catalog driven by a local firebase_ai function-calling loop can host the real-time native StrokeCanvas via a present_activity tool; GATE to a raw firebase_ai-drives-native-widgets fallback if it can't. (completed 2026-06-22)
 - [ ] **Phase 12: SPIKE — full-path latency & presence budget (Pixel Tablet)** - Measure the real on-device stroke→scorer→agent→render→first-TTS path on a Pixel Tablet across Gemini Flash / Flash-Lite / Live API + Gemma; produce a written latency budget and the model/transport choice.
 - [ ] **Phase 13: SPIKE — 3-way bake-off (Authored vs Gemini vs Gemma) on grounding + Arabic** - Score AuthoredFallback vs GeminiBrain vs Gemma-on-device on grounding faithfulness + Arabic register over one harness; the data decides whether fully-offline Gemma is viable. Seeds the eval harness.
 - [ ] **Phase 14: BUILD — TutorBrain spine + grounding invariant** - The swappable TutorBrain interface + AuthoredFallback floor + GeminiBrain + GemmaBrain stub, the 4 ACTION tools with FACTS injected, the scorer-owns-verdict seam at ExerciseController, and the non-PII-facts network guard — durable layers stay free of GenUI/firebase_ai types.
@@ -617,7 +617,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2)*
 
-- [ ] 11-03-PLAN.md — On-device A/B on a real Pixel Tablet (feel-based, D-06), write SPIKE-FINDINGS verdict + GATE keep|drop, package via /gsd:spike-wrap-up for Phase 14 (SC-2/SC-3; D-05/D-06/D-08/D-13)
+- [x] 11-03-PLAN.md — On-device A/B on a real Pixel Tablet (feel-based, D-06), write SPIKE-FINDINGS verdict + GATE keep|drop, package via /gsd:spike-wrap-up for Phase 14 (SC-2/SC-3; D-05/D-06/D-08/D-13)
 
 **Research hint**: yes — riskiest unknown of the milestone (the kill-shot). The whole architecture branches on this result; spend the iteration to reach a confident GATE decision, not a guess.
 
@@ -730,7 +730,7 @@ Spikes first, then the grounded vertical slice: 11 → 12 → 13 → 14 → 15 �
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 11. SPIKE — GenUI catalog + native stylus canvas | 2/3 | In Progress|  |
+| 11. SPIKE — GenUI catalog + native stylus canvas | 3/3 | Complete    | 2026-06-22 |
 | 12. SPIKE — full-path latency & presence budget | 0/TBD | Not started | - |
 | 13. SPIKE — 3-way bake-off (grounding + Arabic) | 0/TBD | Not started | - |
 | 14. BUILD — TutorBrain spine + grounding invariant | 0/TBD | Not started | - |
