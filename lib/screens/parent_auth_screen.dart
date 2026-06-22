@@ -84,7 +84,12 @@ class _ParentAuthScreenState extends ConsumerState<ParentAuthScreen> {
       _error = null;
       _notice = null;
     });
+    // Resolve both providers BEFORE the await: a successful sign-up makes the
+    // router redirect off /auth, which can unmount this screen — reading `ref`
+    // after the await would then throw. The OnboardingGate is a keepAlive object
+    // valid regardless of this widget's mount state.
     final auth = ref.read(authServiceProvider);
+    final onboardingGate = ref.read(onboardingGateProvider);
     try {
       if (_isSignIn) {
         await auth.signInWithEmail(_email.text, _password.text);
@@ -92,7 +97,7 @@ class _ParentAuthScreenState extends ConsumerState<ParentAuthScreen> {
         await auth.signUpWithEmail(_email.text, _password.text);
         // Account creation always leads to a fresh child setup. This also
         // prevents an old device-local profile from bypassing onboarding.
-        ref.read(onboardingGateProvider).requireProfileSetup();
+        onboardingGate.requireProfileSetup();
       }
       // Success: authStateProvider emits the new user and the view flips to the
       // signed-in card. Nothing else to do here.
