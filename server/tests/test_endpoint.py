@@ -20,7 +20,7 @@ from tests.conftest import VALID_AUTH_HEADERS
 pytestmark = pytest.mark.code
 
 
-# --- A fake bound coach model: returns whatever tool call the test configures. ---
+# --- Fake models: the coach returns a forced tool call; analyze/plan return canned structure. ---
 
 
 class _FakeResp:
@@ -28,7 +28,7 @@ class _FakeResp:
         self.tool_calls = tool_calls
 
 
-class _FakeBoundModel:
+class _FakeBoundCoach:
     def __init__(self, tool_calls):
         self._tool_calls = tool_calls
 
@@ -36,11 +36,60 @@ class _FakeBoundModel:
         return _FakeResp(self._tool_calls)
 
 
-def _patch_coach(monkeypatch, tool_calls):
-    """Patch app.graph.build_coach_model to return a fake bound model (no network)."""
-    import app.graph as graph_mod
+class _FakeStructured:
+    """A with_structured_output(...) stand-in that returns a fixed parsed model."""
 
-    monkeypatch.setattr(graph_mod, "build_coach_model", lambda: _FakeBoundModel(tool_calls))
+    def __init__(self, obj):
+        self._obj = obj
+
+    def invoke(self, _messages):
+        return self._obj
+
+
+class _FakeAnalyzeModel:
+    def __init__(self, insight):
+        self._insight = insight
+
+    def with_structured_output(self, _schema):
+        return _FakeStructured(self._insight)
+
+
+class _FakePlanModel:
+    def __init__(self, plan):
+        self._plan = plan
+
+    def with_structured_output(self, _schema):
+        return _FakeStructured(self._plan)
+
+
+def _patch_coach(monkeypatch, tool_calls):
+    """Patch the whole node set offline: a struggle FACTS run goes analyze -> plan -> coach.
+
+    The coach is patched to force `tool_calls`; analyze returns a struggle Insight (so the router
+    takes the plan hop) and plan returns an authored, grounded Plan — both fully offline.
+    """
+    import app.nodes.analyze as analyze_mod
+    import app.nodes.coach as coach_mod
+    import app.nodes.plan as plan_mod
+    from app.nodes.analyze import Insight
+    from app.nodes.plan import Plan
+
+    insight = Insight(
+        struggle_tags=["boat-curvature"],
+        strength_tags=["steady-hand"],
+        pattern_note="shallow bowl recurring",
+    )
+    plan_obj = Plan(
+        next_exercise_id="baa.traceLetter.isolated",
+        intent="drill_isolated",
+        rationale="drill the failed trace",
+    )
+
+    monkeypatch.setattr(analyze_mod, "build_analyze_model", lambda: _FakeAnalyzeModel(insight))
+    monkeypatch.setattr(plan_mod, "build_plan_model", lambda: _FakePlanModel(plan_obj))
+    monkeypatch.setattr(
+        coach_mod, "build_coach_with_tools", lambda: _FakeBoundCoach(tool_calls)
+    )
 
 
 # --- Sample enlarged FACTS payloads ---
