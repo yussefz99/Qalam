@@ -1,106 +1,85 @@
 # Phase 14: BUILD — TutorBrain spine + grounding invariant — Context
 
-**Gathered:** 2026-06-22
+**Gathered:** 2026-06-22 (refreshed for the server architecture)
 **Status:** Ready for planning
-**Source:** ADR Ingest Express Path (docs/architecture/ADR-014-v2-tutor-agent-architecture.md) + Phase 11 SPIKE-FINDINGS (GATE: drop)
+**Source:** ADR-015 (server-side LangGraph) + 14-AI-SPEC.md (implementation + eval contract) + ADR-014 (grounding invariant, still in force)
 **Mode:** mvp (vertical slices)
 
 <domain>
 ## Phase Boundary
 
-Build the v2 AI-tutor **spine** for the baa letter family: a swappable `TutorBrain` with three
-backends, the 4 ACTION tools, FACTS-in/ACTIONS-out, and the grounding invariant wired at the
-existing `ExerciseController` seam. **Client-only, no server, no GenUI/A2UI/AG-UI/MCP** (Phase 11
-GATE: drop; ADR-014). This phase delivers the architecture and the offline+cloud coaching path;
-it does NOT yet do dynamic exercise selection (Phase 15) or voice/TTS + eval gate (Phase 16),
-and GemmaBrain ships as a stub/experimental only (bake-off is Phase 13).
+Build the v2 AI-tutor **spine** for the baa letter family as a **capable server-side agent**:
+a Python **LangGraph** agent on **Cloud Run** (analyze → plan → coach) called by the Flutter
+client over a clean REST/SSE API, with the client's `TutorBrain` seam + `AuthoredFallback`
+offline floor + grounding wired at the existing `ExerciseController`. Deliver a **grounded tutor
+working end-to-end** — cloud-online via the server, offline via the authored floor — for baa.
+NOT in this phase: dynamic grounded exercise selection (Phase 15), voice/TTS + the eval
+regression gate (Phase 16), on-device Gemma (deferred — the floor is AuthoredFallback), the full
+multi-node planning depth (Phase 15 thickens it).
 </domain>
 
 <decisions>
-## Implementation Decisions (LOCKED — from ADR-014, accepted 2026-06-22)
+## Implementation Decisions (LOCKED — ADR-015 + AI-SPEC §2–§4b)
 
-### Topology
-- **Client-only.** Flutter talks to Gemini directly via `firebase_ai` (Firebase AI Logic). No server, no protocol layer. This is the accepted ADR-014 decision; do not reintroduce AG-UI/A2UI/MCP/backend.
+### Topology (reversed from ADR-014's client-only)
+- **Server-side agent on Cloud Run**, Python. The Flutter client calls it over a **plain REST/SSE API**. Model keys live in **Secret Manager** (never in the client); client→server gated by **Firebase Auth ID token + App Check** (verified server-side with `firebase-admin`).
 
-### The seam — `TutorBrain`
-- `abstract class TutorBrain { Future<TutorDecision> next(TutorFacts facts); }`
-- **`TutorFacts` (FACTS-in):** a whitelisted, non-PII DTO built by ONE chokepoint function — `{letterId, mistakeId (enum), struggleTags, pass/fail, session-derived recent mistakes}`. Raw `List<Offset>` strokes and nickname/PII NEVER reach this builder.
-- **`TutorDecision` (ACTIONS-out):** exactly one of the 4 ACTION tool calls — `present_activity{coachingLine, letterId}`, `say{text}`, `give_hint{}`, `advance{}`. The verdict + mastery star are NOT tools.
-- Three impls behind the one interface: **GeminiBrain** (cloud), **GemmaBrain** (on-device, experimental stub), **AuthoredFallback** (offline floor). A factory/router picks: online+capable → Gemini; offline/experimental → Gemma; no model/failure → AuthoredFallback.
-- **Durable v1 layers (canvas / scorer / curriculum) carry ZERO `firebase_ai` / `genui` / `flutter_gemma` imports** (TUTOR-01/04). Enforce with a guard test (grep durable dirs for forbidden imports).
+### Framework — LangGraph (confirmed via scored matrix; AI-SPEC §2)
+- A `StateGraph` with nodes `analyze → plan → coach`; **conditional edges** so a clean pass is one cheap hop (coach only), a struggle runs analyze→plan→coach.
+- **Per-node model routing** (model-agnostic via `init_chat_model`): initial analyze=Gemini Flash / Claude Haiku 4.5, plan=Claude Sonnet 4.6 / Gemini Pro, coach=Claude Haiku 4.5 — **eval-tunable** (the coach-node Claude-vs-Gemini Arabic bake-off is Phase 13/16).
+- The **4 ACTION tools** (`present_activity`, `say`, `give_hint`, `advance`) bound with `tool_choice="any"` — the action space is pinned; **no verdict/star tool**. The server FORCES one tool call; the Flutter dispatcher EXECUTES it.
+- Stateless server for v2 (`InMemorySaver` in-process); the checkpointer→Postgres path is the documented future for durable cross-session memory (NOT built now).
 
-### Agent loop — GeminiBrain
-- `FirebaseAI.googleAI().generativeModel(model: <gemini Flash — confirm exact string at build>, tools: [4 FunctionDeclarations], toolConfig: ToolConfig(functionCallingConfig: FunctionCallingConfig.any({'present_activity','say','give_hint','advance'})))`. `.any({4})` pins the action space — a grounding lever.
-- Loop = `startChat()` → `sendMessage(Content.text(systemInstruction + FACTS))` → `while (response.functionCalls.isNotEmpty) { dispatch; sendMessage(Content.functionResponses(...)); }` (official flutter.dev pattern, ~30 lines).
-- **FACTS injected as system-instruction / Content TEXT — never as a `responseSchema`** (structured-output + function-calling throws an `application/json` mime exception — verified).
-- **ACTION turns run NON-streamed** (`chat.sendMessage`); streaming + tool-calls is undocumented on Dart. Defer streamed `say()` warmth (revisit trigger, not built now).
-- Bounded manual retry-with-backoff around `sendMessage`. **Auto-degrade to AuthoredFallback on offline/timeout/error** (TUTOR-03).
-- **App Check MUST be enforced in prod** (limited-use / replay-protection tokens) — Phase 11 left it off for the throwaway spike (TUTOR-03). Key never in client (Firebase AI Logic proxy).
+### Client seam (Flutter) — reshape the Wave-1 work for the capable agent
+- `TutorBrain { Future<TutorDecision> next(TutorFacts facts); }` with two impls: **`RemoteAgentBrain`** (calls the LangGraph server) + **`AuthoredFallback`** (offline floor, pure Dart, mother-signed-off baa lines). `RemoteAgentBrain` auto-degrades to `AuthoredFallback` on timeout/offline/error (TUTOR-03).
+- `TutorFacts` carries the **scored-attempt trajectory + session learner model** (not just last mistakeId). `TutorDecision` expresses **a plan/sequence + optional memory update**, not only one action. (Reshape the Wave-1 `lib/tutor/` types accordingly — they currently model the small agent.)
+- Native **dispatcher** maps the returned ACTION to imperative widget calls; **the `StrokeCanvas` is never rebuilt from agent state** (Phase 11 kill-shot lesson). The brain's coaching line reaches the UI via a tutor-owned Riverpod provider that `exercise_scaffold.dart` reads — `ExerciseController` stays untouched.
 
-### Agent ↔ UI — native function-call dispatcher (NO protocol)
-- A `switch (functionCall.name)` (~100 lines) maps each ACTION tool to an imperative call on a native controller. **The `StrokeCanvas` stays a plain `StatefulWidget` OUTSIDE any reactive/agent-driven rebuild scope — dispatch imperatively, never rebuild the canvas from agent state.** (The Phase 11 kill-shot lesson; guard in code review.)
+### Grounding invariant (UNCHANGED — ADR-014; structural)
+- The deterministic on-device scorer owns pass/fail + the star at `ExerciseController.applyResult(CheckResult)`. The agent reads the frozen verdict as a FACT and can never flip it.
+- FACTS injected as TEXT (never a responseSchema combined with tools — it throws). The **non-PII chokepoint** guards the **server request body**: only `{letterId, mistakeId enum, struggleTags, pass/fail, trajectory}` cross — never raw strokes, never nickname/PII. GROUND-02 test runs on the serialized payload (build-failing).
 
-### Grounding invariant enforcement (GROUND-01/02)
-1. Action space pinned by `FunctionCallingConfig.any({4 names})` — model cannot emit a 5th action.
-2. Verdict/star never appear as tools; they are FACTS-as-text. The dispatcher has NO "set verdict" branch.
-3. Pass/fail + star decided by the deterministic scorer at the `ExerciseController` seam (`applyResult(CheckResult)`); no agent path can flip a fail to a pass.
-4. One DTO chokepoint builds `TutorFacts`; a **unit test asserts the serialized payload contains only enum/id fields — no raw strokes, no PII** (GROUND-02; build-failing).
-5. Dispatcher is a closed `switch` over the 4 names; unrecognized call = logged no-op, not a crash.
+### Learner model — on-device
+- Session learner model on-device (Riverpod + Drift). Server is stateless → no child data stored server-side → no COPPA server-storage burden in v2.
 
-### Offline floor — AuthoredFallback (TUTOR-02)
-- Pure Dart, zero model, airplane-mode. Coaches from the owner's-mother signed-off lines (the existing per-letter `feedback`/coaching content for baa). Every coaching moment yields a grounded, correctly-Arabic line; the trace loop never blocks.
+### Offline floor (TUTOR-02)
+- `AuthoredFallback` (pure Dart, zero model, airplane mode) from baa's signed-off coaching content. Every coaching moment yields a grounded, correct-Arabic line; the loop never blocks.
 
 ### Claude's Discretion
-- Exact file layout under `lib/` (suggest `lib/tutor/`), provider wiring (Riverpod), the FunctionDeclaration JSON shapes, the router heuristic details, and how `TutorFacts` derives `struggleTags`/recent mistakes from session state.
+- Exact `server/` layout (FastAPI app + the LangGraph graph module), the REST/SSE endpoint shape, the Pydantic FACTS/decision schemas, the dispatcher details, how `struggleTags`/trajectory are derived, and the Riverpod wiring.
 </decisions>
 
 <canonical_refs>
-## Canonical References (downstream agents MUST read before planning/implementing)
+## Canonical References (read before planning/implementing)
 
-### Architecture (binding)
-- `docs/architecture/ADR-014-v2-tutor-agent-architecture.md` — the accepted v2 tutor architecture (topology, loop, dispatcher, grounding, the 5-part Decision).
-- `.planning/spikes/11-genui-native-canvas/SPIKE-FINDINGS.md` — GATE: drop; resolved firebase_ai/firebase_core versions + the firebase_ai function-calling caveats (FACTS-as-text, non-streamed ACTION turns); App-Check-must-enforce flag.
-- `.planning/research/v2-tutor-architecture/` — the decision matrix + research summary (why client-only, why not AG-UI/A2UI/MCP).
-
-### Code seams the spine plugs into (read before touching)
-- `lib/core/scoring/scoring_models.dart` — `enum MistakeId {…}`, `StrokeResult`, `LetterResult` (the FACTS source).
-- `lib/core/exercise_engine/check_result.dart` — `CheckResult{passed, mistakeId(String)}` (the verdict bridge).
-- `lib/features/letter_unit/exercise_controller.dart` — `ExerciseController.applyResult(CheckResult)` (the scorer-owns-verdict seam, GROUND-01 plugs here).
-- `lib/features/letter_unit/widgets/write_surface.dart` — `WriteSurface(... onResult: (CheckResult) ...)`.
-- `lib/features/practice/widgets/stroke_canvas.dart` — the native canvas (DO NOT host in a reactive rebuild scope; read-only to the tutor).
-- `lib/data/progress_repository.dart` — `ProgressRepository` (cleanReps / mastery; the star).
-- `lib/services/auth_service.dart` + `lib/firebase_options.dart` — Firebase init/anon auth (GeminiBrain reuses, read-only).
-- baa's signed-off `feedback`/coaching content (via `CurriculumRepository.getExercises()`) — the AuthoredFallback source of truth.
-
-### Versions (re-pin at build — they ship ~monthly)
-- `firebase_ai 3.13.0`, `firebase_core 4.11.0`, `firebase_auth 6.5.3`, `firebase_app_check 0.4.5`, `flutter_gemma 1.0.2` (GemmaBrain, experimental). Confirm the exact Gemini Flash model string at build.
+- `docs/architecture/ADR-015-v2-tutor-server-langgraph-agent.md` — the binding topology + framework decision.
+- `.planning/phases/14-build-tutorbrain-spine-grounding-invariant/14-AI-SPEC.md` — the implementation contract (LangGraph §3/§4/§4b: install, the StateGraph, per-node binding, tool_choice, Cloud Run deploy, pitfalls) + the 9-dimension eval strategy (§5–§7) + the domain rubric (§1b).
+- `docs/architecture/ADR-014-v2-tutor-agent-architecture.md` — the grounding invariant + the 4 ACTION tools (still in force).
+- `.planning/research/v2-tutor-architecture/CAPABLE-AGENT-SPEC.md` — what the agent must DO (analyze/insight/plan).
+- Code seams: `lib/core/scoring/scoring_models.dart` (MistakeId/StrokeResult/LetterResult), `lib/core/exercise_engine/check_result.dart`, `lib/features/letter_unit/exercise_controller.dart` (applyResult — GROUND-01 seam, do not mutate), `lib/features/letter_unit/widgets/exercise_scaffold.dart` (where _TutorColumn reads the line), `lib/features/practice/widgets/stroke_canvas.dart` (read-only; never agent-rebuilt), `lib/services/auth_service.dart` + `lib/firebase_options.dart` (Firebase ID token for server auth).
+- Wave-1 client code already on disk (reshape, don't discard): `lib/tutor/tutor_brain.dart`, `tutor_facts.dart`(+`_builder`), `tutor_decision.dart`, `authored_fallback_brain.dart`, `tutor_dispatcher.dart`.
+- Deploy: Cloud Run + Secret Manager + Firebase Auth/App Check, GCP project `qalam-app-bd7d0`. Python tooling aligns with CLAUDE.md (Python-for-backend).
 </canonical_refs>
 
 <specifics>
-## Specific Ideas
-- MVP vertical slices, suggested: (1) `TutorBrain` interface + `AuthoredFallback` + the dispatcher + wire to `ExerciseController` → a grounded offline tutor end-to-end; (2) `GeminiBrain` (function-calling loop, App Check, auto-degrade) behind the same seam; (3) the non-PII guard test + the durable-layers-no-forbidden-imports guard; (4) `GemmaBrain` stub. Each slice should leave the baa trace loop working.
-- Riverpod only. Android-only. Anti-gamification (one quiet star — no new counters).
-- Reuse the emulator (Pixel Tablet) for testing the cloud path; Firebase AI Logic is already enabled on qalam-app-bd7d0.
+## Specific Ideas — suggested MVP vertical slices
+1. **Server skeleton + deploy seam:** the `server/` FastAPI app + a minimal LangGraph graph (one `coach` node) + the REST endpoint + Firebase-ID-token/App-Check verification + Secret Manager wiring + a `gcloud run deploy` path. A trivial grounded coach line returns end-to-end.
+2. **The grounded agent graph:** analyze → plan → coach with per-node models + `tool_choice="any"` over the 4 tools + FACTS-as-text + the server-side grounding (no verdict tool) + bounded retry.
+3. **Client `RemoteAgentBrain` + reshape the seam:** `RemoteAgentBrain` calls the server; reshape `TutorFacts`(trajectory+learner model)/`TutorDecision`(plan); auto-degrade to `AuthoredFallback`; wire the line into `exercise_scaffold` via the tutor provider; dispatcher.
+4. **The guards:** the build-failing non-PII payload test (GROUND-02) + the durable-layers-no-agent-imports guard; AuthoredFallback offline-floor test.
+Each slice should leave the baa trace loop working. Riverpod only; Android-only; anti-gamification.
 </specifics>
 
-<deferred>
-## Deferred Ideas
-- Dynamic grounded exercise selection (Phase 15, DYN-01/02).
-- Streamed/TTS coaching + presence latency budget (Phase 16 / Phase 12).
-- The on-device Gemma bake-off + adoption decision (Phase 13 / Phase 16) — GemmaBrain stays an experimental stub here.
-- Across-session nightly profile compiler (future milestone).
-</deferred>
-
 <scope_fence>
-## Scope Fence (do NOT do in Phase 14)
-- No server / Cloud Function / AG-UI / A2UI / MCP / GenUI.
-- No changes to the durable v1 canvas, scorer, or curriculum logic (read-only; guard-tested).
-- No dynamic exercise selection (that replaces LetterUnitController's walk in Phase 15).
-- No real Gemma model shipping decision (stub/experimental only).
-- No TTS/voice.
+## Scope Fence (NOT in Phase 14)
+- No dynamic grounded exercise selection (Phase 15).
+- No voice/TTS, no eval regression gate (Phase 16); the eval *harness* design lives in the AI-SPEC, built/promoted later.
+- No on-device Gemma (deferred; offline floor is AuthoredFallback).
+- No durable cross-session/server-side memory (stateless server; checkpointer→store is future).
+- Do not mutate the durable v1 canvas/scorer/curriculum (read-only; guard-tested).
 </scope_fence>
 
 ---
 
 *Phase: 14-build-tutorbrain-spine-grounding-invariant*
-*Context gathered: 2026-06-22 via ADR Ingest (ADR-014) — architecture pre-decided by the Phase 11 GATE.*
+*Context refreshed 2026-06-22 for the server-side LangGraph architecture (ADR-015 + 14-AI-SPEC.md).*

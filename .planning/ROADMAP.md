@@ -659,19 +659,14 @@ fully-offline ideal is viable. The harness built here seeds the v2.0 eval harnes
 
 #### Phase 14: BUILD — TutorBrain spine + grounding invariant
 
-**Goal**: Build the swappable **`TutorBrain`** interface with the **AuthoredFallback** floor (offline,
-zero-model, mother-signed-off lines), the **GeminiBrain** (Firebase AI Logic + App Check), and a
-**GemmaBrain** stub behind the same interface; expose the **4 ACTION tools** (`present_activity`,
-`say`, `give_hint`, `advance`) with FACTS injected as context (not tools); wire the "agent owns the
-line, scorer owns pass/fail + star" seam at the existing `ExerciseController`; and enforce the
-non-PII-facts network guard — all while keeping the durable layers free of GenUI/A2UI/firebase_ai types.
+**Goal**: Build the **capable server-side tutoring agent** + its client seam. Server (per **ADR-015** / `14-AI-SPEC.md`): a Python **LangGraph** agent on **Cloud Run** with the `analyze → plan → coach` graph, per-node model routing (model-agnostic — Claude + Gemini), the **4 ACTION tools** (`present_activity`, `say`, `give_hint`, `advance`) selected via `tool_choice="any"`, FACTS injected as text (never a verdict tool), keys in **Secret Manager**, client→server gated by **Firebase ID token + App Check**. Client: the swappable **`TutorBrain`** interface with a **`RemoteAgentBrain`** (calls the server) and the **`AuthoredFallback`** offline floor (zero-model, mother-signed-off lines), the dispatcher, and the "agent owns the line, scorer owns pass/fail + star" seam wired at the existing `ExerciseController`; the **non-PII-facts guard** on the request body — all while keeping the durable layers free of agent/framework imports. (`GemmaBrain` on-device is deferred — the offline floor is `AuthoredFallback`.)
 **Mode**: mvp
-**Depends on**: Phase 11 (the GATE: GenUI vs raw firebase_ai — which architecture this spine is built on), v1 Phase 7 (the ExerciseController seam + scorer this wires to)
+**Depends on**: Phase 11 (the GATE → drop GenUI) + **ADR-015** (server-side LangGraph, model-agnostic per-task routing) + `14-AI-SPEC.md` (the implementation + eval contract), v1 Phase 7 (the ExerciseController seam + scorer this wires to)
 **Requirements**: TUTOR-01, TUTOR-02, TUTOR-03, TUTOR-04, TUTOR-05, GROUND-01, GROUND-02
 **Success Criteria** (what must be TRUE):
 
-  1. One `TutorBrain` interface hosts three swappable backends — AuthoredFallback, GeminiBrain, GemmaBrain (stub OK) — and swapping the backend changes no canvas, scorer, or curriculum code; the durable layers carry zero GenUI/A2UI/firebase_ai imports (TUTOR-01, TUTOR-04).
-  2. In airplane mode with no model loaded, every coaching moment still shows a grounded, correctly-Arabic AuthoredFallback line and the trace loop never blocks; online, GeminiBrain coaches and auto-degrades to the floor on timeout/offline, with the Gemini key never in the client (App-Check-gated) (TUTOR-02, TUTOR-03).
+  1. One `TutorBrain` interface hosts swappable backends — `RemoteAgentBrain` (the LangGraph server) + `AuthoredFallback` (offline floor); swapping the backend changes no canvas, scorer, or curriculum code; the durable layers carry zero agent/framework/network imports (TUTOR-01, TUTOR-04).
+  2. In airplane mode every coaching moment still shows a grounded, correctly-Arabic `AuthoredFallback` line and the trace loop never blocks; online, the LangGraph server coaches and the client auto-degrades to the floor on timeout/offline, with model keys never in the client (Secret Manager; App-Check + Firebase-ID-token gated) (TUTOR-02, TUTOR-03).
   3. The agent acts only through the 4 ACTION tools (`present_activity`, `say`, `give_hint`, `advance`); the geometry verdict and learner state arrive as injected FACTS (mistakeId, struggles, letterId, section) — the model cannot request or fabricate a verdict (TUTOR-05).
   4. The pass/fail + star is decided by the deterministic scorer at the `ExerciseController` seam and no agent path can flip a fail to a pass; the agent only supplies the displayed line (GROUND-01).
   5. A guard/test fails the build if raw stroke coordinates or any PII field (nickname/PII) can reach the network payload — only derived non-PII facts cross (GROUND-02).
