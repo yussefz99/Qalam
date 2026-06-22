@@ -21,6 +21,7 @@ dependencies = [
     "sse-starlette>=2.1",
     # Caller verification (Firebase ID token + App Check)
     "firebase-admin>=7.0,<8",
+    "langchain-google-vertexai>=3.2.4",
 ]
 
 [dependency-groups]
