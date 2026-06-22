@@ -108,12 +108,23 @@ async def coach(
         )
 
     decision = result.get("decision") or {}
-    return CoachOut(
+    out = CoachOut(
         toolName=decision.get("name", "say"),
         args=_to_wire_args(decision.get("args", {})),
         source="agent",
         grounded=bool(result.get("grounded", True)),
     )
+    # Observability: the exact line the child sees (Section 7). Lets us confirm a real
+    # online coaching turn vs the client's offline floor without a device probe.
+    _line = out.args.get("text") or out.args.get("coachingLine") or ""
+    logger.info(
+        "coach decision: passed=%s tool=%s grounded=%s line=%r",
+        facts_in.passed,
+        out.toolName,
+        out.grounded,
+        _line[:200],
+    )
+    return out
 
 
 @app.exception_handler(asyncio.TimeoutError)
