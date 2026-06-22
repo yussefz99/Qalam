@@ -1,6 +1,9 @@
 """The FastAPI app (Plan 01 Task 2) — the REST boundary the Flutter client calls.
 
-  * GET /healthz            -> 200, no auth. The session-start warm-up ping (masks cold start).
+  * GET /health             -> 200, no auth. The session-start warm-up ping (masks cold start).
+                               NOTE: must NOT be "/healthz" — Google's edge reserves/intercepts
+                               that exact path before it reaches Cloud Run, so the container never
+                               sees it. "/health" reaches the app normally.
   * POST /coach             -> gated by Depends(verify_caller) (Firebase ID token + App Check).
                                Parses the enlarged TutorFactsIn, runs the minimal graph under
                                asyncio.wait_for, maps state["decision"] -> CoachOut.
@@ -39,9 +42,13 @@ def _graph():
     return build_graph()
 
 
-@app.get("/healthz")
-async def healthz() -> dict:
-    """Warm-up ping. No auth — the client fires this when the child opens a unit."""
+@app.get("/health")
+async def health() -> dict:
+    """Warm-up ping. No auth — the client fires this when the child opens a unit.
+
+    Path is "/health" not "/healthz": Google's edge intercepts the exact path "/healthz"
+    before Cloud Run, so the container never receives it (verified at deploy).
+    """
     return {"status": "ok"}
 
 

@@ -82,7 +82,11 @@ async def test_valid_id_token_but_invalid_app_check_is_401(client):
     assert resp.status_code == 401
 
 
-async def test_healthz_requires_no_auth(client):
-    """The warm-up ping must answer 200 with no tokens (AI-SPEC §3 Cloud Run)."""
-    resp = await client.get("/healthz")
+async def test_health_requires_no_auth(client):
+    """The warm-up ping must answer 200 with no tokens (AI-SPEC §3 Cloud Run).
+
+    Path is "/health" not "/healthz": Google's edge reserves "/healthz" and never
+    routes it to the container (verified live at Phase-14 deploy).
+    """
+    resp = await client.get("/health")
     assert resp.status_code == 200

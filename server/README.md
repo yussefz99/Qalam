@@ -121,13 +121,13 @@ gcloud run deploy qalam-tutor \
 
 > `--allow-unauthenticated` lets the public client reach the URL; the **app** enforces auth
 > in `verify_caller` (Firebase ID token + App Check) — Cloud Run IAM is not the auth layer here.
-> `--min-instances=0` is fine for the demo; the session-start `GET /healthz` warm-up ping masks cold start.
+> `--min-instances=0` is fine for the demo; the session-start `GET /health` warm-up ping masks cold start.
 
 ### 3. Verify the live service (the human-verify checkpoint)
 
 ```bash
 URL="$(gcloud run services describe qalam-tutor --project=qalam-app-bd7d0 --region=us-central1 --format='value(status.url)')"
-curl -i "$URL/healthz"                       # expect 200
+curl -i "$URL/health"                        # expect 200  (NOT /healthz — Google edge reserves that exact path)
 curl -i -XPOST "$URL/coach" -d '{}'          # expect 401 (no tokens — endpoint is NOT open)
 ```
 
@@ -146,7 +146,7 @@ server/
 ├── .dockerignore           # excludes tests/.env/__pycache__
 ├── .env.example            # GCP project id + key placeholders (real values in Secret Manager)
 ├── app/
-│   ├── main.py             # FastAPI: POST /coach (Depends(verify_caller)) + GET /healthz; asyncio.wait_for
+│   ├── main.py             # FastAPI: POST /coach (Depends(verify_caller)) + GET /health; asyncio.wait_for
 │   ├── auth.py             # verify_caller: Firebase ID token + App Check (401 before the graph)
 │   ├── schema.py           # TutorFactsIn (FINAL enlarged) + AttemptFactIn + CoachOut — the wire contract
 │   ├── state.py            # TutorState TypedDict (Annotated[list, add] reducer on the accumulator)
