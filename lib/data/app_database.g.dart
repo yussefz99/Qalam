@@ -1154,6 +1154,731 @@ class LetterRepsCompanion extends UpdateCompanion<LetterRep> {
   }
 }
 
+class $LetterGraphPositionTable extends LetterGraphPosition
+    with TableInfo<$LetterGraphPositionTable, LetterGraphPositionData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LetterGraphPositionTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _letterIdMeta = const VerificationMeta(
+    'letterId',
+  );
+  @override
+  late final GeneratedColumn<String> letterId = GeneratedColumn<String>(
+    'letter_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _currentExerciseIdMeta = const VerificationMeta(
+    'currentExerciseId',
+  );
+  @override
+  late final GeneratedColumn<String> currentExerciseId =
+      GeneratedColumn<String>(
+        'current_exercise_id',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _clearedCompetenciesMeta =
+      const VerificationMeta('clearedCompetencies');
+  @override
+  late final GeneratedColumn<String> clearedCompetencies =
+      GeneratedColumn<String>(
+        'cleared_competencies',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _clearedTiersMeta = const VerificationMeta(
+    'clearedTiers',
+  );
+  @override
+  late final GeneratedColumn<String> clearedTiers = GeneratedColumn<String>(
+    'cleared_tiers',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    letterId,
+    currentExerciseId,
+    clearedCompetencies,
+    clearedTiers,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'letter_graph_position';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LetterGraphPositionData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('letter_id')) {
+      context.handle(
+        _letterIdMeta,
+        letterId.isAcceptableOrUnknown(data['letter_id']!, _letterIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_letterIdMeta);
+    }
+    if (data.containsKey('current_exercise_id')) {
+      context.handle(
+        _currentExerciseIdMeta,
+        currentExerciseId.isAcceptableOrUnknown(
+          data['current_exercise_id']!,
+          _currentExerciseIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('cleared_competencies')) {
+      context.handle(
+        _clearedCompetenciesMeta,
+        clearedCompetencies.isAcceptableOrUnknown(
+          data['cleared_competencies']!,
+          _clearedCompetenciesMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_clearedCompetenciesMeta);
+    }
+    if (data.containsKey('cleared_tiers')) {
+      context.handle(
+        _clearedTiersMeta,
+        clearedTiers.isAcceptableOrUnknown(
+          data['cleared_tiers']!,
+          _clearedTiersMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_clearedTiersMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {letterId};
+  @override
+  LetterGraphPositionData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LetterGraphPositionData(
+      letterId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}letter_id'],
+      )!,
+      currentExerciseId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}current_exercise_id'],
+      ),
+      clearedCompetencies: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}cleared_competencies'],
+      )!,
+      clearedTiers: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}cleared_tiers'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $LetterGraphPositionTable createAlias(String alias) {
+    return $LetterGraphPositionTable(attachedDatabase, alias);
+  }
+}
+
+class LetterGraphPositionData extends DataClass
+    implements Insertable<LetterGraphPositionData> {
+  final String letterId;
+  final String? currentExerciseId;
+  final String clearedCompetencies;
+  final String clearedTiers;
+  final DateTime updatedAt;
+  const LetterGraphPositionData({
+    required this.letterId,
+    this.currentExerciseId,
+    required this.clearedCompetencies,
+    required this.clearedTiers,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['letter_id'] = Variable<String>(letterId);
+    if (!nullToAbsent || currentExerciseId != null) {
+      map['current_exercise_id'] = Variable<String>(currentExerciseId);
+    }
+    map['cleared_competencies'] = Variable<String>(clearedCompetencies);
+    map['cleared_tiers'] = Variable<String>(clearedTiers);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  LetterGraphPositionCompanion toCompanion(bool nullToAbsent) {
+    return LetterGraphPositionCompanion(
+      letterId: Value(letterId),
+      currentExerciseId: currentExerciseId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(currentExerciseId),
+      clearedCompetencies: Value(clearedCompetencies),
+      clearedTiers: Value(clearedTiers),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory LetterGraphPositionData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LetterGraphPositionData(
+      letterId: serializer.fromJson<String>(json['letterId']),
+      currentExerciseId: serializer.fromJson<String?>(
+        json['currentExerciseId'],
+      ),
+      clearedCompetencies: serializer.fromJson<String>(
+        json['clearedCompetencies'],
+      ),
+      clearedTiers: serializer.fromJson<String>(json['clearedTiers']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'letterId': serializer.toJson<String>(letterId),
+      'currentExerciseId': serializer.toJson<String?>(currentExerciseId),
+      'clearedCompetencies': serializer.toJson<String>(clearedCompetencies),
+      'clearedTiers': serializer.toJson<String>(clearedTiers),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  LetterGraphPositionData copyWith({
+    String? letterId,
+    Value<String?> currentExerciseId = const Value.absent(),
+    String? clearedCompetencies,
+    String? clearedTiers,
+    DateTime? updatedAt,
+  }) => LetterGraphPositionData(
+    letterId: letterId ?? this.letterId,
+    currentExerciseId: currentExerciseId.present
+        ? currentExerciseId.value
+        : this.currentExerciseId,
+    clearedCompetencies: clearedCompetencies ?? this.clearedCompetencies,
+    clearedTiers: clearedTiers ?? this.clearedTiers,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  LetterGraphPositionData copyWithCompanion(LetterGraphPositionCompanion data) {
+    return LetterGraphPositionData(
+      letterId: data.letterId.present ? data.letterId.value : this.letterId,
+      currentExerciseId: data.currentExerciseId.present
+          ? data.currentExerciseId.value
+          : this.currentExerciseId,
+      clearedCompetencies: data.clearedCompetencies.present
+          ? data.clearedCompetencies.value
+          : this.clearedCompetencies,
+      clearedTiers: data.clearedTiers.present
+          ? data.clearedTiers.value
+          : this.clearedTiers,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LetterGraphPositionData(')
+          ..write('letterId: $letterId, ')
+          ..write('currentExerciseId: $currentExerciseId, ')
+          ..write('clearedCompetencies: $clearedCompetencies, ')
+          ..write('clearedTiers: $clearedTiers, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    letterId,
+    currentExerciseId,
+    clearedCompetencies,
+    clearedTiers,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LetterGraphPositionData &&
+          other.letterId == this.letterId &&
+          other.currentExerciseId == this.currentExerciseId &&
+          other.clearedCompetencies == this.clearedCompetencies &&
+          other.clearedTiers == this.clearedTiers &&
+          other.updatedAt == this.updatedAt);
+}
+
+class LetterGraphPositionCompanion
+    extends UpdateCompanion<LetterGraphPositionData> {
+  final Value<String> letterId;
+  final Value<String?> currentExerciseId;
+  final Value<String> clearedCompetencies;
+  final Value<String> clearedTiers;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const LetterGraphPositionCompanion({
+    this.letterId = const Value.absent(),
+    this.currentExerciseId = const Value.absent(),
+    this.clearedCompetencies = const Value.absent(),
+    this.clearedTiers = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LetterGraphPositionCompanion.insert({
+    required String letterId,
+    this.currentExerciseId = const Value.absent(),
+    required String clearedCompetencies,
+    required String clearedTiers,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : letterId = Value(letterId),
+       clearedCompetencies = Value(clearedCompetencies),
+       clearedTiers = Value(clearedTiers),
+       updatedAt = Value(updatedAt);
+  static Insertable<LetterGraphPositionData> custom({
+    Expression<String>? letterId,
+    Expression<String>? currentExerciseId,
+    Expression<String>? clearedCompetencies,
+    Expression<String>? clearedTiers,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (letterId != null) 'letter_id': letterId,
+      if (currentExerciseId != null) 'current_exercise_id': currentExerciseId,
+      if (clearedCompetencies != null)
+        'cleared_competencies': clearedCompetencies,
+      if (clearedTiers != null) 'cleared_tiers': clearedTiers,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LetterGraphPositionCompanion copyWith({
+    Value<String>? letterId,
+    Value<String?>? currentExerciseId,
+    Value<String>? clearedCompetencies,
+    Value<String>? clearedTiers,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return LetterGraphPositionCompanion(
+      letterId: letterId ?? this.letterId,
+      currentExerciseId: currentExerciseId ?? this.currentExerciseId,
+      clearedCompetencies: clearedCompetencies ?? this.clearedCompetencies,
+      clearedTiers: clearedTiers ?? this.clearedTiers,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (letterId.present) {
+      map['letter_id'] = Variable<String>(letterId.value);
+    }
+    if (currentExerciseId.present) {
+      map['current_exercise_id'] = Variable<String>(currentExerciseId.value);
+    }
+    if (clearedCompetencies.present) {
+      map['cleared_competencies'] = Variable<String>(clearedCompetencies.value);
+    }
+    if (clearedTiers.present) {
+      map['cleared_tiers'] = Variable<String>(clearedTiers.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LetterGraphPositionCompanion(')
+          ..write('letterId: $letterId, ')
+          ..write('currentExerciseId: $currentExerciseId, ')
+          ..write('clearedCompetencies: $clearedCompetencies, ')
+          ..write('clearedTiers: $clearedTiers, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $LetterExerciseRepsTable extends LetterExerciseReps
+    with TableInfo<$LetterExerciseRepsTable, LetterExerciseRep> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LetterExerciseRepsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _letterIdMeta = const VerificationMeta(
+    'letterId',
+  );
+  @override
+  late final GeneratedColumn<String> letterId = GeneratedColumn<String>(
+    'letter_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _exerciseIdMeta = const VerificationMeta(
+    'exerciseId',
+  );
+  @override
+  late final GeneratedColumn<String> exerciseId = GeneratedColumn<String>(
+    'exercise_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _cleanRepsMeta = const VerificationMeta(
+    'cleanReps',
+  );
+  @override
+  late final GeneratedColumn<int> cleanReps = GeneratedColumn<int>(
+    'clean_reps',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    letterId,
+    exerciseId,
+    cleanReps,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'letter_exercise_reps';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LetterExerciseRep> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('letter_id')) {
+      context.handle(
+        _letterIdMeta,
+        letterId.isAcceptableOrUnknown(data['letter_id']!, _letterIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_letterIdMeta);
+    }
+    if (data.containsKey('exercise_id')) {
+      context.handle(
+        _exerciseIdMeta,
+        exerciseId.isAcceptableOrUnknown(data['exercise_id']!, _exerciseIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_exerciseIdMeta);
+    }
+    if (data.containsKey('clean_reps')) {
+      context.handle(
+        _cleanRepsMeta,
+        cleanReps.isAcceptableOrUnknown(data['clean_reps']!, _cleanRepsMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cleanRepsMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {letterId, exerciseId};
+  @override
+  LetterExerciseRep map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LetterExerciseRep(
+      letterId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}letter_id'],
+      )!,
+      exerciseId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}exercise_id'],
+      )!,
+      cleanReps: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}clean_reps'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $LetterExerciseRepsTable createAlias(String alias) {
+    return $LetterExerciseRepsTable(attachedDatabase, alias);
+  }
+}
+
+class LetterExerciseRep extends DataClass
+    implements Insertable<LetterExerciseRep> {
+  final String letterId;
+  final String exerciseId;
+  final int cleanReps;
+  final DateTime updatedAt;
+  const LetterExerciseRep({
+    required this.letterId,
+    required this.exerciseId,
+    required this.cleanReps,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['letter_id'] = Variable<String>(letterId);
+    map['exercise_id'] = Variable<String>(exerciseId);
+    map['clean_reps'] = Variable<int>(cleanReps);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  LetterExerciseRepsCompanion toCompanion(bool nullToAbsent) {
+    return LetterExerciseRepsCompanion(
+      letterId: Value(letterId),
+      exerciseId: Value(exerciseId),
+      cleanReps: Value(cleanReps),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory LetterExerciseRep.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LetterExerciseRep(
+      letterId: serializer.fromJson<String>(json['letterId']),
+      exerciseId: serializer.fromJson<String>(json['exerciseId']),
+      cleanReps: serializer.fromJson<int>(json['cleanReps']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'letterId': serializer.toJson<String>(letterId),
+      'exerciseId': serializer.toJson<String>(exerciseId),
+      'cleanReps': serializer.toJson<int>(cleanReps),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  LetterExerciseRep copyWith({
+    String? letterId,
+    String? exerciseId,
+    int? cleanReps,
+    DateTime? updatedAt,
+  }) => LetterExerciseRep(
+    letterId: letterId ?? this.letterId,
+    exerciseId: exerciseId ?? this.exerciseId,
+    cleanReps: cleanReps ?? this.cleanReps,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  LetterExerciseRep copyWithCompanion(LetterExerciseRepsCompanion data) {
+    return LetterExerciseRep(
+      letterId: data.letterId.present ? data.letterId.value : this.letterId,
+      exerciseId: data.exerciseId.present
+          ? data.exerciseId.value
+          : this.exerciseId,
+      cleanReps: data.cleanReps.present ? data.cleanReps.value : this.cleanReps,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LetterExerciseRep(')
+          ..write('letterId: $letterId, ')
+          ..write('exerciseId: $exerciseId, ')
+          ..write('cleanReps: $cleanReps, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(letterId, exerciseId, cleanReps, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LetterExerciseRep &&
+          other.letterId == this.letterId &&
+          other.exerciseId == this.exerciseId &&
+          other.cleanReps == this.cleanReps &&
+          other.updatedAt == this.updatedAt);
+}
+
+class LetterExerciseRepsCompanion extends UpdateCompanion<LetterExerciseRep> {
+  final Value<String> letterId;
+  final Value<String> exerciseId;
+  final Value<int> cleanReps;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const LetterExerciseRepsCompanion({
+    this.letterId = const Value.absent(),
+    this.exerciseId = const Value.absent(),
+    this.cleanReps = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  LetterExerciseRepsCompanion.insert({
+    required String letterId,
+    required String exerciseId,
+    required int cleanReps,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : letterId = Value(letterId),
+       exerciseId = Value(exerciseId),
+       cleanReps = Value(cleanReps),
+       updatedAt = Value(updatedAt);
+  static Insertable<LetterExerciseRep> custom({
+    Expression<String>? letterId,
+    Expression<String>? exerciseId,
+    Expression<int>? cleanReps,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (letterId != null) 'letter_id': letterId,
+      if (exerciseId != null) 'exercise_id': exerciseId,
+      if (cleanReps != null) 'clean_reps': cleanReps,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  LetterExerciseRepsCompanion copyWith({
+    Value<String>? letterId,
+    Value<String>? exerciseId,
+    Value<int>? cleanReps,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return LetterExerciseRepsCompanion(
+      letterId: letterId ?? this.letterId,
+      exerciseId: exerciseId ?? this.exerciseId,
+      cleanReps: cleanReps ?? this.cleanReps,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (letterId.present) {
+      map['letter_id'] = Variable<String>(letterId.value);
+    }
+    if (exerciseId.present) {
+      map['exercise_id'] = Variable<String>(exerciseId.value);
+    }
+    if (cleanReps.present) {
+      map['clean_reps'] = Variable<int>(cleanReps.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LetterExerciseRepsCompanion(')
+          ..write('letterId: $letterId, ')
+          ..write('exerciseId: $exerciseId, ')
+          ..write('cleanReps: $cleanReps, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1161,6 +1886,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $LetterMasteryTable letterMastery = $LetterMasteryTable(this);
   late final $ChildProfilesTable childProfiles = $ChildProfilesTable(this);
   late final $LetterRepsTable letterReps = $LetterRepsTable(this);
+  late final $LetterGraphPositionTable letterGraphPosition =
+      $LetterGraphPositionTable(this);
+  late final $LetterExerciseRepsTable letterExerciseReps =
+      $LetterExerciseRepsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1170,6 +1899,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     letterMastery,
     childProfiles,
     letterReps,
+    letterGraphPosition,
+    letterExerciseReps,
   ];
 }
 
@@ -1856,6 +2587,424 @@ typedef $$LetterRepsTableProcessedTableManager =
       LetterRep,
       PrefetchHooks Function()
     >;
+typedef $$LetterGraphPositionTableCreateCompanionBuilder =
+    LetterGraphPositionCompanion Function({
+      required String letterId,
+      Value<String?> currentExerciseId,
+      required String clearedCompetencies,
+      required String clearedTiers,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$LetterGraphPositionTableUpdateCompanionBuilder =
+    LetterGraphPositionCompanion Function({
+      Value<String> letterId,
+      Value<String?> currentExerciseId,
+      Value<String> clearedCompetencies,
+      Value<String> clearedTiers,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$LetterGraphPositionTableFilterComposer
+    extends Composer<_$AppDatabase, $LetterGraphPositionTable> {
+  $$LetterGraphPositionTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get letterId => $composableBuilder(
+    column: $table.letterId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currentExerciseId => $composableBuilder(
+    column: $table.currentExerciseId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get clearedCompetencies => $composableBuilder(
+    column: $table.clearedCompetencies,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get clearedTiers => $composableBuilder(
+    column: $table.clearedTiers,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$LetterGraphPositionTableOrderingComposer
+    extends Composer<_$AppDatabase, $LetterGraphPositionTable> {
+  $$LetterGraphPositionTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get letterId => $composableBuilder(
+    column: $table.letterId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currentExerciseId => $composableBuilder(
+    column: $table.currentExerciseId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get clearedCompetencies => $composableBuilder(
+    column: $table.clearedCompetencies,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get clearedTiers => $composableBuilder(
+    column: $table.clearedTiers,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LetterGraphPositionTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LetterGraphPositionTable> {
+  $$LetterGraphPositionTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get letterId =>
+      $composableBuilder(column: $table.letterId, builder: (column) => column);
+
+  GeneratedColumn<String> get currentExerciseId => $composableBuilder(
+    column: $table.currentExerciseId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get clearedCompetencies => $composableBuilder(
+    column: $table.clearedCompetencies,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get clearedTiers => $composableBuilder(
+    column: $table.clearedTiers,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$LetterGraphPositionTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LetterGraphPositionTable,
+          LetterGraphPositionData,
+          $$LetterGraphPositionTableFilterComposer,
+          $$LetterGraphPositionTableOrderingComposer,
+          $$LetterGraphPositionTableAnnotationComposer,
+          $$LetterGraphPositionTableCreateCompanionBuilder,
+          $$LetterGraphPositionTableUpdateCompanionBuilder,
+          (
+            LetterGraphPositionData,
+            BaseReferences<
+              _$AppDatabase,
+              $LetterGraphPositionTable,
+              LetterGraphPositionData
+            >,
+          ),
+          LetterGraphPositionData,
+          PrefetchHooks Function()
+        > {
+  $$LetterGraphPositionTableTableManager(
+    _$AppDatabase db,
+    $LetterGraphPositionTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LetterGraphPositionTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LetterGraphPositionTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$LetterGraphPositionTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> letterId = const Value.absent(),
+                Value<String?> currentExerciseId = const Value.absent(),
+                Value<String> clearedCompetencies = const Value.absent(),
+                Value<String> clearedTiers = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LetterGraphPositionCompanion(
+                letterId: letterId,
+                currentExerciseId: currentExerciseId,
+                clearedCompetencies: clearedCompetencies,
+                clearedTiers: clearedTiers,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String letterId,
+                Value<String?> currentExerciseId = const Value.absent(),
+                required String clearedCompetencies,
+                required String clearedTiers,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => LetterGraphPositionCompanion.insert(
+                letterId: letterId,
+                currentExerciseId: currentExerciseId,
+                clearedCompetencies: clearedCompetencies,
+                clearedTiers: clearedTiers,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$LetterGraphPositionTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LetterGraphPositionTable,
+      LetterGraphPositionData,
+      $$LetterGraphPositionTableFilterComposer,
+      $$LetterGraphPositionTableOrderingComposer,
+      $$LetterGraphPositionTableAnnotationComposer,
+      $$LetterGraphPositionTableCreateCompanionBuilder,
+      $$LetterGraphPositionTableUpdateCompanionBuilder,
+      (
+        LetterGraphPositionData,
+        BaseReferences<
+          _$AppDatabase,
+          $LetterGraphPositionTable,
+          LetterGraphPositionData
+        >,
+      ),
+      LetterGraphPositionData,
+      PrefetchHooks Function()
+    >;
+typedef $$LetterExerciseRepsTableCreateCompanionBuilder =
+    LetterExerciseRepsCompanion Function({
+      required String letterId,
+      required String exerciseId,
+      required int cleanReps,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$LetterExerciseRepsTableUpdateCompanionBuilder =
+    LetterExerciseRepsCompanion Function({
+      Value<String> letterId,
+      Value<String> exerciseId,
+      Value<int> cleanReps,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$LetterExerciseRepsTableFilterComposer
+    extends Composer<_$AppDatabase, $LetterExerciseRepsTable> {
+  $$LetterExerciseRepsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get letterId => $composableBuilder(
+    column: $table.letterId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get exerciseId => $composableBuilder(
+    column: $table.exerciseId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get cleanReps => $composableBuilder(
+    column: $table.cleanReps,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$LetterExerciseRepsTableOrderingComposer
+    extends Composer<_$AppDatabase, $LetterExerciseRepsTable> {
+  $$LetterExerciseRepsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get letterId => $composableBuilder(
+    column: $table.letterId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get exerciseId => $composableBuilder(
+    column: $table.exerciseId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get cleanReps => $composableBuilder(
+    column: $table.cleanReps,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LetterExerciseRepsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LetterExerciseRepsTable> {
+  $$LetterExerciseRepsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get letterId =>
+      $composableBuilder(column: $table.letterId, builder: (column) => column);
+
+  GeneratedColumn<String> get exerciseId => $composableBuilder(
+    column: $table.exerciseId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get cleanReps =>
+      $composableBuilder(column: $table.cleanReps, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$LetterExerciseRepsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LetterExerciseRepsTable,
+          LetterExerciseRep,
+          $$LetterExerciseRepsTableFilterComposer,
+          $$LetterExerciseRepsTableOrderingComposer,
+          $$LetterExerciseRepsTableAnnotationComposer,
+          $$LetterExerciseRepsTableCreateCompanionBuilder,
+          $$LetterExerciseRepsTableUpdateCompanionBuilder,
+          (
+            LetterExerciseRep,
+            BaseReferences<
+              _$AppDatabase,
+              $LetterExerciseRepsTable,
+              LetterExerciseRep
+            >,
+          ),
+          LetterExerciseRep,
+          PrefetchHooks Function()
+        > {
+  $$LetterExerciseRepsTableTableManager(
+    _$AppDatabase db,
+    $LetterExerciseRepsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LetterExerciseRepsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$LetterExerciseRepsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$LetterExerciseRepsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> letterId = const Value.absent(),
+                Value<String> exerciseId = const Value.absent(),
+                Value<int> cleanReps = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => LetterExerciseRepsCompanion(
+                letterId: letterId,
+                exerciseId: exerciseId,
+                cleanReps: cleanReps,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String letterId,
+                required String exerciseId,
+                required int cleanReps,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => LetterExerciseRepsCompanion.insert(
+                letterId: letterId,
+                exerciseId: exerciseId,
+                cleanReps: cleanReps,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$LetterExerciseRepsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LetterExerciseRepsTable,
+      LetterExerciseRep,
+      $$LetterExerciseRepsTableFilterComposer,
+      $$LetterExerciseRepsTableOrderingComposer,
+      $$LetterExerciseRepsTableAnnotationComposer,
+      $$LetterExerciseRepsTableCreateCompanionBuilder,
+      $$LetterExerciseRepsTableUpdateCompanionBuilder,
+      (
+        LetterExerciseRep,
+        BaseReferences<
+          _$AppDatabase,
+          $LetterExerciseRepsTable,
+          LetterExerciseRep
+        >,
+      ),
+      LetterExerciseRep,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -1868,6 +3017,10 @@ class $AppDatabaseManager {
       $$ChildProfilesTableTableManager(_db, _db.childProfiles);
   $$LetterRepsTableTableManager get letterReps =>
       $$LetterRepsTableTableManager(_db, _db.letterReps);
+  $$LetterGraphPositionTableTableManager get letterGraphPosition =>
+      $$LetterGraphPositionTableTableManager(_db, _db.letterGraphPosition);
+  $$LetterExerciseRepsTableTableManager get letterExerciseReps =>
+      $$LetterExerciseRepsTableTableManager(_db, _db.letterExerciseReps);
 }
 
 // **************************************************************************

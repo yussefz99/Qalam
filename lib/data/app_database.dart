@@ -9,6 +9,7 @@
 // storage and stores NOTHING sensitive in Phase 1 — only a non-sensitive
 // sentinel. No network, no telemetry, and the value is never logged.
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:drift/drift.dart';
@@ -73,7 +74,64 @@ class LetterReps extends Table {
   Set<Column> get primaryKey => {letterId};
 }
 
-@DriftDatabase(tables: [AppSettings, LetterMastery, ChildProfiles, LetterReps])
+/// The child's durable position in a letter's curriculum graph — Phase 15
+/// (DYN-02 / D-08, Plan 15-04). One row per letter the child has started.
+///
+/// This is the on-device resume cursor: re-entering the baa unit after an app
+/// restart restores exactly where the child left off (the current node + the
+/// cleared competencies/tiers the online rail and the offline walker both read).
+/// The server stays stateless (COPPA posture) — resume state lives ONLY here.
+///
+/// [clearedCompetencies] / [clearedTiers] are JSON-encoded `List<String>` (a
+/// `text` column holding `["recognize","positionalForms"]`) — Drift has no native
+/// list column, so we encode/decode in the accessors (mirrors no extra package).
+///
+/// SECURITY (T-15-04-ID): persists ONLY ids/timestamps — the letterId, the
+/// current exercise id, derived competency/tier id lists, and updatedAt. NEVER a
+/// stroke point, an Offset, a child name, or any PII (mirrors the LetterReps /
+/// LetterMastery no-PII convention). Values are never logged.
+class LetterGraphPosition extends Table {
+  TextColumn get letterId => text()(); // PK — "baa"
+  TextColumn get currentExerciseId => text().nullable()(); // the walk cursor
+  TextColumn get clearedCompetencies => text()(); // JSON-encoded List<String>
+  TextColumn get clearedTiers => text()(); // JSON-encoded List<String>
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {letterId};
+}
+
+/// Per-essential-EXERCISE clean-rep counter — Phase 15 (Open Q3 / D-06, Plan
+/// 15-04). Keyed by the (letterId, exerciseId) composite so `isMasteryMet` can
+/// read each essential node's banked reps after a relaunch.
+///
+/// Open Q3 resolution: a SIBLING table (not a PK change to [LetterReps]). The
+/// existing [LetterReps] keys ONE cleanReps per letterId (the per-letter
+/// in-progress counter the parent dashboard reads); the on-device star condition
+/// needs reps PER ESSENTIAL EXERCISE. Changing [LetterReps]'s PK would force a
+/// data-migrating table rebuild; a new sibling table is a clean `createTable`
+/// that touches no existing rows — the lower-migration-risk option.
+///
+/// SECURITY (T-15-04-ID): only ids + a count + a timestamp; never stroke points
+/// or PII. Values are never logged.
+class LetterExerciseReps extends Table {
+  TextColumn get letterId => text()();
+  TextColumn get exerciseId => text()();
+  IntColumn get cleanReps => integer()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {letterId, exerciseId};
+}
+
+@DriftDatabase(tables: [
+  AppSettings,
+  LetterMastery,
+  ChildProfiles,
+  LetterReps,
+  LetterGraphPosition,
+  LetterExerciseReps,
+])
 class AppDatabase extends _$AppDatabase {
   /// Pass a [QueryExecutor] (e.g. `NativeDatabase.memory()`) in tests; defaults
   /// to a lazily-opened on-device file in app-private storage.
@@ -89,7 +147,7 @@ class AppDatabase extends _$AppDatabase {
   final bool _ownsExecutor;
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -108,6 +166,15 @@ class AppDatabase extends _$AppDatabase {
               "UPDATE child_profiles SET starting_lesson_id = 'lesson_01' "
               "WHERE starting_lesson_id = 'alif'",
             );
+          }
+          if (from < 5) {
+            // Phase 15 (DYN-02 / Open Q3): the durable resume cursor + the
+            // per-essential-exercise clean-rep counter. Pure createTable adds —
+            // no data rewrite, no touch to existing rows. A child with no
+            // position row defaults to the graph root (clean start, getPosition
+            // returns null — no crash). Version-guarded for idempotency.
+            await m.createTable(letterGraphPosition);
+            await m.createTable(letterExerciseReps);
           }
         },
       );
@@ -241,6 +308,87 @@ class AppDatabase extends _$AppDatabase {
       (select(letterReps)..where((t) => t.letterId.equals(letterId)))
           .watchSingleOrNull()
           .map((row) => row?.cleanReps ?? 0);
+
+  // ---------------------------------------------------------------------------
+  // LetterGraphPosition accessors — Phase 15 (DYN-02 / D-08, Plan 15-04).
+  //
+  // getPosition is a FUTURE, not a stream (Pitfall 6): the resume read at unit
+  // entry is a one-shot read; a bare StreamProvider.future hangs under Riverpod
+  // 3 (it pauses unlistened streams). The competency/tier lists are JSON-encoded
+  // List<String> in a text column (Drift has no native list column).
+  //
+  // SECURITY: persists ONLY ids/timestamps — never stroke points / PII
+  // (T-15-04-ID). Values are never logged.
+  // ---------------------------------------------------------------------------
+
+  /// Read the persisted graph position for a letter, or null if the child has
+  /// never started it (clean default — start at the graph root, never throws).
+  Future<LetterGraphPositionData?> getPosition(String letterId) =>
+      (select(letterGraphPosition)
+            ..where((t) => t.letterId.equals(letterId)))
+          .getSingleOrNull();
+
+  /// Write (or overwrite) the graph position for a letter. The competency/tier
+  /// lists are JSON-encoded into their text columns.
+  Future<void> setPosition({
+    required String letterId,
+    String? currentExerciseId,
+    required List<String> clearedCompetencies,
+    required List<String> clearedTiers,
+  }) =>
+      into(letterGraphPosition).insertOnConflictUpdate(
+        LetterGraphPositionCompanion.insert(
+          letterId: letterId,
+          currentExerciseId: Value(currentExerciseId),
+          clearedCompetencies: jsonEncode(clearedCompetencies),
+          clearedTiers: jsonEncode(clearedTiers),
+          updatedAt: DateTime.now(),
+        ),
+      );
+
+  // ---------------------------------------------------------------------------
+  // LetterExerciseReps accessors — Phase 15 (Open Q3 / D-06, Plan 15-04). The
+  // per-essential-EXERCISE clean-rep counter isMasteryMet reads after a relaunch.
+  // SECURITY: only ids/counts/timestamps — never stroke points / PII.
+  // ---------------------------------------------------------------------------
+
+  /// Write (or overwrite) the banked clean-rep count for one exercise within a
+  /// letter (write-through, including 0 — mirrors setCleanReps' reset shape).
+  Future<void> setExerciseCleanReps({
+    required String letterId,
+    required String exerciseId,
+    required int cleanReps,
+  }) =>
+      into(letterExerciseReps).insertOnConflictUpdate(
+        LetterExerciseRepsCompanion.insert(
+          letterId: letterId,
+          exerciseId: exerciseId,
+          cleanReps: cleanReps,
+          updatedAt: DateTime.now(),
+        ),
+      );
+
+  /// Read the banked clean-rep count for one exercise; 0 when never practiced.
+  Future<int> getExerciseCleanReps({
+    required String letterId,
+    required String exerciseId,
+  }) async =>
+      (await (select(letterExerciseReps)
+                ..where((t) =>
+                    t.letterId.equals(letterId) &
+                    t.exerciseId.equals(exerciseId)))
+              .getSingleOrNull())
+          ?.cleanReps ??
+      0;
+
+  /// Read every banked per-exercise clean-rep count for a letter as a
+  /// `{exerciseId: cleanReps}` map — the exact shape `isMasteryMet` consumes.
+  Future<Map<String, int>> exerciseCleanRepsFor(String letterId) async {
+    final rows = await (select(letterExerciseReps)
+          ..where((t) => t.letterId.equals(letterId)))
+        .get();
+    return {for (final r in rows) r.exerciseId: r.cleanReps};
+  }
 
   // ---------------------------------------------------------------------------
   // Read-only aggregate accessors for the Parent Dashboard — Phase 9 (S1-11,
