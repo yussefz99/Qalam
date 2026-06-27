@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
-status: verifying
+status: executing
 stopped_at: Phase 15 context gathered (discuss-phase complete)
-last_updated: "2026-06-27T13:21:37.422Z"
-last_activity: "2026-06-22 -- Phase 14 finalized: built+merged 4 plans, deployed server, verified deploy gate, fixed present_activity seam (5fecd3b), verification + UAT persisted"
+last_updated: "2026-06-27T14:18:08.873Z"
+last_activity: 2026-06-27 -- Phase 15 planning complete
 progress:
   total_phases: 20
   completed_phases: 13
-  total_plans: 66
+  total_plans: 73
   completed_plans: 65
   percent: 65
 ---
@@ -27,8 +27,8 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 
 Phase: 14 (build-tutorbrain-spine-grounding-invariant) — CODE-COMPLETE + VERIFIED (5/5 criteria); AWAITING HUMAN UAT
 Plan: 4 of 4 (all SUMMARYs landed)
-Status: Code on branch gsd/phase-14-tutorbrain; server deployed (Cloud Run rev qalam-tutor-00003-7gv). 3 human-verify gates pending in 14-HUMAN-UAT.md: (1) on-device online coaching + offline floor, (2) Firebase App Check Play-Integrity registration, (3) AUTHORED_BAA_IDS curriculum sign-off. Provider keys are placeholders — add real Anthropic key before the device test.
-Last activity: 2026-06-22 -- Phase 14 finalized: built+merged 4 plans, deployed server, verified deploy gate, fixed present_activity seam (5fecd3b), verification + UAT persisted
+Status: Ready to execute
+Last activity: 2026-06-27 -- Phase 15 planning complete
 Next: human UAT (run app with --dart-define=TUTOR_BASE_URL=<service URL>), then /gsd-verify-work 14 → mark complete; then /gsd-plan-phase 15
 
 ## Performance Metrics
