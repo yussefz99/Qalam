@@ -175,12 +175,24 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
+      // start() now reads the DURABLE Drift graph position (D-08) — it is async,
+      // but we don't await it here (the post-frame callback can't be async); the
+      // controller drives the rebuild once the persisted position resolves.
       ref.read(letterUnitControllerProvider(_letterId).notifier).start(
             letterId: _letterId,
             total: widget.data.unit.sections.length,
             resumeSection: widget.resumeSection,
           );
     });
+  }
+
+  /// Record the quiet star ONLY when the on-device mastery condition is met
+  /// (D-06 / Pitfall 2). Called when the Mastery section is actually presented —
+  /// it never grants the star for merely navigating there; a clicked-through unit
+  /// with unmet essential reps records NOTHING. Replaces the deleted
+  /// `state.atMastery → recordMastery(cleanReps:0)` auto-write.
+  void _recordMasteryIfMet() {
+    ref.read(letterUnitControllerProvider(_letterId).notifier).recordMasteryIfMet();
   }
 
   void _advance() =>
@@ -288,6 +300,14 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
           onFinish: _advance,
         );
       case 'mastery':
+        // The quiet star is gated on the on-device mastery condition (D-06 /
+        // Pitfall 2): recording is attempted ONLY when the Mastery section is
+        // actually presented, and the controller records NOTHING unless every
+        // essential node has met the owner-mother's clean-reps. Fired post-frame
+        // so it never mutates provider state during a build.
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _recordMasteryIfMet();
+        });
         return MasterySection(
           key: const ValueKey('section:mastery'),
           letter: letter,

@@ -1,32 +1,53 @@
-// LetterUnitController — the section-sequencing + resume state machine for the
-// baa Letter Unit shell (Plan 07-06). Riverpod-only (CLAUDE.md Decided:
-// Riverpod, never BLoC/GetX). Mirrors the prototype's `go(n)` + the `visited`
-// set + `cur` index (unit.js): it holds WHICH section the child is on, the set
-// of sections they have VISITED (for the R→L ribbon's done/active dots), and
-// advances forward through the 6 ordered sections.
+// LetterUnitController — the unit-level sequencing + DURABLE resume + mastery
+// state machine for the baa Letter Unit (Plan 07-06, rewired in 15-05 for
+// DYN-02). Riverpod-only (CLAUDE.md Decided: Riverpod, never BLoC/GetX).
 //
-// RESUME-AWARE: the controller is keyed per letterId and KEEP-ALIVE for the app
-// lifetime, so exiting the unit and re-entering returns to the section the child
-// left off on (the prototype's "Your place is saved"). The per-letter resume
-// index is held in-memory across navigations; durable cross-session persistence
-// can layer on later via the ProgressRepository seam without changing this API.
+// Phase 15 rewire (DYN-02 / Open Q1 / D-06 / D-08 / Pitfall 2):
+//   • RESUME is now DURABLE. The old in-memory `_resumeByLetter` map (lost on an
+//     app restart) is replaced by the Drift `LetterGraphPosition` table via
+//     `graphPositionRepository` — re-entering the unit after a relaunch restores
+//     the child's graph position (D-08). `getPosition` is a Future (Pitfall 6).
+//   • SELECTION is graph-driven. The next step is chosen by the `ExerciseSelector`
+//     router (online RemoteAgent plan.nextExerciseId when graph-legal, else the
+//     offline CurriculumGraphWalker) — a FAIL re-surfaces a remediation (one tier
+//     down within the competency), NOT the next linear section (Pitfall 5). The
+//     selected exercise id is persisted as the resume cursor.
+//   • The STAR is gated strictly on real mastery. The old
+//     `state.atMastery → recordMastery(cleanReps:0)` auto-write FIRED ON MERE
+//     NAVIGATION (Pitfall 2). It is DELETED. `recordMasteryIfMet` now records
+//     mastery ONLY when `isMasteryMet(graph, perExerciseCleanReps)` is true — the
+//     on-device condition over the essential 70/30 core (D-06, ADR-014 trust
+//     boundary). A clicked-through unit with unmet reps records NOTHING.
 //
-// MASTERY WRITE (T-07-06-02): reaching the Mastery section records the letter
-// mastered through the EXISTING ProgressRepository seam — a LOCAL Drift write
-// only (no child data leaves the device). The write is idempotent (recordMastery
-// overwrites), so re-entering Mastery never double-counts anything.
+// The section index/visited state is kept so the rich Phase-07 sections + the R→L
+// ribbon still render; the graph position is the durable resume + mastery source
+// layered beside it.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../curriculum/curriculum_graph.dart';
+import '../../curriculum/curriculum_graph_walker.dart' show GraphPosition;
+import '../../curriculum/mastery_condition.dart';
+import '../../data/app_database.dart';
 import '../../data/drift_progress_repository.dart';
+import '../../data/graph_position_repository.dart' as repo;
+import '../../tutor/exercise_selector_provider.dart';
+import '../../tutor/tutor_decision.dart';
+import '../../tutor/tutor_facts.dart';
 
 /// The immutable unit state: the section [index] within the [total] sections,
-/// and the set of [visited] section indices (for the ribbon's done dots).
+/// the set of [visited] section indices (for the ribbon's done dots), and the
+/// durable graph [currentExerciseId] + cleared competency/tier state (the resume
+/// cursor restored from Drift).
 class LetterUnitState {
   const LetterUnitState({
     required this.index,
     required this.total,
     required this.visited,
+    this.currentExerciseId,
+    this.clearedCompetencies = const [],
+    this.clearedTiers = const [],
+    this.masteryRecorded = false,
   });
 
   /// The current section index (0-based; 0 = Meet … total-1 = Mastery).
@@ -38,14 +59,40 @@ class LetterUnitState {
   /// Every section index the child has visited this unit (resume + ribbon).
   final Set<int> visited;
 
+  /// The graph exercise the child is currently on — the durable resume cursor
+  /// (null at the graph root before any node is entered).
+  final String? currentExerciseId;
+
+  /// The competency ids cleared so far (durable forward-progress state).
+  final List<String> clearedCompetencies;
+
+  /// The إملاء tiers cleared so far (durable ramp-progress state).
+  final List<String> clearedTiers;
+
+  /// True once the quiet star has been recorded for this unit (idempotency
+  /// guard — the star is information, recorded at most once; CLAUDE.md Decided).
+  final bool masteryRecorded;
+
   /// True when the child is on the final (Mastery) section.
   bool get atMastery => total > 0 && index == total - 1;
 
-  LetterUnitState copyWith({int? index, int? total, Set<int>? visited}) {
+  LetterUnitState copyWith({
+    int? index,
+    int? total,
+    Set<int>? visited,
+    String? currentExerciseId,
+    List<String>? clearedCompetencies,
+    List<String>? clearedTiers,
+    bool? masteryRecorded,
+  }) {
     return LetterUnitState(
       index: index ?? this.index,
       total: total ?? this.total,
       visited: visited ?? this.visited,
+      currentExerciseId: currentExerciseId ?? this.currentExerciseId,
+      clearedCompetencies: clearedCompetencies ?? this.clearedCompetencies,
+      clearedTiers: clearedTiers ?? this.clearedTiers,
+      masteryRecorded: masteryRecorded ?? this.masteryRecorded,
     );
   }
 
@@ -53,84 +100,175 @@ class LetterUnitState {
       LetterUnitState(index: 0, total: 0, visited: {0});
 }
 
-/// Drives one letter unit's section sequencing + resume. Construct per letterId
-/// via the [letterUnitControllerProvider] family (the family arg is the
-/// letterId); call [start] once the section order is known, then [goTo] /
-/// [advance] / [back] to navigate.
+/// Drives one letter unit's sequencing + DURABLE resume + the mastery-gated star.
+/// Construct per letterId via the [letterUnitControllerProvider] family (the
+/// family arg is the letterId); call [start] once the section order is known,
+/// then [goTo] / [advance] / [back] to navigate.
 class LetterUnitController extends Notifier<LetterUnitState> {
-  /// The family argument — which letter's unit this controller drives. Used as
-  /// the default letterId so [start]'s argument is optional in practice.
+  /// The family argument — which letter's unit this controller drives.
   LetterUnitController(this._argLetterId);
 
   final String _argLetterId;
 
-  /// The keep-alive resume store: the last section index per letterId, held for
-  /// the app lifetime so re-entering a unit resumes where the child left off.
-  static final Map<String, int> _resumeByLetter = <String, int>{};
-
   late String _letterId = _argLetterId;
-  bool _masteryRecorded = false;
 
   @override
   LetterUnitState build() => LetterUnitState.empty;
 
-  /// Initialise the controller for [letterId] with [total] sections. Resumes at
-  /// [resumeSection] if given, else at the persisted resume index, else 0.
-  void start({
+  /// Initialise the controller for [letterId] with [total] sections. Reads the
+  /// DURABLE graph position from Drift (D-08) and resumes at [resumeSection] if
+  /// forced, else the section the persisted cursor implies, else 0.
+  Future<void> start({
     required String letterId,
     required int total,
     int? resumeSection,
-  }) {
+  }) async {
     _letterId = letterId;
-    _masteryRecorded = false;
-    final saved = _resumeByLetter[letterId];
-    final start = (resumeSection ?? saved ?? 0).clamp(0, total > 0 ? total - 1 : 0);
+    // 1) Read the durable graph position from Drift (Pitfall 6: a Future read).
+    repo.GraphPosition? saved;
+    try {
+      saved = await ref.read(repo.graphPositionRepositoryProvider).getPosition(letterId);
+    } catch (_) {
+      saved = null; // a read failure degrades to a clean start (never crashes).
+    }
+    // 2) Resolve the resume section. An explicit resumeSection wins; otherwise
+    // the count of visited (cleared) competencies/tiers is a coarse position hint.
+    final hint = _sectionHintFor(saved, total);
+    final start = (resumeSection ?? hint ?? 0).clamp(0, total > 0 ? total - 1 : 0);
     final visited = <int>{for (var i = 0; i <= start; i++) i};
-    state = LetterUnitState(index: start, total: total, visited: visited);
-    _onEnterSection(start);
+    state = LetterUnitState(
+      index: start,
+      total: total,
+      visited: visited,
+      currentExerciseId: saved?.currentExerciseId,
+      clearedCompetencies: saved?.clearedCompetencies ?? const [],
+      clearedTiers: saved?.clearedTiers ?? const [],
+      masteryRecorded: false,
+    );
+    // 3) Persist the (re)entered position so a relaunch resumes here.
+    await _persist();
   }
 
-  /// Jump to section [n] (clamped). Marks it visited + persists the resume spot.
+  /// Jump to section [n] (clamped). Marks it visited + persists the resume cursor.
+  /// NOTE: this is NAVIGATION only — it never records mastery (Pitfall 2).
   void goTo(int n) {
     final total = state.total;
     if (total <= 0) return;
     final next = n.clamp(0, total - 1);
     final visited = {...state.visited, next};
     state = state.copyWith(index: next, visited: visited);
-    _onEnterSection(next);
+    _persist();
   }
 
-  /// Advance to the next section (the section's onAdvance / a clean pass).
+  /// Advance to the next section (a section's onAdvance / a clean pass).
   void advance() => goTo(state.index + 1);
 
   /// Step back one section (the app bar back button). Never below 0.
   void back() => goTo(state.index - 1);
 
-  void _onEnterSection(int index) {
-    // Persist the resume position so re-entry resumes here.
-    _resumeByLetter[_letterId] = index;
-    // Reaching Mastery records the letter mastered (LOCAL Drift only).
-    if (state.atMastery) _recordMastery();
+  /// Pick the NEXT graph exercise via the selection router (DYN-02). On a pass it
+  /// advances forward; on a fail it re-surfaces a remediation (one tier down) —
+  /// NEVER the next linear section (Pitfall 5). Updates + persists the cursor.
+  /// Returns the selected exercise id (or null when the graph is exhausted).
+  String? selectNext(TutorFacts facts, {TutorDecision? decision}) {
+    final selector = ref.read(exerciseSelectorProvider);
+    final position = GraphPosition(
+      letterId: _letterId,
+      currentExerciseId: state.currentExerciseId ?? facts.section,
+      clearedCompetencies: state.clearedCompetencies,
+      clearedTiers: state.clearedTiers,
+    );
+    final next = selector.selectNext(facts, position, decision: decision);
+    if (next != null) {
+      state = state.copyWith(currentExerciseId: next);
+      _persist();
+    }
+    return next;
   }
 
-  Future<void> _recordMastery() async {
-    if (_masteryRecorded) return;
-    _masteryRecorded = true;
+  /// Record mastery ONLY when the on-device condition is met (D-06, Pitfall 2):
+  /// every essential node has reached the owner-mother's clean-reps. A
+  /// clicked-through unit with unmet reps records NOTHING. Idempotent (the star
+  /// is information, recorded at most once). Never reads a server response
+  /// (ADR-014 trust boundary).
+  Future<bool> recordMasteryIfMet() async {
+    if (state.masteryRecorded) return true;
+    final CurriculumGraph graph;
+    final Map<String, int> reps;
     try {
+      graph = await ref.read(curriculumGraphProvider.future);
+      reps = await ref.read(appDatabaseProvider).exerciseCleanRepsFor(_letterId);
+    } catch (_) {
+      return false; // can't evaluate → never grant the star off a guess.
+    }
+    if (!isMasteryMet(graph, reps)) return false;
+    state = state.copyWith(masteryRecorded: true);
+    try {
+      // The recorded cleanReps is the essential-core minimum the child actually
+      // met — never the cleanReps:0 navigation write the old bug stamped.
+      final met = _essentialFloor(graph, reps);
       await ref.read(progressRepositoryProvider).recordMastery(
             letterId: _letterId,
-            cleanReps: 0,
+            cleanReps: met,
           );
     } catch (_) {
-      // A failed local write must never crash the celebration — the child
-      // still sees their star; the mastery row can be re-recorded on re-entry.
-      _masteryRecorded = false;
+      // A failed LOCAL write must never crash the celebration — the child still
+      // sees their star; the mastery row can be re-recorded on re-entry.
+      state = state.copyWith(masteryRecorded: false);
+      return false;
     }
+    return true;
+  }
+
+  /// The smallest essential clean-rep count the child has banked (a real,
+  /// non-zero progress value to record — never the old cleanReps:0).
+  int _essentialFloor(CurriculumGraph graph, Map<String, int> reps) {
+    var min = 0;
+    var first = true;
+    for (final node in graph.essentialNodes) {
+      final r = reps[node.exerciseId] ?? 0;
+      if (first || r < min) {
+        min = r;
+        first = false;
+      }
+    }
+    return min;
+  }
+
+  /// Persist the current graph position to Drift (the durable resume cursor).
+  Future<void> _persist() async {
+    try {
+      await ref.read(repo.graphPositionRepositoryProvider).setPosition(
+            repo.GraphPosition(
+              letterId: _letterId,
+              currentExerciseId: state.currentExerciseId,
+              clearedCompetencies: state.clearedCompetencies,
+              clearedTiers: state.clearedTiers,
+            ),
+          );
+    } catch (_) {
+      // A failed local persist must never crash navigation — resume simply falls
+      // back to the last successfully written position (or the graph root).
+    }
+  }
+
+  /// A coarse resume-section hint from the durable position: more cleared
+  /// competencies → further along the unit. Null when nothing is cleared (start
+  /// at section 0). This keeps the rich section UI resuming sensibly while the
+  /// graph position is the source of truth for selection + mastery.
+  int? _sectionHintFor(repo.GraphPosition? saved, int total) {
+    if (saved == null || total <= 0) return null;
+    final cleared = saved.clearedCompetencies.length;
+    if (cleared <= 0) return null;
+    // Map cleared-competency count onto the section ribbon (clamped one short of
+    // Mastery so resume never lands on the star section by navigation alone).
+    return cleared.clamp(0, total - 2 < 0 ? 0 : total - 2);
   }
 }
 
 /// The per-letter unit controller (keep-alive so resume survives navigation).
-/// Read `.notifier` to call [LetterUnitController.start] / advance / back.
+/// Read `.notifier` to call [LetterUnitController.start] / advance / back /
+/// selectNext / recordMasteryIfMet.
 final letterUnitControllerProvider =
     NotifierProvider.family<LetterUnitController, LetterUnitState, String>(
   LetterUnitController.new,

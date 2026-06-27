@@ -1,18 +1,32 @@
-// LetterUnitScreen (the 6-section unit shell) behavior — Plan 07-06 Task 2.
+// LetterUnitScreen (the 6-section unit shell) behavior — Plan 07-06 Task 2,
+// rewired for DYN-02 in Plan 15-05.
 //
 // The shell hosts the 6 baa sections behind the R→L ProgressRibbon app bar and
-// sequences them via the LetterUnitController, resume-aware. These tests prove:
+// sequences them via the LetterUnitController, now with DURABLE Drift resume and
+// the star gated strictly on the on-device `isMasteryMet` condition. These tests
+// prove:
 //   • the app bar renders 6 ribbon dots, R→L (dot 0 on the right);
 //   • the shell starts at section 0 (Meet) and advances through all 6 sections
 //     to a single-star Mastery;
-//   • the ribbon is position-only (no gold, no numerals) and Mastery shows one
-//     quiet star (anti-gamification).
+//   • Pitfall 2 (the FLIPPED assertion): reaching the Mastery section by mere
+//     NAVIGATION on a clicked-through unit with UNMET essential reps records
+//     NOTHING — the star is no longer granted off navigation (D-06);
+//   • a ribbon dot jumps to that section.
 
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:drift/drift.dart'
+    show DatabaseConnection, driftRuntimeOptions;
+import 'package:drift/native.dart';
 import 'package:flutter/material.dart' hide Form;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:qalam/curriculum/curriculum_graph.dart';
+import 'package:qalam/data/app_database.dart';
 import 'package:qalam/data/drift_progress_repository.dart';
+import 'package:qalam/data/graph_position_repository.dart';
 import 'package:qalam/data/progress_repository.dart';
 import 'package:qalam/features/letter_unit/letter_unit_screen.dart';
 import 'package:qalam/features/letter_unit/letter_unit_controller.dart';
@@ -22,8 +36,19 @@ import 'package:qalam/models/exercise.dart';
 import 'package:qalam/models/letter_unit.dart';
 import 'package:qalam/models/word.dart';
 import 'package:qalam/providers/audio_providers.dart';
+import 'package:qalam/tutor/exercise_selector_provider.dart';
 
 import 'section_test_support.dart';
+
+/// The single-source curriculum graph parsed straight off disk (hermetic — no
+/// rootBundle, mirroring the curriculum unit tests). Overrides
+/// `curriculumGraphProvider` so the mastery gate has a real graph in tests.
+CurriculumGraph _loadGraph() {
+  final raw = json.decode(
+    File('assets/curriculum/curriculum_graph.json').readAsStringSync(),
+  ) as Map<String, Object?>;
+  return CurriculumGraph.fromJson(raw);
+}
 
 class _CapturingAudioPlayer implements LetterAudioPlayer {
   @override
@@ -52,6 +77,20 @@ class _FakeProgressRepository implements ProgressRepository {
       Stream.value(const <String>{});
   @override
   Stream<int> watchCleanReps(String letterId) => Stream.value(0);
+}
+
+/// An in-memory fake of the durable resume cursor — round-trips the position so
+/// the controller's Drift-backed resume path runs without a real database.
+class _FakeGraphPositionRepository implements GraphPositionRepository {
+  final Map<String, GraphPosition> _store = {};
+
+  @override
+  Future<GraphPosition?> getPosition(String letterId) async => _store[letterId];
+
+  @override
+  Future<void> setPosition(GraphPosition position) async {
+    _store[position.letterId] = position;
+  }
 }
 
 /// The baa unit's 6 ordered sections (units.json), plus its exercises + words.
@@ -91,8 +130,15 @@ LetterUnitData _baaData() {
   );
 }
 
-Future<_FakeProgressRepository> _pump(WidgetTester tester) async {
+/// Pump the screen with a fresh in-memory AppDatabase (so the controller's
+/// per-exercise reps read returns EMPTY — unmet essential reps), a fake durable
+/// position repo, and the fake progress repo. Returns the progress repo + the db.
+Future<({_FakeProgressRepository progress, AppDatabase db})> _pump(
+  WidgetTester tester,
+) async {
   final progress = _FakeProgressRepository();
+  final db = AppDatabase(DatabaseConnection(NativeDatabase.memory()).executor);
+  addTearDown(db.close);
   tester.view.physicalSize = const Size(1280, 800);
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.resetPhysicalSize);
@@ -101,6 +147,12 @@ Future<_FakeProgressRepository> _pump(WidgetTester tester) async {
       overrides: [
         audioPlayerProvider.overrideWithValue(_CapturingAudioPlayer()),
         progressRepositoryProvider.overrideWithValue(progress),
+        appDatabaseProvider.overrideWithValue(db),
+        graphPositionRepositoryProvider
+            .overrideWithValue(_FakeGraphPositionRepository()),
+        // The mastery gate reads the single-source graph; load it off disk so the
+        // test is hermetic (no rootBundle dependence).
+        curriculumGraphProvider.overrideWith((ref) async => _loadGraph()),
         letterUnitDataProvider('baa').overrideWith((ref) async => _baaData()),
       ],
       child: const MaterialApp(
@@ -109,10 +161,15 @@ Future<_FakeProgressRepository> _pump(WidgetTester tester) async {
     ),
   );
   await tester.pumpAndSettle();
-  return progress;
+  return (progress: progress, db: db);
 }
 
 void main() {
+  // Each test spins up its own in-memory AppDatabase (distinct executors, no
+  // shared store) — silence drift's cross-instance race warning, which does not
+  // apply here.
+  driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
+
   testWidgets('Test 1: the app bar renders 6 R→L ribbon dots',
       (tester) async {
     await _pump(tester);
@@ -145,19 +202,26 @@ void main() {
     expect(find.byType(MeetSection), findsNothing);
   });
 
-  testWidgets('Test 3: Mastery shows exactly ONE star + records mastery locally',
-      (tester) async {
-    final progress = await _pump(tester);
+  testWidgets(
+      'Test 3 (FLIPPED, D-06/Pitfall 2): a clicked-through unit with UNMET reps '
+      'records NO mastery on reaching the Mastery section', (tester) async {
+    final pumped = await _pump(tester);
+    final progress = pumped.progress;
 
     final ctx = tester.element(find.byType(LetterUnitScreen));
     final container = ProviderScope.containerOf(ctx);
+    // Navigate straight to the Mastery section — NO exercises actually cleaned
+    // (the in-memory db has zero per-exercise reps → isMasteryMet is false).
     container.read(letterUnitControllerProvider('baa').notifier).goTo(5);
     await tester.pumpAndSettle();
 
-    // Exactly ONE star (MasteryCelebration's single settling star).
+    // The Mastery section is shown (navigation works) …
     expect(find.byType(MasterySection), findsOneWidget);
-    // The letter was recorded mastered to the LOCAL repo (T-07-06-02).
-    expect(progress.mastered, contains('baa'));
+    // … but the star is NOT granted off navigation: with unmet essential reps,
+    // recordMastery is never called (the deleted cleanReps:0 auto-write).
+    expect(progress.mastered, isNot(contains('baa')),
+        reason: 'the star must be gated on isMasteryMet, never on navigation '
+            '(D-06 / Pitfall 2)');
   });
 
   testWidgets('Test 4: a ribbon dot jumps to that section',
@@ -169,5 +233,49 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(MasterySection), findsOneWidget);
+  });
+
+  testWidgets(
+      'Test 5 (D-06): with the essential core at the owner-mother reps, the '
+      'Mastery section records exactly one quiet star', (tester) async {
+    final pumped = await _pump(tester);
+    final progress = pumped.progress;
+    final db = pumped.db;
+
+    // Bank enough clean-reps on EVERY essential node so isMasteryMet is true.
+    // (The essential nodes are recognize/positionalForms/copyWrite/fluentReading;
+    // we over-bank a high count on every authored baa.* id so all essentials
+    // clear regardless of their per-node minCleanReps.)
+    for (final id in const [
+      'baa.teachCard.meet',
+      'baa.traceLetter.isolated',
+      'baa.traceLetter.initial',
+      'baa.traceLetter.medial',
+      'baa.writeLetter.fromSound',
+      'baa.writeLetter.fromPicture',
+      'baa.writeLetter.writeForm',
+      'baa.connectWord.baab',
+      'baa.connectWord.kitaab',
+      'baa.completeWord.middle',
+      'baa.writeWord.copy',
+      'baa.writeWord.picture',
+      'baa.writeWord.dictation',
+      'baa.buildSentence.hear',
+      'baa.buildSentence.picture',
+    ]) {
+      await db.setExerciseCleanReps(
+          letterId: 'baa', exerciseId: id, cleanReps: 9);
+    }
+
+    final ctx = tester.element(find.byType(LetterUnitScreen));
+    final container = ProviderScope.containerOf(ctx);
+    container.read(letterUnitControllerProvider('baa').notifier).goTo(5);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(MasterySection), findsOneWidget);
+    // The on-device condition is met → exactly one quiet star recorded locally.
+    expect(progress.mastered, contains('baa'));
+    expect(progress.mastered.where((id) => id == 'baa').length, 1,
+        reason: 'exactly ONE quiet star (anti-gamification; idempotent record)');
   });
 }
