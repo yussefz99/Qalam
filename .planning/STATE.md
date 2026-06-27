@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
 stopped_at: Phase 15 context gathered (discuss-phase complete)
-last_updated: "2026-06-27T14:40:05.044Z"
+last_updated: "2026-06-27T14:52:46.736Z"
 last_activity: 2026-06-27
 progress:
   total_phases: 20
   completed_phases: 13
   total_plans: 73
-  completed_plans: 66
+  completed_plans: 67
   percent: 65
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 15 (build-dynamic-grounded-exercise-selection-on-baa) — EXECUTING
-Plan: 2 of 7
+Plan: 3 of 7
 Status: Ready to execute
 Last activity: 2026-06-27
 Next: human UAT (run app with --dart-define=TUTOR_BASE_URL=<service URL>), then /gsd-verify-work 14 → mark complete; then /gsd-plan-phase 15
@@ -84,6 +84,7 @@ Next: human UAT (run app with --dart-define=TUTOR_BASE_URL=<service URL>), then 
 | Phase 11 P01 | 13min | 2 tasks | 6 files |
 | Phase 11 P02 | 9min | 3 tasks | 6 files |
 | Phase 15 P01 | 8min | 3 tasks | 10 files |
+| Phase 15 P02 | 7min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -153,6 +154,9 @@ Recent decisions affecting current work:
 - [Phase ?]: [15-01]: Wave-0 RED contract authored — every Phase-15 requirement (DYN-01/DYN-02/GROUND-03) has a failing automated test naming its exact behavior before implementation (Nyquist). 5 new test files (3 Dart, 2 Python) + 1 JSONL fixture, all RED by missing symbol.
 - [Phase ?]: [15-01]: Provisional baa curriculum graph authored as a SEPARATE asset from exercises.json (independent signedOff gate, A5); 19 nodes map each signed baa.* exercise to competency/tier/minCleanReps; node set byte-identical to baa_authored_ids.json (metadata only). signedOff:false (PROVISIONAL, D-05) — 15-07 owns the flip behind human-verify.
 - [Phase ?]: [15-01]: tier non-null ONLY for the إملاء writing ramp (connect/complete/writeWord/buildSentence); recognize/trace/recall/morphology nodes tier:null. Backward remediation walks ghayrManzur→manzur→manqul within a competency. DRAFT clean-reps (trace 3, write 2, teach/sentence 1) are owner-mother's to confirm (D-05/D-07).
+- [Phase ?]: [15-02]: Server graph rail GREEN — generate.py derives server/app/curriculum_data/curriculum_graph.json from the asset (baa.* nodes only); curriculum.py loads CURRICULUM_GRAPH once at import (fail-closed to empty on read error) + tier_of/reachable_tiers/prerequisites_met; plan.py adds G5 (tier-reachability) + G6 (prereq-chain) after G4, before G3. is_authored/AUTHORED_BAA_IDS untouched (D-02). test_plan_graph.py GREEN.
+- [Phase ?]: [15-02]: G5/G6 activate ONLY on a known graph position (clearedTiers OR clearedCompetencies non-empty); both-empty = pre-graph (root child OR pre-15-04 wire) → rail no-op. Forced by Pydantic defaulting both new TutorFactsIn fields to [] + main.py model_dump — the live endpoint always carries the keys, so an unconditional G6 would degrade every online plan run to the floor before 15-04 ships the Dart mirror. Backward remediation passes both guards (Pitfall 3).
+- [Phase ?]: [15-02]: TutorFactsIn gains clearedTiers/clearedCompetencies (extra=forbid). Backward-compatible (default []) + rail no-op on empty → a standalone server re-deploy is SAFE; the 422 trap (Pitfall 1) is the FORWARD direction — re-deploy server BEFORE 15-04's Dart fields ship.
 
 ### Pending Todos
 
@@ -188,6 +192,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-27T14:39:10.623Z
+Last session: 2026-06-27T14:51:58.709Z
 Stopped at: Phase 15 context gathered (discuss-phase complete)
 Resume files: .planning/phases/06.1-firebase-curriculum-backend/06.1-05-PLAN.md (next), .planning/phases/06.1-firebase-curriculum-backend/06.1-03-PLAN.md (pending), .planning/phases/06.1-firebase-curriculum-backend/06.1-04-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
