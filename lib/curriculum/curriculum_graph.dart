@@ -214,4 +214,90 @@ class CurriculumGraph {
     }
     return null;
   }
+
+  // ── Graph legality (G5/G6 client mirror — Plan 15-05) ──────────────────────
+  // These mirror the server's `app.curriculum.reachable_tiers` /
+  // `prerequisites_met` byte-for-byte so the online↔offline selection router
+  // (lib/tutor/exercise_selector_provider.dart) re-checks an agent-proposed
+  // `plan.nextExerciseId` against the SAME rules the server's G5/G6 rail applies
+  // (T-15-05-T: the agent's choice is untrusted — the client re-checks before
+  // presenting). A LOWER tier of an already-reached competency is legal —
+  // backward remediation passes (Pitfall 3). Forward-only means "no skipping
+  // ahead," not "no stepping back."
+
+  /// True iff [exerciseId] is a node in the graph (the client membership rail —
+  /// the pure-Dart mirror of the server's authored-id membership; the graph node
+  /// set is byte-identical to `baa_authored_ids.json`).
+  bool isAuthored(String? exerciseId) =>
+      exerciseId != null &&
+      exerciseId.trim().isNotEmpty &&
+      _nodeFor(exerciseId) != null;
+
+  /// The set of إملاء tiers the child may enter given [clearedTiers]. Strict
+  /// progressive unlock along [tiers] (easiest-first): the FIRST tier is always
+  /// reachable; each subsequent tier unlocks only once its predecessor is
+  /// cleared. Order-based (not membership-based) so a child at the top can still
+  /// enter any lower tier (backward remediation — Pitfall 3). Mirrors the
+  /// server's `reachable_tiers`.
+  Set<String> reachableTiers(List<String> clearedTiers) {
+    final cleared = clearedTiers.toSet();
+    final reachable = <String>{};
+    for (var index = 0; index < tiers.length; index++) {
+      if (index == 0) {
+        reachable.add(tiers[index]); // the floor tier is always reachable.
+        continue;
+      }
+      final predecessor = tiers[index - 1];
+      if (cleared.contains(predecessor)) {
+        reachable.add(tiers[index]);
+      } else {
+        break; // the ladder is strict — stop at the first locked rung.
+      }
+    }
+    return reachable;
+  }
+
+  /// True iff EVERY prerequisite competency of [exerciseId]'s competency is in
+  /// [clearedCompetencies] (G6 forward-only). An unknown id has no graph
+  /// competency → false (rejected). A competency with no prerequisites is
+  /// trivially met. Backward remediation passes (the prereqs of an
+  /// already-reached competency are, by definition, already cleared). Mirrors the
+  /// server's `prerequisites_met`.
+  bool prerequisitesMet(String? exerciseId, List<String> clearedCompetencies) {
+    final node = exerciseId == null ? null : _nodeFor(exerciseId);
+    if (node == null) return false;
+    final cleared = clearedCompetencies.toSet();
+    final prereqs = _prereqsFor(node.competency);
+    return prereqs.every(cleared.contains);
+  }
+
+  /// The prerequisite competency ids of [competencyId] (empty if none / unknown).
+  List<String> _prereqsFor(String competencyId) {
+    for (final c in competencies) {
+      if (c.id == competencyId) return c.prerequisites;
+    }
+    return const [];
+  }
+
+  /// True iff an agent-proposed [exerciseId] is graph-LEGAL to present given the
+  /// child's cleared state: it is an authored node (G4 membership), its إملاء
+  /// tier is reachable (G5 — a null tier off-ramp node is trivially tier-legal),
+  /// AND its competency prerequisites are met (G6). The single legality gate the
+  /// online selection router calls before accepting `plan.nextExerciseId`
+  /// (T-15-05-T). Backward remediation passes; forward jumps fail closed.
+  bool isLegalSelection(
+    String? exerciseId, {
+    required List<String> clearedTiers,
+    required List<String> clearedCompetencies,
+  }) {
+    if (!isAuthored(exerciseId)) return false;
+    final tier = tierOf(exerciseId!);
+    // G5: a ramp node must sit in a reachable tier; an off-ramp (null) node has
+    // no tier to gate (mirrors the server's `tier_of → None` G5 no-op).
+    if (tier != null && !reachableTiers(clearedTiers).contains(tier)) {
+      return false;
+    }
+    // G6: the competency prerequisites must be cleared.
+    return prerequisitesMet(exerciseId, clearedCompetencies);
+  }
 }

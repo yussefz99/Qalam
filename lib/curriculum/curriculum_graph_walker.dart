@@ -15,6 +15,7 @@
 /// remediation, not the next linear step.
 library;
 
+import '../tutor/tutor_decision.dart';
 import '../tutor/tutor_facts.dart';
 import 'curriculum_graph.dart';
 
@@ -48,8 +49,18 @@ class GraphPosition {
 /// with the next exercise id (or null when the graph is exhausted). It never
 /// decides pass/fail or the star — the scorer owns the verdict; this only
 /// chooses what comes next.
+///
+/// An optional [decision] carries the online agent's reply (its
+/// `plan.nextExerciseId` SUGGESTION). The OFFLINE walker ignores it entirely; the
+/// ONLINE router (`lib/tutor/exercise_selector_provider.dart`) accepts the
+/// agent's choice ONLY when it is graph-legal, else falls to the walker (Pitfall
+/// 5 — selection degrades on a separate axis from coaching).
 abstract class ExerciseSelector {
-  String? selectNext(TutorFacts facts, GraphPosition position);
+  String? selectNext(
+    TutorFacts facts,
+    GraphPosition position, {
+    TutorDecision? decision,
+  });
 }
 
 /// The OFFLINE deterministic [ExerciseSelector]. With zero model loaded, in
@@ -68,7 +79,13 @@ class CurriculumGraphWalker implements ExerciseSelector {
   final CurriculumGraph graph;
 
   @override
-  String? selectNext(TutorFacts facts, GraphPosition position) {
+  String? selectNext(
+    TutorFacts facts,
+    GraphPosition position, {
+    TutorDecision? decision,
+  }) {
+    // The OFFLINE walker IGNORES the online agent decision (Pitfall 5 — selection
+    // degrades on a separate axis; offline it walks the graph deterministically).
     final current = position.currentExerciseId;
     if (facts.passed) {
       // A pass walks the chain forward — the graph IS the order now.
