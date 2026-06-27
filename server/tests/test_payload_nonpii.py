@@ -15,6 +15,8 @@ Model-free, network-free — a plain `code` check that gates every PR.
 
 from __future__ import annotations
 
+import re
+
 import pytest
 from pydantic import ValidationError
 
@@ -23,8 +25,9 @@ pytestmark = pytest.mark.code
 from app.schema import AttemptFactIn, TutorFactsIn
 
 # A LEGIT, fully-populated enlarged payload — the exact field set from
-# server/app/schema.py (6 base + a populated trajectory + strengthTags). It MUST
-# validate (this is what the client's TutorFacts.toJson() produces).
+# server/app/schema.py (6 base + a populated trajectory + strengthTags + the two
+# Phase-15 graph-position fields). It MUST validate (this is what the client's
+# TutorFacts.toJson() produces).
 LEGIT_FACTS = {
     "letterId": "baa",
     "section": "traceLetter",
@@ -37,21 +40,66 @@ LEGIT_FACTS = {
         {"passed": True, "mistakeId": None, "section": "writeWord"},
     ],
     "strengthTags": ["writeWord"],
+    # Phase 15 (15-02 server / 15-04 Dart): the graph-position fields — pure
+    # non-PII id string-lists (tier ids / competency ids). Mirror the Dart
+    # TutorFacts whitelist byte-for-byte (Pitfall 1 — the 422 lockstep).
+    "clearedTiers": ["manqul", "manzur"],
+    "clearedCompetencies": ["recognize", "positionalForms"],
 }
+
+# The graph-position field names — they must be ACCEPTED and must carry no PII.
+GRAPH_POSITION_FIELDS = ["clearedTiers", "clearedCompetencies"]
 
 # The geometry/PII keys that must NEVER be accepted on either model.
 FORBIDDEN_KEYS = ["strokes", "x", "y", "offsets", "nickname", "childName"]
+
+# The tightened coordinate/PII token guard — the SERVER mirror of the Dart regex
+# in test/tutor/payload_nonpii_test.dart (`\b[xy]\b|stroke|offset|coord|point|raw|
+# nick|name`). The two graph-position fields + their id values must trip none of it.
+_PII_TOKEN_RE = re.compile(r"\b[xy]\b|stroke|offset|coord|point|raw|nick|name", re.IGNORECASE)
 
 
 # --- TutorFactsIn (top-level request body) ------------------------------------------------
 
 
 def test_tutorfactsin_accepts_the_legit_enlarged_payload():
-    """The day-one-final enlarged payload (populated trajectory + strengthTags) validates."""
+    """The day-one-final enlarged payload (trajectory + strengthTags + the two
+    Phase-15 graph-position fields) validates."""
     facts = TutorFactsIn.model_validate(LEGIT_FACTS)
     assert facts.letterId == "baa"
     assert len(facts.trajectory) == 2
     assert facts.strengthTags == ["writeWord"]
+    # The two Phase-15 fields are accepted and round-trip their id string-lists.
+    assert facts.clearedTiers == ["manqul", "manzur"]
+    assert facts.clearedCompetencies == ["recognize", "positionalForms"]
+
+
+def test_graph_position_fields_carry_no_pii():
+    """The two enlarged graph-position fields — their NAMES and VALUES — trip no
+    PII/stroke token (GROUND-02 regression over the enlarged wire contract)."""
+    facts = TutorFactsIn.model_validate(LEGIT_FACTS)
+    dumped = facts.model_dump()
+    for field in GRAPH_POSITION_FIELDS:
+        # The field is present in the serialized payload …
+        assert field in dumped, f"{field} must serialize on the server DTO"
+        # … its key name trips no PII/stroke token …
+        assert not _PII_TOKEN_RE.search(field), (
+            f"the graph-position field name {field!r} matches the PII/stroke guard"
+        )
+        # … and every id value it carries is a plain non-PII tier/competency id.
+        for value in dumped[field]:
+            assert not _PII_TOKEN_RE.search(str(value)), (
+                f"the {field} value {value!r} matches the PII/stroke guard"
+            )
+
+
+def test_graph_position_fields_default_empty_when_omitted():
+    """Omitting the two fields is backward-compatible: they default to [] (a fresh
+    child at the graph root), never a 422 — the standalone-redeploy safety."""
+    minimal = {"letterId": "baa", "section": "traceLetter", "passed": True}
+    facts = TutorFactsIn.model_validate(minimal)
+    assert facts.clearedTiers == []
+    assert facts.clearedCompetencies == []
 
 
 @pytest.mark.parametrize("bad_key", FORBIDDEN_KEYS)
