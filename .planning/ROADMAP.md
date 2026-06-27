@@ -703,9 +703,31 @@ at mastery; and grounding faithfulness is enforced and first-measured here.
   3. The dynamic flow is **resume-aware** (re-entering resumes correctly) and ends in **one quiet star** at mastery — no streaks, totals, or extra stars (DYN-02).
   4. Grounding faithfulness is **measurable and enforced** here — given a fixed scorer verdict, the harness flags any coaching that praises a failed stroke or names the wrong fix, and a faithfulness rate is reported (GROUND-03).
 
-**Plans**: TBD
+**Plans**: 7 plans
+
+Plans:
+
+**Wave 0**
+
+- [ ] 15-01-PLAN.md — Nyquist RED contract: all failing tests (server + Dart) + the PROVISIONAL baa curriculum graph asset (signedOff:false) + the owner-mother sign-off sheet (DYN-01/DYN-02/GROUND-03; D-04/D-05)
+
+**Wave 1** *(blocked on Wave 0)*
+
+- [ ] 15-02-PLAN.md — Server graph rail: derive the server graph copy via generate.py, load it in curriculum.py, G5/G6 guards + thickened plan prompt on top of G3/G4, server-side cleared-* FACTS fields (DYN-01; D-01/D-02/D-04)
+- [ ] 15-03-PLAN.md — Offline parity + mastery: pure-Dart CurriculumGraph + CurriculumGraphWalker (advance/remediate) + isMasteryMet (70/30, on-device star); backward remediation demoable offline (DYN-01/DYN-02; D-01/D-06/D-09)
+- [ ] 15-04-PLAN.md — Resume persistence: Drift LetterGraphPosition table + per-exercise clean-reps (v4→v5) + GraphPositionRepository + the Dart cleared-* FACTS fields (DYN-02; D-08)
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [ ] 15-05-PLAN.md — Dynamic flow integration: ExerciseSelector router (online↔offline) replaces the fixed section walk; mastery-gated quiet star; non-PII regression (DYN-01/DYN-02; D-02/D-06)
+- [ ] 15-06-PLAN.md — GROUND-03 faithfulness seed: model-free Python check flags praise-on-fail / wrong-fix + reports a rate (GROUND-03; D-10)
+
+**Wave 3** *(blocked on Waves 1-2 — human-gated)*
+
+- [ ] 15-07-PLAN.md — autonomous:false — owner-mother signs the curriculum graph at the tier level; flip signedOff:true; re-derive + re-deploy (DYN-01/DYN-02; D-05/D-07/D-11)
+
 **UI hint**: yes
-**Research hint**: no — runs on the Phase 13 harness + the Phase 14 spine; no new unknowns.
+**Research hint**: no — runs on the Phase 14 spine; the grounding harness is seeded here (the narrow GROUND-03 slice, D-10) rather than depending on the unrun Phase-13 bake-off.
 
 #### Phase 16: BUILD — presence + voice + eval gate + demo-harden
 
@@ -740,7 +762,7 @@ graceful offline/timeout fallback to the authored floor) on the **Pixel-Tablet b
 | 12. SPIKE — full-path latency & presence budget | 0/TBD | Not started | - |
 | 13. SPIKE — 3-way bake-off (grounding + Arabic) | 0/TBD | Not started | - |
 | 14. BUILD — TutorBrain spine + grounding invariant | 4/4 | Complete   | 2026-06-22 |
-| 15. BUILD — dynamic grounded exercise selection on baa | 0/TBD | Not started | - |
+| 15. BUILD — dynamic grounded exercise selection on baa | 0/7 | Planned | - |
 | 16. BUILD — presence + voice + eval gate + demo-harden | 0/TBD | Not started | - |
 
 **Coverage:** all 14 v2.0 requirements mapped across Phases 14–16; the three spikes (11–13) own no requirements by design. See REQUIREMENTS.md → v2.0 Traceability.
