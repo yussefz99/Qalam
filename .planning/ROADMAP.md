@@ -720,7 +720,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1)*
 
-- [ ] 15-05-PLAN.md — Dynamic flow integration: ExerciseSelector router (online↔offline) replaces the fixed section walk; mastery-gated quiet star; non-PII regression (DYN-01/DYN-02; D-02/D-06)
+- [x] 15-05-PLAN.md — Dynamic flow integration: ExerciseSelector router (online↔offline) replaces the fixed section walk; mastery-gated quiet star; non-PII regression (DYN-01/DYN-02; D-02/D-06)
 
 **Wave 3** *(blocked on Waves 1-2 — human-gated)*
 
@@ -762,7 +762,7 @@ graceful offline/timeout fallback to the authored floor) on the **Pixel-Tablet b
 | 12. SPIKE — full-path latency & presence budget | 0/TBD | Not started | - |
 | 13. SPIKE — 3-way bake-off (grounding + Arabic) | 0/TBD | Not started | - |
 | 14. BUILD — TutorBrain spine + grounding invariant | 4/4 | Complete   | 2026-06-22 |
-| 15. BUILD — dynamic grounded exercise selection on baa | 5/7 | In Progress|  |
+| 15. BUILD — dynamic grounded exercise selection on baa | 6/7 | In Progress|  |
 | 16. BUILD — presence + voice + eval gate + demo-harden | 0/TBD | Not started | - |
 
 **Coverage:** all 14 v2.0 requirements mapped across Phases 14–16; the three spikes (11–13) own no requirements by design. See REQUIREMENTS.md → v2.0 Traceability.

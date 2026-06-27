@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
-stopped_at: Phase 15 context gathered (discuss-phase complete)
-last_updated: "2026-06-27T15:25:22.335Z"
+stopped_at: Completed 15-05-PLAN.md
+last_updated: "2026-06-27T15:50:10.389Z"
 last_activity: 2026-06-27
 progress:
   total_phases: 20
   completed_phases: 13
   total_plans: 73
-  completed_plans: 70
+  completed_plans: 71
   percent: 65
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 15 (build-dynamic-grounded-exercise-selection-on-baa) — EXECUTING
-Plan: 6 of 7
+Plan: 7 of 7
 Status: Ready to execute
 Last activity: 2026-06-27
 Next: human UAT (run app with --dart-define=TUTOR_BASE_URL=<service URL>), then /gsd-verify-work 14 → mark complete; then /gsd-plan-phase 15
@@ -88,6 +88,7 @@ Next: human UAT (run app with --dart-define=TUTOR_BASE_URL=<service URL>), then 
 | Phase 15 P03 | 5min | 2 tasks | 4 files |
 | Phase 15 P04 | 10min | 2 tasks | 8 files |
 | Phase 15 P06 | 2min | 1 tasks | 1 files |
+| Phase 15 P05 | 16min | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -166,6 +167,9 @@ Recent decisions affecting current work:
 - [Phase ?]: [15-04]: cleared lists persist as JSON-encoded List<String> in a text column; GraphPosition value type lives in graph_position_repository.dart (not app_database.dart) so DB accessors stay primitive-typed — breaks the repo↔DB import cycle.
 - [Phase ?]: [15-04]: TutorFacts gains clearedTiers/clearedCompetencies (whitelisted non-PII string-lists), names mirror server/app/schema.py byte-for-byte (Pitfall 1, 422 lockstep — server side landed 15-02). Three exact-mirror field-set test assertions extended 8→10 fields; payload_nonpii_test extended in place. .g.dart files are TRACKED here, not gitignored. Server re-deploy gated to follow both wire sides landing.
 - [Phase 15]: [15-06]: GROUND-03 faithfulness check shipped — app/faithfulness.py is a deterministic, model-AGNOSTIC check (no model/auth/Firebase) scoring coaching against FIXED verdicts; _contradicts flags praise-on-fail (incl. Arabic أحسنت) + wrong-fix (omitted expected-fix token), BOTH gated on a FAIL so a faithful praising PASS is not flagged; evaluate_faithfulness returns {faithful,total,rate,flagged} (9/13=69.23%). Documented as a FLOOR not a ceiling (A6) — Phase 13/16 grow it into the Claude-vs-Gemini bake-off + calibrated judge. 15-01's fixture+test satisfied the contract unchanged.
+- [Phase ?]: [15-05]: exerciseSelectorProvider is the SELECTION switch point (sibling of tutorBrainFactoryProvider); RouterExerciseSelector accepts the agent plan.nextExerciseId ONLY when graph-legal (CurriculumGraph.isLegalSelection = authored+reachableTiers+prerequisitesMet, the pure-Dart client mirror of the server G5/G6), else delegates to CurriculumGraphWalker. Selection degrades on a SEPARATE axis from coaching (Pitfall 5); the agent's choice is UNTRUSTED (T-15-05-T).
+- [Phase ?]: [15-05]: LetterUnitController rewired — durable Drift resume via graphPositionRepository (getPosition Future, Pitfall 6) replaces the in-memory _resumeByLetter; the state.atMastery->recordMastery(cleanReps:0) navigation auto-write is DELETED; recordMasteryIfMet gates the star strictly on isMasteryMet over the essential 70/30 core (D-06/Pitfall 2). Rich Phase-07 section widgets KEPT (no wholesale UI replacement); the controller is the unit-level selection+mastery driver.
+- [Phase ?]: [15-05]: provider named lib/tutor/exercise_selector_provider.dart with top-level exerciseSelectorProvider to MATCH the 15-01 RED contract exactly (zero test edits), reconciling vs the plan's selection_providers.dart. The ExerciseSelector seam gained an optional decision param (offline walker ignores it). Server test_payload_nonpii.py extended over the two graph-position fields; the Dart side was already done by 15-04 (verified green, not re-touched).
 
 ### Pending Todos
 
@@ -201,6 +205,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-27T15:25:07.604Z
-Stopped at: Phase 15 context gathered (discuss-phase complete)
+Last session: 2026-06-27T15:50:10.383Z
+Stopped at: Completed 15-05-PLAN.md
 Resume files: .planning/phases/06.1-firebase-curriculum-backend/06.1-05-PLAN.md (next), .planning/phases/06.1-firebase-curriculum-backend/06.1-03-PLAN.md (pending), .planning/phases/06.1-firebase-curriculum-backend/06.1-04-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
