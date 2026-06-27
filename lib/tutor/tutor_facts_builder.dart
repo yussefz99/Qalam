@@ -21,12 +21,21 @@ import 'tutor_facts.dart';
 /// the tutor's attention), most-recent-first. `strengthTags` are the inverse —
 /// the sections passed cleanly (with no miss) across the [trajectory]. Both are
 /// pure + deterministic, no PII.
+///
+/// [clearedTiers] / [clearedCompetencies] are the child's durable graph-position
+/// state, read from the Drift `LetterGraphPosition` on resume (D-08 trajectory
+/// replay) — pure non-PII id strings. They are passed straight through (no
+/// derivation): the source of truth is the persisted position, not the session.
+/// They mirror `TutorFactsIn.clearedTiers`/`clearedCompetencies`
+/// (`server/app/schema.py`) byte-for-byte — the 422 lockstep (Pitfall 1).
 TutorFacts buildTutorFacts({
   required String letterId,
   required String section,
   required CheckResult result,
   List<String> recentMistakes = const [],
   List<AttemptFact> trajectory = const [],
+  List<String> clearedTiers = const [],
+  List<String> clearedCompetencies = const [],
 }) {
   return TutorFacts(
     letterId: letterId,
@@ -37,6 +46,8 @@ TutorFacts buildTutorFacts({
     strengthTags: _deriveStrengthTags(trajectory),
     recentMistakes: List<String>.unmodifiable(recentMistakes),
     trajectory: List<AttemptFact>.unmodifiable(trajectory),
+    clearedTiers: List<String>.unmodifiable(clearedTiers),
+    clearedCompetencies: List<String>.unmodifiable(clearedCompetencies),
   );
 }
 

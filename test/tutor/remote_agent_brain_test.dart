@@ -179,7 +179,8 @@ void main() {
 
     final sentBody = jsonDecode(captured.body) as Map<String, Object?>;
     // Byte-for-byte the non-PII whitelist — no extra key that would 422 under
-    // the server's extra=forbid.
+    // the server's extra=forbid. The two Phase-15 graph-position fields
+    // (clearedTiers/clearedCompetencies) mirror server/app/schema.py (Pitfall 1).
     expect(sentBody, facts.toJson());
     expect(sentBody.keys.toSet(), {
       'letterId',
@@ -190,6 +191,8 @@ void main() {
       'recentMistakes',
       'trajectory',
       'strengthTags',
+      'clearedTiers',
+      'clearedCompetencies',
     });
   });
 }

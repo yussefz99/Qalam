@@ -29,6 +29,10 @@ const _whitelist = <String>{
   'strengthTags',
   'recentMistakes',
   'trajectory',
+  // Phase 15 (15-04): the graph-position fields — pure non-PII id string-lists
+  // mirroring server/app/schema.py TutorFactsIn (Pitfall 1 — the 422 lockstep).
+  'clearedTiers',
+  'clearedCompetencies',
 };
 
 /// Matches a key that would smell like raw stroke geometry or PII.
@@ -187,8 +191,11 @@ void main() {
         trajectory: const [
           AttemptFact(passed: false, mistakeId: 'shallowBowl', section: 'traceLetter'),
         ],
+        clearedTiers: const ['manqul'],
+        clearedCompetencies: const ['recognize'],
       );
-      // The 8 base TutorFactsIn fields, exactly — no more, no fewer.
+      // The 10 TutorFactsIn fields, exactly — the 8 base + the two Phase-15
+      // graph-position fields — no more, no fewer (Pitfall 1: extra=forbid).
       expect(
         facts.toJson().keys.toSet(),
         {
@@ -200,8 +207,13 @@ void main() {
           'recentMistakes',
           'trajectory',
           'strengthTags',
+          'clearedTiers',
+          'clearedCompetencies',
         },
       );
+      // The two new fields are pure string-lists, threaded straight through.
+      expect(facts.toJson()['clearedTiers'], const ['manqul']);
+      expect(facts.toJson()['clearedCompetencies'], const ['recognize']);
       // Each AttemptFactIn carries exactly {passed, mistakeId, section}.
       final entry = (facts.toJson()['trajectory'] as List).first as Map;
       expect(entry.keys.toSet(), {'passed', 'mistakeId', 'section'});

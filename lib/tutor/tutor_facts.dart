@@ -17,11 +17,13 @@
 /// of truth) field-for-field, so the server's `extra="forbid"` never 422s a legit
 /// enlarged payload.
 ///
-/// GROUND-02 / non-PII guard: [toMap] / [toJson] emit ONLY the eight whitelisted
-/// scalar / string-list / derived-record fields below. A unit test asserts the
-/// serialized payload (recursing into the trajectory records) carries no
-/// coordinate/PII key (a real `x`/`y`/`strokes`/`offset`/`childName` key trips
-/// the guard; the legit `trajectory`/`strengthTags` pass it). Because the builder
+/// GROUND-02 / non-PII guard: [toMap] / [toJson] emit ONLY the ten whitelisted
+/// scalar / string-list / derived-record fields below (the eight base fields plus
+/// the two Phase-15 graph-position fields `clearedTiers`/`clearedCompetencies`).
+/// A unit test asserts the serialized payload (recursing into the trajectory
+/// records) carries no coordinate/PII key (a real `x`/`y`/`strokes`/`offset`/
+/// `childName` key trips the guard; the legit `trajectory`/`strengthTags`/
+/// `clearedTiers`/`clearedCompetencies` pass it). Because the builder
 /// ([buildTutorFacts]) is the only constructor path callers use and its signature
 /// accepts no stroke/Offset parameter, raw geometry physically cannot reach the
 /// model.
@@ -74,6 +76,8 @@ class TutorFacts {
     this.strengthTags = const [],
     this.recentMistakes = const [],
     this.trajectory = const [],
+    this.clearedTiers = const [],
+    this.clearedCompetencies = const [],
   });
 
   /// The letter family this moment belongs to (e.g. `baa`).
@@ -105,11 +109,24 @@ class TutorFacts {
   /// per-attempt records (`{passed, mistakeId, section}`). Never raw geometry.
   final List<AttemptFact> trajectory;
 
-  /// The whitelisted serialized form. Emits ONLY the eight derived fields — no
-  /// raw strokes, no PII. This is the exact shape that crosses the network as the
-  /// `/coach` request body; its keys + casing mirror the deployed server
-  /// `TutorFactsIn` (`server/app/schema.py`) so `extra="forbid"` returns 200, not
-  /// 422 (GROUND-02).
+  /// The إملاء difficulty tiers the child has cleared (e.g. `['manqul','manzur']`)
+  /// — read from the durable Drift graph position on resume (D-08 trajectory
+  /// replay), so the agent's reasoning resumes where it left off. Pure non-PII
+  /// tier-id strings; mirrors `TutorFactsIn.clearedTiers` (`server/app/schema.py`)
+  /// byte-for-byte (Pitfall 1 — the 422 trap under `extra="forbid"`).
+  final List<String> clearedTiers;
+
+  /// The curriculum-graph competencies the child has cleared (e.g.
+  /// `['recognize','positionalForms']`) — read from the durable Drift graph
+  /// position on resume. Pure non-PII competency-id strings; mirrors
+  /// `TutorFactsIn.clearedCompetencies` (`server/app/schema.py`) byte-for-byte.
+  final List<String> clearedCompetencies;
+
+  /// The whitelisted serialized form. Emits ONLY the ten derived fields (the
+  /// eight base + `clearedTiers`/`clearedCompetencies`) — no raw strokes, no PII.
+  /// This is the exact shape that crosses the network as the `/coach` request
+  /// body; its keys + casing mirror the deployed server `TutorFactsIn`
+  /// (`server/app/schema.py`) so `extra="forbid"` returns 200, not 422 (GROUND-02).
   Map<String, Object?> toMap() => {
         'letterId': letterId,
         'section': section,
@@ -119,6 +136,8 @@ class TutorFacts {
         'recentMistakes': recentMistakes,
         'trajectory': [for (final a in trajectory) a.toMap()],
         'strengthTags': strengthTags,
+        'clearedTiers': clearedTiers,
+        'clearedCompetencies': clearedCompetencies,
       };
 
   /// Alias of [toMap] — same whitelisted shape.

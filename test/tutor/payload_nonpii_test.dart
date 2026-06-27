@@ -25,7 +25,7 @@ import 'package:qalam/tutor/tutor_facts.dart';
 /// is a leak the guard must catch. Mirrors the server `TutorFactsIn` /
 /// `AttemptFactIn` field set (`server/app/schema.py`) exactly.
 const _whitelist = <String>{
-  // TutorFactsIn (the 6 base + 2 enlarged fields).
+  // TutorFactsIn (the 6 base + 2 enlarged + 2 graph-position fields).
   'letterId',
   'section',
   'passed',
@@ -34,6 +34,10 @@ const _whitelist = <String>{
   'recentMistakes',
   'trajectory',
   'strengthTags',
+  // Phase 15 (15-04): the graph-position fields — pure non-PII id string-lists
+  // mirroring server/app/schema.py TutorFactsIn (Pitfall 1 — the 422 lockstep).
+  'clearedTiers',
+  'clearedCompetencies',
   // AttemptFactIn (nested trajectory record keys) — passed/mistakeId/section
   // overlap the base set above, all already whitelisted.
 };
@@ -84,6 +88,8 @@ TutorFacts _fullyPopulatedFacts() => const TutorFacts(
         AttemptFact(passed: false, mistakeId: 'noDot', section: 'traceLetter'),
         AttemptFact(passed: true, mistakeId: null, section: 'writeWord'),
       ],
+      clearedTiers: ['manqul', 'manzur'],
+      clearedCompetencies: ['recognize', 'positionalForms'],
     );
 
 void main() {
