@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
 stopped_at: Phase 15 context gathered (discuss-phase complete)
-last_updated: "2026-06-27T15:19:26.962Z"
+last_updated: "2026-06-27T15:25:22.335Z"
 last_activity: 2026-06-27
 progress:
   total_phases: 20
   completed_phases: 13
   total_plans: 73
-  completed_plans: 69
+  completed_plans: 70
   percent: 65
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 15 (build-dynamic-grounded-exercise-selection-on-baa) — EXECUTING
-Plan: 5 of 7
+Plan: 6 of 7
 Status: Ready to execute
 Last activity: 2026-06-27
 Next: human UAT (run app with --dart-define=TUTOR_BASE_URL=<service URL>), then /gsd-verify-work 14 → mark complete; then /gsd-plan-phase 15
@@ -87,6 +87,7 @@ Next: human UAT (run app with --dart-define=TUTOR_BASE_URL=<service URL>), then 
 | Phase 15 P02 | 7min | 2 tasks | 7 files |
 | Phase 15 P03 | 5min | 2 tasks | 4 files |
 | Phase 15 P04 | 10min | 2 tasks | 8 files |
+| Phase 15 P06 | 2min | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -164,6 +165,7 @@ Recent decisions affecting current work:
 - [Phase ?]: [15-04]: Drift resume GREEN — LetterGraphPosition table (durable cursor, D-08) + LetterExerciseReps sibling composite-PK table (Open Q3: per-essential-exercise clean-reps for isMasteryMet, lower-migration-risk than a LetterReps PK rebuild) at schema v5; version-guarded idempotent v4→v5 onUpgrade; getPosition Future not stream (Pitfall 6); no-position reads null (clean graph-root start). GraphPositionRepository mirrors DriftProgressRepository.
 - [Phase ?]: [15-04]: cleared lists persist as JSON-encoded List<String> in a text column; GraphPosition value type lives in graph_position_repository.dart (not app_database.dart) so DB accessors stay primitive-typed — breaks the repo↔DB import cycle.
 - [Phase ?]: [15-04]: TutorFacts gains clearedTiers/clearedCompetencies (whitelisted non-PII string-lists), names mirror server/app/schema.py byte-for-byte (Pitfall 1, 422 lockstep — server side landed 15-02). Three exact-mirror field-set test assertions extended 8→10 fields; payload_nonpii_test extended in place. .g.dart files are TRACKED here, not gitignored. Server re-deploy gated to follow both wire sides landing.
+- [Phase 15]: [15-06]: GROUND-03 faithfulness check shipped — app/faithfulness.py is a deterministic, model-AGNOSTIC check (no model/auth/Firebase) scoring coaching against FIXED verdicts; _contradicts flags praise-on-fail (incl. Arabic أحسنت) + wrong-fix (omitted expected-fix token), BOTH gated on a FAIL so a faithful praising PASS is not flagged; evaluate_faithfulness returns {faithful,total,rate,flagged} (9/13=69.23%). Documented as a FLOOR not a ceiling (A6) — Phase 13/16 grow it into the Claude-vs-Gemini bake-off + calibrated judge. 15-01's fixture+test satisfied the contract unchanged.
 
 ### Pending Todos
 
@@ -199,6 +201,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-27T15:19:26.957Z
+Last session: 2026-06-27T15:25:07.604Z
 Stopped at: Phase 15 context gathered (discuss-phase complete)
 Resume files: .planning/phases/06.1-firebase-curriculum-backend/06.1-05-PLAN.md (next), .planning/phases/06.1-firebase-curriculum-backend/06.1-03-PLAN.md (pending), .planning/phases/06.1-firebase-curriculum-backend/06.1-04-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)

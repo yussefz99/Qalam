@@ -716,7 +716,7 @@ Plans:
 - [x] 15-02-PLAN.md — Server graph rail: derive the server graph copy via generate.py, load it in curriculum.py, G5/G6 guards + thickened plan prompt on top of G3/G4, server-side cleared-* FACTS fields (DYN-01; D-01/D-02/D-04)
 - [x] 15-03-PLAN.md — Offline parity + mastery: pure-Dart CurriculumGraph + CurriculumGraphWalker (advance/remediate) + isMasteryMet (70/30, on-device star); backward remediation demoable offline (DYN-01/DYN-02; D-01/D-06/D-09)
 - [x] 15-04-PLAN.md — Resume persistence: Drift LetterGraphPosition table + per-exercise clean-reps (v4→v5) + GraphPositionRepository + the Dart cleared-* FACTS fields (DYN-02; D-08)
-- [ ] 15-06-PLAN.md — GROUND-03 faithfulness seed: model-free Python check flags praise-on-fail / wrong-fix + reports a rate (GROUND-03; D-10)
+- [x] 15-06-PLAN.md — GROUND-03 faithfulness seed: model-free Python check flags praise-on-fail / wrong-fix + reports a rate (GROUND-03; D-10)
 
 **Wave 2** *(blocked on Wave 1)*
 
@@ -762,7 +762,7 @@ graceful offline/timeout fallback to the authored floor) on the **Pixel-Tablet b
 | 12. SPIKE — full-path latency & presence budget | 0/TBD | Not started | - |
 | 13. SPIKE — 3-way bake-off (grounding + Arabic) | 0/TBD | Not started | - |
 | 14. BUILD — TutorBrain spine + grounding invariant | 4/4 | Complete   | 2026-06-22 |
-| 15. BUILD — dynamic grounded exercise selection on baa | 4/7 | In Progress|  |
+| 15. BUILD — dynamic grounded exercise selection on baa | 5/7 | In Progress|  |
 | 16. BUILD — presence + voice + eval gate + demo-harden | 0/TBD | Not started | - |
 
 **Coverage:** all 14 v2.0 requirements mapped across Phases 14–16; the three spikes (11–13) own no requirements by design. See REQUIREMENTS.md → v2.0 Traceability.

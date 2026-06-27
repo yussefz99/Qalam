@@ -91,7 +91,7 @@ numbering from the v1 roadmap (start at Phase 11). Traceability filled by the v2
   - *Accept:* the pass/fail + star is decided by the deterministic scorer at the `ExerciseController` seam; the agent only supplies the displayed line; no agent path can flip a fail to a pass
 - [ ] **GROUND-02**: Only derived, non-PII facts (mistakeId, struggle tags, letterId) ever cross the network — never raw strokes, never nickname/PII — enforced automatically
   - *Accept:* a guard/test fails the build if raw stroke coordinates or any PII field can reach the network payload
-- [ ] **GROUND-03**: Grounding faithfulness is measurable — the harness detects any model claim that contradicts the geometry
+- [x] **GROUND-03**: Grounding faithfulness is measurable — the harness detects any model claim that contradicts the geometry
   - *Accept:* given a fixed scorer verdict, the harness flags coaching that praises a failed stroke or names the wrong fix; a faithfulness rate is reported
 
 ### Dynamic Teaching
