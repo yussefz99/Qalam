@@ -716,11 +716,11 @@ Plans:
 - [ ] 15-02-PLAN.md — Server graph rail: derive the server graph copy via generate.py, load it in curriculum.py, G5/G6 guards + thickened plan prompt on top of G3/G4, server-side cleared-* FACTS fields (DYN-01; D-01/D-02/D-04)
 - [ ] 15-03-PLAN.md — Offline parity + mastery: pure-Dart CurriculumGraph + CurriculumGraphWalker (advance/remediate) + isMasteryMet (70/30, on-device star); backward remediation demoable offline (DYN-01/DYN-02; D-01/D-06/D-09)
 - [ ] 15-04-PLAN.md — Resume persistence: Drift LetterGraphPosition table + per-exercise clean-reps (v4→v5) + GraphPositionRepository + the Dart cleared-* FACTS fields (DYN-02; D-08)
+- [ ] 15-06-PLAN.md — GROUND-03 faithfulness seed: model-free Python check flags praise-on-fail / wrong-fix + reports a rate (GROUND-03; D-10)
 
 **Wave 2** *(blocked on Wave 1)*
 
 - [ ] 15-05-PLAN.md — Dynamic flow integration: ExerciseSelector router (online↔offline) replaces the fixed section walk; mastery-gated quiet star; non-PII regression (DYN-01/DYN-02; D-02/D-06)
-- [ ] 15-06-PLAN.md — GROUND-03 faithfulness seed: model-free Python check flags praise-on-fail / wrong-fix + reports a rate (GROUND-03; D-10)
 
 **Wave 3** *(blocked on Waves 1-2 — human-gated)*
 

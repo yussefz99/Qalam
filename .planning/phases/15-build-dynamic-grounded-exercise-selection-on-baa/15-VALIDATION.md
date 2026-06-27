@@ -58,7 +58,7 @@ created: 2026-06-27
 | GROUND-03 | The check flags coaching that praises a failed stroke | server unit | `uv run pytest tests/test_faithfulness.py::test_flags_praise_on_fail -q` | ❌ W0 | ⬜ pending |
 | GROUND-03 | The check flags coaching that names the wrong fix | server unit | `uv run pytest tests/test_faithfulness.py::test_flags_wrong_fix -q` | ❌ W0 | ⬜ pending |
 | GROUND-03 | The check reports a faithfulness RATE (printed/asserted) | server unit | `uv run pytest tests/test_faithfulness.py::test_faithfulness_rate_reported -s -q` | ❌ W0 | ⬜ pending |
-| GROUND-02 (regression) | Enlarged FACTS (clearedTiers/clearedCompetencies) carry no PII/strokes | client + server | extend `test/tutor/payload_nonpii_test.dart` + `server/tests/test_payload_nonpii.py` | ✅ | ⬜ pending |
+| GROUND-02 (regression) | Enlarged FACTS (clearedTiers/clearedCompetencies) carry no PII/strokes | client + server | extend `test/tutor/payload_nonpii_test.dart` + `server/tests/test_payload_nonpii.py` (Wave-2, owned by 15-05) | ✅ | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -71,8 +71,9 @@ created: 2026-06-27
 - [ ] `test/curriculum/curriculum_graph_test.dart`, `curriculum_graph_walker_test.dart`, `mastery_condition_test.dart` — the pure-Dart graph/walker/mastery
 - [ ] `test/data/graph_position_repository_test.dart` — D-08 resume (simulated-restart shape, mirrors Phase 09's persisted-cooldown test)
 - [ ] `test/features/letter_unit/dynamic_selection_test.dart` — DYN-02 end-to-end dynamic flow
-- [ ] Extend `payload_nonpii_test.dart` / `test_payload_nonpii.py` for the two new FACTS fields
 - [ ] Framework install: none (pytest + flutter_test both present)
+
+> Not a Wave-0 item: the non-PII regression over the two new FACTS fields is an **extend-in-place of pre-existing green tests** (`test/tutor/payload_nonpii_test.dart` + `server/tests/test_payload_nonpii.py` both already exist and pass), **owned by 15-05 in Wave 2** — it adds `clearedTiers`/`clearedCompetencies` to the existing whitelist + DTO assertions and keeps them green. It is NOT a new Wave-0 RED stub (it appears correctly in the per-task map above, tagged Wave-2/15-05).
 
 ---
 

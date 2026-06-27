@@ -510,22 +510,27 @@ String? selectNext(TutorFacts facts, GraphPosition pos) {
 
 **This table is non-empty because the curriculum graph is NEW pedagogy (owner-mother's domain) — A1/A2/A3 are exactly the items her sign-off resolves (D-05). The planner must gate them behind a human-verify checkpoint, not treat them as locked.**
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Where does selection get invoked in the section flow?**
    - What we know: `ExerciseScaffold._onResult` is the per-attempt seam where the verdict is scored and `brain.next(facts)` is called for COACHING. The fixed walk advances via `onAdvance`/`onNext` callbacks the *section* widgets fire.
    - What's unclear: whether Phase 15 drives selection at the *unit* level (replace `LetterUnitScreen._section`'s section switch with a single config-presenter fed by the selector) or threads selection through the existing section widgets.
    - Recommendation: drive at the unit level — replace the fixed `_section(index)` switch with a single "present the selected exercise config" surface fed by the `ExerciseSelector`. This is the cleanest "replace the fixed walk end-to-end" (DYN-02) and reuses `ExerciseScaffold` (already config-driven). The planner should confirm against `letter_unit_screen.dart` section wiring.
+   - **RESOLVED: drive selection at the UNIT level — `letter_unit_screen.dart`'s `_section(index)` switch is replaced by a single config-presenter fed by the `ExerciseSelector` router (see plan 15-05, Task 2; the router itself is plan 15-05, Task 1).**
 
 2. **Does the agent's `present_activity.letter_id` carry an EXERCISE id or a SECTION id?**
    - What we know: `is_authored` accepts BOTH section ids and exercise ids (`curriculum.py` docstring). The plan node emits `next_exercise_id` (an exercise id); `present_activity` takes `letter_id` (named loosely).
    - What's unclear: which the dispatcher should present in the dynamic flow.
    - Recommendation: standardize on EXERCISE ids for selection (the graph nodes are exercises). Keep section ids valid for `present_activity` for backward compatibility, but the graph rail and walker operate on exercise ids.
+   - **RESOLVED: selection standardizes on EXERCISE ids — the graph nodes are exercises, the server rail keys on exercise ids (see plan 15-02), and the offline walker keys on exercise ids (see plan 15-03); section ids stay valid for `present_activity` for backward compatibility.**
 
 3. **Clean-rep accounting per exercise for the mastery condition.**
    - What we know: `LetterReps` stores ONE `cleanReps` per `letterId` (not per exercise); `ExerciseController` tracks per-exercise reps in-memory only.
    - What's unclear: D-06 needs per-essential-exercise clean-reps to evaluate mastery; the current Drift schema is per-letter.
    - Recommendation: persist clean-reps per exercise (extend `LetterReps` to key on `(letterId, exerciseId)` or add a column) so `isMasteryMet` can read them after a restart. The planner should decide the exact shape; flag as a schema concern alongside the position table.
+   - **RESOLVED: persist clean-reps PER EXERCISE in Drift (composite `(letterId, exerciseId)` key or a sibling table — the executor picks the lower-migration-risk shape and records it in the SUMMARY) so `isMasteryMet` reads them after a restart (see plan 15-04, Task 1, alongside the `LetterGraphPosition` table).**
+
+> Assumption A4 (Dockerfile/`.dockerignore` ships the derived `curriculum_data/curriculum_graph.json`) is **CONFIRMED** in plan 15-02, Task 1 (the Dockerfile copies the whole `app/` package and `.dockerignore` does not exclude the derived graph). RESEARCH already records A4 as verified during planning.
 
 ## Environment Availability
 
