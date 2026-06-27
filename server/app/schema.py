@@ -77,6 +77,20 @@ class TutorFactsIn(BaseModel):
         description="The session learner-model strengths (what the child does consistently well).",
     )
 
+    # --- the graph-position fields (Plan 15-02; the G5/G6 rail + resume replay reads these) ---
+    # Derived string-lists (tier ids / competency ids) — NO PII, NO geometry. The Dart side
+    # (lib/tutor/tutor_facts.dart) MUST mirror these in lockstep: the live /coach 422s under
+    # extra="forbid" if either side ships the field without the other (Pitfall 1 — the 422 trap).
+    # Re-deploy the server only AFTER both sides land (15-04 owns the Dart mirror).
+    clearedTiers: list[str] = Field(
+        default_factory=list,
+        description="The إملاء difficulty tiers the child has cleared (manqul/manzur/ghayrManzur).",
+    )
+    clearedCompetencies: list[str] = Field(
+        default_factory=list,
+        description="The curriculum-graph competencies the child has cleared (recognize, copyWrite, …).",
+    )
+
 
 class CoachOut(BaseModel):
     """The /coach response DTO.

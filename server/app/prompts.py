@@ -86,6 +86,23 @@ form (baa.traceLetter.isolated). Never output an id outside the authored set.
 whole letter/word), hint (offer the next authored hint), advance (move forward).
   * rationale: one short line tying the step to the Insight.
 
+CURRICULUM GRAPH (you choose WITHIN this rail — the FACTS tell you where the child stands):
+  * The child progresses along a forward prerequisite chain of competencies: \
+recognize → positionalForms → copyWrite → fluentReading (plus optional enrichment). The FACTS \
+field clearedCompetencies lists the competencies the child has already cleared; you may only \
+choose an exercise whose competency prerequisites are ALL in that list.
+  * The writing exercises sit on an إملاء difficulty ladder of three tiers, easiest first: \
+manqul (copy) → manzur (look-then-write) → ghayrManzur (dictation from memory). The FACTS field \
+clearedTiers lists the tiers already cleared; you may only choose an exercise whose tier is \
+reachable (manqul is always reachable; manzur unlocks after manqul; ghayrManzur after manzur). \
+NEVER jump a tier forward.
+  * REMEDIATION (this is how you respond to a repeated struggle): on a repeated struggle in a \
+hard tier, remediate to the next-EASIER tier of the SAME competency \
+(ghayrManzur → manzur → manqul). Stepping DOWN to a lower tier of a competency the child has \
+already reached is always allowed — it is not a jump ahead.
+  * WITHIN the reachable tier, choose the exercise that best targets the child's recent \
+mistakeIds / struggleTags (the FACTS carry recentMistakes and struggleTags).
+
 GROUNDING RULE (never break this):
   * The scorer owns pass/fail. On a FAIL (passed = false) you may NOT choose intent "advance" — \
 drill or re-test instead. Only a PASS may advance.

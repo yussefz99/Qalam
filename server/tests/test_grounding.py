@@ -17,9 +17,10 @@ import pytest
 pytestmark = pytest.mark.code
 
 from app.graph import build_graph
+from app.nodes import StructuredOutputError
 from app.nodes.analyze import Insight
 from app.nodes.coach import coach
-from app.nodes.plan import Plan
+from app.nodes.plan import Plan, plan
 from app.tools import ACTION_TOOL_NAMES
 
 
@@ -154,6 +155,34 @@ def test_coach_present_activity_authored_allowed(monkeypatch):
     out = coach({"facts": FAIL_FACTS})
     assert out["decision"]["name"] == "present_activity"  # authored id passes
     assert out["grounded"] is True
+
+
+# --- G4 on the plan node: an unauthored next_exercise_id is rejected (graph guards present) ---
+
+
+def test_plan_unauthored_id_rejected_by_g4(monkeypatch):
+    """G4 stays the inner membership guard on the plan node even with the G5/G6 graph rail added:
+    a fabricated next_exercise_id fails closed BEFORE the graph guards ever look at it."""
+    import app.nodes.plan as plan_mod
+
+    monkeypatch.setattr(
+        plan_mod,
+        "build_plan_model",
+        lambda: _FakeModel(
+            Plan(
+                next_exercise_id="baa.fake.exercise",  # not in AUTHORED_BAA_IDS
+                intent="drill_isolated",
+                rationale="fabricated id",
+            )
+        ),
+    )
+    facts = {
+        **FAIL_FACTS,
+        "clearedTiers": ["manqul", "manzur"],
+        "clearedCompetencies": ["recognize", "positionalForms"],
+    }
+    with pytest.raises(StructuredOutputError):
+        plan({"facts": facts, "insight": {}})
 
 
 # --- Full-graph routing: analyze -> coach on a clean pass; analyze -> plan -> coach else ---
