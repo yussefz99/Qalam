@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
 stopped_at: Phase 15 context gathered (discuss-phase complete)
-last_updated: "2026-06-27T15:03:28.242Z"
+last_updated: "2026-06-27T15:19:26.962Z"
 last_activity: 2026-06-27
 progress:
   total_phases: 20
   completed_phases: 13
   total_plans: 73
-  completed_plans: 68
+  completed_plans: 69
   percent: 65
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 15 (build-dynamic-grounded-exercise-selection-on-baa) — EXECUTING
-Plan: 4 of 7
+Plan: 5 of 7
 Status: Ready to execute
 Last activity: 2026-06-27
 Next: human UAT (run app with --dart-define=TUTOR_BASE_URL=<service URL>), then /gsd-verify-work 14 → mark complete; then /gsd-plan-phase 15
@@ -86,6 +86,7 @@ Next: human UAT (run app with --dart-define=TUTOR_BASE_URL=<service URL>), then 
 | Phase 15 P01 | 8min | 3 tasks | 10 files |
 | Phase 15 P02 | 7min | 2 tasks | 7 files |
 | Phase 15 P03 | 5min | 2 tasks | 4 files |
+| Phase 15 P04 | 10min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -160,6 +161,9 @@ Recent decisions affecting current work:
 - [Phase ?]: [15-02]: TutorFactsIn gains clearedTiers/clearedCompetencies (extra=forbid). Backward-compatible (default []) + rail no-op on empty → a standalone server re-deploy is SAFE; the 422 trap (Pitfall 1) is the FORWARD direction — re-deploy server BEFORE 15-04's Dart fields ship.
 - [Phase ?]: [15-03]: Offline-parity GREEN — pure-Dart CurriculumGraph.fromJson (essentialNodes 70/30, tierOf, nextForward declaration-order walk, remediateOneTier=first same-competency node one tier down ghayrManzur→manzur→manqul, null at floor) + CurriculumGraphWalker implements ExerciseSelector{selectNext(TutorFacts,GraphPosition)}: pass→nextForward, fail→remediateOneTier ?? drill-in-place. GraphNode.essential derived from competency at parse. Never the old linear order (Pitfall 5/D-09).
 - [Phase ?]: [15-03]: isMasteryMet (D-06) is the on-device star condition — pure over Map<String,int> clean-reps on ESSENTIAL nodes only (missing key=0 reps → clicked-through unit never earns the star, Pitfall 2; enrichment never gates). Never reads a server CoachOut (ADR-014 trust boundary). lib/curriculum gets a SEPARATE stricter import ban (cloud/Firebase/flutter-render/drift/riverpod) layered over the shared durable-layer scan, since lib/data legitimately needs Firebase/drift but lib/curriculum must not.
+- [Phase ?]: [15-04]: Drift resume GREEN — LetterGraphPosition table (durable cursor, D-08) + LetterExerciseReps sibling composite-PK table (Open Q3: per-essential-exercise clean-reps for isMasteryMet, lower-migration-risk than a LetterReps PK rebuild) at schema v5; version-guarded idempotent v4→v5 onUpgrade; getPosition Future not stream (Pitfall 6); no-position reads null (clean graph-root start). GraphPositionRepository mirrors DriftProgressRepository.
+- [Phase ?]: [15-04]: cleared lists persist as JSON-encoded List<String> in a text column; GraphPosition value type lives in graph_position_repository.dart (not app_database.dart) so DB accessors stay primitive-typed — breaks the repo↔DB import cycle.
+- [Phase ?]: [15-04]: TutorFacts gains clearedTiers/clearedCompetencies (whitelisted non-PII string-lists), names mirror server/app/schema.py byte-for-byte (Pitfall 1, 422 lockstep — server side landed 15-02). Three exact-mirror field-set test assertions extended 8→10 fields; payload_nonpii_test extended in place. .g.dart files are TRACKED here, not gitignored. Server re-deploy gated to follow both wire sides landing.
 
 ### Pending Todos
 
@@ -195,6 +199,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-27T15:02:32.632Z
+Last session: 2026-06-27T15:19:26.957Z
 Stopped at: Phase 15 context gathered (discuss-phase complete)
 Resume files: .planning/phases/06.1-firebase-curriculum-backend/06.1-05-PLAN.md (next), .planning/phases/06.1-firebase-curriculum-backend/06.1-03-PLAN.md (pending), .planning/phases/06.1-firebase-curriculum-backend/06.1-04-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
