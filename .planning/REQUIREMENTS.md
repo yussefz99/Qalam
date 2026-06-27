@@ -98,7 +98,7 @@ numbering from the v1 roadmap (start at Phase 11). Traceability filled by the v2
 
 - [x] **DYN-01**: The agent selects the next exercise from baa's authored configs, reasoning about the child's recent mistakes; the curriculum rails the choices
   - *Accept:* the agent can only pick valid, signed-off baa configs; its choice visibly responds to recent mistakeIds/struggles, not a fixed order
-- [ ] **DYN-02**: The dynamic, resume-aware flow replaces the fixed section walk for the baa unit end-to-end
+- [x] **DYN-02**: The dynamic, resume-aware flow replaces the fixed section walk for the baa unit end-to-end
   - *Accept:* entering the baa unit runs the agent-driven flow (not `LetterUnitController`'s static sequence); resume still works; one quiet star at mastery
 
 ### Presence & Voice
