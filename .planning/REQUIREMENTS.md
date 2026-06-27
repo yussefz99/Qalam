@@ -206,9 +206,9 @@ Phases 11–13 are **spikes** — de-risking investigations that own **no requir
 | TUTOR-05 | Phase 14 — TutorBrain spine + grounding invariant | Pending |
 | GROUND-01 | Phase 14 — TutorBrain spine + grounding invariant | Pending |
 | GROUND-02 | Phase 14 — TutorBrain spine + grounding invariant | Pending |
-| DYN-01 | Phase 15 — Dynamic grounded exercise selection on baa | Pending |
-| DYN-02 | Phase 15 — Dynamic grounded exercise selection on baa | Pending |
-| GROUND-03 | Phase 15 — Dynamic grounded exercise selection on baa | Pending |
+| DYN-01 | Phase 15 — Dynamic grounded exercise selection on baa | In Progress |
+| DYN-02 | Phase 15 — Dynamic grounded exercise selection on baa | In Progress |
+| GROUND-03 | Phase 15 — Dynamic grounded exercise selection on baa | In Progress |
 | PRES-01 | Phase 16 — Presence + voice + eval gate + demo-harden | Pending |
 | PRES-02 | Phase 16 — Presence + voice + eval gate + demo-harden | Pending |
 | EVAL-01 | Phase 16 — Presence + voice + eval gate + demo-harden | Pending |

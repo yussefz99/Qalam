@@ -709,7 +709,7 @@ Plans:
 
 **Wave 0**
 
-- [ ] 15-01-PLAN.md — Nyquist RED contract: all failing tests (server + Dart) + the PROVISIONAL baa curriculum graph asset (signedOff:false) + the owner-mother sign-off sheet (DYN-01/DYN-02/GROUND-03; D-04/D-05)
+- [x] 15-01-PLAN.md — Nyquist RED contract: all failing tests (server + Dart) + the PROVISIONAL baa curriculum graph asset (signedOff:false) + the owner-mother sign-off sheet (DYN-01/DYN-02/GROUND-03; D-04/D-05)
 
 **Wave 1** *(blocked on Wave 0)*
 
@@ -762,7 +762,7 @@ graceful offline/timeout fallback to the authored floor) on the **Pixel-Tablet b
 | 12. SPIKE — full-path latency & presence budget | 0/TBD | Not started | - |
 | 13. SPIKE — 3-way bake-off (grounding + Arabic) | 0/TBD | Not started | - |
 | 14. BUILD — TutorBrain spine + grounding invariant | 4/4 | Complete   | 2026-06-22 |
-| 15. BUILD — dynamic grounded exercise selection on baa | 0/7 | Planned | - |
+| 15. BUILD — dynamic grounded exercise selection on baa | 1/7 | In Progress|  |
 | 16. BUILD — presence + voice + eval gate + demo-harden | 0/TBD | Not started | - |
 
 **Coverage:** all 14 v2.0 requirements mapped across Phases 14–16; the three spikes (11–13) own no requirements by design. See REQUIREMENTS.md → v2.0 Traceability.

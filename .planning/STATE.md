@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
 stopped_at: Phase 15 context gathered (discuss-phase complete)
-last_updated: "2026-06-27T14:18:08.873Z"
-last_activity: 2026-06-27 -- Phase 15 planning complete
+last_updated: "2026-06-27T14:40:05.044Z"
+last_activity: 2026-06-27
 progress:
   total_phases: 20
   completed_phases: 13
   total_plans: 73
-  completed_plans: 65
+  completed_plans: 66
   percent: 65
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
-**Current focus:** Phase 14 — build-tutorbrain-spine-grounding-invariant
+**Current focus:** Phase 15 — build-dynamic-grounded-exercise-selection-on-baa
 
 ## Current Position
 
-Phase: 14 (build-tutorbrain-spine-grounding-invariant) — CODE-COMPLETE + VERIFIED (5/5 criteria); AWAITING HUMAN UAT
-Plan: 4 of 4 (all SUMMARYs landed)
+Phase: 15 (build-dynamic-grounded-exercise-selection-on-baa) — EXECUTING
+Plan: 2 of 7
 Status: Ready to execute
-Last activity: 2026-06-27 -- Phase 15 planning complete
+Last activity: 2026-06-27
 Next: human UAT (run app with --dart-define=TUTOR_BASE_URL=<service URL>), then /gsd-verify-work 14 → mark complete; then /gsd-plan-phase 15
 
 ## Performance Metrics
@@ -83,6 +83,7 @@ Next: human UAT (run app with --dart-define=TUTOR_BASE_URL=<service URL>), then 
 | Phase 06.1 P05 | ~10min | 2 tasks | 4 files |
 | Phase 11 P01 | 13min | 2 tasks | 6 files |
 | Phase 11 P02 | 9min | 3 tasks | 6 files |
+| Phase 15 P01 | 8min | 3 tasks | 10 files |
 
 ## Accumulated Context
 
@@ -149,6 +150,9 @@ Recent decisions affecting current work:
 - [Phase 11]: [11-01]: baa fixture COPIES letters.json read-only (Q1) — lib/spike_genui/fixtures/baa_reference.dart imports only StrokeSpec, no curriculum loader/Firestore/Drift. Two guards wired as flutter_test and green: package-correctness + SC-4 durable-layers git-diff (TUTOR-01). Task 3 (Firebase AI Logic console enable on qalam-app-bd7d0) recorded as PENDING HUMAN ACTION — console-only, no CLI path, no human in this autonomous session; NOT blocked because Plan 02 needs only the installed packages + fixture, not the live backend (backend only needed at Plan-03 device runtime). App Check unenforced in throwaway scope (D-13) — must not carry to Phase 14.
 - [Phase 11]: [11-02]: Spike GenUI render widget is Surface (not GenUiSurface); data accessor is itemContext.data as JsonMap + BoundString (genui 0.9.2 verified)
 - [Phase 11]: Spike A2UI transport: A2uiTransportAdapter onSend -> generateContentStream -> addChunk; FirebaseAI.googleAI Flash, never firebase_vertex_ai
+- [Phase ?]: [15-01]: Wave-0 RED contract authored — every Phase-15 requirement (DYN-01/DYN-02/GROUND-03) has a failing automated test naming its exact behavior before implementation (Nyquist). 5 new test files (3 Dart, 2 Python) + 1 JSONL fixture, all RED by missing symbol.
+- [Phase ?]: [15-01]: Provisional baa curriculum graph authored as a SEPARATE asset from exercises.json (independent signedOff gate, A5); 19 nodes map each signed baa.* exercise to competency/tier/minCleanReps; node set byte-identical to baa_authored_ids.json (metadata only). signedOff:false (PROVISIONAL, D-05) — 15-07 owns the flip behind human-verify.
+- [Phase ?]: [15-01]: tier non-null ONLY for the إملاء writing ramp (connect/complete/writeWord/buildSentence); recognize/trace/recall/morphology nodes tier:null. Backward remediation walks ghayrManzur→manzur→manqul within a competency. DRAFT clean-reps (trace 3, write 2, teach/sentence 1) are owner-mother's to confirm (D-05/D-07).
 
 ### Pending Todos
 
@@ -184,6 +188,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-27T13:21:37.417Z
+Last session: 2026-06-27T14:39:10.623Z
 Stopped at: Phase 15 context gathered (discuss-phase complete)
 Resume files: .planning/phases/06.1-firebase-curriculum-backend/06.1-05-PLAN.md (next), .planning/phases/06.1-firebase-curriculum-backend/06.1-03-PLAN.md (pending), .planning/phases/06.1-firebase-curriculum-backend/06.1-04-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
