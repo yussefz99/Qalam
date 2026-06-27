@@ -25,11 +25,18 @@ import 'package:flutter_test/flutter_test.dart';
 ///   • lib/features/practice — the StrokeCanvas + practice widgets.
 ///   • lib/models       — the curriculum content models.
 ///   • lib/data         — the curriculum repository + codecs.
+///   • lib/curriculum   — the pure-Dart graph parser + offline walker + the
+///                        on-device mastery condition (Plan 15-03). These drive
+///                        offline selection + the star ON-DEVICE; they must stay
+///                        equally free of agent/cloud/network/render imports so
+///                        the star is never granted off a server response (D-06,
+///                        ADR-014 trust boundary).
 const _durableDirs = <String>[
   'lib/core',
   'lib/features/practice',
   'lib/models',
   'lib/data',
+  'lib/curriculum',
 ];
 
 /// The forbidden import tokens. An import line containing any of these in a
@@ -117,6 +124,74 @@ void main() {
       const legit = "import 'package:cloud_firestore/cloud_firestore.dart';";
       expect(_forbidden.any(legit.contains), isFalse,
           reason: 'cloud_firestore is a legit durable persistence dep');
+    });
+  });
+
+  // D-06 / ADR-014 trust boundary (Plan 15-03): lib/curriculum/ drives offline
+  // selection AND the on-device star, so it must be STRICTER than the rest of the
+  // spine — it carries only tier/competency/exercise ids and the pure walk, never
+  // a cloud/Firebase/network/render/persistence import (the star is computed
+  // on-device, never granted off a server response; the parser stays render-free
+  // and unit-testable from a Map). `lib/data` legitimately persists via
+  // cloud_firestore/drift/flutter; lib/curriculum must NOT — hence a separate,
+  // tighter ban list scoped to lib/curriculum only.
+  group('D-06 — lib/curriculum carries zero cloud-AI/Firebase/network/render import',
+      () {
+    // The stricter ban: agent + network (above) PLUS cloud/Firebase/render/
+    // persistence. A `flutter/services` rootBundle read belongs in the loader
+    // (lib/data), not in the pure parser, so `package:flutter/` is forbidden here.
+    const curriculumForbidden = <String>[
+      ..._forbidden,
+      'cloud_firestore',
+      'firebase_core',
+      'firebase_auth',
+      'firebase',
+      'package:flutter/', // no Flutter render/services import in the pure layer
+      'package:drift/',
+      'drift.dart',
+      'riverpod', // selection providers live in lib/tutor, not the pure layer
+    ];
+
+    test('every lib/curriculum .dart file imports no forbidden package', () {
+      final offenders = <String>[];
+      var scanned = 0;
+
+      for (final file in _dartFiles('lib/curriculum')) {
+        scanned++;
+        for (final line in _codeLines(file)) {
+          if (!line.contains('import')) continue;
+          for (final bad in curriculumForbidden) {
+            if (line.contains(bad)) {
+              offenders.add('${file.path}: $bad  ->  ${line.trim()}');
+            }
+          }
+        }
+      }
+
+      expect(scanned, greaterThan(0),
+          reason: 'no lib/curriculum .dart files were scanned — check the glob');
+      expect(
+        offenders,
+        isEmpty,
+        reason: 'a lib/curriculum file took a forbidden cloud/Firebase/network/'
+            'render import (the on-device star/selection layer must stay pure):\n'
+            '${offenders.join('\n')}',
+      );
+    });
+
+    test('the curriculum scan is non-vacuous (self-test)', () {
+      // A Firebase import MUST trip the curriculum ban.
+      const leak = "import 'package:cloud_firestore/cloud_firestore.dart';";
+      expect(curriculumForbidden.any(leak.contains), isTrue,
+          reason: 'the curriculum ban must catch a real Firebase import');
+      // A Flutter render import MUST trip it too.
+      const render = "import 'package:flutter/material.dart';";
+      expect(curriculumForbidden.any(render.contains), isTrue,
+          reason: 'the curriculum ban must catch a Flutter render import');
+      // A legit pure-Dart sibling import must NOT trip it.
+      const legit = "import 'curriculum_graph.dart';";
+      expect(curriculumForbidden.any(legit.contains), isFalse,
+          reason: 'a pure-Dart sibling import is legit in lib/curriculum');
     });
   });
 }
