@@ -1,8 +1,8 @@
 ---
 phase: 16
 slug: build-presence-voice-eval-gate-demo-harden
-status: draft
-nyquist_compliant: false
+status: approved
+nyquist_compliant: true
 wave_0_complete: false
 created: 2026-06-29
 ---
@@ -88,4 +88,4 @@ created: 2026-06-29
 - [ ] Feedback latency < 30s (model-free quick gate)
 - [ ] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** approved 2026-06-29 (plan-checker VERIFICATION PASSED — Nyquist PASS, no 3-consecutive gap)
