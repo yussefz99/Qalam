@@ -1,7 +1,8 @@
-# baa Curriculum Graph — Owner-Mother Sign-Off Sheet (DRAFT)
+# baa Curriculum Graph — Owner-Mother Sign-Off Sheet (SIGNED)
 
-**Status:** PROVISIONAL — `signedOff: false` until owner-mother reviews and signs.
+**Status:** SIGNED — `signedOff: true` (owner-mother reviewed and signed at the tier level 2026-06-28; Plan 15-07 flipped the flag).
 **Drafted:** 2026-06-27 (Phase 15, Plan 15-01).
+**Signed:** 2026-06-28 (Phase 15, Plan 15-07) — Owner-mother (Arabic-teacher domain expert).
 **Author:** Claude DRAFTED this mapping from the national grade-1 curriculum; the
 owner-mother REVIEWS and signs (mirrors the `AUTHORED_BAA_IDS` sign-off gate). She
 signs at the **tier level**, not per-row.
@@ -119,17 +120,31 @@ Draft values (yours to set):
 - Single-letter writes (`writeLetter.*`) and word-writing (`connectWord/completeWord/writeWord`): **2** each.
 - Teach card, sentence, fill-blank, and transforms: **1** each.
 
-**☐ Confirmed as drafted   ☐ Adjust (note changes below)**
+**☐ Confirmed as drafted   ☑ Adjust (note changes below)**
+
+> **Owner-mother adjustment (2026-06-28):** "Writing & tracing = 3 clean reps;
+> lighter exercises stay at 1." Applied: **all single-letter writes
+> (`writeLetter.fromSound/.fromPicture/.writeForm`) and all word-writing
+> (`connectWord.baab/.kitaab`, `completeWord.middle`, `writeWord.copy/.picture/.dictation`)
+> moved from draft 2 → 3** clean reps (nine nodes), joining the trace exercises already
+> at 3. Grammar/enrichment and the lighter exercises (teach card, sentences, fill-blank,
+> transforms) are **unchanged at 1**. No change to competency mapping, the 70/30
+> essential/enrichment split, prerequisites, or difficulty tiers.
 
 ---
 
 ## Sign-off
 
-- [ ] Q1 competency mapping confirmed
-- [ ] Q2 70/30 essential/enrichment split confirmed
-- [ ] Q3 per-skill clean-reps confirmed
-- [ ] Reviewed by: ______________________  Date: ____________
+- [x] Q1 competency mapping confirmed — **approved as drafted**
+- [x] Q2 70/30 essential/enrichment split confirmed — **approved as drafted**
+      (grammar/`grammarTransform` + fill-blank/`wordBuilding` remain enrichment —
+      mandatory grade-1 content presented to the child, but with a simple bar:
+      `essential: false`, `minCleanReps: 1`. They do NOT gate the mastery star.)
+- [x] Q3 per-skill clean-reps confirmed — **adjusted** (writing & tracing → 3 clean reps;
+      lighter exercises stay at 1; see the Q3 adjustment note above)
+- [x] Reviewed by: **Owner-mother (Arabic-teacher domain expert)**  Date: **2026-06-28**
 
-> Once all three are confirmed, Plan 15-07 flips `signedOff: true` in
-> `assets/curriculum/curriculum_graph.json` behind a human-verify checkpoint —
-> **not before.** Until then the graph is provisional and is gated out of the demo path.
+> All three confirmed (Q1/Q2 approved as drafted, Q3 adjusted), so Plan 15-07 flipped
+> `signedOff: true` in `assets/curriculum/curriculum_graph.json` behind the human-verify
+> checkpoint, re-derived the server copy via `generate.py`, and recorded the human-UAT
+> entry. The graph is now the signed demo path.
