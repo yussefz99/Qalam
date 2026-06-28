@@ -585,7 +585,7 @@ requirements** by design — investigations that tune the deployed system.
 - [ ] **Phase 12: SPIKE — full-path latency & presence budget (Pixel Tablet)** - Measure the real stroke→scorer→**client→Cloud Run server→model→back**→render→first-TTS path on a Pixel Tablet (incl. Cloud Run cold-start) across the server's per-node models (Claude Haiku/Sonnet, Gemini Flash/Pro); produce a written latency budget + the per-node model/transport choice and the cold-start mitigation.
 - [ ] **Phase 13: SPIKE — eval harness + Claude-vs-Gemini coach bake-off (grounding + Arabic)** - Build the AI-SPEC grounding+Arabic eval harness and score the LangGraph server's **coach node on Claude vs Gemini** (+ the AuthoredFallback baseline) for never-contradicts-geometry, names-the-fix, register, and correct-Arabic; the data picks the coach-node model. Seeds the Phase-16 gate. (On-device Gemma deferred — offline floor is AuthoredFallback.)
 - [x] **Phase 14: BUILD — TutorBrain spine + grounding invariant** - The server-side **LangGraph** tutoring agent on Cloud Run (analyze→plan→coach, per-node models, 4 ACTION tools, FACTS-as-text) + the Flutter `RemoteAgentBrain` + `AuthoredFallback` floor + the scorer-owns-verdict seam at ExerciseController + the non-PII request-body guard — durable layers stay free of agent/framework imports. (ADR-015 + 14-AI-SPEC.md.) (completed 2026-06-22)
-- [ ] **Phase 15: BUILD — dynamic grounded exercise selection on baa** - The server agent's **plan node** drives `present_activity` selection over baa's 19 Schema-v2 configs (reasoning about recent mistakes); the curriculum rails the choices; resume-aware; one quiet star at mastery; first-measure grounding faithfulness.
+- [x] **Phase 15: BUILD — dynamic grounded exercise selection on baa** - The server agent's **plan node** drives `present_activity` selection over baa's 19 Schema-v2 configs (reasoning about recent mistakes); the curriculum rails the choices; resume-aware; one quiet star at mastery; first-measure grounding faithfulness. (completed 2026-06-28)
 - [ ] **Phase 16: BUILD — presence + voice + eval gate + demo-harden** - Server-**streamed/TTS** coaching within the Phase-12 budget (reflex stays local), the Phase-13 harness promoted to a regression gate, the baa AI-tutor path (client + Cloud Run server) demo-hardened on the Pixel Tablet, and the per-node model choices finalized.
 
 ### Phase Details
@@ -724,7 +724,7 @@ Plans:
 
 **Wave 3** *(blocked on Waves 1-2 — human-gated)*
 
-- [ ] 15-07-PLAN.md — autonomous:false — owner-mother signs the curriculum graph at the tier level; flip signedOff:true; re-derive + re-deploy (DYN-01/DYN-02; D-05/D-07/D-11)
+- [x] 15-07-PLAN.md — autonomous:false — owner-mother signs the curriculum graph at the tier level; flip signedOff:true; re-derive + re-deploy (DYN-01/DYN-02; D-05/D-07/D-11)
 
 **UI hint**: yes
 **Research hint**: no — runs on the Phase 14 spine; the grounding harness is seeded here (the narrow GROUND-03 slice, D-10) rather than depending on the unrun Phase-13 bake-off.
@@ -762,7 +762,7 @@ graceful offline/timeout fallback to the authored floor) on the **Pixel-Tablet b
 | 12. SPIKE — full-path latency & presence budget | 0/TBD | Not started | - |
 | 13. SPIKE — 3-way bake-off (grounding + Arabic) | 0/TBD | Not started | - |
 | 14. BUILD — TutorBrain spine + grounding invariant | 4/4 | Complete   | 2026-06-22 |
-| 15. BUILD — dynamic grounded exercise selection on baa | 6/7 | In Progress|  |
+| 15. BUILD — dynamic grounded exercise selection on baa | 7/7 | Complete   | 2026-06-28 |
 | 16. BUILD — presence + voice + eval gate + demo-harden | 0/TBD | Not started | - |
 
 **Coverage:** all 14 v2.0 requirements mapped across Phases 14–16; the three spikes (11–13) own no requirements by design. See REQUIREMENTS.md → v2.0 Traceability.

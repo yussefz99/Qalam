@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
-status: executing
+status: verifying
 stopped_at: Completed 15-05-PLAN.md
-last_updated: "2026-06-27T15:50:10.389Z"
-last_activity: 2026-06-27
+last_updated: "2026-06-28T12:41:36.180Z"
+last_activity: 2026-06-28
 progress:
   total_phases: 20
-  completed_phases: 13
+  completed_phases: 14
   total_plans: 73
-  completed_plans: 71
-  percent: 65
+  completed_plans: 72
+  percent: 70
 ---
 
 # Project State
@@ -27,8 +27,8 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 
 Phase: 15 (build-dynamic-grounded-exercise-selection-on-baa) — EXECUTING
 Plan: 7 of 7
-Status: Ready to execute
-Last activity: 2026-06-27
+Status: Phase complete — ready for verification
+Last activity: 2026-06-28
 Next: human UAT (run app with --dart-define=TUTOR_BASE_URL=<service URL>), then /gsd-verify-work 14 → mark complete; then /gsd-plan-phase 15
 
 ## Performance Metrics
@@ -89,6 +89,7 @@ Next: human UAT (run app with --dart-define=TUTOR_BASE_URL=<service URL>), then 
 | Phase 15 P04 | 10min | 2 tasks | 8 files |
 | Phase 15 P06 | 2min | 1 tasks | 1 files |
 | Phase 15 P05 | 16min | 3 tasks | 7 files |
+| Phase 15 P07 | 20min | 1 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -170,6 +171,10 @@ Recent decisions affecting current work:
 - [Phase ?]: [15-05]: exerciseSelectorProvider is the SELECTION switch point (sibling of tutorBrainFactoryProvider); RouterExerciseSelector accepts the agent plan.nextExerciseId ONLY when graph-legal (CurriculumGraph.isLegalSelection = authored+reachableTiers+prerequisitesMet, the pure-Dart client mirror of the server G5/G6), else delegates to CurriculumGraphWalker. Selection degrades on a SEPARATE axis from coaching (Pitfall 5); the agent's choice is UNTRUSTED (T-15-05-T).
 - [Phase ?]: [15-05]: LetterUnitController rewired — durable Drift resume via graphPositionRepository (getPosition Future, Pitfall 6) replaces the in-memory _resumeByLetter; the state.atMastery->recordMastery(cleanReps:0) navigation auto-write is DELETED; recordMasteryIfMet gates the star strictly on isMasteryMet over the essential 70/30 core (D-06/Pitfall 2). Rich Phase-07 section widgets KEPT (no wholesale UI replacement); the controller is the unit-level selection+mastery driver.
 - [Phase ?]: [15-05]: provider named lib/tutor/exercise_selector_provider.dart with top-level exerciseSelectorProvider to MATCH the 15-01 RED contract exactly (zero test edits), reconciling vs the plan's selection_providers.dart. The ExerciseSelector seam gained an optional decision param (offline walker ignores it). Server test_payload_nonpii.py extended over the two graph-position fields; the Dart side was already done by 15-04 (verified green, not re-touched).
+- [Phase 15]: [15-07]: Owner-mother signed the baa curriculum graph at the tier level (D-05, 2026-06-28); signedOff flipped false->true ONLY behind the human-verify gate, with a 15-HUMAN-UAT.md record on the same change (Pitfall 4).
+- [Phase 15]: [15-07]: Q3 adjustment — writing & tracing = 3 clean reps, lighter exercises = 1; nine writing nodes (writeLetter.* x3, connectWord.* x2, completeWord.middle, writeWord.* x3) bumped minCleanReps 2->3, joining traceLetter.* already at 3.
+- [Phase 15]: [15-07]: Q1 competency mapping + Q2 70/30 essential/enrichment split APPROVED as drafted — grammarTransform + wordBuilding stay enrichment (essential:false, reps 1), do not gate the star; no flag/prerequisite/tier change.
+- [Phase 15]: [15-07]: server curriculum_graph.json re-derived from the signed asset via generate.py (never hand-edited); baa-only (D-11) confirmed. FOLLOW-UP: Cloud Run qalam-tutor re-deploy (gcloud, human) so the signed graph + 15-02/15-04 wire fields go live before on-device /coach.
 
 ### Pending Todos
 
@@ -205,6 +210,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-27T15:50:10.383Z
+Last session: 2026-06-28T12:40:57.544Z
 Stopped at: Completed 15-05-PLAN.md
 Resume files: .planning/phases/06.1-firebase-curriculum-backend/06.1-05-PLAN.md (next), .planning/phases/06.1-firebase-curriculum-backend/06.1-03-PLAN.md (pending), .planning/phases/06.1-firebase-curriculum-backend/06.1-04-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
