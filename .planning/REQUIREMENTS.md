@@ -96,10 +96,12 @@ numbering from the v1 roadmap (start at Phase 11). Traceability filled by the v2
 
 ### Dynamic Teaching
 
-- [x] **DYN-01**: The agent selects the next exercise from baa's authored configs, reasoning about the child's recent mistakes; the curriculum rails the choices
+- [ ] **DYN-01**: The agent selects the next exercise from baa's authored configs, reasoning about the child's recent mistakes; the curriculum rails the choices
   - *Accept:* the agent can only pick valid, signed-off baa configs; its choice visibly responds to recent mistakeIds/struggles, not a fixed order
-- [x] **DYN-02**: The dynamic, resume-aware flow replaces the fixed section walk for the baa unit end-to-end
+  - *Status (2026-06-28):* reopened — server rail built + green, but selection is not wired into the running screen (15-08 gap closure)
+- [ ] **DYN-02**: The dynamic, resume-aware flow replaces the fixed section walk for the baa unit end-to-end
   - *Accept:* entering the baa unit runs the agent-driven flow (not `LetterUnitController`'s static sequence); resume still works; one quiet star at mastery
+  - *Status (2026-06-28):* reopened — components built, but the screen still uses the linear walk + the star can't fire (no clean-rep writer); 15-08 gap closure
 
 ### Presence & Voice
 
@@ -206,8 +208,8 @@ Phases 11–13 are **spikes** — de-risking investigations that own **no requir
 | TUTOR-05 | Phase 14 — TutorBrain spine + grounding invariant | Pending |
 | GROUND-01 | Phase 14 — TutorBrain spine + grounding invariant | Pending |
 | GROUND-02 | Phase 14 — TutorBrain spine + grounding invariant | Pending |
-| DYN-01 | Phase 15 — Dynamic grounded exercise selection on baa | Complete |
-| DYN-02 | Phase 15 — Dynamic grounded exercise selection on baa | Complete |
+| DYN-01 | Phase 15 — Dynamic grounded exercise selection on baa | In Progress |
+| DYN-02 | Phase 15 — Dynamic grounded exercise selection on baa | In Progress |
 | GROUND-03 | Phase 15 — Dynamic grounded exercise selection on baa | Complete |
 | PRES-01 | Phase 16 — Presence + voice + eval gate + demo-harden | Pending |
 | PRES-02 | Phase 16 — Presence + voice + eval gate + demo-harden | Pending |
