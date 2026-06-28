@@ -16,7 +16,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 // RED: lib/curriculum/{curriculum_graph,mastery_condition}.dart do not exist yet (Plan 15-03).
 import 'package:qalam/curriculum/curriculum_graph.dart';
-import 'package:qalam/curriculum/mastery_condition.dart';
+import 'package:qalam/curriculum/mastery_condition.dart'
+    show isMasteryMet, isMasteryMetForPresented;
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -66,5 +67,98 @@ void main() {
 
     expect(isMasteryMet(graph, reps), isTrue,
         reason: 'enrichment (wordBuilding / grammarTransform) does NOT gate mastery (D-06)');
+  });
+
+  // ── T5 (INTERIM): isMasteryMetForPresented — scoped mastery for the 6-section UI ──
+
+  test('T5: false on an empty presented set — an empty intersection never grants the star', () {
+    final graph = loadGraph();
+    // Even if every essential node has reps, an empty presented set → false.
+    final reps = <String, int>{
+      for (final n in graph.essentialNodes) n.exerciseId: n.minCleanReps,
+    };
+    expect(
+      isMasteryMetForPresented(graph, reps, const {}),
+      isFalse,
+      reason: 'empty presented set: no overlap with essential nodes → star never granted',
+    );
+  });
+
+  test('T5: false when any presented essential node is below threshold (clicked-through)', () {
+    final graph = loadGraph();
+    // The 7 nodes the baa unit actually presents and records.
+    const presented = {
+      'baa.teachCard.meet',
+      'baa.traceLetter.isolated',
+      'baa.traceLetter.initial',
+      'baa.traceLetter.medial',
+      'baa.connectWord.baab',
+      'baa.writeWord.dictation',
+      'baa.writeLetter.fromSound',
+    };
+    // Zero reps everywhere → clicked-through unit must NOT earn the star (Pitfall 2).
+    expect(
+      isMasteryMetForPresented(graph, const {}, presented),
+      isFalse,
+      reason: 'zero clean-reps on presented essential nodes → no star (Pitfall 2)',
+    );
+  });
+
+  test('T5: true when every presented essential node meets its threshold', () {
+    final graph = loadGraph();
+    const presented = {
+      'baa.teachCard.meet',
+      'baa.traceLetter.isolated',
+      'baa.traceLetter.initial',
+      'baa.traceLetter.medial',
+      'baa.connectWord.baab',
+      'baa.writeWord.dictation',
+      'baa.writeLetter.fromSound',
+    };
+    // Bank exactly minCleanReps on each presented essential node.
+    final reps = <String, int>{};
+    for (final node in graph.essentialNodes) {
+      if (presented.contains(node.exerciseId)) {
+        reps[node.exerciseId] = node.minCleanReps;
+      }
+    }
+    expect(
+      isMasteryMetForPresented(graph, reps, presented),
+      isTrue,
+      reason: 'all presented essential nodes at their threshold → star granted',
+    );
+  });
+
+  test('T5: non-presented essential nodes do not block the scoped star', () {
+    final graph = loadGraph();
+    const presented = {
+      'baa.teachCard.meet',
+      'baa.traceLetter.isolated',
+      'baa.traceLetter.initial',
+      'baa.traceLetter.medial',
+      'baa.connectWord.baab',
+      'baa.writeWord.dictation',
+      'baa.writeLetter.fromSound',
+    };
+    // Satisfy presented nodes only; leave non-presented essential nodes at 0.
+    final reps = <String, int>{};
+    for (final node in graph.essentialNodes) {
+      if (presented.contains(node.exerciseId)) {
+        reps[node.exerciseId] = node.minCleanReps;
+      }
+      // Non-presented essential nodes (e.g. baa.writeLetter.fromPicture) stay
+      // at 0 — they must NOT block the scoped star (that is the T5 invariant).
+    }
+    // Confirm there ARE non-presented essential nodes to make this test meaningful.
+    final nonPresented =
+        graph.essentialNodes.where((n) => !presented.contains(n.exerciseId));
+    expect(nonPresented, isNotEmpty,
+        reason: 'there must be essential nodes outside the presented set');
+
+    expect(
+      isMasteryMetForPresented(graph, reps, presented),
+      isTrue,
+      reason: 'non-presented essential nodes must NOT block the scoped star (T5 interim)',
+    );
   });
 }

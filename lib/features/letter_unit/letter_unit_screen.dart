@@ -22,6 +22,7 @@ import 'package:flutter/material.dart' hide Form;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../data/app_database.dart';
 import '../../data/curriculum_repository.dart';
 import '../../models/exercise.dart';
 import '../../models/letter.dart';
@@ -30,6 +31,7 @@ import '../../models/letter_unit.dart';
 import '../../models/word.dart';
 import '../../theme/qalam_tokens.dart';
 import '../../theme/text_styles.dart';
+import '../../tutor/tutor_facts.dart';
 import '../../widgets/arabic_text.dart';
 import 'letter_unit_controller.dart';
 import 'sections/forms_section.dart';
@@ -195,6 +197,47 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
     ref.read(letterUnitControllerProvider(_letterId).notifier).recordMasteryIfMet();
   }
 
+  /// T2 + T1 + T3 scoring chokepoint — called by a section when it reports a
+  /// clean pass on [graphExerciseId] (a canonical graph node id, not a synthetic
+  /// per-word id). In order:
+  ///   1. Increments the Drift clean-rep count for the node (T2).
+  ///   2. Calls [markNodeCleared] so cleared state grows when the threshold is met
+  ///      (T1 — makes reachableTiers/prerequisitesMet and resume advance with real
+  ///      progress).
+  ///   3. Calls [selectNext] so the durable cursor reflects the graph's decision
+  ///      (T3 — a pass advances forward reachably; keeps the 6-section shell + the
+  ///      ribbon intact; the section still calls its own [onAdvance]/[onFinish]
+  ///      for section-level navigation).
+  /// All three are fire-and-forget async: they must never block the UI or crash.
+  void _onNodePassed(String graphExerciseId) {
+    final db = ref.read(appDatabaseProvider);
+    final controller =
+        ref.read(letterUnitControllerProvider(_letterId).notifier);
+
+    // 1) Increment the Drift clean-rep count (T2).
+    db
+        .incrementExerciseCleanReps(
+          letterId: _letterId,
+          exerciseId: graphExerciseId,
+        )
+        .then((_) {
+      // 2) T1: update cleared competencies/tiers once threshold is met.
+      return controller.markNodeCleared(graphExerciseId);
+    }).then((_) {
+      // 3) T3: advance the graph cursor forward (reachability-aware; Pitfall 5).
+      // Build a minimal TutorFacts to tell the selector this was a PASS.
+      final facts = TutorFacts(
+        letterId: _letterId,
+        section: graphExerciseId,
+        passed: true,
+      );
+      controller.selectNext(facts);
+    }).catchError((_) {
+      // Any failure in the async chain must never crash the UI (Pitfall 2 /
+      // the "a failed LOCAL write must never crash" convention from the controller).
+    });
+  }
+
   void _advance() =>
       ref.read(letterUnitControllerProvider(_letterId).notifier).advance();
 
@@ -266,6 +309,10 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
           exercise: _meetExercise(data),
           letter: letter,
           onAdvance: _advance,
+          // baa.teachCard.meet has minCleanReps:1 in the graph; record via the
+          // onNext (the "Got it/Start Writing" CTA) since teachCards aren't scored
+          // through _onResult (surface == null → no grading pass event).
+          onGraphNodePassed: _onNodePassed,
         );
       case 'watchTrace':
         return WatchTraceSection(
@@ -273,6 +320,7 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
           exercise: _traceIsolated(data),
           letter: letter,
           onAdvance: _advance,
+          onGraphNodePassed: _onNodePassed,
         );
       case 'forms':
         return FormsSection(
@@ -283,8 +331,11 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
           join: _join(data),
           letter: letter,
           onAdvance: _advance,
+          onGraphNodePassed: _onNodePassed,
         );
       case 'words':
+        // Per-word exercises use synthetic ids (baa.writeWord.door, etc.) —
+        // these are not graph nodes, so no clean-rep recording here (null).
         return WordsSection(
           key: const ValueKey('section:words'),
           words: _wordTraces(data),
@@ -298,6 +349,7 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
           writeLetter: _writeLetter(data),
           letter: letter,
           onFinish: _advance,
+          onGraphNodePassed: _onNodePassed,
         );
       case 'mastery':
         // The quiet star is gated on the on-device mastery condition (D-06 /

@@ -27,7 +27,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../curriculum/curriculum_graph.dart';
 import '../../curriculum/curriculum_graph_walker.dart' show GraphPosition;
-import '../../curriculum/mastery_condition.dart';
+import '../../curriculum/mastery_condition.dart'
+    show isMasteryMet, isMasteryMetForPresented;
 import '../../data/app_database.dart';
 import '../../data/drift_progress_repository.dart';
 import '../../data/graph_position_repository.dart' as repo;
@@ -186,11 +187,69 @@ class LetterUnitController extends Notifier<LetterUnitState> {
     return next;
   }
 
+  /// Mark a graph node as cleared (its competency + tier added to cleared state)
+  /// when the child's clean-rep count for [exerciseId] reaches its minCleanReps
+  /// threshold. This is the T1 write path: the forward-progress state
+  /// (`clearedCompetencies` / `clearedTiers`) only grows when a node is
+  /// genuinely completed — never on mere navigation (Pitfall 2).
+  ///
+  /// Reads the graph and the current Drift rep count; no-ops gracefully if
+  /// either is unavailable. Idempotent: adding a competency/tier already in the
+  /// cleared list is a no-op (dedup).
+  Future<void> markNodeCleared(String exerciseId) async {
+    final CurriculumGraph graph;
+    try {
+      graph = await ref.read(curriculumGraphProvider.future);
+    } catch (_) {
+      return; // graph not loaded — skip silently, never crash.
+    }
+    final node = graph.nodes
+        .cast<GraphNode?>()
+        .firstWhere((n) => n?.exerciseId == exerciseId, orElse: () => null);
+    if (node == null) return; // unknown id — not a graph node, nothing to clear.
+
+    // Check whether the child has actually reached the threshold for this node.
+    int reps;
+    try {
+      reps = await ref.read(appDatabaseProvider).getExerciseCleanReps(
+            letterId: _letterId,
+            exerciseId: exerciseId,
+          );
+    } catch (_) {
+      reps = 0;
+    }
+    if (reps < node.minCleanReps) return; // threshold not yet met — skip.
+
+    // Dedup-add the competency and (non-null) tier to the cleared lists.
+    final comps = [...state.clearedCompetencies];
+    if (!comps.contains(node.competency)) comps.add(node.competency);
+
+    final tiers = [...state.clearedTiers];
+    if (node.tier != null && !tiers.contains(node.tier)) {
+      tiers.add(node.tier!);
+    }
+
+    state = state.copyWith(
+      clearedCompetencies: comps,
+      clearedTiers: tiers,
+    );
+    await _persist();
+  }
+
   /// Record mastery ONLY when the on-device condition is met (D-06, Pitfall 2):
-  /// every essential node has reached the owner-mother's clean-reps. A
-  /// clicked-through unit with unmet reps records NOTHING. Idempotent (the star
-  /// is information, recorded at most once). Never reads a server response
-  /// (ADR-014 trust boundary).
+  /// every essential node that this unit PRESENTS AND RECORDS has reached the
+  /// owner-mother's clean-reps. A clicked-through unit with unmet reps records
+  /// NOTHING. Idempotent (the star is information, recorded at most once). Never
+  /// reads a server response (ADR-014 trust boundary).
+  ///
+  /// INTERIM (T5): the 6-section baa unit surfaces only a subset (~7) of the
+  /// graph's 15 essential nodes. The scoped condition `isMasteryMetForPresented`
+  /// evaluates over the intersection of `graph.essentialNodes` and the exercises
+  /// the baa unit actually presents and records. The star fires when the child
+  /// genuinely completes the presented essential exercises — not blocked by
+  /// essential nodes the current UI never exercises. Surfacing the remaining
+  /// essential exercises is a content-coverage task for the owner/mother and a
+  /// later phase. The original `isMasteryMet` semantics are not modified.
   Future<bool> recordMasteryIfMet() async {
     if (state.masteryRecorded) return true;
     final CurriculumGraph graph;
@@ -201,7 +260,17 @@ class LetterUnitController extends Notifier<LetterUnitState> {
     } catch (_) {
       return false; // can't evaluate → never grant the star off a guess.
     }
-    if (!isMasteryMet(graph, reps)) return false;
+    // T5 (INTERIM): scope the mastery gate to the exercises the unit presents.
+    // The baa unit surfaces baa.teachCard.meet, baa.traceLetter.isolated,
+    // baa.traceLetter.initial, baa.traceLetter.medial, baa.connectWord.baab,
+    // baa.writeWord.dictation, and baa.writeLetter.fromSound — 7 of 15 essential
+    // nodes. The star reflects mastery of what is taught here; the other 8
+    // essential nodes belong to a later content-coverage expansion.
+    final presented = _presentedExerciseIds();
+    final masteryMet = presented.isNotEmpty
+        ? isMasteryMetForPresented(graph, reps, presented)
+        : isMasteryMet(graph, reps); // fallback: if no presented set, full check.
+    if (!masteryMet) return false;
     state = state.copyWith(masteryRecorded: true);
     try {
       // The recorded cleanReps is the essential-core minimum the child actually
@@ -219,6 +288,24 @@ class LetterUnitController extends Notifier<LetterUnitState> {
     }
     return true;
   }
+
+  /// The exercise ids this unit's 6 sections actually present and score (T5
+  /// scoped mastery). These are the GRAPH node ids — never the synthetic per-word
+  /// ids like `baa.writeWord.door`. Only ids whose clean-reps the scaffold
+  /// actually increments belong here.
+  ///
+  /// INTERIM: this set is baa-specific. A later phase should derive it from the
+  /// unit config so it stays in sync automatically. For now it is explicit and
+  /// correct for the signed baa graph.
+  Set<String> _presentedExerciseIds() => const {
+        'baa.teachCard.meet',
+        'baa.traceLetter.isolated',
+        'baa.traceLetter.initial',
+        'baa.traceLetter.medial',
+        'baa.connectWord.baab',
+        'baa.writeWord.dictation',
+        'baa.writeLetter.fromSound',
+      };
 
   /// The smallest essential clean-rep count the child has banked (a real,
   /// non-zero progress value to record — never the old cleanReps:0).

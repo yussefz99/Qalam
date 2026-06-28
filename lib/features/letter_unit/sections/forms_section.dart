@@ -81,6 +81,7 @@ class FormsSection extends ConsumerStatefulWidget {
     required this.letter,
     this.onAdvance,
     this.strings = const FormsSectionStrings(),
+    this.onGraphNodePassed,
   });
 
   final Exercise initial;
@@ -90,6 +91,14 @@ class FormsSection extends ConsumerStatefulWidget {
   final Letter letter;
   final VoidCallback? onAdvance;
   final FormsSectionStrings strings;
+
+  /// Called with the canonical graph node id on a clean scored pass for each
+  /// form scaffold (T2/T3). Only fired for nodes in the graph:
+  ///   • baa.traceLetter.initial  — initial form
+  ///   • baa.traceLetter.medial   — medial form
+  ///   • baa.connectWord.baab     — the join stage
+  /// baa.traceLetter.final is NOT in the signed graph → null for that form.
+  final void Function(String graphExerciseId)? onGraphNodePassed;
 
   @override
   ConsumerState<FormsSection> createState() => FormsSectionState();
@@ -228,6 +237,14 @@ class FormsSectionState extends ConsumerState<FormsSection> {
     // including its own Clear / Next CTAs and the PromptHeader Play (the single
     // audio affordance — a separate overlaid Listen card used to cover the CTAs;
     // owner bug #4).
+    // T2: map each form to its canonical graph node id. baa.traceLetter.final is
+    // NOT in the signed graph (15 nodes), so that form passes null — no rep
+    // recording for it. initial + medial ARE in the graph.
+    final graphId = switch (step.form) {
+      'initial' => step.exercise.id, // baa.traceLetter.initial
+      'medial' => step.exercise.id,  // baa.traceLetter.medial
+      _ => null,                     // final: not a signed graph node
+    };
     return ExerciseScaffold(
       // A key per form so the scaffold/controller reset cleanly on switch.
       key: ValueKey<String>('formScaffold:${step.form}'),
@@ -236,6 +253,8 @@ class FormsSectionState extends ConsumerState<FormsSection> {
       kick: step.label,
       onNext: () => _onFormPassed(step.form),
       onAudioTap: _play,
+      graphExerciseId: graphId,
+      onGraphNodePassed: graphId != null ? widget.onGraphNodePassed : null,
     );
   }
 
@@ -250,6 +269,9 @@ class FormsSectionState extends ConsumerState<FormsSection> {
         kick: s.joinKick,
         onNext: widget.onAdvance,
         onAudioTap: _play,
+        // T2: baa.connectWord.baab IS in the signed graph (copyWrite / manqul).
+        graphExerciseId: widget.join.id,
+        onGraphNodePassed: widget.onGraphNodePassed,
       ),
     );
   }

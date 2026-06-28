@@ -89,6 +89,7 @@ class MeetSection extends ConsumerStatefulWidget {
     required this.letter,
     this.onAdvance,
     this.strings = const MeetSectionStrings(),
+    this.onGraphNodePassed,
   });
 
   /// The `baa.teachCard.meet` config (PromptHeader-only — surface == null).
@@ -102,6 +103,12 @@ class MeetSection extends ConsumerStatefulWidget {
 
   /// Section copy (English defaults; call site passes l10n).
   final MeetSectionStrings strings;
+
+  /// Called with the canonical graph node id when the child completes this
+  /// section. For the teach card, fired on the "Got it / Start Writing" CTA
+  /// (there is no scored pass event — surface == null). The host uses this to
+  /// increment the clean-rep count and advance the graph cursor (T2/T1/T3).
+  final void Function(String graphExerciseId)? onGraphNodePassed;
 
   @override
   ConsumerState<MeetSection> createState() => _MeetSectionState();
@@ -140,7 +147,13 @@ class _MeetSectionState extends ConsumerState<MeetSection> {
       letter: widget.letter,
       kick: s.kick,
       // The teachCard "Got it" CTA, relabelled "Start Writing" → Section 2.
-      onNext: widget.onAdvance,
+      // T2: fire onGraphNodePassed for baa.teachCard.meet before advancing —
+      // the teach card has minCleanReps:1 in the graph, so viewing it counts
+      // as one clean rep (the child demonstrated awareness of the letter).
+      onNext: () {
+        widget.onGraphNodePassed?.call(widget.exercise.id);
+        widget.onAdvance?.call();
+      },
       strings: ExerciseScaffoldStrings(gotIt: s.startWriting, playLabel: s.hear),
       // Any audio prompt part in the header plays the bundled clip offline.
       onAudioTap: _play,

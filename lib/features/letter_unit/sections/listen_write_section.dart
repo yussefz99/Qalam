@@ -79,6 +79,7 @@ class ListenWriteSection extends ConsumerStatefulWidget {
     required this.letter,
     this.onFinish,
     this.strings = const ListenWriteStrings(),
+    this.onGraphNodePassed,
   });
 
   /// `baa.writeWord.dictation` — write the whole word from memory (the gate).
@@ -95,6 +96,12 @@ class ListenWriteSection extends ConsumerStatefulWidget {
 
   /// Section copy (English defaults; call site passes l10n).
   final ListenWriteStrings strings;
+
+  /// Called with the canonical graph node id on a clean scored pass (T2/T3).
+  /// Wired into each mode's scaffold:
+  ///   • word mode  → `baa.writeWord.dictation`  (copyWrite / ghayrManzur)
+  ///   • letter mode → `baa.writeLetter.fromSound` (positionalForms / null tier)
+  final void Function(String graphExerciseId)? onGraphNodePassed;
 
   @override
   ConsumerState<ListenWriteSection> createState() => ListenWriteSectionState();
@@ -191,6 +198,11 @@ class ListenWriteSectionState extends ConsumerState<ListenWriteSection> {
   }
 
   Widget _recallSurface(ListenWriteStrings s) {
+    // T2: map the active mode to its canonical graph node id.
+    //   word mode   → baa.writeWord.dictation  (copyWrite / ghayrManzur)
+    //   letter mode → baa.writeLetter.fromSound (positionalForms / null tier)
+    // Both are signed graph nodes; both get clean-rep recording.
+    final graphId = activeExercise.id;
     return Stack(
       children: [
         Positioned.fill(
@@ -202,6 +214,8 @@ class ListenWriteSectionState extends ConsumerState<ListenWriteSection> {
             kick: s.kick,
             onNext: _onPass,
             onAudioTap: _play,
+            graphExerciseId: graphId,
+            onGraphNodePassed: widget.onGraphNodePassed,
           ),
         ),
         // .noguide — the "from memory" badge over the surface (top-start).

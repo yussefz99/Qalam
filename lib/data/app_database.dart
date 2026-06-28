@@ -381,6 +381,24 @@ class AppDatabase extends _$AppDatabase {
           ?.cleanReps ??
       0;
 
+  /// Atomically increment the banked clean-rep count for one exercise by 1.
+  /// Reads the current count, adds 1, and writes back. Safe to call from an
+  /// async context; a missing row is treated as 0 before incrementing.
+  Future<void> incrementExerciseCleanReps({
+    required String letterId,
+    required String exerciseId,
+  }) async {
+    final current = await getExerciseCleanReps(
+      letterId: letterId,
+      exerciseId: exerciseId,
+    );
+    await setExerciseCleanReps(
+      letterId: letterId,
+      exerciseId: exerciseId,
+      cleanReps: current + 1,
+    );
+  }
+
   /// Read every banked per-exercise clean-rep count for a letter as a
   /// `{exerciseId: cleanReps}` map — the exact shape `isMasteryMet` consumes.
   Future<Map<String, int>> exerciseCleanRepsFor(String letterId) async {

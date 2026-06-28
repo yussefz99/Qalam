@@ -88,11 +88,37 @@ class CurriculumGraphWalker implements ExerciseSelector {
     // degrades on a separate axis; offline it walks the graph deterministically).
     final current = position.currentExerciseId;
     if (facts.passed) {
-      // A pass walks the chain forward — the graph IS the order now.
-      return graph.nextForward(current);
+      // A pass walks the chain forward — but only to a node that is REACHABLE
+      // (tier-legal + prerequisites-met) given the cleared state (T4).
+      // A forward pass must not cross into an unreached tier or skip a
+      // prerequisite. Scan declaration order from `current` for the next
+      // node that passes the legality gate; null at the end of the graph.
+      return _nextReachableForward(current, position);
     }
     // A fail remediates ONE tier down within the same competency; at the manqul
     // floor (no easier tier) it re-presents in place — NEVER the linear walk.
+    // Backward remediation always passes the legality gate (a lower tier of an
+    // already-reached competency is, by definition, reachable — Pitfall 3).
     return graph.remediateOneTier(current) ?? current;
+  }
+
+  /// Scan forward from [currentId] in declaration order for the next node that
+  /// is tier-reachable and has its prerequisites met given [position]'s cleared
+  /// state. Null when the graph is exhausted or no legal forward node exists.
+  String? _nextReachableForward(String currentId, GraphPosition position) {
+    final nodes = graph.nodes;
+    final startIndex = nodes.indexWhere((n) => n.exerciseId == currentId);
+    if (startIndex < 0) return null;
+    for (var i = startIndex + 1; i < nodes.length; i++) {
+      final candidate = nodes[i].exerciseId;
+      if (graph.isLegalSelection(
+        candidate,
+        clearedTiers: position.clearedTiers,
+        clearedCompetencies: position.clearedCompetencies,
+      )) {
+        return candidate;
+      }
+    }
+    return null; // graph exhausted (all remaining nodes are locked).
   }
 }

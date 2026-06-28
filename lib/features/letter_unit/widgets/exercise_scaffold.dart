@@ -83,6 +83,8 @@ class ExerciseScaffold extends ConsumerStatefulWidget {
     this.onAudioTap,
     this.strings = const ExerciseScaffoldStrings(),
     this.customSurface,
+    this.graphExerciseId,
+    this.onGraphNodePassed,
   });
 
   /// The config that drives the whole page.
@@ -109,6 +111,23 @@ class ExerciseScaffold extends ConsumerStatefulWidget {
   /// An escape-hatch non-writing center panel (teachCard forms). When provided
   /// AND `exercise.surface == null`, it replaces the (absent) WriteSurface.
   final WidgetBuilder? customSurface;
+
+  /// The canonical graph node id this exercise maps to (T2/T3). When non-null
+  /// and the exercise passes, the scaffold calls [onGraphNodePassed] and the
+  /// controller increments the clean-rep count for this node. Must be a REAL
+  /// graph node id (e.g. `baa.traceLetter.isolated`, `baa.writeWord.dictation`,
+  /// `baa.writeLetter.fromSound`) — never a synthetic per-word id like
+  /// `baa.writeWord.door`. Pass null for exercises with no graph-node analog
+  /// (e.g. the meet teachCard which is not scored, or per-word word-traces) —
+  /// nothing is recorded for those.
+  final String? graphExerciseId;
+
+  /// Called immediately when this exercise scores a PASS (before the CTA fires),
+  /// with the canonical graph node id so the host can increment clean-reps and
+  /// drive [markNodeCleared] on the controller. Only called when [graphExerciseId]
+  /// is non-null and the result is a pass. Never called for teach-cards or on a
+  /// fail (T2: the rep counter only grows on genuine clean passes).
+  final void Function(String graphExerciseId)? onGraphNodePassed;
 
   @override
   ConsumerState<ExerciseScaffold> createState() => _ExerciseScaffoldState();
@@ -151,7 +170,16 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
     // 1) The scorer's verdict — first, unchanged (GROUND-01).
     ref.read(exerciseControllerProvider.notifier).applyResult(result);
 
-    // 2) Accumulate the non-PII session trajectory (derived records only). The
+    // 2) T2: on a clean pass, notify the host so it can increment the graph
+    // node's clean-rep count and check cleared state (T1). Only fires when
+    // graphExerciseId is set (a canonical node id, not a synthetic per-word id)
+    // and the result is a pass — never on a fail (rep counter only grows on
+    // genuine clean passes; Pitfall 2 — never on mere navigation).
+    if (result.passed && widget.graphExerciseId != null) {
+      widget.onGraphNodePassed?.call(widget.graphExerciseId!);
+    }
+
+    // 3) Accumulate the non-PII session trajectory (derived records only). The
     // section id is the exercise's template `type` (e.g. 'traceLetter'), falling
     // back to its broad `skill` when no template label is authored.
     final section = widget.exercise.type ?? widget.exercise.skill;

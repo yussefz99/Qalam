@@ -71,6 +71,7 @@ class WatchTraceSection extends ConsumerStatefulWidget {
     required this.letter,
     this.onAdvance,
     this.strings = const WatchTraceStrings(),
+    this.onGraphNodePassed,
   });
 
   /// The `baa.traceLetter.isolated` config (trace/glyph/isolated + demo).
@@ -85,6 +86,10 @@ class WatchTraceSection extends ConsumerStatefulWidget {
 
   /// Section copy (English defaults; call site passes l10n).
   final WatchTraceStrings strings;
+
+  /// Called with the canonical graph node id on a clean scored pass (T2/T3).
+  /// Wired to the scaffold's [onGraphNodePassed] with `baa.traceLetter.isolated`.
+  final void Function(String graphExerciseId)? onGraphNodePassed;
 
   @override
   ConsumerState<WatchTraceSection> createState() => _WatchTraceSectionState();
@@ -190,6 +195,9 @@ class _WatchTraceSectionState extends ConsumerState<WatchTraceSection> {
       kick: s.traceKick,
       onNext: widget.onAdvance,
       onAudioTap: _play,
+      // T2: the canonical graph node id for the isolated-trace exercise.
+      graphExerciseId: widget.exercise.id,
+      onGraphNodePassed: widget.onGraphNodePassed,
     );
   }
 }
