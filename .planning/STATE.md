@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: — AI Tutor
 status: verifying
 stopped_at: Completed 15-05-PLAN.md
-last_updated: "2026-06-28T12:41:36.180Z"
+last_updated: "2026-06-28T15:45:16.767Z"
 last_activity: 2026-06-28
 progress:
   total_phases: 20
   completed_phases: 14
   total_plans: 73
-  completed_plans: 72
+  completed_plans: 73
   percent: 70
 ---
 
@@ -25,8 +25,8 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 
 ## Current Position
 
-Phase: 15 (build-dynamic-grounded-exercise-selection-on-baa) — EXECUTING
-Plan: 7 of 7
+Phase: 16
+Plan: Not started
 Status: Phase complete — ready for verification
 Last activity: 2026-06-28
 Next: human UAT (run app with --dart-define=TUTOR_BASE_URL=<service URL>), then /gsd-verify-work 14 → mark complete; then /gsd-plan-phase 15
@@ -35,7 +35,7 @@ Next: human UAT (run app with --dart-define=TUTOR_BASE_URL=<service URL>), then 
 
 **Velocity:**
 
-- Total plans completed: 44 of 34 (only 04-06 deferred/human-gated)
+- Total plans completed: 52 of 34 (only 04-06 deferred/human-gated)
 - Phases complete: 7 of 13 tracked (1, 2, 02.1, 02.1.1, 3, 03.1, 5); Phase 4 in progress (5/6)
 - Average duration: — min
 - Total execution time: 0.0 hours
@@ -51,6 +51,7 @@ Next: human UAT (run app with --dart-define=TUTOR_BASE_URL=<service URL>), then 
 | 09 | 3 | - | - |
 | 06.1 | 5 | - | - |
 | 11 | 3 | - | - |
+| 15 | 8 | - | - |
 
 **Recent Trend:**
 
