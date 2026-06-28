@@ -1,13 +1,12 @@
-// DYN-01 / DYN-02 (Wave 0, RED) — CurriculumGraph parses the provisional asset.
+// DYN-01 / DYN-02 — CurriculumGraph parses the signed baa asset.
 //
-// INTENTIONALLY RED at Wave 0: imports package:qalam/curriculum/curriculum_graph.dart,
-// which does not exist yet. Plan 15-03 writes the pure-Dart CurriculumGraph (parse
-// assets/curriculum/curriculum_graph.json: essentialNodes filter, tierOf / nextForward /
-// remediateOneTier helpers, signedOff getter) and turns this green. Do NOT add a lib/ stub.
+// History: authored RED at Wave 0 (Plan 15-01) against the PROVISIONAL asset
+// (signedOff:false); turned green by Plan 15-03's pure-Dart CurriculumGraph parser
+// (essentialNodes filter, tierOf / nextForward / remediateOneTier helpers, signedOff getter).
 //
-// The asset itself was authored in Plan 15-01 (signedOff:false, 19 baa.* nodes), so the
-// parse target exists; only the parser is missing. This file names the observable parse
-// behavior from 15-VALIDATION.md.
+// Plan 15-07 (the owner-mother sign-off gate, 2026-06-28) flipped
+// assets/curriculum/curriculum_graph.json signedOff:false → true. The signedOff assertion
+// below now pins the SIGNED reality (D-05) — it tracks the asset, not a frozen draft value.
 
 import 'dart:convert';
 import 'dart:io';
@@ -27,13 +26,13 @@ void main() {
     return json.decode(file.readAsStringSync()) as Map<String, Object?>;
   }
 
-  test('CurriculumGraph parses the provisional baa asset (19 baa.* nodes, signedOff false)',
+  test('CurriculumGraph parses the signed baa asset (19 baa.* nodes, signedOff true)',
       () {
     final graph = CurriculumGraph.fromJson(rawGraph());
 
     expect(graph.letterId, 'baa');
-    expect(graph.signedOff, isFalse,
-        reason: 'the asset is PROVISIONAL until owner-mother signs (D-05)');
+    expect(graph.signedOff, isTrue,
+        reason: 'owner-mother signed the graph at the tier level (D-05); Plan 15-07 flipped it');
     expect(graph.nodes.length, 19, reason: 'all 19 signed baa.* exercises are nodes');
     expect(
       graph.nodes.every((n) => n.exerciseId.startsWith('baa.')),
