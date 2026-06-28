@@ -6,7 +6,7 @@
     "sign_off": "Owner-mother signs at the TIER level (D-05): she confirms the baa-config→competency mapping, the 70/30 essential/enrichment split, and the per-skill clean-reps. signedOff stays false until then — Claude DRAFTED this; she REVIEWS and signs (mirror the AUTHORED_BAA_IDS gate). Plan 15-07 owns the flip to true."
   },
   "letterId": "baa",
-  "signedOff": false,
+  "signedOff": true,
   "competencies": [
     {
       "id": "recognize",
@@ -83,55 +83,55 @@
       "exerciseId": "baa.writeLetter.fromSound",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 2
+      "minCleanReps": 3
     },
     {
       "exerciseId": "baa.writeLetter.fromPicture",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 2
+      "minCleanReps": 3
     },
     {
       "exerciseId": "baa.writeLetter.writeForm",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 2
+      "minCleanReps": 3
     },
     {
       "exerciseId": "baa.connectWord.baab",
       "competency": "copyWrite",
       "tier": "manqul",
-      "minCleanReps": 2
+      "minCleanReps": 3
     },
     {
       "exerciseId": "baa.connectWord.kitaab",
       "competency": "copyWrite",
       "tier": "manqul",
-      "minCleanReps": 2
+      "minCleanReps": 3
     },
     {
       "exerciseId": "baa.completeWord.middle",
       "competency": "copyWrite",
       "tier": "manqul",
-      "minCleanReps": 2
+      "minCleanReps": 3
     },
     {
       "exerciseId": "baa.writeWord.copy",
       "competency": "copyWrite",
       "tier": "manzur",
-      "minCleanReps": 2
+      "minCleanReps": 3
     },
     {
       "exerciseId": "baa.writeWord.picture",
       "competency": "copyWrite",
       "tier": "manzur",
-      "minCleanReps": 2
+      "minCleanReps": 3
     },
     {
       "exerciseId": "baa.writeWord.dictation",
       "competency": "copyWrite",
       "tier": "ghayrManzur",
-      "minCleanReps": 2
+      "minCleanReps": 3
     },
     {
       "exerciseId": "baa.buildSentence.hear",
