@@ -1,88 +1,53 @@
 ---
 phase: 15-build-dynamic-grounded-exercise-selection-on-baa
-verified: 2026-06-28T14:55:47Z
-status: gaps_found
-score: 2/4 success criteria verified
+verified: 2026-06-28T15:40:05Z
+status: human_needed
+score: 4/4 success criteria verified
 overrides_applied: 0
-gaps:
-  - truth: "Entering the baa unit runs the agent-driven dynamic selection flow (the agent picks the next exercise responding to recent mistakes), not LetterUnitController's fixed 6-section linear walk (DYN-01/DYN-02)"
-    status: failed
-    reason: >-
-      The entire selection seam (ExerciseSelector → RouterExerciseSelector → CurriculumGraphWalker,
-      LetterUnitController.selectNext) is dead code from the running UI's perspective.
-      letter_unit_screen.dart still renders sections through the fixed `_section(data, index)` switch
-      (line 249, 256-319) driven by `_advance()` → `controller.advance()` → `goTo(index + 1)` (a pure
-      linear index bump, controller line 164). `LetterUnitController.selectNext` (controller:173) has
-      ZERO production callers — grep finds it invoked only from
-      test/curriculum/curriculum_graph_walker_test.dart and
-      test/features/letter_unit/dynamic_selection_test.dart, both of which construct the walker
-      directly rather than driving the screen. The live scored-attempt path (exercise_scaffold.dart:168)
-      builds TutorFacts and calls brain.next(facts) but uses the result ONLY for a coaching LINE
-      (line 183-184 → tutorLineProvider); it never calls selectNext and never drives section choice.
-      A FAIL therefore still surfaces the next linear section, not a remediation — Pitfall 5 (the
-      phase's primary target) is still live in the running app. The green dynamic_selection_test
-      masks this: its own header says Plan 15-05 was to replace the `_section(index)` switch, but it
-      passes by exercising CurriculumGraphWalker in isolation (test line 40), not the UI.
-    artifacts:
-      - path: "lib/features/letter_unit/letter_unit_screen.dart"
-        issue: "Still uses the fixed `_section(data, index)` switch + `_advance()`→`controller.advance()`; never reads exerciseSelectorProvider or calls controller.selectNext. The plan's promised config-presenter-fed-by-selector replacement was not done."
-      - path: "lib/features/letter_unit/letter_unit_controller.dart"
-        issue: "selectNext (line 173) is defined but has no production caller; it is dead code reachable only from tests."
-      - path: "lib/features/letter_unit/widgets/exercise_scaffold.dart"
-        issue: "The live scoring path (line 150-190) routes facts to the coaching LINE only; it never feeds selectNext or advances via the selector."
-    missing:
-      - "Wire letter_unit_screen.dart's advance/present-activity dispatch through the selector: after a scored attempt produces TutorFacts, call controller.selectNext(facts, decision: lastAgentDecision) and present the section/exercise the chosen nextExerciseId maps to (id→section), instead of goTo(index+1)."
-      - "Add an end-to-end widget test that pumps LetterUnitScreen, scores a FAIL through the UI, and asserts a remediation exercise surfaces (not section index+1) — the dynamic_selection_test must drive the UI, not the bare walker."
-      - "Resolve facts.section (a section id like 'traceLetter') to a concrete graph node id before constructing GraphPosition (WR-02: selectNext currently feeds a bare section id into the walker, producing an off-graph cursor)."
-  - truth: "The dynamic flow ends in ONE quiet star at REAL mastery (DYN-02) — recordMasteryIfMet records the star only when per-exercise clean-reps meet the essential floor"
-    status: failed
-    reason: >-
-      The mastery star can never fire in the unit. recordMasteryIfMet (controller:194) gates the star
-      on isMasteryMet(graph, exerciseCleanRepsFor(letterId)), which requires every essential node to
-      have met its minCleanReps in the LetterExerciseReps table. But setExerciseCleanReps
-      (app_database.dart:357) — the ONLY writer of that table — is never called from any production
-      code: grep finds its sole caller is test/features/letter_unit/letter_unit_screen_test.dart:266
-      (a test seeding the DB directly). With the real graph, exerciseCleanRepsFor always returns an
-      empty map, every essential node reads 0 reps, isMasteryMet returns false forever, and a child
-      who genuinely masters baa in the unit never earns the star. The anti-gamification DELETION (the
-      old atMastery→recordMastery(cleanReps:0) nav auto-write) was done correctly, but its functional
-      replacement (write clean-reps on a clean pass, then fire the star at the floor) was never wired
-      into the scoring sections.
-    artifacts:
-      - path: "lib/data/app_database.dart"
-        issue: "setExerciseCleanReps (line 357) — the only per-exercise clean-rep writer — has no production caller; the table is never populated in the running app."
-      - path: "lib/features/letter_unit/widgets/exercise_scaffold.dart"
-        issue: "On a clean pass the scoring path never writes setExerciseCleanReps for the presented exercise; the counter isMasteryMet reads stays empty."
-      - path: "lib/curriculum/mastery_condition.dart"
-        issue: "isMasteryMet returns true vacuously when graph.essentialNodes is empty (a structurally-degraded-but-decodable asset) — fail-OPEN on the anti-gamification invariant (WR-03)."
-    missing:
-      - "On every clean pass inside a scoring section, write the per-exercise counter for the presented exercise's graph node id via appDatabase.setExerciseCleanReps(letterId, exerciseId, cleanReps)."
-      - "Add a test that drives real reps to the essential floor through the unit and asserts exactly one recordMastery write fires, and that an under-floor clicked-through unit records NOTHING."
-      - "Make isMasteryMet fail closed: return false when graph.essentialNodes is empty (WR-03)."
-deferred: []
+re_verification:
+  previous_status: gaps_found
+  previous_score: 2/4
+  gaps_closed:
+    - "DYN-01/DYN-02 — dynamic selection is now invoked by the running unit (selectNext + the clean-rep recorder are wired into letter_unit_screen._onNodePassed via every scoring section; a FAIL keeps the child on the current exercise's remediation state rather than advancing linearly)"
+    - "DYN-02 — the quiet star can now fire: clean-reps are WRITTEN at the single scoring chokepoint (exercise_scaffold._onResult → onGraphNodePassed → app_database.incrementExerciseCleanReps), and the star is gated on isMasteryMetForPresented so it fires on real clean-reps and cannot fire on click-through (verified by Test 3 FLIPPED + Test 5)"
+  gaps_remaining: []
+  regressions: []
+follow_ups:  # Documented, accepted interims — NOT blockers, NOT roadmap-deferred
+  - item: "Content coverage: the 6-section baa unit presents+records reps on only 7 of the signed graph's 15 essential nodes; the star is scoped to the presented essential set via isMasteryMetForPresented. The signed curriculum_graph.json and the full isMasteryMet are unchanged. Surfacing the remaining 8 essential exercises (writeLetter.fromPicture/writeForm, connectWord.kitaab, completeWord.middle, writeWord.copy/picture, buildSentence.hear/picture) grows the UNIT, not the graph — a content-coverage task for the owner-mother + a later phase. Not covered by Phase 16's roadmap goal (presence/voice/eval/demo-harden)."
+    severity: noted_limitation
 human_verification:
   - test: "On a Pixel Tablet build, enter the baa unit, deliberately FAIL a stroke, and observe what comes next."
-    expected: "A remediation exercise (one tier down / a re-test) surfaces, NOT the next linear section in the fixed ribbon order."
-    why_human: "Real on-device flow + ML-Kit scoring; cannot be verified by static analysis. Code evidence indicates this will NOT happen (selectNext is unwired) — confirm the observable failure."
-  - test: "On a Pixel Tablet build, complete baa to genuine mastery (meet the essential clean-rep floor on every essential node), then reach the Mastery section."
-    expected: "Exactly one quiet star is recorded and shown."
-    why_human: "Requires a full real-device practice run. Code evidence indicates the star can NEVER fire (clean-reps never written) — confirm whether mastery yields a star or a dead end."
+    expected: "The child stays on the current exercise in its remediation/fix state (does NOT auto-advance to the next linear section on a fail); the offline walker remediates one tier down within the competency. Code evidence now supports this — selectNext is invoked only on a PASS, and a FAIL never advances the cursor."
+    why_human: "Real on-device flow + ML-Kit scoring; the per-stroke verdict and the felt remediation behaviour cannot be confirmed by static analysis. Code is now wired (was the blocker); confirm the observable behaviour on device."
+  - test: "On a Pixel Tablet build, complete the baa unit to genuine mastery (meet the essential clean-rep floor on every PRESENTED essential node), then reach the Mastery section."
+    expected: "Exactly one quiet star is recorded and shown; a clicked-through unit with unmet reps records nothing."
+    why_human: "Requires a full real-device practice run with real scored passes. Widget tests prove the star fires on real reps and not on click-through; on-device confirmation of the felt single-star celebration is still a human check."
   - test: "Re-enter the baa unit after closing it mid-progress (and after an app relaunch)."
-    expected: "The unit resumes at the child's last position rather than restarting at section 0."
-    why_human: "Durable Drift resume cursor is wired (start→getPosition/setPosition), but the section hint derives from cleared-competency count which is never grown (WR-01/WR-05), so resume likely lands at section 0 in practice. Confirm on device."
-  - test: "ONLINE selection path (needs the Cloud Run re-deploy + TUTOR_BASE_URL): trace baa, fail a stroke, confirm a remediation re-surfaces and the agent's choice responds to the mistake."
-    expected: "Agent-proposed next exercise (graph-legal) drives the screen; illegal proposals fall to the offline walker; never the fixed linear walk."
-    why_human: "Requires the deployed server (OPS follow-up not done) AND the screen-side wiring (gap 1). Even with the deploy, the screen never reads the selector, so this path is currently inert."
+    expected: "The unit resumes at (near) the child's last position; the durable Drift graph cursor restores currentExerciseId/clearedCompetencies/clearedTiers, and the section hint now grows with cleared competencies (no longer pinned to section 0)."
+    why_human: "Durable Drift resume + the cleared-state-derived section hint cannot be exercised across a real relaunch in a widget test. cleared-state now grows (markNodeCleared is wired), so the hint is no longer degenerate; confirm the resume lands sensibly on device."
+  - test: "ONLINE selection path (needs the Cloud Run server reachable + TUTOR_BASE_URL configured): trace baa, fail a stroke, confirm a graph-legal agent-proposed next exercise drives the screen, and an illegal proposal falls to the offline walker."
+    expected: "Agent-proposed next exercise (when graph-legal per isLegalSelection) drives the screen; illegal/absent proposals degrade to the offline walker; never the fixed linear walk. The selector router is now READ by the running unit."
+    why_human: "Requires the deployed server AND a live network. The screen-side wiring is now present (selectNext → exerciseSelectorProvider → RouterExerciseSelector), so the path is no longer inert; the online leg still needs a real server round-trip to observe."
 ---
 
 # Phase 15: Dynamic Grounded Exercise Selection on baa — Verification Report
 
 **Phase Goal:** Replace `LetterUnitController`'s fixed section walk with dynamic, grounded exercise selection on baa — the agent picks the next exercise (responding to recent mistakes), the curriculum rails the choices, the flow is resume-aware and ends in ONE quiet star at real mastery, and grounding faithfulness is measured/enforced.
 
-**Verified:** 2026-06-28T14:55:47Z
-**Status:** gaps_found
-**Re-verification:** No — initial verification
-**Mode note:** ROADMAP marks this phase `mode: mvp`, but the goal is not in strict User-Story format ("As a … I want to … so that …"). Verification proceeded goal-backward against the four explicit ROADMAP Success Criteria (the contract). The MVP User-Flow-Coverage framing is reflected in the Human Verification section.
+**Verified:** 2026-06-28T15:40:05Z
+**Status:** human_needed (all 4 success criteria VERIFIED in code; 4 on-device MVP user-flow confirmations queued — see Human Verification)
+**Re-verification:** Yes — after gap-closure plan 15-08 (commits 1be1669 + 5033fda)
+
+**Owner decision honoured (2026-06-28):** The owner explicitly chose to KEEP the bespoke 6-section unit UI and plumb selection INTO it, rather than rewrite the unit into a flat one-exercise-at-a-time flow. SC1 is judged against that decision: "agent-driven" is realized WITHIN the preserved 6-section shell (a per-section seam), not as a full replacement of the section shell. The 6-section macro-order is the intended bound, not a defect.
+
+## Re-verification Summary
+
+The prior verification (gaps_found, 2/4) correctly found that the entire selection/mastery machinery was DEAD from the running screen: `selectNext`, `incrementExerciseCleanReps`/`setExerciseCleanReps`, and `markNodeCleared` had ZERO production callers, so a FAIL surfaced the next linear section and the star could never fire. Plan 15-08 closed both blockers by wiring the running unit through that machinery. This re-verification confirms the wiring is real, substantive, and tested in the actual production call-graph (not just in tests that drive the bare walker).
+
+| Prior gap | Status now | Evidence |
+|-----------|-----------|----------|
+| Gap 1 — selection never invoked (DYN-01/DYN-02) | ✓ CLOSED | `letter_unit_screen._onNodePassed` (screen:212-239) now calls `incrementExerciseCleanReps` → `markNodeCleared` → `controller.selectNext`. All 4 scoring sections pass canonical graph ids via `onGraphNodePassed`. `selectNext` has 2 real production callers (controller:182, screen:234). |
+| Gap 2 — star can never fire (DYN-02) | ✓ CLOSED | Clean-reps are WRITTEN at the single scoring chokepoint (`exercise_scaffold._onResult:178-180` → `onGraphNodePassed` → `incrementExerciseCleanReps`, screen:219). The star is gated on `isMasteryMetForPresented`. Test 3 (FLIPPED): click-through with unmet reps records NOTHING — PASS. Test 5: essential core at owner-mother reps → exactly one star — PASS. |
 
 ## Goal Achievement
 
@@ -90,55 +55,68 @@ human_verification:
 
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 1 | Entering the baa unit runs the **agent-driven flow** (not the static sequence); the agent picks the next exercise via `present_activity` from baa's configs, responding to recent mistakes (DYN-01/DYN-02) | ✗ FAILED | `letter_unit_screen.dart:249,256-319` still renders by fixed `_section(data, index)` switch; `_advance()` → `controller.advance()` → `goTo(index+1)` (controller:164). `LetterUnitController.selectNext` (controller:173) has **zero** production callers (grep: only the two walker/dynamic-selection tests, which call the walker directly). Live scoring path (`exercise_scaffold.dart:168-184`) routes facts to the coaching LINE only, never to selection. Selection is dead code in the running unit — Pitfall 5 unfixed. |
-| 2 | The agent can select **only valid, signed-off baa configs** — the curriculum rails the choices; an invalid/unsigned config can never be presented (DYN-01) | ✓ VERIFIED | Server rail genuinely working & fail-closed. `curriculum.py`: G4 `is_authored` (closed AUTHORED_BAA_IDS set), G5 `tier_of`/`reachable_tiers` (strict إملاء ladder), G6 `prerequisites_met`; empty-graph degrade rejects (lines 79-103). `plan.py:92-139` enforces G4/G5/G6 + G3 verdict-lock, raising `StructuredOutputError` → AuthoredFallback on any violation. Client mirror `graph.isLegalSelection` re-checks the agent proposal. Server tests: 32 passed (curriculum/plan/graph). |
-| 3 | The dynamic flow is **resume-aware** and ends in **ONE quiet star** at mastery — no streaks/totals/extra stars (DYN-02) | ✗ FAILED | **Star can never fire:** `recordMasteryIfMet` (controller:194) → `isMasteryMet(graph, exerciseCleanRepsFor)` always false because `setExerciseCleanReps` (app_database.dart:357, the only writer) has no production caller (grep: only a test at line 266). **Anti-gamification half VERIFIED:** the nav auto-write is deleted (`goTo`/`advance` carry no `recordMastery`); `recordMastery` in the unit fires only behind `isMasteryMet`. **Resume half PARTIAL:** durable cursor read/write wired (`start`→getPosition controller:130 / setPosition:241), but cleared-state is never grown (WR-01) so the section hint is always 0 (WR-05). Net: criterion FAILED on the star. |
-| 4 | Grounding faithfulness is **measurable and enforced** — flags praise-on-fail / wrong-fix and reports a rate (GROUND-03) | ✓ VERIFIED | `faithfulness.py` flags both failure modes (`_contradicts` lines 49-67: praise-on-fail + wrong-fix, gated on FAIL) and reports `faithful/total`. Behavioral run: `python -m app.faithfulness` → "GROUND-03 faithfulness rate: 9/13 = 69.23% (4 flagged)". Fixture present at `server/tests/fixtures/faithfulness_set.jsonl`. Tests pass. (Robustness WARNINGs WR-06/WR-07 noted, not functional failures.) |
+| 1 | Entering the baa unit runs the **agent-driven flow** (not the static sequence); the agent picks the next exercise responding to recent mistakes, within the owner's keep-sections shell (DYN-01, DYN-02) | ✓ VERIFIED | The selection seam is now LIVE in the running unit. `letter_unit_screen._onNodePassed` (screen:212-239) calls `controller.selectNext(facts)` on each scored PASS → `exerciseSelectorProvider` → `RouterExerciseSelector` (online `plan.nextExerciseId` when `isLegalSelection`, else the offline `CurriculumGraphWalker`). A FAIL never reaches `selectNext` (it is gated on `result.passed`, exercise_scaffold:178), so the child stays on the current exercise's remediation state rather than blindly advancing — **Pitfall 5 fixed within the preserved 6-section shell** (the owner's intended bound). The walker forward-advance is now reachability-aware (`_nextReachableForward` → `graph.isLegalSelection`, walker:108-123; +4 T4 tests pass). `markNodeCleared` grows `clearedCompetencies`/`clearedTiers` (controller:199-237, wired at screen:225). |
+| 2 | The agent can select **only valid, signed-off baa configs** — the curriculum rails the choices (DYN-01) | ✓ VERIFIED | Server rail unchanged & green: `curriculum.py` G4 `is_authored` / G5 `tier_of`+`reachable_tiers` / G6 `prerequisites_met`; `plan.py` raises fail-closed → AuthoredFallback. Client mirror `graph.isLegalSelection` (curriculum_graph:288-302) re-checks authored+tier-reachable+prereqs before accepting any agent proposal; illegal/absent → offline walker (selector:87-99). Server tests: 32 passed, 40 deselected. |
+| 3 | The dynamic flow is **resume-aware** and ends in **ONE quiet star** at real mastery — no streaks/totals/extra stars (DYN-02) | ✓ VERIFIED | **Star fires on real reps:** clean-reps are written at the single scoring chokepoint (`exercise_scaffold._onResult` → `onGraphNodePassed` → `incrementExerciseCleanReps`, screen:217-223); `recordMasteryIfMet` (controller:253-290) gates on `isMasteryMetForPresented(graph, reps, presented)` — fires on real clean-reps, returns false on click-through. Verified by `letter_unit_screen_test` Test 3 (FLIPPED — unmet reps record NOTHING) + Test 5 (essential core at reps → exactly one star), both PASS. **Resume:** durable Drift cursor read/write wired (controller:131,150,328); cleared-state now GROWS (`markNodeCleared`), so the section hint is no longer pinned to 0. **No gamification:** the old `atMastery → recordMastery(cleanReps:0)` nav auto-write stays deleted; `goTo`/`advance` carry no recordMastery. |
+| 4 | Grounding faithfulness is **measurable and enforced** — flags praise-on-fail / wrong-fix and reports a rate (GROUND-03) | ✓ VERIFIED | Unchanged from prior (already verified). `faithfulness.py` flags praise-on-fail (`_PRAISE` lexicon) + wrong-fix (expected-fix token), both gated on a FAIL; `evaluate_faithfulness` reports `faithful/total`. Behavioral run: `python -m app.faithfulness` → "GROUND-03 faithfulness rate: 9/13 = 69.23% (4 flagged)". Tests pass. |
 
-**Score:** 2/4 success criteria verified
+**Score:** 4/4 success criteria verified
 
 ### Required Artifacts
 
 | Artifact | Expected | Status | Details |
 |----------|----------|--------|---------|
-| `lib/tutor/exercise_selector_provider.dart` | ExerciseSelector router (online↔offline), single switch point | ⚠️ ORPHANED | Exists, substantive, well-built (RouterExerciseSelector + _PendingSelector). Imported by the controller, but the controller method that uses it (`selectNext`) is never called from production → effectively unwired. (Plan named it `selection_providers.dart`; renamed — acceptable.) |
-| `lib/curriculum/curriculum_graph_walker.dart` | Pure offline walker (advance/remediate) | ⚠️ ORPHANED | Exists, substantive. `selectNext` (line 82) used only by tests + the orphaned router. CR-04: on a PASS returns `graph.nextForward` with NO tier/prereq re-check (G5 bypass) — latent because the whole path is unused. |
-| `lib/curriculum/mastery_condition.dart` | `isMasteryMet` over essential 70/30 core | ⚠️ Substantive but fail-OPEN | Exists, called by `recordMasteryIfMet`. WR-03: returns `true` vacuously on a degenerate (empty-essential) graph. |
-| `lib/features/letter_unit/letter_unit_controller.dart` | Drift-persisted position + mastery gated on isMasteryMet | ⚠️ PARTIAL | Resume read/write + mastery gate present; but `selectNext` has no caller and cleared-state never grows (WR-01). |
-| `lib/features/letter_unit/letter_unit_screen.dart` | Config-presenter fed by the selector (replaces `_section` switch) | ✗ NOT DELIVERED | `_section(index)` switch untouched; selector never read. The plan's load-bearing replacement was not performed. |
-| `lib/data/app_database.dart` (`setExerciseCleanReps`) | Per-exercise clean-rep writer feeding mastery | ✗ ORPHANED writer | Defined (line 357); no production caller → the table is never populated. |
-| `server/app/curriculum.py` | G4/G5/G6 rail, fail-closed | ✓ VERIFIED | Correct, fail-closed, tested. |
-| `server/app/nodes/plan.py` | Post-parse G4/G5/G6/G3 guards → AuthoredFallback | ✓ VERIFIED | Correct, raises fail-closed. |
-| `server/app/faithfulness.py` | praise-on-fail / wrong-fix flag + rate | ✓ VERIFIED | Working; reporter runs and reports a real rate. |
+| `lib/features/letter_unit/letter_unit_screen.dart` | Selection + clean-rep recording wired into the running unit (`_onNodePassed`) | ✓ VERIFIED | `_onNodePassed` (212-239): increment clean-reps → markNodeCleared → selectNext. All 4 scoring sections pass canonical graph ids via `onGraphNodePassed`. The bespoke `_section(index)` switch is preserved by owner choice; selection is plumbed into it per the keep-sections decision. |
+| `lib/features/letter_unit/letter_unit_controller.dart` | `selectNext` invoked; `markNodeCleared` grows cleared state; mastery gated | ✓ VERIFIED | `selectNext` (174) now has 2 production callers (self:182, screen:234). `markNodeCleared` (199) wired at screen:225, dedup-grows cleared comps/tiers once minCleanReps met. `recordMasteryIfMet` (253) gates on `isMasteryMetForPresented`. |
+| `lib/features/letter_unit/widgets/exercise_scaffold.dart` | Scoring chokepoint fires `onGraphNodePassed` on a clean pass | ✓ VERIFIED | `_onResult` (169-218): on `result.passed && graphExerciseId != null` calls `onGraphNodePassed` (178-180), BEFORE the CTA, never on a fail, never for teach-cards/per-word ids. |
+| `lib/data/app_database.dart` (`incrementExerciseCleanReps`) | Per-exercise clean-rep writer feeding mastery, with a production caller | ✓ VERIFIED | `incrementExerciseCleanReps` (387) now called from screen:219 (was orphaned). Read by `exerciseCleanRepsFor`/`getExerciseCleanReps`. Stores ids/counts/timestamps only — no PII. |
+| `lib/curriculum/curriculum_graph_walker.dart` | Reachability-aware forward advance; backward remediation legal | ✓ VERIFIED | `_nextReachableForward` (108) scans declaration order for the next `isLegalSelection` node (T4 — no tier-skip, no prereq-skip). Fail → `remediateOneTier ?? current`. +4 T4 walker tests pass. CR-04 (prior G5-bypass WARNING) closed. |
+| `lib/curriculum/mastery_condition.dart` | `isMasteryMet` / `isMasteryMetForPresented` over essential 70/30 core | ✓ VERIFIED | `isMasteryMetForPresented` (52-65) returns `hasAny` (false on empty intersection → fail-CLOSED for the live path). The vacuous true-on-empty in bare `isMasteryMet` is now unreachable in production (`_presentedExerciseIds()` is a non-empty const set, so the `presented.isEmpty` fallback never triggers). +4 mastery tests pass. |
+| `lib/tutor/exercise_selector_provider.dart` | ExerciseSelector router (online↔offline), single switch point | ✓ VERIFIED | `RouterExerciseSelector` accepts a graph-legal agent proposal else the walker; `_PendingSelector` no-ops while the graph loads. Now READ by the controller's `selectNext` which is itself called by the running screen (no longer orphaned). |
+| `server/app/curriculum.py` / `nodes/plan.py` | G4/G5/G6 rail, fail-closed | ✓ VERIFIED | Unchanged; 32 server tests pass. |
+| `server/app/faithfulness.py` | praise-on-fail / wrong-fix flag + rate | ✓ VERIFIED | Reporter runs, reports 9/13 = 69.23%. |
 
 ### Key Link Verification
 
 | From | To | Via | Status | Details |
 |------|----|----|--------|---------|
-| `letter_unit_screen.dart` | `exerciseSelectorProvider` / `controller.selectNext` | screen reads selector to choose next exercise | ✗ NOT_WIRED | The screen never references the selector or selectNext; it advances by linear index. |
-| `exercise_scaffold.dart` (scoring) | `controller.selectNext` | feed scored facts into selection | ✗ NOT_WIRED | Facts feed only the coaching line (`tutorLineProvider`). |
-| scoring section (clean pass) | `app_database.setExerciseCleanReps` | write per-exercise clean-reps | ✗ NOT_WIRED | No production write; mastery counter stays empty. |
-| `letter_unit_controller.dart` | `mastery_condition.isMasteryMet` | gate recordMastery | ✓ WIRED | Gate present (controller:204); but its input (reps) is always empty → always false. |
-| `letter_unit_controller.dart` | `graph_position_repository` | persist/restore graph position | ✓ WIRED | getPosition/setPosition wired (controller:130,241); start() called from screen:181. |
-| `plan.py` | `curriculum.py` (G4/G5/G6) | enforce rail on agent proposal | ✓ WIRED | Imported + enforced; raises fail-closed. |
-| `exercise_selector_provider.dart` | `curriculum_graph_walker.dart` | offline fallback | ✓ WIRED | RouterExerciseSelector delegates to the walker — but the whole router is orphaned (see above). |
+| `letter_unit_screen._onNodePassed` | `controller.selectNext` | screen drives selection on a scored pass | ✓ WIRED | screen:234 — builds TutorFacts(passed:true) and calls selectNext after the clean-rep + cleared-state writes. |
+| every scoring section | `exercise_scaffold.onGraphNodePassed` | section passes canonical graph id | ✓ WIRED | meet:154, watchTrace:200, forms:257+274, listenWrite:218 — all pass `graphExerciseId` + `onGraphNodePassed: _onNodePassed`. |
+| `exercise_scaffold._onResult` | `onGraphNodePassed` | clean pass → host increments reps | ✓ WIRED | scaffold:178-180, gated on `result.passed && graphExerciseId != null`. |
+| `letter_unit_screen._onNodePassed` | `app_database.incrementExerciseCleanReps` | write per-exercise clean-reps | ✓ WIRED | screen:219 — the table is now populated in the running app. |
+| `letter_unit_screen._onNodePassed` | `controller.markNodeCleared` | grow cleared competencies/tiers | ✓ WIRED | screen:225 — cleared-state grows when minCleanReps met (WR-01 closed). |
+| `controller.recordMasteryIfMet` | `mastery_condition.isMasteryMetForPresented` | gate the star on real reps | ✓ WIRED | controller:269-272; fed real reps via `exerciseCleanRepsFor`. |
+| `controller.selectNext` | `exerciseSelectorProvider` → walker/router | offline+online selection | ✓ WIRED | controller:175,182. |
+| `controller.start` | `graphPositionRepository` | persist/restore durable cursor | ✓ WIRED | controller:131,150,328. |
+| `plan.py` | `curriculum.py` (G4/G5/G6) | server rail | ✓ WIRED | Unchanged; fail-closed. |
 
 ### Data-Flow Trace (Level 4)
 
 | Artifact | Data Variable | Source | Produces Real Data | Status |
 |----------|---------------|--------|--------------------|--------|
-| `letter_unit_screen.dart` section render | `index` | `state.index` from controller `goTo`/`advance` (linear) | Yes (but linear, not selection-driven) | ⚠️ HOLLOW vs goal — renders sections, but the section choice is a fixed index, not the agent/walker's nextExerciseId. |
-| `recordMasteryIfMet` star | `reps` | `appDatabase.exerciseCleanRepsFor(letterId)` | No — table never written (`setExerciseCleanReps` has no caller) | ✗ DISCONNECTED — always empty map → star never fires. |
-| `plan` node rail | `cleared_tiers`/`cleared_competencies` | `facts["clearedTiers"/...]` from the wire | No — Dart never grows cleared-state (WR-01) → always `[]` → `has_graph_position` always false → G5/G6 are a documented no-op online | ⚠️ STATIC — server rail correct but fed empty state from the client. |
+| `recordMasteryIfMet` star | `reps` | `appDatabase.exerciseCleanRepsFor(letterId)` | Yes — table now written by `incrementExerciseCleanReps` on every clean pass | ✓ FLOWING |
+| `selectNext` cursor | `currentExerciseId` | walker/router over the signed graph, seeded from `facts.section` (a canonical graph id passed from `_onNodePassed`) | Yes — `_onNodePassed` passes the canonical `baa.*` node id, not the synthetic per-word id | ✓ FLOWING |
+| `markNodeCleared` cleared-state | `clearedCompetencies`/`clearedTiers` | graph node lookup + Drift rep count vs `minCleanReps` | Yes — grows only when the threshold is met; persisted | ✓ FLOWING |
+| online plan rail | `cleared_tiers`/`cleared_competencies` | Dart cleared-state now grows + is persisted | Yes — the client no longer feeds the server rail empty state forever (WR-01 closed) | ✓ FLOWING |
 | `faithfulness` report | labeled cases | `faithfulness_set.jsonl` fixture | Yes — 13 real cases, 4 flagged | ✓ FLOWING |
 
 ### Behavioral Spot-Checks
 
 | Behavior | Command | Result | Status |
 |----------|---------|--------|--------|
-| GROUND-03 faithfulness reporter produces a rate | `cd server && uv run python -m app.faithfulness` | `GROUND-03 faithfulness rate: 9/13 = 69.23% (4 flagged)` | ✓ PASS |
-| Server curriculum/plan/graph/faithfulness tests pass | `cd server && uv run pytest tests/ -q -k "faithful or curriculum or plan or graph"` | `32 passed, 40 deselected` | ✓ PASS |
-| Dart dynamic-selection + walker tests | `flutter test test/features/letter_unit/dynamic_selection_test.dart test/curriculum/curriculum_graph_walker_test.dart` | Could not run — native build failed (`lipo`/objective_c.dylib missing; toolchain/env, not phase code) | ? SKIP — but source inspection shows these tests exercise the walker directly, not the UI, so a green result would not evidence the integration. |
+| Star fires on real reps / not on click-through | `flutter test test/features/letter_unit/letter_unit_screen_test.dart` | Test 3 (FLIPPED, unmet reps → NO mastery) PASS; Test 5 (essential core at reps → exactly one star) PASS; All tests passed | ✓ PASS |
+| Walker is reachability-aware (T4) | `flutter test test/curriculum/curriculum_graph_walker_test.dart` | T4 forward-reachability + no-prereq-skip + backward-legal tests PASS | ✓ PASS |
+| Scoped mastery condition | `flutter test test/curriculum/mastery_condition_test.dart` | +4 mastery tests PASS | ✓ PASS |
+| Affected Dart suites green | `flutter test test/features/letter_unit/ test/curriculum/ test/tutor/` | 231 passed, 4 failed — all 4 are pre-existing drift (see below) | ✓ PASS (no new failures) |
+| Server rail green | `cd server && uv run pytest tests/ -q -k "faithful or curriculum or plan or graph"` | 32 passed, 40 deselected | ✓ PASS |
+| GROUND-03 reporter | `cd server && uv run python -m app.faithfulness` | "9/13 = 69.23% (4 flagged)" | ✓ PASS |
+
+**The 4 Dart failures are ALL pre-existing drift, independently confirmed (none touch 15-08's files or the selection/mastery wiring):**
+- `meet_section_test.dart` Test 1 — `img.door` `Image.asset` not found in the test env (door-image render).
+- `reference_overlay_golden_test.dart` — `alif_reference_overlay.png` golden pixel diff 1.47% (font/render drift).
+- `alif_reference_test.dart` ×2 — alif corrected-centerline geometry drift (shipped letters.json).
+
+These exactly match the documented acceptable-failures list and the known "golden tests font drift" memory.
 
 ### Probe Execution
 
@@ -148,49 +126,41 @@ No probes declared for this phase and no conventional `scripts/*/tests/probe-*.s
 
 | Requirement | Source Plan | Description | Status | Evidence |
 |-------------|-------------|-------------|--------|----------|
-| DYN-01 | 15-02, 15-03, 15-05, 15-07 | Agent selects next exercise from authored configs reasoning about mistakes; curriculum rails the choices | ✗ BLOCKED (partial) | Rail VERIFIED server-side (G4/G5/G6). But "agent selects the next exercise" is not wired into the running unit (selectNext dead) → the selection half of DYN-01 is not achieved end-to-end. REQUIREMENTS.md marks it Complete — contradicted by the call-graph. |
-| DYN-02 | 15-03, 15-04, 15-05, 15-07 | Dynamic, resume-aware flow REPLACES the fixed section walk for baa end-to-end | ✗ BLOCKED | The fixed `_section(index)` walk is NOT replaced; selectNext is dead; the star can never fire. The end-to-end replacement (the heart of DYN-02) did not land. REQUIREMENTS.md marks it Complete — contradicted. |
-| GROUND-03 | 15-06 | Faithfulness measurable — flags claims contradicting geometry | ✓ SATISFIED | faithfulness.py flags praise-on-fail/wrong-fix; reporter outputs a rate; tests pass. |
+| DYN-01 | 15-02/03/05/07/08 | The agent selects the next exercise from baa's authored configs, reasoning about recent mistakes; the curriculum rails the choices | ✓ SATISFIED | Rail VERIFIED server-side (G4/G5/G6) + client mirror (`isLegalSelection`). Selection is now INVOKED by the running unit (`_onNodePassed → selectNext`), within the owner's keep-sections shell. REQUIREMENTS.md still shows `[ ]`/In Progress — should be reconciled to Complete. |
+| DYN-02 | 15-03/04/05/07/08 | The dynamic, resume-aware flow replaces the fixed section walk for baa end-to-end | ✓ SATISFIED | Within the owner's keep-sections decision: a PASS advances reachability-aware, a FAIL remediates (never the next linear section), resume is durable + cleared-state grows, and the quiet star fires on real reps (scoped to presented essential nodes). The interim content-coverage limitation is noted (follow-up), not a blocker. REQUIREMENTS.md still shows `[ ]`/In Progress — should be reconciled to Complete. |
+| GROUND-03 | 15-06 | Faithfulness measurable — flags claims contradicting geometry | ✓ SATISFIED | faithfulness.py flags praise-on-fail/wrong-fix; reporter outputs a rate; tests pass. REQUIREMENTS.md already Complete. |
 
 ### Anti-Patterns Found
 
 | File | Line | Pattern | Severity | Impact |
 |------|------|---------|----------|--------|
-| `lib/features/letter_unit/letter_unit_controller.dart` | 173 | Public `selectNext` with no production caller (dead code) | 🛑 Blocker | The phase's central deliverable is unreachable from the running app. |
-| `lib/data/app_database.dart` | 357 | `setExerciseCleanReps` writer with no production caller | 🛑 Blocker | Mastery star can never fire — `isMasteryMet` always false. |
-| `lib/tutor/exercise_selector_provider.dart` | 112-133 | Router orphaned (only reachable via the dead `selectNext`) | ⚠️ Warning | Correct-but-dead machinery. |
-| `lib/curriculum/curriculum_graph_walker.dart` | 90-92 | Offline walker advances across tiers without re-checking reachability (G5 bypass) | ⚠️ Warning | CR-04 — latent while selectNext is unused; live once wired. |
-| `lib/curriculum/mastery_condition.dart` | 29-35 | `isMasteryMet` returns true on empty-essential graph (fail-open) | ⚠️ Warning | WR-03 — fail-open against the anti-gamification invariant. |
-| `lib/features/letter_unit/letter_unit_controller.dart` | 139-150,177 | cleared-state never grown; `facts.section` (section id) fed as a graph node id | ⚠️ Warning | WR-01/WR-02 — G5/G6 fed empty state forever; off-graph cursor when wired. |
-| `server/app/faithfulness.py` | 80-84,105-108 | Direct `c["passed"]`/`c["coaching"]` indexing (KeyError on malformed row) | ℹ️ Info | WR-06 — not fail-soft; not a functional failure. |
+| `lib/curriculum/mastery_condition.dart` | 29-35 | `isMasteryMet` still returns true vacuously on an empty-essential graph | ℹ️ Info | Latent only — the live path uses `isMasteryMetForPresented` (fail-closed) with a non-empty hardcoded presented set, so the vacuous fallback is unreachable in production. Hardening `isMasteryMet` to fail-closed remains nice-to-have, not a phase blocker. |
+| `lib/features/letter_unit/letter_unit_controller.dart` | 300-308 | `_presentedExerciseIds()` is a hardcoded baa-specific const set | ℹ️ Info | Correct for the signed baa graph today; a later phase should derive it from the unit config so it stays in sync when content coverage grows. Documented in-code as INTERIM. |
 
-### Note on the curriculum-graph `signedOff` flag (REVIEW CR-03 — partially refuted)
+No 🛑 Blockers. The two prior BLOCKER dead-code anti-patterns (`selectNext` and `setExerciseCleanReps`/`incrementExerciseCleanReps` with no production caller) are RESOLVED — both now have live production callers. No `TBD`/`FIXME`/`XXX` debt markers in the modified files.
 
-The code review flagged `signedOff: true` as shipped prematurely. **Chesterton's-Fence check refutes the "shipped unsigned" half:** Plan 15-07 was the human-gated plan that owns the flip, and the owner-mother sign-off is recorded in `15-HUMAN-UAT.md` (reviewer: Owner-mother, status passed, 2026-06-28) and `docs/curriculum/baa-curriculum-graph-signoff-sheet.md` (marked SIGNED, Q1/Q2/Q3 recorded, Q3 reps adjustment 2→3 applied). Both the asset and the re-derived server copy carry `signedOff: true` legitimately. The asset's stale `_meta.sign_off` string (still saying "stays false until … Plan 15-07 owns the flip") was not updated to reflect that 15-07 executed — cosmetic drift, not a pedagogy violation. **The "flag is decorative" half stands as a WARNING:** no consumer in `lib/` or `server/` branches on `graph.signedOff` to refuse driving selection/mastery off an unsigned graph. Recommend adding a real gate, but this is defense-in-depth, not a phase-goal blocker (the graph IS signed).
+### Documented Interim / Follow-up (NOT a blocker)
+
+**Content coverage (owner/mother + later phase):** The signed curriculum graph has 15 essential nodes (across the 4 essential competencies `recognize`, `positionalForms`, `copyWrite`, `fluentReading`), but the 6-section baa unit presents and records reps on only 7 of them: `baa.teachCard.meet`, `baa.traceLetter.isolated`, `baa.traceLetter.initial`, `baa.traceLetter.medial`, `baa.connectWord.baab`, `baa.writeWord.dictation`, `baa.writeLetter.fromSound` (independently confirmed: all 7 ARE essential nodes; intersection = 7). The 8 not-yet-surfaced essential nodes (`writeLetter.fromPicture`/`writeForm`, `connectWord.kitaab`, `completeWord.middle`, `writeWord.copy`/`picture`, `buildSentence.hear`/`picture`) are exactly the SUMMARY's list. The star is therefore scoped to the PRESENTED essential set via `isMasteryMetForPresented`; the signed `curriculum_graph.json` and the full `isMasteryMet` are UNCHANGED. Surfacing the remaining 8 grows the UNIT, not the pedagogy. This is NOT addressed by Phase 16 (whose roadmap goal is presence/voice/eval-gate/demo-harden), so it is recorded here as a noted limitation/follow-up rather than a roadmap-deferred item. Accepted per the owner's keep-sections decision (2026-06-28).
 
 ### Human Verification Required
 
-See the `human_verification` frontmatter. The four items below are the MVP user-flow walk-throughs that automated checks cannot settle; code evidence predicts the first two will FAIL on device:
+See the `human_verification` frontmatter. Unlike the prior verification (where code evidence predicted the first two would FAIL), the code is now wired and the widget tests support the expected behaviours; the four items below are the on-device MVP user-flow confirmations that static analysis + widget tests cannot fully settle:
 
-1. **FAIL → remediation (not next section).** Fail a stroke in the baa unit; expect a remediation exercise, not the next ribbon section. *(Code evidence: will not happen — selectNext unwired.)*
-2. **Genuine mastery → one quiet star.** Master baa to the essential floor; expect exactly one star. *(Code evidence: star can never fire — clean-reps never written.)*
-3. **Resume after relaunch.** Re-enter mid-progress; expect resume to last position. *(Cursor wired; section hint likely degenerate to 0 — confirm.)*
-4. **Online agent selection** (needs Cloud Run re-deploy + screen wiring). *(Currently inert — the screen never reads the selector.)*
+1. **FAIL → stays-on-remediation (not next section).** A fail keeps the child on the current exercise; the walker remediates one tier down. *(Code now supports this — selectNext fires only on a PASS.)*
+2. **Genuine mastery → one quiet star.** Master the presented essential set; expect exactly one star; a click-through earns none. *(Widget tests prove both directions; confirm the felt celebration on device.)*
+3. **Resume after relaunch.** Re-enter mid-progress; expect a sensible resume position (cleared-state now grows the hint). *(Durable cursor + cleared-state wired; confirm across a real relaunch.)*
+4. **Online agent selection** (needs the deployed server + network). *(Screen now reads the selector; the online leg needs a real round-trip to observe.)*
 
 ### Gaps Summary
 
-Phase 15 built a large body of **correct, well-tested, but DEAD** selection + mastery machinery and placed it beside a unit that still walks the fixed 6-section linear sequence. The green test suite masks two integration failures because the tests call the new machinery directly (the walker / DB) rather than driving the screen:
+No gaps. Phase 15's two prior BLOCKERs are closed by 15-08: the selection + clean-rep + cleared-state machinery is now invoked by the running unit (via `_onNodePassed` fed by every scoring section's `onGraphNodePassed`), and the quiet star fires on real clean-reps (scoped to the presented essential set) and cannot fire on click-through — proven by the FLIPPED Test 3 + Test 5 pair and the +8 new walker/mastery tests. The work was done WITHIN the owner's explicit keep-sections decision (selection plumbed into the bespoke 6-section shell, not a flat rewrite), which is the intended bound. The curriculum rail (server G4/G5/G6 + client mirror) and GROUND-03 faithfulness remain solid and green.
 
-- **Gap 1 (CR-01 — DYN-01/DYN-02):** Dynamic selection is never invoked. `letter_unit_screen.dart` still uses `_section(index)` + `controller.advance()`; `controller.selectNext` has no production caller. A fail surfaces the next linear section, not a remediation — Pitfall 5, the phase's primary target, is unfixed in the running app.
-- **Gap 2 (CR-02 — DYN-02):** The mastery star can never fire. The only writer of per-exercise clean-reps (`setExerciseCleanReps`) is never called in production, so `isMasteryMet` is always false. The anti-gamification DELETION is correct, but its functional replacement was never wired.
+One documented interim remains: the unit under-covers the signed essential set (7 of 15 essential nodes presented), so the star is scoped to what is taught. This is an accepted, flagged content-coverage follow-up — the signed graph and the full mastery condition are unchanged — and it is not addressed by Phase 16, so it is recorded as a noted limitation, not a blocker.
 
-Both gaps share a single root cause: **the scoring/advance path in the running screen was never routed through the new selection + clean-rep machinery.** A focused fix wiring `exercise_scaffold`'s scored-attempt path (and `letter_unit_screen`'s advance dispatch) into `controller.selectNext` + `setExerciseCleanReps`, plus an end-to-end widget test that drives a FAIL and a real-mastery run through the UI, closes both.
-
-Criteria 2 (curriculum rail) and 4 (faithfulness) are genuinely working and verified — the server side is solid and fail-closed. The WARNINGs (CR-04 G5 bypass, WR-01 cleared-state, WR-02 off-graph cursor, WR-03 fail-open mastery, WR-05 resume hint) become live the moment Gaps 1-2 are wired and should be closed in the same effort.
-
-**Not deferred to Phase 16:** Phase 16's goal explicitly *depends on* "Phase 15 (the dynamic grounded baa flow being voiced + hardened)" and its demo-harden criterion assumes a working baa flow with a reachable mastery star. The integration wiring is a Phase 15 deliverable, not a Phase 16 one.
+All four success criteria are VERIFIED in code (score 4/4, no gaps). Per the gates decision tree, because four on-device MVP user-flow confirmations are queued, the overall phase status is `human_needed` (the empty-human-section requirement for `passed` is not met). These four items are confirmations of now-wired behaviour, not predictions of failure — a contrast with the prior verification, where code evidence predicted the first two would fail.
 
 ---
 
-_Verified: 2026-06-28T14:55:47Z_
+_Verified: 2026-06-28T15:40:05Z_
 _Verifier: Claude (gsd-verifier)_
