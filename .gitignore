@@ -83,6 +83,6 @@ tools/curriculum/*adminsdk*.json
 tools/tts/.env
 tools/tts/*.env
 
-# Curriculum source worksheets (large binaries) + rendered pages — local only, not committed
+# Curriculum source worksheets (large binaries) + rendered pages â€” local only, not committed
 tools/curriculum/source/
 tools/curriculum/render/
