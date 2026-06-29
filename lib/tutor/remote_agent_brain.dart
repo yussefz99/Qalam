@@ -23,6 +23,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'authored_fallback_brain.dart';
+import 'latency_trace.dart';
 import 'tutor_brain.dart';
 import 'tutor_decision.dart';
 import 'tutor_facts.dart';
@@ -80,6 +81,9 @@ class RemoteAgentBrain implements TutorBrain {
         return fallback.next(facts);
       }
 
+      // LATENCY MARK 3 (debug/demo-only): the /coach POST is about to leave the
+      // device — the network leg of the written-stroke → first-TTS budget.
+      markLatency(LatencySegment.coachRequestSent);
       final response = await client
           .post(
             Uri.parse('$baseUrl/coach'),
@@ -91,6 +95,10 @@ class RemoteAgentBrain implements TutorBrain {
             body: jsonEncode(facts.toJson()),
           )
           .timeout(timeout);
+      // LATENCY MARK 4 (debug/demo-only): the /coach response returned — the
+      // gap from mark 3 is the Cloud Run + model round-trip (the cold-start
+      // delta shows up HERE on the first call after idle, min-instances=0).
+      markLatency(LatencySegment.coachResponseReceived);
 
       if (response.statusCode != 200) {
         return fallback.next(facts);

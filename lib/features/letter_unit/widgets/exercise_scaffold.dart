@@ -28,6 +28,7 @@ import '../../../models/letter.dart';
 import '../../../providers/tts_providers.dart';
 import '../../../theme/qalam_tokens.dart';
 import '../../../theme/text_styles.dart';
+import '../../../tutor/latency_trace.dart';
 import '../../../tutor/tutor_decision.dart';
 import '../../../tutor/tutor_facts.dart';
 import '../../../tutor/tutor_facts_builder.dart';
@@ -166,8 +167,12 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
     });
   }
 
-  void _onValidating() =>
-      ref.read(exerciseControllerProvider.notifier).think();
+  void _onValidating() {
+    // LATENCY MARK 1 (debug/demo-only): the child lifted the stylus and the
+    // letter is complete — the start of the written-stroke → first-TTS path.
+    markLatency(LatencySegment.stylusUp);
+    ref.read(exerciseControllerProvider.notifier).think();
+  }
 
   /// Apply a scored verdict. GROUND-01: `ExerciseController.applyResult` runs
   /// FIRST and unchanged — it owns pass/fail + the authored verdict line. ONLY
@@ -176,6 +181,10 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
   void _onResult(CheckResult result) {
     // 1) The scorer's verdict — first, unchanged (GROUND-01).
     ref.read(exerciseControllerProvider.notifier).applyResult(result);
+    // LATENCY MARK 2 (debug/demo-only): the instant on-screen verdict + star are
+    // applied — the LOCAL reflex. It must land WITHOUT waiting on /coach or TTS
+    // (D-05); the marks below (the spoken line) come a beat later.
+    markLatency(LatencySegment.scorerVerdictRendered);
 
     // 2) T2: on a clean pass, notify the host so it can increment the graph
     // node's clean-rep count and check cleared state (T1). Only fires when
@@ -217,6 +226,9 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
       // shows.
       final line = _lineOf(decision);
       ref.read(tutorLineProvider.notifier).set(line.isNotEmpty ? line : null);
+      // LATENCY MARK 5 (debug/demo-only): the coaching line is painted into the
+      // bubble (a beat after the instant verdict at mark 2).
+      markLatency(LatencySegment.lineRendered);
 
       // 5) PHASE 16 PRESENCE HOOK (D-05 two clocks): a BEAT after the instant
       // visual verdict (applyResult already rendered, GROUND-01), SPEAK the
@@ -227,6 +239,10 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
       // only; the speak hook can never flip a verdict).
       final spokenText = line.isNotEmpty ? line : _floorLineFor(result);
       if (spokenText.isNotEmpty) {
+        // LATENCY MARK 6 (debug/demo-only): the first TTS utterance is kicked off
+        // — the END of the written-stroke → first-TTS budget. Marked just before
+        // the fire-and-forget speak so it is the moment synthesis is requested.
+        markLatency(LatencySegment.firstTtsStart);
         unawaited(ref.read(ttsCoachSpeakerProvider).speak(spokenText));
       }
     }).catchError((_) {
