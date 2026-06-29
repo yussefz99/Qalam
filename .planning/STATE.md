@@ -208,6 +208,7 @@ None yet.
 | 260602-bw1 | Rebuild Watch/Trace/Feedback/Celebration faithful to mockups; demo loop → Baa (owner override: gamification) | 2026-06-02 | 326c221 | [260602-bw1-rebuild-demo-walkthrough-baa](./quick/260602-bw1-rebuild-demo-walkthrough-baa/) |
 | 260607-pr1 | Practice screen three-zone Trace/ShowFix/ShowPraise tutor redesign + Hear-the-letter (UI-only; scorer/state-machine/persistence untouched) | 2026-06-07 | 8f8eb56 | [practice-redesign spec](../docs/design/practice-redesign/) |
 | 260615-tqu | Wire baa-unit vocab illustrations into the app: bundle assets/images/, add imageId→asset resolver (mirrors audio seam) + provider, render Image.asset in _ImagePart with silent-degrade hatched-stub fallback | 2026-06-15 | 2cff97e | [260615-tqu-wire-baa-unit-vocab-illustrations-into-t](./quick/260615-tqu-wire-baa-unit-vocab-illustrations-into-t/) |
+| 260629-nle | Add iOS FirebaseOptions block so app boots on iPad (owner-authorized iOS-enabling for demo/testing — scoped extension of Android-only) | 2026-06-29 | 05109e9 | [260629-nle-add-ios-firebaseoptions-block-so-app-boo](./quick/260629-nle-add-ios-firebaseoptions-block-so-app-boo/) |
 
 ## Deferred Items
 
