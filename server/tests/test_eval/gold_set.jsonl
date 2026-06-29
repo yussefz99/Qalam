@@ -1,0 +1,24 @@
+# gold_set.jsonl — (verdict, learner-state) → ideal-coaching gold examples for the register/Arabic
+# LLM-judge calibration (D5 + correct-Arabic). CLAUDE-DRAFTED, AWAITING MOM SIGN-OFF (Plan 16-05).
+#
+# STATUS: every line is "signed": false / "drafted_by": "claude". The owner's mother (a graduate-
+# degreed Arabic teacher) REVIEWS and SIGNS each line in 16-05; the sign-off gate flips
+# "signed": true. NOTHING register-shaping ships unsigned (CLAUDE.md curriculum-authority rule).
+# DO NOT mark these signed in this plan.
+#
+# D-10 NO-TRAINING CONSTRAINT (14-AI-SPEC §1b): this gold set is SYNTHETIC / AUTHORED, non-PII (no
+# raw strokes, no child name/nickname — only frozen FACTS). It MUST NOT be used to train or
+# fine-tune any model without separate verifiable parental consent. It is read ONLY for judge
+# calibration / scoring, never emitted as training data. Vertex request-response logging stays off.
+#
+# Lines starting with `#` are header/comments and are skipped by the JSONL loader.
+{"letterId": "baa", "section": "traceLetter.isolated", "passed": true, "mistakeId": null, "expectedFix": null, "idealCoaching": "Beautiful — a deep, smooth bowl. أحسنت!", "label": "gold_register", "signed": false, "drafted_by": "claude"}
+{"letterId": "baa", "section": "traceLetter.isolated", "passed": false, "mistakeId": "shallowBowl", "expectedFix": "deeper curve", "idealCoaching": "Your baa needs a deeper curve at the bottom — try again, slower this time.", "label": "gold_register", "signed": false, "drafted_by": "claude"}
+{"letterId": "baa", "section": "traceLetter.isolated", "passed": false, "mistakeId": "noDot", "expectedFix": "dot", "idealCoaching": "The bowl is lovely — now place the dot just below it.", "label": "gold_register", "signed": false, "drafted_by": "claude"}
+{"letterId": "baa", "section": "traceLetter.initial", "passed": false, "mistakeId": "hasTail", "expectedFix": "tail", "idealCoaching": "Keep the start small and flat — no tail yet. Try once more.", "label": "gold_register", "signed": false, "drafted_by": "claude"}
+{"letterId": "baa", "section": "traceLetter.medial", "passed": false, "mistakeId": "tooBig", "expectedFix": "smaller", "idealCoaching": "A little smaller — just a tooth, no tail. Try again.", "label": "gold_register", "signed": false, "drafted_by": "claude"}
+{"letterId": "baa", "section": "connectWord.baab", "passed": false, "mistakeId": "lifted", "expectedFix": "join", "idealCoaching": "Don't lift between the letters — let baa stay joined across the word. Try again.", "label": "gold_register", "signed": false, "drafted_by": "claude"}
+{"letterId": "baa", "section": "writeWord.dictation", "passed": false, "mistakeId": "missingDot", "expectedFix": "dot", "idealCoaching": "Close — your first baa is missing its dot. Listen again: باب.", "label": "gold_register", "signed": false, "drafted_by": "claude"}
+{"letterId": "baa", "section": "writeWord.dictation", "passed": true, "mistakeId": null, "expectedFix": null, "idealCoaching": "باب — from memory, no guide. Real writing! أحسنت!", "label": "gold_register", "signed": false, "drafted_by": "claude"}
+{"letterId": "baa", "section": "connectWord.kitaab", "passed": true, "mistakeId": null, "expectedFix": null, "idealCoaching": "كتاب — “book,” joined in one go. أحسنت!", "label": "gold_register", "signed": false, "drafted_by": "claude"}
+{"letterId": "baa", "section": "traceLetter.isolated", "passed": false, "mistakeId": "shallowBowl", "expectedFix": "deeper curve", "idealCoaching": "Almost — the bottom is a little flat. Round it into a deeper bowl, slower this time.", "label": "gold_register", "signed": false, "drafted_by": "claude"}
