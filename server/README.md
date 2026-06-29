@@ -35,6 +35,31 @@ Response DTO `CoachOut`: `toolName` (one of `present_activity`, `say`, `give_hin
 
 ---
 
+## Model routing (keyless Gemini-on-Vertex — D-02 / 16-RESEARCH)
+
+All three nodes (analyze / plan / coach) run **Gemini-on-Vertex, keyless**: the server
+authenticates to Vertex AI via the runtime service account's Application Default Credentials.
+There is **no provider API key** anywhere — not in the image, not in Secret Manager, not on the
+client. This is the live `qalam-tutor` deploy. The routing table lives in `app/models.py`
+(env-driven, eval-tunable without a code change).
+
+| node | model (default) | provider | location | temp | max_tokens |
+|------|-----------------|----------|----------|------|------------|
+| analyze | `gemini-2.5-flash` | `google_vertexai` | us-central1 | 0.0 | 512 |
+| plan | `gemini-2.5-flash` | `google_vertexai` | us-central1 | 0.2 | 512 |
+| coach | `gemini-2.5-flash` | `google_vertexai` | us-central1 | 0.5 | 256 |
+
+**Gated upgrade — Claude-on-Vertex coach (D-03).** Claude is a drop-in **env swap**, not a code
+change: set `COACH_MODEL_PROVIDER=anthropic_vertex`, `COACH_MODEL=claude-haiku-4-5@20251001`,
+`COACH_LOCATION=global`. Allowed **only after** (a) a human clicks **Enable** on the Claude card in
+Vertex AI Model Garden for `qalam-app-bd7d0` (it returns 404 "no access" until then), **and** (b)
+the eval (`make eval`) picks Claude over Gemini on the Arabic-register dimension. Still keyless
+(runtime SA ADC). Claude does **not** serve `us-central1` (Gemini's region) — hence the separate
+`COACH_LOCATION=global` (`build_coach_model()` routes this branch through `ChatAnthropicVertex`,
+since `init_chat_model(model_provider="google_vertexai")` resolves to Gemini's `ChatVertexAI`).
+
+---
+
 ## Resolved dependency versions
 
 Verified GA on PyPI at build (2026-06-22). Pinned ranges live in `pyproject.toml`; the exact resolved set is captured by `uv pip freeze` after install.
@@ -43,7 +68,8 @@ Verified GA on PyPI at build (2026-06-22). Pinned ranges live in `pyproject.toml
 |---------|--------------|--------------------|
 | `langgraph` | `>=1.2,<2` | `1.2.6` |
 | `langchain` | `>=1.0,<2` | `1.3.10` |
-| `langchain-anthropic` | `>=1.0,<2` | `1.4.6` |
+| `langchain-google-vertexai` | `>=3.2.4` | carries both Gemini (`ChatVertexAI`) and Claude-on-Vertex (`ChatAnthropicVertex`) |
+| `langchain-anthropic` | `>=1.0,<2` | `1.4.6` — REMOVE candidate (D-02): the superseded Anthropic-direct-key path; Claude-on-Vertex uses `ChatAnthropicVertex` instead |
 | `langchain-google-genai` | `>=3.0,<5` | `4.2.5` (AI-SPEC said `<4`; widened to `<5` since latest GA is 4.x) |
 | `fastapi` | `>=0.115` | `0.138.0` |
 | `uvicorn[standard]` | `>=0.32` | `0.49.0` |
@@ -70,42 +96,33 @@ uv run pytest -q         # auth + endpoint tests (model-free `code` checks; offl
 uv run uvicorn app.main:app --reload --port 8080
 ```
 
-Local token verification uses Application Default Credentials:
+Local token verification AND keyless Vertex model calls both use Application Default Credentials —
+there is no provider key to set:
 ```bash
-gcloud auth application-default login   # so firebase-admin can resolve qalam-app-bd7d0
+gcloud auth application-default login   # so firebase-admin resolves qalam-app-bd7d0 AND Vertex ADC works
 ```
 
 ---
 
 ## Cloud Run deploy
 
-Provider keys live in **Secret Manager**, injected as env vars — **never** in the image or the client.
+**Keyless (D-02):** the service authenticates to Vertex AI via the runtime service account's ADC.
+There is **no provider API key** to create, store, or inject — no `ANTHROPIC_API_KEY`, no
+`GOOGLE_API_KEY`, in the image, in Secret Manager, or on the client.
 
-### 1. Create the two secrets (one time, project `qalam-app-bd7d0`)
+### 1. Grant the runtime service account Vertex AI access (one time, project `qalam-app-bd7d0`)
 
 ```bash
 PROJECT=qalam-app-bd7d0
-
-# Anthropic key (Claude Haiku/Sonnet, coach voice)
-printf '%s' "<ANTHROPIC_API_KEY value>" \
-  | gcloud secrets create ANTHROPIC_API_KEY --project="$PROJECT" --data-file=-
-
-# Google AI key (Gemini per-node routing, Plan 02)
-printf '%s' "<GOOGLE_API_KEY value>" \
-  | gcloud secrets create GOOGLE_API_KEY --project="$PROJECT" --data-file=-
-```
-
-Grant the Cloud Run runtime service account `secretAccessor`:
-```bash
 RUNTIME_SA="$(gcloud iam service-accounts list --project="$PROJECT" \
   --filter='displayName:Compute Engine default service account' --format='value(email)')"
-for S in ANTHROPIC_API_KEY GOOGLE_API_KEY; do
-  gcloud secrets add-iam-policy-binding "$S" --project="$PROJECT" \
-    --member="serviceAccount:${RUNTIME_SA}" --role="roles/secretmanager.secretAccessor"
-done
+gcloud projects add-iam-policy-binding "$PROJECT" \
+  --member="serviceAccount:${RUNTIME_SA}" --role="roles/aiplatform.user"
 ```
 
-### 2. Deploy (build + run, secrets as env refs)
+The Vertex AI API must be enabled on the project (`gcloud services enable aiplatform.googleapis.com --project="$PROJECT"`).
+
+### 2. Deploy (build + run, keyless env only)
 
 ```bash
 gcloud run deploy qalam-tutor \
@@ -115,13 +132,20 @@ gcloud run deploy qalam-tutor \
   --allow-unauthenticated \
   --min-instances=0 \
   --timeout=30 \
-  --set-env-vars=GCP_PROJECT_ID=qalam-app-bd7d0,COACH_TIMEOUT_SECONDS=8 \
-  --set-secrets=ANTHROPIC_API_KEY=ANTHROPIC_API_KEY:latest,GOOGLE_API_KEY=GOOGLE_API_KEY:latest
+  --set-env-vars=GCP_PROJECT_ID=qalam-app-bd7d0,GOOGLE_CLOUD_LOCATION=us-central1,COACH_TIMEOUT_SECONDS=12
 ```
 
 > `--allow-unauthenticated` lets the public client reach the URL; the **app** enforces auth
 > in `verify_caller` (Firebase ID token + App Check) — Cloud Run IAM is not the auth layer here.
 > `--min-instances=0` is fine for the demo; the session-start `GET /health` warm-up ping masks cold start.
+> **No `--set-secrets`:** keyless ADC means there is no provider key to inject.
+
+**Gated Claude-on-Vertex upgrade (D-03):** after a human Enables the Claude card in Vertex AI
+Model Garden AND the eval picks Claude, re-deploy with the coach env swap (still keyless — no key):
+
+```bash
+  --set-env-vars=...,COACH_MODEL=claude-haiku-4-5@20251001,COACH_MODEL_PROVIDER=anthropic_vertex,COACH_LOCATION=global
+```
 
 ### 3. Verify the live service (the human-verify checkpoint)
 
@@ -132,7 +156,8 @@ curl -i -XPOST "$URL/coach" -d '{}'          # expect 401 (no tokens — endpoin
 ```
 
 Also confirm in the GCP Console:
-- ANTHROPIC_API_KEY / GOOGLE_API_KEY are **Secret Manager references** on the service (not plaintext env values), and no key is in the container image.
+- The service has **no provider-key env var and no Secret Manager reference** (keyless ADC only); no key is in the container image.
+- The runtime service account holds `roles/aiplatform.user` so Vertex calls authenticate via ADC.
 - Firebase **App Check** shows the Android app registered with the **Play Integrity** provider.
 
 ---
@@ -144,7 +169,7 @@ server/
 ├── pyproject.toml          # pinned deps (uv)
 ├── Dockerfile              # python:3.12-slim + plain uvicorn (no langgraph-cli)
 ├── .dockerignore           # excludes tests/.env/__pycache__
-├── .env.example            # GCP project id + key placeholders (real values in Secret Manager)
+├── .env.example            # GCP project id + keyless model routing (no provider key — D-02)
 ├── app/
 │   ├── main.py             # FastAPI: POST /coach (Depends(verify_caller)) + GET /health; asyncio.wait_for
 │   ├── auth.py             # verify_caller: Firebase ID token + App Check (401 before the graph)

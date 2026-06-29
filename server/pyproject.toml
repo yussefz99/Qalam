@@ -11,8 +11,8 @@ dependencies = [
     # Core graph runtime + the LangChain v1 model layer (init_chat_model lives here)
     "langgraph>=1.2,<2",
     "langchain>=1.0,<2",
-    # Per-node provider clients (model-agnostic routing needs BOTH)
-    "langchain-anthropic>=1.0,<2",        # Claude Haiku / Sonnet
+    # Per-node provider clients
+    "langchain-anthropic>=1.0,<2",        # REMOVE candidate (D-02): superseded Anthropic-direct-key path; Claude-on-Vertex uses ChatAnthropicVertex from langchain-google-vertexai
     "langchain-google-genai>=3.0,<5",     # Gemini Flash / Pro (latest GA is 4.x; AI-SPEC said <4, widened to <5)
     # Server transport + structured output
     "fastapi>=0.115",
