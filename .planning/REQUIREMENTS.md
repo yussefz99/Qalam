@@ -107,14 +107,14 @@ numbering from the v1 roadmap (start at Phase 11). Traceability filled by the v2
 
 - [ ] **PRES-01**: The tutor feels present — coordination stays within a defined latency budget on a real Pixel Tablet, and the millisecond stroke reflex stays local
   - *Accept:* a written budget for stroke→scorer→agent→render→first-TTS is met on-device; instant stroke feedback/nudges never route through the agent
-- [ ] **PRES-02**: The tutor speaks — streamed/TTS coaching plays at the right moments and degrades gracefully offline
+- [x] **PRES-02**: The tutor speaks — streamed/TTS coaching plays at the right moments and degrades gracefully offline
   - *Accept:* coaching is spoken (or streamed) on pass/miss; offline/timeout falls back to text without breaking the flow
 
 ### Evaluation
 
-- [ ] **EVAL-01**: An eval harness scores tutor quality on grounding faithfulness + Arabic coaching register against a labeled set
+- [x] **EVAL-01**: An eval harness scores tutor quality on grounding faithfulness + Arabic coaching register against a labeled set
   - *Accept:* a reusable harness runs the brain over labeled (verdict, learner-state) cases and scores never-contradicts-geometry, names-the-specific-fix, register-for-a-5-10-year-old, correct-Arabic
-- [ ] **EVAL-02**: The harness runs as a regression gate that catches tutor-quality regressions before they ship
+- [x] **EVAL-02**: The harness runs as a regression gate that catches tutor-quality regressions before they ship
   - *Accept:* the harness runs in CI (or a documented pre-merge step) and fails on a regression below threshold
 
 ### Demo Readiness
@@ -212,9 +212,9 @@ Phases 11–13 are **spikes** — de-risking investigations that own **no requir
 | DYN-02 | Phase 15 — Dynamic grounded exercise selection on baa | Complete |
 | GROUND-03 | Phase 15 — Dynamic grounded exercise selection on baa | Complete |
 | PRES-01 | Phase 16 — Presence + voice + eval gate + demo-harden | Pending |
-| PRES-02 | Phase 16 — Presence + voice + eval gate + demo-harden | Pending |
-| EVAL-01 | Phase 16 — Presence + voice + eval gate + demo-harden | Pending |
-| EVAL-02 | Phase 16 — Presence + voice + eval gate + demo-harden | Pending |
+| PRES-02 | Phase 16 — Presence + voice + eval gate + demo-harden | Complete |
+| EVAL-01 | Phase 16 — Presence + voice + eval gate + demo-harden | Complete |
+| EVAL-02 | Phase 16 — Presence + voice + eval gate + demo-harden | Complete |
 | DEMO-01 | Phase 16 — Presence + voice + eval gate + demo-harden | Pending |
 
 **Spike → build linkages (spikes own no REQ-IDs):**
