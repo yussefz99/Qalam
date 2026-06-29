@@ -65,14 +65,17 @@ Future<void> main() async {
   final db = AppDatabase();
   final hasProfile = await db.hasProfile();
 
-  // DEMO-ONLY seed (DEMO-01 / D-12 — Plan 16-06). Double-gated: it runs ONLY on
-  // a debug build (`kDebugMode`) launched with `--dart-define=DEMO=true`
-  // (`kDemoMode`), never on the child-facing default boot. It arms the reliable
-  // hero-moment starting state (child mid-unit on the wobble form, reps BELOW
-  // mastery) so a fail re-surfaces an easier exercise on cue. It NEVER awards a
-  // star — the scorer owns that (ADR-014). Idempotent: re-running re-arms the
-  // same state between demo runs.
-  if (kDebugMode && kDemoMode) {
+  // DEMO-ONLY seed (DEMO-01 / D-12 — Plan 16-06). Gated on the DEMO flag
+  // (`kDemoMode` = `--dart-define=DEMO=true`): it runs ONLY in a demo build,
+  // never on the child-facing default boot (DEMO is false by default, so the
+  // shipped child app never seeds). Runs in debug AND profile/release demo
+  // builds so the demo can launch STANDALONE on-device — a debug build can only
+  // be launched from flutter tooling (iOS 14+), so a profile demo build is what
+  // runs untethered on stage. It arms the reliable hero-moment starting state
+  // (child mid-unit on the wobble form, reps BELOW mastery) so a fail re-surfaces
+  // an easier exercise on cue. It NEVER awards a star — the scorer owns that
+  // (ADR-014). Idempotent: re-running re-arms the same state between demo runs.
+  if (kDemoMode) {
     await seedDemoState(DriftGraphPositionRepository(db), db: db);
   }
 
