@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
 stopped_at: Completed 16-03-PLAN.md (eval gate)
-last_updated: "2026-06-29T13:13:39.889Z"
+last_updated: "2026-06-29T13:22:14.794Z"
 last_activity: 2026-06-29
 progress:
   total_phases: 20
   completed_phases: 14
   total_plans: 80
-  completed_plans: 75
+  completed_plans: 76
   percent: 70
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 16 (build-presence-voice-eval-gate-demo-harden) — EXECUTING
-Plan: 3 of 6
+Plan: 4 of 6
 Status: Ready to execute
 Last activity: 2026-06-29
 Next: human UAT (run app with --dart-define=TUTOR_BASE_URL=<service URL>), then /gsd-verify-work 14 → mark complete; then /gsd-plan-phase 15
@@ -93,6 +93,7 @@ Next: human UAT (run app with --dart-define=TUTOR_BASE_URL=<service URL>), then 
 | Phase 15 P07 | 20min | 1 tasks | 4 files |
 | Phase 16 P01 | 8min | 2 tasks | 7 files |
 | Phase 16 P03 | 14min | 3 tasks | 7 files |
+| Phase 16 P02 | ~6min | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -182,6 +183,7 @@ Recent decisions affecting current work:
 - [Phase ?]: [16-01]: Claude-on-Vertex coach is a drop-in env swap (COACH_MODEL_PROVIDER=anthropic_vertex + COACH_MODEL=claude-haiku-4-5@20251001 + COACH_LOCATION=global → ChatAnthropicVertex), returned UNbound so coach.py keeps the bind_tools(tool_choice=any) G2 lock; gated on a human Model-Garden Enable + an eval win (D-03). langchain-anthropic annotated as REMOVE candidate (nothing imports it).
 - [Phase ?]: [16-01]: Wave-0 RED contract authored (Nyquist) — test/tutor/tts_coach_speaker_test.dart (segmentByScript + TtsCoachSpeaker over an injectable TtsEngine) and server/tests/test_eval/test_eval_harness.py (score_eval_set over 4 §5 dims; model-free faithfulness leg==1.0; Vertex-judge leg skipped in -m code) both RED by missing symbol. The eval RED test fails the full -m code suite until 16-03 ships run_eval.py — intended state.
 - [Phase ?]: [16-03]: Eval gate shipped — grew faithfulness to full baa coverage (6 mistakeIds x faithful/praise-on-fail/wrong-fix) with a zero-tolerance D1==100% assertion (D-08); run_eval scores all four 14-AI-SPEC §5 dims (D1/D2 model-free, D5/correct-Arabic via a gemini-2.5-flash Vertex judge != coach); make eval is the local pre-merge gate (not CI), bake-off-ready by env-swap; gold_set.jsonl is Claude-drafted signed:false awaiting mom sign-off in 16-05; faithfulness.py untouched (lexicon already covered the probes, model-free floor preserved).
+- [Phase 16-02]: On-device coach voice shipped (PRES-02) — flutter_tts ^4.2.5 (human-approved legitimacy gate, verified publisher dlutton/eyedeadevelopment.com). segmentByScript splits a mixed en/ar line into ordered (locale,text) runs (Arabic block U+0600–06FF + presentation forms to ar, else en-US); TtsCoachSpeaker over an injectable TtsEngine seam checks isLanguageAvailable(ar) ONCE per line, per-run setLanguage+speak with awaitSpeakCompletion(true), skips the ar run when no Arabic voice so English still speaks (D-06). Display-only (ADR-014): speak() swallows everything, never throws/blocks. ttsCoachSpeakerProvider (Riverpod Provider + ref.onDispose) + NoopTtsCoachSpeaker mirror the audio seam. 16-01 RED tests GREEN with zero test edits; TTS_SERVICE queries entry added for Android 11+ discoverability.
 
 ### Pending Todos
 
@@ -217,6 +219,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-29T13:13:39.883Z
+Last session: 2026-06-29T13:20:57.614Z
 Stopped at: Completed 16-03-PLAN.md (eval gate)
 Resume files: .planning/phases/06.1-firebase-curriculum-backend/06.1-05-PLAN.md (next), .planning/phases/06.1-firebase-curriculum-backend/06.1-03-PLAN.md (pending), .planning/phases/06.1-firebase-curriculum-backend/06.1-04-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
