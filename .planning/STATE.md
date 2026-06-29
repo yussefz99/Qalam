@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
-stopped_at: Completed 16-03-PLAN.md (eval gate)
-last_updated: "2026-06-29T13:22:14.794Z"
-last_activity: 2026-06-29
+stopped_at: Phase 16 paused at human-gate boundary — autonomous code landed, 6 HUMAN-UAT items pending
+last_updated: "2026-06-29T13:47:12Z"
+last_activity: 2026-06-29 -- Phase 16 autonomous code complete; device/mom/Enable gates deferred to HUMAN-UAT
 progress:
   total_phases: 20
   completed_phases: 14
@@ -25,11 +25,11 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 
 ## Current Position
 
-Phase: 16 (build-presence-voice-eval-gate-demo-harden) — EXECUTING
-Plan: 4 of 6
-Status: Ready to execute
+Phase: 16 (build-presence-voice-eval-gate-demo-harden) — EXECUTING (paused at human-gate boundary)
+Plan: 16-01 ✓, 16-02 ✓, 16-03 ✓ complete · 16-04 code landed (Task 3 device-gated) · 16-05 pending mom sign-off · 16-06 Task 1 landed (Tasks 2-4 device/Enable/judge-gated)
+Status: All autonomous code landed + green (20/20 Flutter, 78 server -m code). 6 human/hardware/authority gates deferred to HUMAN-UAT.
 Last activity: 2026-06-29
-Next: human UAT (run app with --dart-define=TUTOR_BASE_URL=<service URL>), then /gsd-verify-work 14 → mark complete; then /gsd-plan-phase 15
+Next: work the 6 items in 16-HUMAN-UAT.md (device latency, mom gold sign-off → judge calibration, on-device demo-harden, Claude Model-Garden Enable, coach bake-off + ADR-016). After the gold sign-off + Model-Garden Enable land, re-run /gsd-execute-phase 16 to finish the two autonomous tail tasks (16-05 Task 2 calibration, 16-06 Task 4 bake-off+ADR), then /gsd-verify-work 16 → mark complete.
 
 ## Performance Metrics
 
