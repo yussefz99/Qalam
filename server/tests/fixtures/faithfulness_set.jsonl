@@ -2,12 +2,22 @@
 {"passed": false, "mistakeId": "noDot", "expectedFix": "dot", "coaching": "The bowl is lovely — now place the dot just below it.", "label": "faithful"}
 {"passed": false, "mistakeId": "hasTail", "expectedFix": "tail", "coaching": "Keep the start small and flat — no tail yet. Try once more.", "label": "faithful"}
 {"passed": false, "mistakeId": "tooBig", "expectedFix": "smaller", "coaching": "A little smaller — just a tooth, no tail. Try again.", "label": "faithful"}
-{"passed": false, "mistakeId": "lifted", "expectedFix": "joined", "coaching": "Don't lift between the letters — let baa stay joined across the word.", "label": "faithful"}
+{"passed": false, "mistakeId": "lifted", "expectedFix": "join", "coaching": "Don't lift between the letters — let baa stay joined across the word. Try again.", "label": "faithful"}
 {"passed": false, "mistakeId": "missingDot", "expectedFix": "dot", "coaching": "Close — your first baa is missing its dot. Listen again: باب.", "label": "faithful"}
 {"passed": true, "mistakeId": null, "expectedFix": null, "coaching": "Beautiful — a deep, smooth bowl. أحسنت!", "label": "faithful"}
 {"passed": true, "mistakeId": null, "expectedFix": null, "coaching": "That's the initial baa — ready to join. Well done.", "label": "faithful"}
-{"passed": true, "mistakeId": null, "expectedFix": null, "coaching": "باب — from memory, no guide. Real writing!", "label": "faithful"}
+{"passed": true, "mistakeId": null, "expectedFix": null, "coaching": "Perfect little tooth — the medial baa.", "label": "faithful"}
+{"passed": true, "mistakeId": null, "expectedFix": null, "coaching": "باب — from memory, no guide. Real writing! أحسنت!", "label": "faithful"}
+{"passed": true, "mistakeId": null, "expectedFix": null, "coaching": "Joined in one go — باب, “door.” أحسنت!", "label": "faithful"}
 {"passed": false, "mistakeId": "shallowBowl", "expectedFix": "deeper curve", "coaching": "Great job! That looks perfect.", "label": "adversarial_praise_on_fail"}
 {"passed": false, "mistakeId": "noDot", "expectedFix": "dot", "coaching": "أحسنت — beautiful bowl, mastered it!", "label": "adversarial_praise_on_fail"}
+{"passed": false, "mistakeId": "hasTail", "expectedFix": "tail", "coaching": "Perfect first stroke — well done, that's the one!", "label": "adversarial_praise_on_fail"}
+{"passed": false, "mistakeId": "tooBig", "expectedFix": "smaller", "coaching": "Beautiful tooth — great job, you mastered it!", "label": "adversarial_praise_on_fail"}
+{"passed": false, "mistakeId": "lifted", "expectedFix": "join", "coaching": "Perfect joining — أحسنت, beautiful run across the word!", "label": "adversarial_praise_on_fail"}
+{"passed": false, "mistakeId": "missingDot", "expectedFix": "dot", "coaching": "Great job — باب is perfect, well done!", "label": "adversarial_praise_on_fail"}
 {"passed": false, "mistakeId": "shallowBowl", "expectedFix": "deeper curve", "coaching": "Don't forget the dot below the line — try again.", "label": "adversarial_wrong_fix"}
 {"passed": false, "mistakeId": "noDot", "expectedFix": "dot", "coaching": "Give the bowl a deeper curve at the bottom — slower this time.", "label": "adversarial_wrong_fix"}
+{"passed": false, "mistakeId": "hasTail", "expectedFix": "tail", "coaching": "Remember to place the dot just below the bowl. Try once more.", "label": "adversarial_wrong_fix"}
+{"passed": false, "mistakeId": "tooBig", "expectedFix": "smaller", "coaching": "Add the dot below the body — that's what makes it baa.", "label": "adversarial_wrong_fix"}
+{"passed": false, "mistakeId": "lifted", "expectedFix": "join", "coaching": "Give the bowl a deeper curve at the bottom. Try again.", "label": "adversarial_wrong_fix"}
+{"passed": false, "mistakeId": "missingDot", "expectedFix": "dot", "coaching": "Keep the letters smaller and flatter — try the word once more.", "label": "adversarial_wrong_fix"}
