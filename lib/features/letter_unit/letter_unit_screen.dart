@@ -18,6 +18,8 @@
 // ANTI-GAMIFICATION: the ProgressRibbon is position-only (never gold); Mastery
 // shows the one quiet star via the reused MasteryCelebration. No totals.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart' hide Form;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -31,7 +33,9 @@ import '../../models/letter_unit.dart';
 import '../../models/word.dart';
 import '../../theme/qalam_tokens.dart';
 import '../../theme/text_styles.dart';
+import '../../tutor/coach_warmup.dart';
 import '../../tutor/tutor_facts.dart';
+import '../../tutor/tutor_providers.dart';
 import '../../widgets/arabic_text.dart';
 import 'letter_unit_controller.dart';
 import 'sections/forms_section.dart';
@@ -175,6 +179,15 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
   @override
   void initState() {
     super.initState();
+    // D-11: fire a best-effort GET /health the moment the unit opens to mask the
+    // Cloud Run cold-start (min-instances=0), so the first /coach call — and the
+    // first spoken coach line — does not stall. Fire-and-forget: warmUpCoach
+    // no-ops on an empty baseUrl (no --dart-define) and swallows every error, so
+    // it never blocks the unit-open path (RemoteAgentBrain never-throw posture).
+    unawaited(warmUpCoach(
+      ref.read(tutorHttpClientProvider),
+      ref.read(tutorBaseUrlProvider),
+    ));
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       // start() now reads the DURABLE Drift graph position (D-08) — it is async,
