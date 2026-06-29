@@ -42,5 +42,12 @@
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
+        <!-- TTS engine discoverability on Android 11+ (package visibility). Without
+             this query the platform TextToSpeech engine is invisible to the app and
+             flutter_tts cannot synthesize the coach voice (PRES-02, RESEARCH Pitfall 5).
+             A sibling <intent> inside the SINGLE existing <queries> element. -->
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
     </queries>
 </manifest>
