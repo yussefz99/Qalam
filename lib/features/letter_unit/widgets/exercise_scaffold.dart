@@ -17,12 +17,15 @@
 // [ExerciseController] (idle→think→pass|fix), exactly like the prototype's
 // `tutorAndFeedback`. Riverpod-only (CLAUDE.md Decided).
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/exercise_engine/check_result.dart';
 import '../../../models/exercise.dart';
 import '../../../models/letter.dart';
+import '../../../providers/tts_providers.dart';
 import '../../../theme/qalam_tokens.dart';
 import '../../../theme/text_styles.dart';
 import '../../../tutor/tutor_decision.dart';
@@ -156,6 +159,10 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
       ref.read(exerciseControllerProvider.notifier).load(widget.exercise);
       // Clear any stale agent line from a prior exercise.
       ref.read(tutorLineProvider.notifier).clear();
+      // Stop any in-flight coach voice from the prior exercise so a fresh idle is
+      // silent (the visual is reset; the voice must not carry over). Fire-and-
+      // forget — never block the build (ADR-014 display-only).
+      unawaited(ref.read(ttsCoachSpeakerProvider).stop());
     });
   }
 
@@ -210,6 +217,18 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
       // shows.
       final line = _lineOf(decision);
       ref.read(tutorLineProvider.notifier).set(line.isNotEmpty ? line : null);
+
+      // 5) PHASE 16 PRESENCE HOOK (D-05 two clocks): a BEAT after the instant
+      // visual verdict (applyResult already rendered, GROUND-01), SPEAK the
+      // resolved bubble text on BOTH a pass and a miss. Voice the SAME text the
+      // bubble shows — prefer the agent line, else the authored FLOOR line for
+      // this verdict (so airplane-mode coaching speaks — D-04). Fire-and-forget:
+      // a slow or missing synth must NEVER stall the trace loop (ADR-014 display-
+      // only; the speak hook can never flip a verdict).
+      final spokenText = line.isNotEmpty ? line : _floorLineFor(result);
+      if (spokenText.isNotEmpty) {
+        unawaited(ref.read(ttsCoachSpeakerProvider).speak(spokenText));
+      }
     }).catchError((_) {
       // The brain never throws, but be defensive: on any error clear the agent
       // line so the verdict-side authored line is the floor.
@@ -224,6 +243,26 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
         _ => '',
       };
 
+  /// The authored FLOOR line for [result] — a mirror of
+  /// `AuthoredFallbackBrain._resolveLine` over the active exercise's feedback:
+  ///   • pass            → feedback['pass']
+  ///   • miss (known id) → feedback[mistakeId]
+  ///   • miss (unknown)  → the first non-'pass' authored line
+  /// Used to VOICE the offline floor when no agent line is present (D-04), so the
+  /// spoken text matches the verdict-side authored line the bubble shows. Empty
+  /// only when nothing is authored at all (then there is nothing to speak).
+  String _floorLineFor(CheckResult result) {
+    final feedback = widget.exercise.feedback ?? const <String, String>{};
+    if (result.passed) return feedback['pass'] ?? '';
+    final id = result.mistakeId;
+    final direct = id != null ? feedback[id] : null;
+    if (direct != null) return direct;
+    for (final entry in feedback.entries) {
+      if (entry.key != 'pass') return entry.value;
+    }
+    return '';
+  }
+
   /// Clear the child's ink AND reset the mascot/feedback — the Clear / Try-again
   /// CTAs. (Previously only the controller reset, so the drawing stayed put.)
   void _clear() {
@@ -232,6 +271,9 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
     // Drop any agent line so the cleared idle state shows the prompt, not a
     // stale coaching bubble.
     ref.read(tutorLineProvider.notifier).clear();
+    // Stop any in-flight coach voice — a cleared idle is silent (D-05). Fire-and-
+    // forget; a stop hiccup is non-fatal (ADR-014 display-only).
+    unawaited(ref.read(ttsCoachSpeakerProvider).stop());
   }
 
   /// Submit what's drawn for scoring — the Done CTA. Essential for write-mode
