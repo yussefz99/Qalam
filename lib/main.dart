@@ -11,9 +11,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app.dart';
 import 'data/app_database.dart';
+import 'data/graph_position_repository.dart';
+import 'demo/seeded_demo_state.dart';
 import 'firebase_options.dart';
 import 'providers/parent_providers.dart';
 import 'providers/profile_providers.dart';
+import 'router/app_router.dart' show kDemoMode;
 import 'services/auth_service.dart';
 import 'tutor/tutor_providers.dart';
 
@@ -61,6 +64,17 @@ Future<void> main() async {
   // redirect, no flicker — Pitfall 2/3).
   final db = AppDatabase();
   final hasProfile = await db.hasProfile();
+
+  // DEMO-ONLY seed (DEMO-01 / D-12 — Plan 16-06). Double-gated: it runs ONLY on
+  // a debug build (`kDebugMode`) launched with `--dart-define=DEMO=true`
+  // (`kDemoMode`), never on the child-facing default boot. It arms the reliable
+  // hero-moment starting state (child mid-unit on the wobble form, reps BELOW
+  // mastery) so a fail re-surfaces an easier exercise on cue. It NEVER awards a
+  // star — the scorer owns that (ADR-014). Idempotent: re-running re-arms the
+  // same state between demo runs.
+  if (kDebugMode && kDemoMode) {
+    await seedDemoState(DriftGraphPositionRepository(db), db: db);
+  }
 
   runApp(
     ProviderScope(

@@ -15,15 +15,11 @@
 
 import 'dart:convert';
 
-// Hide the Drift query-builder matchers that collide with flutter_test's
-// isNull/isNotNull (same idiom as the sibling Drift tests).
-import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:drift/native.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:qalam/curriculum/curriculum_graph.dart';
-import 'package:qalam/curriculum/curriculum_graph_walker.dart' show GraphPosition;
 import 'package:qalam/curriculum/mastery_condition.dart'
     show isMasteryMetForPresented;
 import 'package:qalam/data/app_database.dart';
