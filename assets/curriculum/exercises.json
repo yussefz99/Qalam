@@ -1333,9 +1333,12 @@
       "check": "glyph+positionalForm",
       "feedback": {
         "pass": "Yes — that's it. أحسنت!",
-        "wrongLetter": "Listen again — which letter makes that sound?"
+        "wrongLetter": "Listen again — which letter makes that sound?",
+        "tooShort": "Make your alif taller — one line from the very top all the way down.",
+        "wrongDirection": "Start at the very top and pull straight down.",
+        "tooCurved": "Keep it straight — alif is one straight line, no curve."
       },
-      "signedOff": true
+      "signedOff": false
     },
     {
       "id": "alif.writeLetter.writeForm",
@@ -1359,10 +1362,12 @@
       },
       "check": "glyph+positionalForm",
       "feedback": {
-        "pass": "Yes — that's it. أحسنت!",
-        "wrongLetter": "Listen again — which letter makes that sound?"
+        "pass": "Yes — one tall, straight alif. أحسنت!",
+        "tooShort": "Make your alif taller — one line from the very top all the way down.",
+        "wrongDirection": "Start at the very top and pull straight down.",
+        "tooCurved": "Keep it straight — alif is one straight line, no curve."
       },
-      "signedOff": true
+      "signedOff": false
     },
     {
       "id": "alif.writeWord.dictation",
