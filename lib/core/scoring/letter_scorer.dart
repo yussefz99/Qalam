@@ -80,10 +80,14 @@ Future<LetterResult> scoreLetter(
   // validator's check 5b). Classify each child stroke as a dot (a tap — very few
   // points) or a body stroke and require the SAME sequence as the reference. A
   // child who taps the dot before drawing the boat fails here.
+  // Classify child strokes as dot/body by RELATIVE spatial extent — a stylus dot
+  // TAP emits many sample points (not a single point), so a point-count rule
+  // misfires and a real dot is mistaken for a body stroke (→ wrongStrokeOrder →
+  // "noDot"). A dot is spatially tiny regardless of how many points it carries.
+  final childIsDot = _classifyChildDots(childStrokes);
   for (var i = 0; i < reference.length; i++) {
     final refIsDot = reference[i].type == 'dot';
-    final childIsDot = _looksLikeDot(childStrokes[i]);
-    if (refIsDot != childIsDot) {
+    if (refIsDot != childIsDot[i]) {
       return const LetterResult.fail(MistakeId.wrongStrokeOrder);
     }
   }
@@ -122,9 +126,37 @@ Future<LetterResult> scoreLetter(
   return const LetterResult.pass();
 }
 
-/// True if [stroke] is a single tap (a dot) rather than a drawn body stroke.
-bool _looksLikeDot(List<List<double>> stroke) =>
-    stroke.length <= _kDotPointCeiling;
+/// Classify each child stroke as a dot (true) or a body stroke (false) by RELATIVE
+/// spatial extent. A dot TAP is spatially tiny even when the stylus emits many
+/// sample points; a body line spans most of the letter. So a stroke is a dot when
+/// its bounding-box diagonal is small relative to the largest stroke's — OR when it
+/// is a literal 1–3 point tap (the synthetic/clean case). This fixes the on-device
+/// bug where a pen-drawn dot (many points, tiny extent) was mistaken for a body
+/// stroke and failed stroke-order as "noDot".
+List<bool> _classifyChildDots(List<List<List<double>>> strokes) {
+  final diags = [for (final s in strokes) _strokeDiagonal(s)];
+  final maxDiag = diags.fold<double>(0.0, (m, d) => d > m ? d : m);
+  return [
+    for (var i = 0; i < strokes.length; i++)
+      strokes[i].length <= _kDotPointCeiling ||
+          (maxDiag > 0 && diags[i] < 0.3 * maxDiag),
+  ];
+}
+
+/// Bounding-box diagonal of a stroke (0 for empty/degenerate).
+double _strokeDiagonal(List<List<double>> stroke) {
+  if (stroke.isEmpty) return 0.0;
+  var minX = double.infinity, minY = double.infinity;
+  var maxX = double.negativeInfinity, maxY = double.negativeInfinity;
+  for (final p in stroke) {
+    minX = math.min(minX, p[0]);
+    maxX = math.max(maxX, p[0]);
+    minY = math.min(minY, p[1]);
+    maxY = math.max(maxY, p[1]);
+  }
+  final w = maxX - minX, h = maxY - minY;
+  return math.sqrt(w * w + h * h);
+}
 
 /// Checks every reference dot against the child's matching stroke: the child must
 /// also have drawn a dot there (count) and it must sit on the SAME side of the

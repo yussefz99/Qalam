@@ -117,10 +117,15 @@ async def coach(
     # Observability: the exact line the child sees (Section 7). Lets us confirm a real
     # online coaching turn vs the client's offline floor without a device probe.
     _line = out.args.get("text") or out.args.get("coachingLine") or ""
+    # Phase 17 diagnostic: log the DERIVED (point-free) strokeDiff so we can confirm the
+    # on-device geometry is reaching the server and cross-check the scorer's verdict (e.g.
+    # dotPresent vs a noDot verdict). Non-PII derived data — safe to log.
+    _sd = facts_in.strokeDiff.model_dump(exclude_none=True) if facts_in.strokeDiff else None
     logger.warning(
-        "coach decision: passed=%s mistakeId=%s tool=%s grounded=%s line=%r",
+        "coach decision: passed=%s mistakeId=%s strokeDiff=%s tool=%s grounded=%s line=%r",
         facts_in.passed,
         facts_in.mistakeId,
+        _sd,
         out.toolName,
         out.grounded,
         _line[:200],
