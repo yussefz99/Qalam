@@ -28,7 +28,9 @@ import '../../../models/letter.dart';
 import '../../../providers/tts_providers.dart';
 import '../../../theme/qalam_tokens.dart';
 import '../../../theme/text_styles.dart';
+import '../../../tutor/authored_fallback_brain.dart';
 import '../../../tutor/latency_trace.dart';
+import '../../../tutor/tutor_brain.dart';
 import '../../../tutor/tutor_decision.dart';
 import '../../../tutor/tutor_facts.dart';
 import '../../../tutor/tutor_facts_builder.dart';
@@ -238,9 +240,15 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
       strokeDiff: strokeDiff,
       strokeImage: strokeImage,
     );
-    final brain = ref.read(tutorBrainFactoryProvider)(
-      widget.exercise.feedback ?? const <String, String>{},
-    );
+    // The cloud agent's coaching prompt is baa-specific (Phase 14-17 was scoped to
+    // baa), so it must run ONLY for baa — for any other letter it speaks baa
+    // coaching ("deeper curve", "the dot"). Non-baa letters use the
+    // AuthoredFallbackBrain, which returns the letter's OWN authored feedback line.
+    // (Generalizing the agent beyond baa is the agent-driven-unit work for next.)
+    final feedback = widget.exercise.feedback ?? const <String, String>{};
+    final TutorBrain brain = widget.letter.id == 'baa'
+        ? ref.read(tutorBrainFactoryProvider)(feedback)
+        : AuthoredFallbackBrain(feedback: feedback);
     brain.next(facts).then((decision) {
       if (!mounted) return;
       final line = _lineOf(decision);

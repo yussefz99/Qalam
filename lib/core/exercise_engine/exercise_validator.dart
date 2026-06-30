@@ -254,14 +254,20 @@ String _sequenceMiss(String expected, String written, ExerciseSpec exercise) {
 /// candidate the exercise actually authored wins. Falls back to a generic
 /// authored key so no raw scorer internal ever surfaces (T-07-03-02).
 String _mapMistake(MistakeId? id, ExerciseSpec exercise) {
+  // Each list is tried in order; the FIRST key the exercise authored wins. The
+  // geometry/semantic key name (e.g. 'tooShort') is FIRST so a letter that authors
+  // its OWN letter-specific feedback (alif: tooShort/wrongDirection/tooCurved) is
+  // preferred; the baa-shaped keys (shallowBowl/noDot) stay as the fallback for
+  // exercises that only authored those. This is what makes a non-baa letter (alif)
+  // resolve to ITS feedback instead of baa's "shallow bowl" / "now the dots".
   const candidatesByMistake = <MistakeId, List<String>>{
-    MistakeId.tooShort: ['shallowBowl', 'incomplete'],
-    MistakeId.wrongDirection: ['shallowBowl', 'wrongLetter', 'wrongForm'],
-    MistakeId.tooCurved: ['shallowBowl'],
-    MistakeId.wrongStrokeCount: ['noDot', 'missingDot', 'incomplete'],
-    MistakeId.wrongStrokeOrder: ['noDot', 'missingDot'],
-    MistakeId.dotMisplaced: ['noDot', 'missingDot', 'shallowBowl'],
-    MistakeId.wrongLetterIdentity: ['wrongLetter', 'wrongForm', 'wrongWord'],
+    MistakeId.tooShort: ['tooShort', 'shallowBowl', 'incomplete'],
+    MistakeId.wrongDirection: ['wrongDirection', 'shallowBowl', 'wrongLetter', 'wrongForm'],
+    MistakeId.tooCurved: ['tooCurved', 'shallowBowl'],
+    MistakeId.wrongStrokeCount: ['wrongStrokeCount', 'noDot', 'missingDot', 'incomplete'],
+    MistakeId.wrongStrokeOrder: ['wrongStrokeOrder', 'noDot', 'missingDot'],
+    MistakeId.dotMisplaced: ['dotMisplaced', 'noDot', 'missingDot', 'shallowBowl'],
+    MistakeId.wrongLetterIdentity: ['wrongLetterIdentity', 'wrongLetter', 'wrongForm', 'wrongWord'],
     MistakeId.fallback: [],
   };
   final candidates = candidatesByMistake[id ?? MistakeId.fallback] ?? const [];

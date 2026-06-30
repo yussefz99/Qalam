@@ -1299,11 +1299,12 @@
       },
       "check": "glyph",
       "feedback": {
-        "pass": "Beautiful — smooth and clean. أحسنت!",
-        "shallowBowl": "A little more curve — try again, slower.",
-        "noDot": "Good shape — now the dots."
+        "pass": "Beautiful — smooth and straight. أحسنت!",
+        "tooShort": "Make your alif taller — draw it from the very top all the way down.",
+        "wrongDirection": "Start at the top and pull straight down — not from the bottom up.",
+        "tooCurved": "Keep your alif straight — one tall straight line, no curve."
       },
-      "signedOff": true
+      "signedOff": false
     },
     {
       "id": "alif.writeLetter.fromSound",
