@@ -122,6 +122,15 @@ numbering from the v1 roadmap (start at Phase 11). Traceability filled by the v2
 - [ ] **DEMO-01**: The baa AI-tutor path is demo-hardened for the live Technion meeting
   - *Accept:* no dead ends or stuck states; graceful offline/timeout fallback to authored lines; stable on the Pixel-Tablet build end-to-end (Home/Journey → baa unit → mastery star)
 
+### Stroke-Aware Coaching (Phase 17 — added 2026-06-30 from the stroke-aware spike verdict)
+
+- [ ] **STRK-01**: The coach names the SPECIFIC geometry of the child's actual baa attempt (where the curve fell short, which side is flat, where the dot landed), not just the scorer's coarse mistakeId
+  - *Accept:* on the eval's specificity/variety dimensions, stroke-aware coaching measurably beats the label-only baseline (distinguishes dot-left vs dot-right vs dot-above; a one-sided flat bowl from a uniformly shallow one) with grounding intact (0 advance-on-fail, 0 praise-on-fail)
+- [ ] **GROUND-04**: Stroke geometry is derived ON-DEVICE; only the derived diff — never raw strokes — crosses the network (softens GROUND-02)
+  - *Accept:* a guard/test fails the build if raw stroke coordinates reach the payload; the new `strokeDiff` field is the only stroke-derived data sent; `extra="forbid"` still rejects raw points/PII; the reversal is recorded as an ADR
+- [ ] **EVAL-03**: The eval scores stroke-level coaching with a SEMANTIC faithfulness gate (replacing the coarse substring floor) plus a no-false-geometry check, re-signed by the owner's mother
+  - *Accept:* the faithfulness gate no longer false-flags correct paraphrases; a "do-not-assert-false-geometry" check fails coaching that invents geometry absent from the attempt; the gold set is regrown for stroke-level coaching and signed; runs as the regression gate
+
 ## Future Requirements (full AI Tutor — deferred beyond the Technion build)
 
 The remaining Sprint-2 scope, **not** in the v2.0 roadmap. The Technion build is a client-side,
@@ -216,6 +225,9 @@ Phases 11–13 are **spikes** — de-risking investigations that own **no requir
 | EVAL-01 | Phase 16 — Presence + voice + eval gate + demo-harden | Complete |
 | EVAL-02 | Phase 16 — Presence + voice + eval gate + demo-harden | Complete |
 | DEMO-01 | Phase 16 — Presence + voice + eval gate + demo-harden | Pending |
+| STRK-01 | Phase 17 — Stroke-aware coaching (on-device geo-diff → coach) | Pending |
+| GROUND-04 | Phase 17 — Stroke-aware coaching (on-device geo-diff → coach) | Pending |
+| EVAL-03 | Phase 17 — Stroke-aware coaching (on-device geo-diff → coach) | Pending |
 
 **Spike → build linkages (spikes own no REQ-IDs):**
 

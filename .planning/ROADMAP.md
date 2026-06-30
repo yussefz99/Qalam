@@ -751,6 +751,32 @@ graceful offline/timeout fallback to the authored floor) on the **Pixel-Tablet b
 **UI hint**: yes
 **Research hint**: no — presence numbers come from Phase 12; the gate harness from Phase 13. This phase integrates and hardens.
 
+#### Phase 17: BUILD — stroke-aware coaching (on-device geo-diff → coach)
+
+**Goal**: Make the coach name the **specific geometry of the child's actual baa attempt** — where the
+curve fell short, which side is flat, where the dot landed — instead of being capped by the scorer's
+small `mistakeId` set. The agent consumes a **derived stroke-geometry diff computed ON-DEVICE** (Dart)
+and sent as a structured fact; **raw strokes never leave the device**. The diff flows to the `coach`
+node only (v1), which verbalizes it in the mother's voice through the existing 4 ACTION tools. The
+deterministic scorer stays the **frozen judge** (GROUND-01); grounding holds (G2/G3/G4 + faithfulness);
+and the eval grows to score stroke-level coaching. Validated by the stroke-aware spike (GATE: BUILD —
+`geo_diff`, grounding held, image rejected; see `.planning/spikes/SPIKE-FINDINGS.md`).
+**Mode**: build
+**Depends on**: Phase 16 (the voiced + hardened coach spine — Phase 17 executes after 16 closes); the stroke-aware spike (VALIDATED)
+**Requirements**: STRK-01, GROUND-04, EVAL-03
+**Success Criteria** (what must be TRUE):
+
+  1. The coach produces attempt-specific, varied, grounded lines that name the actual geometry (dot left/right/above; which side of the bowl is flat) — measurably beating the label-only baseline on the eval's specificity/variety, grounding intact (0 advance-on-fail, 0 praise-on-fail) (STRK-01).
+  2. Raw strokes never leave the device; only the derived `strokeDiff` crosses the wire; `extra="forbid"` still rejects raw points/PII; client + server contracts match (no 422) (GROUND-04).
+  3. The eval scores stroke-level coaching with a **semantic** faithfulness gate (the coarse substring floor retired) + a no-false-geometry check, re-signed by the owner's mother, and runs as the regression gate (EVAL-03).
+  4. The **softened** GROUND-02 reversal (a derived diff leaves the device, NOT raw strokes) is recorded as an ADR.
+
+**Deferred (NOT in this phase)**: sending raw strokes or rendered images to the model (spike rejected image; on-device derived diff chosen); enriching the `analyze` node with geometric struggle tags (later follow-up); letters beyond baa; the **cheap-win prompt fix** (exemplars as register guidance, never copied) — ships separately first as a `/gsd:quick`, a prerequisite, not part of this phase.
+**Canonical refs**: docs/architecture/STROKE-AWARE-COACH-SPIKE-BRIEF.md; .planning/spikes/SPIKE-FINDINGS.md; .planning/spikes/MANIFEST.md; .planning/spikes/_lib/geometry.py; server/app/faithfulness.py; server/app/schema.py; server/app/nodes/coach.py; server/app/prompts.py
+**Plans**: TBD
+**UI hint**: no — server + client-contract + on-device diff; no new screens.
+**Research hint**: no — the spike already validated representation, grounding, latency, and privacy; this phase implements the spike's verdict.
+
 ### Progress (v2.0)
 
 **Execution Order:**
@@ -764,5 +790,6 @@ graceful offline/timeout fallback to the authored floor) on the **Pixel-Tablet b
 | 14. BUILD — TutorBrain spine + grounding invariant | 4/4 | Complete   | 2026-06-22 |
 | 15. BUILD — dynamic grounded exercise selection on baa | 8/7 | Complete    | 2026-06-28 |
 | 16. BUILD — presence + voice + eval gate + demo-harden | 3/6 | In Progress|  |
+| 17. BUILD — stroke-aware coaching (on-device geo-diff → coach) | 0/TBD | Not started | - |
 
-**Coverage:** all 14 v2.0 requirements mapped across Phases 14–16; the three spikes (11–13) own no requirements by design. See REQUIREMENTS.md → v2.0 Traceability.
+**Coverage:** the 14 original v2.0 requirements map across Phases 14–16; Phase 17 (added 2026-06-30 from the stroke-aware spike) adds STRK-01 / GROUND-04 / EVAL-03. The three spikes (11–13) own no requirements by design. See REQUIREMENTS.md → v2.0 Traceability.

@@ -97,6 +97,10 @@ Next: work the 6 items in 16-HUMAN-UAT.md (device latency, mom gold sign-off →
 
 ## Accumulated Context
 
+### Roadmap Evolution
+
+- Phase 17 added (2026-06-30): **BUILD — stroke-aware coaching (on-device geo-diff → coach)**, appended to v2.0 from the stroke-aware spike verdict (GATE: BUILD `geo_diff`; image rejected; grounding held). Reqs STRK-01 / GROUND-04 / EVAL-03. Depends on Phase 16 (executes after 16 closes). Agent approach locked: client computes the derived diff on-device (raw strokes stay local), coach node verbalizes it (coach-only v1).
+
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table.
