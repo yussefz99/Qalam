@@ -402,7 +402,7 @@
         "letter": null,
         "examples": []
       },
-      "_contextualFormsNote": "DRAFT per-positional centerlines (open pen-tip paths, normalized 0..1) for the four baa forms. The isolated form ports the validated boat+dot; initial/medial/final are best-effort drafts and NEED a real-tablet re-capture via /dev/authoring at the owner's-mother sign-off (the per-form pen motion is HER call). Every form stays signedOff:false until she reviews. The dot is always below; body sweeps rightToLeft.",
+      "_contextualFormsNote": "Per-positional centerlines (open pen-tip paths, normalized 0..1). isolated = validated boat+dot (signedOff). initial/medial/final centerlines were provided by the owner from letters.json on 2026-06-30 (the tracing guide the child follows); they stay signedOff:false until the owner's mother formally reviews the per-form pen motion. Dot always below; body sweeps rightToLeft.",
       "contextualForms": {
         "isolated": {
           "referenceStrokes": [
@@ -509,36 +509,40 @@
               "type": "curve",
               "points": [
                 [
-                  0.74,
-                  0.5
+                  0.55,
+                  0.455
                 ],
                 [
-                  0.7,
-                  0.535
+                  0.565,
+                  0.494
                 ],
                 [
-                  0.64,
-                  0.555
+                  0.571,
+                  0.53
                 ],
                 [
-                  0.57,
-                  0.561
+                  0.555,
+                  0.564
                 ],
                 [
-                  0.49,
-                  0.561
+                  0.512,
+                  0.579
                 ],
                 [
-                  0.41,
-                  0.557
+                  0.471,
+                  0.583
                 ],
                 [
-                  0.34,
-                  0.55
+                  0.407,
+                  0.581
                 ],
                 [
-                  0.28,
-                  0.547
+                  0.359,
+                  0.579
+                ],
+                [
+                  0.313,
+                  0.57
                 ]
               ],
               "direction": "rightToLeft"
@@ -549,8 +553,8 @@
               "type": "dot",
               "points": [
                 [
-                  0.52,
-                  0.7
+                  0.467,
+                  0.672
                 ]
               ],
               "direction": "tap"
@@ -580,7 +584,8 @@
           ],
           "tolerances": {
             "preset": "normal"
-          }
+          },
+          "signedOff": false
         },
         "medial": {
           "referenceStrokes": [
@@ -590,36 +595,36 @@
               "type": "curve",
               "points": [
                 [
-                  0.8,
-                  0.55
+                  0.628,
+                  0.571
                 ],
                 [
-                  0.72,
-                  0.5
+                  0.573,
+                  0.578
                 ],
                 [
-                  0.63,
-                  0.455
+                  0.518,
+                  0.564
                 ],
                 [
-                  0.55,
-                  0.44
+                  0.506,
+                  0.49
                 ],
                 [
-                  0.47,
-                  0.455
+                  0.48,
+                  0.569
                 ],
                 [
-                  0.38,
-                  0.5
+                  0.433,
+                  0.575
                 ],
                 [
-                  0.3,
-                  0.545
+                  0.388,
+                  0.574
                 ],
                 [
-                  0.22,
-                  0.55
+                  0.342,
+                  0.57
                 ]
               ],
               "direction": "rightToLeft"
@@ -630,8 +635,8 @@
               "type": "dot",
               "points": [
                 [
-                  0.5,
-                  0.74
+                  0.495,
+                  0.841
                 ]
               ],
               "direction": "tap"
@@ -661,7 +666,8 @@
           ],
           "tolerances": {
             "preset": "normal"
-          }
+          },
+          "signedOff": false
         },
         "final": {
           "referenceStrokes": [
@@ -671,44 +677,48 @@
               "type": "curve",
               "points": [
                 [
-                  0.78,
-                  0.46
+                  0.702,
+                  0.584
                 ],
                 [
-                  0.75,
-                  0.5
+                  0.653,
+                  0.572
                 ],
                 [
-                  0.7,
-                  0.55
+                  0.605,
+                  0.567
                 ],
                 [
-                  0.63,
-                  0.59
+                  0.56,
+                  0.556
                 ],
                 [
-                  0.54,
-                  0.605
+                  0.573,
+                  0.493
                 ],
                 [
-                  0.45,
-                  0.6
+                  0.528,
+                  0.56
                 ],
                 [
-                  0.37,
+                  0.481,
+                  0.577
+                ],
+                [
+                  0.425,
                   0.58
                 ],
                 [
-                  0.3,
-                  0.55
+                  0.382,
+                  0.575
                 ],
                 [
-                  0.25,
-                  0.51
+                  0.343,
+                  0.548
                 ],
                 [
-                  0.22,
-                  0.47
+                  0.316,
+                  0.498
                 ]
               ],
               "direction": "rightToLeft"
@@ -719,8 +729,8 @@
               "type": "dot",
               "points": [
                 [
-                  0.48,
-                  0.78
+                  0.447,
+                  0.643
                 ]
               ],
               "direction": "tap"
@@ -750,7 +760,8 @@
           ],
           "tolerances": {
             "preset": "normal"
-          }
+          },
+          "signedOff": false
         }
       }
     },
