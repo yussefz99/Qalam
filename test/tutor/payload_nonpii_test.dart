@@ -38,8 +38,33 @@ const _whitelist = <String>{
   // mirroring server/app/schema.py TutorFactsIn (Pitfall 1 — the 422 lockstep).
   'clearedTiers',
   'clearedCompetencies',
+  // Phase 17 (STRK-01/GROUND-04): the DERIVED, point-free stroke-geometry diff —
+  // a nested object whose own keys are listed in [_strokeDiffKeys]. The field
+  // itself is non-PII; raw strokes never leave the device, only this derived map.
+  'strokeDiff',
   // AttemptFactIn (nested trajectory record keys) — passed/mistakeId/section
   // overlap the base set above, all already whitelisted.
+};
+
+/// The keys allowed INSIDE the derived [strokeDiff] object (Phase 17). All are
+/// derived scalars/strings/booleans — NO coordinate keys. Mirrors the server
+/// `StrokeDiffIn` (`server/app/schema.py`); the server `extra="forbid"` 422s any
+/// stray coordinate key, and the token guard below independently catches it.
+const _strokeDiffKeys = <String>{
+  'summary',
+  'strokeCount',
+  'bodySegments',
+  'bowlDepthRatio',
+  'bowlDepthVerdict',
+  'bowlSymmetry',
+  'sizeVerdict',
+  'directionChild',
+  'directionReference',
+  'tailPresent',
+  'dotPresent',
+  'dotHorizontal',
+  'dotVertical',
+  'dotPlacementOk',
 };
 
 /// The TIGHTENED coordinate/PII token guard (the exact regex Plan 14-03 settled
@@ -49,8 +74,12 @@ const _whitelist = <String>{
 /// `nextExerciseId` (ne**x**t) PASS, while the multi-char geometry/PII tokens
 /// stay substrings because no legit field name contains them. A real
 /// `x`/`y`/`strokes`/`offset`/`childName`/`nickname` key FAILS.
+// NOTE (Phase 17): the raw-array token is `strokes` (plural), NOT bare `stroke`,
+// so the DERIVED keys `strokeDiff` / `strokeCount` PASS while a raw `strokes`
+// array still FAILS. The whitelist ([_whitelist] ∪ [_strokeDiffKeys]) is the
+// primary guard; this token scan is defense-in-depth against a future leak.
 final _forbiddenKey = RegExp(
-  r'\b[xy]\b|stroke|offset|coord|point|raw|nick|name',
+  r'\b[xy]\b|strokes|offset|coord|point|raw|nick|name',
   caseSensitive: false,
 );
 
@@ -90,6 +119,24 @@ TutorFacts _fullyPopulatedFacts() => const TutorFacts(
       ],
       clearedTiers: ['manqul', 'manzur'],
       clearedCompetencies: ['recognize', 'positionalForms'],
+      // Phase 17: a representative DERIVED diff exercising every nested key — all
+      // derived scalars/strings/booleans, NO coordinates.
+      strokeDiff: <String, Object?>{
+        'summary': 'bowl shallower than the reference; dot left of center',
+        'strokeCount': 2,
+        'bodySegments': 1,
+        'bowlDepthRatio': 0.62,
+        'bowlDepthVerdict': 'shallower',
+        'bowlSymmetry': 'right side flat, left side curves',
+        'sizeVerdict': 'matches',
+        'directionChild': 'rightToLeft',
+        'directionReference': 'rightToLeft',
+        'tailPresent': false,
+        'dotPresent': true,
+        'dotHorizontal': 'left of center',
+        'dotVertical': 'below the bowl',
+        'dotPlacementOk': false,
+      },
     );
 
 void main() {
@@ -99,11 +146,13 @@ void main() {
       final json = _fullyPopulatedFacts().toJson();
       final keys = _allKeys(json);
 
-      // Sanity: the scan actually descended into the trajectory records.
+      // Sanity: the scan actually descended into the trajectory records AND the
+      // nested strokeDiff object.
       expect(keys, containsAll(<String>{'trajectory', 'passed', 'mistakeId', 'section'}));
+      expect(keys, containsAll(<String>{'strokeDiff', 'bowlDepthVerdict', 'dotHorizontal'}));
 
       expect(
-        keys.difference(_whitelist),
+        keys.difference(_whitelist.union(_strokeDiffKeys)),
         isEmpty,
         reason: 'TutorFacts leaked a non-whitelisted key (incl. nested): $keys',
       );
@@ -155,6 +204,12 @@ void main() {
         'section',
         'passed',
         'mistakeId',
+        // Phase 17 derived diff keys — must PASS the guard (derived, point-free).
+        'strokeDiff',
+        'strokeCount',
+        'bowlDepthRatio',
+        'dotHorizontal',
+        'dotPlacementOk',
       ]) {
         expect(
           _forbiddenKey.hasMatch(ok),

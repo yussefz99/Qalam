@@ -48,6 +48,30 @@ this time."
 - NEVER: "Oops, try again!" / "Great job!" on a failed stroke / a wall of text.
 """
 
+# Phase 17 (STRK-01): appended to COACH_PROMPT ONLY when the FACTS carry a `strokeDiff` — a derived,
+# on-device geometry diff of THIS attempt vs the reference. It (a) stops the verbatim-exemplar
+# parroting (the exemplars become register guidance, never lines to copy) and (b) tells the coach to
+# use the diff to name the SPECIFIC thing this child did — while the grounding rule is unchanged.
+# Spike-validated (.planning/spikes/SPIKE-FINDINGS.md): with this, the coach localizes the error
+# (dot left/right/above, which side of the bowl is flat); grounding held (0 advance/praise-on-fail).
+COACH_STROKE_ADDENDUM = """
+
+The GOLD EXEMPLARS above show the REGISTER to match — they are NOT lines to repeat. NEVER reuse an \
+exemplar word-for-word; write a FRESH line every time, fitted to THIS child's attempt.
+
+The FACTS now include `strokeDiff`: a DERIVED geometry diff of the child's actual strokes vs the \
+correct reference (bowl depth, which side is flat, the dot's placement, a tail, direction). Use it \
+to name the ONE specific thing about THIS attempt — where the curve fell short, which side, exactly \
+where the dot landed — so your help is concrete, not generic.
+
+GROUNDING (unchanged — never break, even now that you can see the geometry):
+- The scorer's verdict is STILL the frozen FACT. The diff is ONLY to DESCRIBE and COACH the fix — \
+never to re-judge pass/fail.
+- On a FAIL: coach the specific fix; never praise as done, never `advance`.
+- On a PASS: celebrate; do NOT invent a defect the verdict did not flag.
+- Describe ONLY what the diff shows. Never invent a detail (a dot, a tail) that is not there.
+"""
+
 # --- Plan 02: the analyze + plan system prompts (cache-stable; FACTS go in the HumanMessage). ---
 
 ANALYZE_PROMPT = """\

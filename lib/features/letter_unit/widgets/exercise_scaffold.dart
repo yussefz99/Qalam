@@ -150,6 +150,12 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
   final List<AttemptFact> _trajectory = [];
   final List<String> _recentMistakes = [];
 
+  /// Phase 17 (STRK-01): the DERIVED, point-free stroke-geometry diff for the
+  /// CURRENT attempt, set by [WriteSurface.onStrokeDiff] just before the verdict
+  /// arrives, consumed by [_onResult] when building the coach FACTS, then cleared.
+  /// Never holds raw strokes (the surface discards those) — only the derived map.
+  Map<String, Object?>? _pendingStrokeDiff;
+
   bool get _isTeachCard => widget.exercise.surface == null;
 
   @override
@@ -165,6 +171,12 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
       // forget — never block the build (ADR-014 display-only).
       unawaited(ref.read(ttsCoachSpeakerProvider).stop());
     });
+  }
+
+  /// Phase 17: stash the derived stroke-geometry diff for the current attempt. It
+  /// arrives from [WriteSurface] just before [_onResult] (point-free; no strokes).
+  void _onStrokeDiff(Map<String, Object?>? diff) {
+    _pendingStrokeDiff = diff;
   }
 
   void _onValidating() {
@@ -208,13 +220,19 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
       _recentMistakes.insert(0, result.mistakeId!);
     }
 
-    // 3) Build the non-PII FACTS via the chokepoint and ask the brain.
+    // 3) Build the non-PII FACTS via the chokepoint and ask the brain. Phase 17:
+    // attach the DERIVED stroke-geometry diff for THIS attempt (point-free; the
+    // surface already discarded the raw strokes), then clear it so it never leaks
+    // onto a later attempt.
+    final strokeDiff = _pendingStrokeDiff;
+    _pendingStrokeDiff = null;
     final facts = buildTutorFacts(
       letterId: widget.letter.id,
       section: section,
       result: result,
       recentMistakes: List<String>.unmodifiable(_recentMistakes),
       trajectory: List<AttemptFact>.unmodifiable(_trajectory),
+      strokeDiff: strokeDiff,
     );
     final brain = ref.read(tutorBrainFactoryProvider)(
       widget.exercise.feedback ?? const <String, String>{},
@@ -373,6 +391,7 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
         letter: widget.letter,
         onValidating: _onValidating,
         onResult: _onResult,
+        onStrokeDiff: _onStrokeDiff,
         canvasController: _canvasController,
         watchMeLabel: widget.strings.watchMe,
       );

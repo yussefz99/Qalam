@@ -27,7 +27,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 
 from app.curriculum import is_authored
 from app.models import build_coach_model
-from app.prompts import COACH_PROMPT
+from app.prompts import COACH_PROMPT, COACH_STROKE_ADDENDUM
 from app.state import TutorState
 from app.tools import ACTION_TOOL_NAMES, ACTION_TOOLS
 
@@ -52,10 +52,15 @@ def coach(state: TutorState) -> dict:
     insight = state.get("insight", {})
     plan = state.get("plan")
 
+    # Phase 17 (STRK-01): when the FACTS carry a derived strokeDiff, append the stroke addendum so
+    # the coach names the specific geometry (and stops parroting the exemplars). No strokeDiff ->
+    # byte-identical to the prior behavior (the existing flow is unchanged).
+    system_prompt = COACH_PROMPT + (COACH_STROKE_ADDENDUM if facts.get("strokeDiff") else "")
+
     coach_with_tools = build_coach_with_tools()
     resp = coach_with_tools.invoke(
         [
-            SystemMessage(content=COACH_PROMPT),  # mother's-voice + grounding rule (cache-stable)
+            SystemMessage(content=system_prompt),  # mother's-voice + grounding rule (cache-stable)
             HumanMessage(content=str({"facts": facts, "insight": insight, "plan": plan})),
         ]
     )

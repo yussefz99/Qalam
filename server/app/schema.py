@@ -44,6 +44,43 @@ class AttemptFactIn(BaseModel):
     section: str = Field(description="The exercise/section id, e.g. 'traceLetter'.")
 
 
+class StrokeDiffIn(BaseModel):
+    """A DERIVED, point-free stroke-geometry diff (Phase 17 / STRK-01 / GROUND-04).
+
+    Computed ON-DEVICE (Dart) from the child's strokes vs the authored reference, then sent so the
+    coach can name the SPECIFIC geometry of this attempt. `extra="forbid"` + only scalar/string
+    fields means **raw stroke points can never cross the wire** (GROUND-04: only the derived diff
+    leaves the device, never raw strokes) — a leaked `points`/`x`/`y` key is a 422. Every field is
+    optional so the producer sends only what applies to the current form.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    summary: str | None = Field(
+        default=None,
+        description="One-line natural-language summary of the deviation (e.g. 'bowl much shallower; dot left of center').",
+    )
+    strokeCount: int | None = None
+    bodySegments: int | None = None
+    bowlDepthRatio: float | None = Field(default=None, description="child bowl depth / reference depth.")
+    bowlDepthVerdict: str | None = Field(
+        default=None, description="'much shallower' | 'shallower' | 'matches' | 'deeper'."
+    )
+    bowlSymmetry: str | None = Field(
+        default=None, description="e.g. 'right side flat, left side curves'; null when symmetric."
+    )
+    sizeVerdict: str | None = Field(default=None, description="'too big' | 'too small' | 'matches'.")
+    directionChild: str | None = None
+    directionReference: str | None = None
+    tailPresent: bool | None = None
+    dotPresent: bool | None = None
+    dotHorizontal: str | None = Field(
+        default=None, description="'left of center' | 'right of center' | 'centered'."
+    )
+    dotVertical: str | None = Field(default=None, description="'above the bowl' | 'below the bowl'.")
+    dotPlacementOk: bool | None = None
+
+
 class TutorFactsIn(BaseModel):
     """The FINAL, enlarged, non-PII request contract for POST /coach.
 
@@ -89,6 +126,14 @@ class TutorFactsIn(BaseModel):
     clearedCompetencies: list[str] = Field(
         default_factory=list,
         description="The curriculum-graph competencies the child has cleared (recognize, copyWrite, …).",
+    )
+
+    # --- Phase 17: the DERIVED on-device stroke-geometry diff (STRK-01 / GROUND-04) ---
+    # OPTIONAL + point-free (StrokeDiffIn forbids extras). Optional => backward compatible: a client
+    # that does not send it still validates (no 422 window — server lands first, client follows).
+    strokeDiff: StrokeDiffIn | None = Field(
+        default=None,
+        description="DERIVED stroke-geometry diff computed on-device (no raw points). Lets the coach name the specific attempt geometry.",
     )
 
 

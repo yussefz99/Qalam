@@ -36,6 +36,7 @@ TutorFacts buildTutorFacts({
   List<AttemptFact> trajectory = const [],
   List<String> clearedTiers = const [],
   List<String> clearedCompetencies = const [],
+  Map<String, Object?>? strokeDiff,
 }) {
   return TutorFacts(
     letterId: letterId,
@@ -48,6 +49,7 @@ TutorFacts buildTutorFacts({
     trajectory: List<AttemptFact>.unmodifiable(trajectory),
     clearedTiers: List<String>.unmodifiable(clearedTiers),
     clearedCompetencies: List<String>.unmodifiable(clearedCompetencies),
+    strokeDiff: strokeDiff,
   );
 }
 

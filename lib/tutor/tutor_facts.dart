@@ -78,6 +78,7 @@ class TutorFacts {
     this.trajectory = const [],
     this.clearedTiers = const [],
     this.clearedCompetencies = const [],
+    this.strokeDiff,
   });
 
   /// The letter family this moment belongs to (e.g. `baa`).
@@ -122,6 +123,16 @@ class TutorFacts {
   /// `TutorFactsIn.clearedCompetencies` (`server/app/schema.py`) byte-for-byte.
   final List<String> clearedCompetencies;
 
+  /// Phase 17 (STRK-01 / GROUND-04): a DERIVED, POINT-FREE stroke-geometry diff of
+  /// THIS attempt vs the authored reference (bowl depth, which side is flat, the
+  /// dot's placement, a tail, direction) — computed ON-DEVICE in
+  /// `tutor/stroke_diff.dart` at the surface seam, where the raw strokes are still
+  /// discarded. Holds ONLY derived scalars/strings (no `x`/`y`/`points`), so it
+  /// honors GROUND-02/04. Null when none could be derived (write mode / no
+  /// reference). Mirrors `TutorFactsIn.strokeDiff` (`server/app/schema.py`); the
+  /// server's `extra="forbid"` 422s any stray coordinate key.
+  final Map<String, Object?>? strokeDiff;
+
   /// The whitelisted serialized form. Emits ONLY the ten derived fields (the
   /// eight base + `clearedTiers`/`clearedCompetencies`) — no raw strokes, no PII.
   /// This is the exact shape that crosses the network as the `/coach` request
@@ -138,6 +149,9 @@ class TutorFacts {
         'strengthTags': strengthTags,
         'clearedTiers': clearedTiers,
         'clearedCompetencies': clearedCompetencies,
+        // Phase 17: include the derived diff only when present (omit the key when
+        // null so an unchanged payload byte-matches the prior shape).
+        if (strokeDiff != null) 'strokeDiff': strokeDiff,
       };
 
   /// Alias of [toMap] — same whitelisted shape.

@@ -35,6 +35,7 @@ import '../../../core/recognition/ml_kit_recognizer.dart';
 import '../../../models/exercise.dart';
 import '../../../models/letter.dart';
 import '../../../services/model_download_service.dart';
+import '../../../tutor/stroke_diff.dart';
 import '../../../theme/qalam_tokens.dart';
 import '../../../theme/text_styles.dart';
 import '../../../widgets/arabic_text.dart';
@@ -52,6 +53,7 @@ class WriteSurface extends ConsumerStatefulWidget {
     required this.surface,
     required this.letter,
     this.onResult,
+    this.onStrokeDiff,
     this.onValidating,
     this.canvasController,
     this.watchMeLabel = 'Watch me',
@@ -76,6 +78,13 @@ class WriteSurface extends ConsumerStatefulWidget {
 
   /// Called with the validator verdict on letter-complete.
   final void Function(CheckResult result)? onResult;
+
+  /// Phase 17 (STRK-01/GROUND-04): called on letter-complete with the DERIVED,
+  /// point-free stroke-geometry diff (child vs reference) — or null when none can
+  /// be computed (write mode / no reference). Fires just BEFORE [onResult] so the
+  /// host has the diff in hand when it builds the coach FACTS. The raw strokes are
+  /// still discarded here; only this derived map leaves the surface.
+  final void Function(Map<String, Object?>? diff)? onStrokeDiff;
 
   /// Called the instant the child finishes the letter, BEFORE the (async)
   /// validator resolves — lets the host show the "thinking" beat.
@@ -198,6 +207,19 @@ class _WriteSurfaceState extends ConsumerState<WriteSurface> {
       writtenWord: writtenWord,
     );
     if (!mounted) return;
+    // Phase 17: derive the point-free stroke-geometry diff from the just-captured
+    // strokes vs the reference, THEN let pixelStrokes fall out of scope (still
+    // discarded — only the derived diff leaves). Best-effort: any failure → null
+    // diff (label-only coaching), never a thrown exception out of the handler.
+    Map<String, Object?>? strokeDiff;
+    if (_isTrace && _referenceStrokes.isNotEmpty) {
+      try {
+        strokeDiff = computeStrokeDiff(pixelStrokes, _referenceStrokes);
+      } catch (_) {
+        strokeDiff = null;
+      }
+    }
+    widget.onStrokeDiff?.call(strokeDiff);
     widget.onResult?.call(result);
   }
 
