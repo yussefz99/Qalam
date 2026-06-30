@@ -156,6 +156,12 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
   /// Never holds raw strokes (the surface discards those) — only the derived map.
   Map<String, Object?>? _pendingStrokeDiff;
 
+  /// Phase 17.1 (owner directive): a base64 PNG of the current attempt's strokes
+  /// (baa only), set by [WriteSurface.onStrokeImage], attached to the coach FACTS
+  /// so the AI judges pass/fail, then cleared. The AI verdict can OVERRULE a scorer
+  /// fail (fixing false negatives on correct writing).
+  String? _pendingStrokeImage;
+
   bool get _isTeachCard => widget.exercise.surface == null;
 
   @override
@@ -177,6 +183,12 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
   /// arrives from [WriteSurface] just before [_onResult] (point-free; no strokes).
   void _onStrokeDiff(Map<String, Object?>? diff) {
     _pendingStrokeDiff = diff;
+  }
+
+  /// Phase 17.1: stash the rendered-strokes image (baa) for the current attempt,
+  /// attached to the coach FACTS so the AI judges pass/fail (owner directive).
+  void _onStrokeImage(String? imageB64) {
+    _pendingStrokeImage = imageB64;
   }
 
   void _onValidating() {
@@ -226,6 +238,9 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
     // onto a later attempt.
     final strokeDiff = _pendingStrokeDiff;
     _pendingStrokeDiff = null;
+    // Phase 17.1: attach the rendered image (baa) so the AI judges pass/fail.
+    final strokeImage = _pendingStrokeImage;
+    _pendingStrokeImage = null;
     final facts = buildTutorFacts(
       letterId: widget.letter.id,
       section: section,
@@ -233,6 +248,7 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
       recentMistakes: List<String>.unmodifiable(_recentMistakes),
       trajectory: List<AttemptFact>.unmodifiable(_trajectory),
       strokeDiff: strokeDiff,
+      strokeImage: strokeImage,
     );
     final brain = ref.read(tutorBrainFactoryProvider)(
       widget.exercise.feedback ?? const <String, String>{},
@@ -243,6 +259,17 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
       // (the floor had nothing authored) leave it null so the verdict-side line
       // shows.
       final line = _lineOf(decision);
+      // Phase 17.1 (owner directive): the AI judged the rendered letter and may
+      // OVERRULE the scorer's FAIL. When the AI passes an attempt the scorer
+      // failed, award the pass — this fixes the scorer's false negatives on real
+      // handwriting (a fluent writer's correct baa was being rejected). The AI
+      // never downgrades a scorer pass. Online-only; offline keeps the scorer floor.
+      if (decision.verdict == 'pass' && !result.passed) {
+        ref.read(exerciseControllerProvider.notifier).upgradeToPass(line);
+        if (widget.graphExerciseId != null) {
+          widget.onGraphNodePassed?.call(widget.graphExerciseId!);
+        }
+      }
       ref.read(tutorLineProvider.notifier).set(line.isNotEmpty ? line : null);
       // LATENCY MARK 5 (debug/demo-only): the coaching line is painted into the
       // bubble (a beat after the instant verdict at mark 2).
@@ -392,6 +419,7 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
         onValidating: _onValidating,
         onResult: _onResult,
         onStrokeDiff: _onStrokeDiff,
+        onStrokeImage: _onStrokeImage,
         canvasController: _canvasController,
         watchMeLabel: widget.strings.watchMe,
       );

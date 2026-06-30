@@ -42,6 +42,13 @@ const _whitelist = <String>{
   // a nested object whose own keys are listed in [_strokeDiffKeys]. The field
   // itself is non-PII; raw strokes never leave the device, only this derived map.
   'strokeDiff',
+  // Phase 17.1 (owner directive 2026-06-30): a base64 PNG of the rendered strokes
+  // — the AI-owns-pass/fail path. This DELIBERATELY relaxes GROUND-02 (a rendered
+  // image of the handwriting leaves the device) — owner-authorized; consent + an
+  // ADR are required for production. The value is an opaque base64 string (no
+  // coordinate KEYS), so it passes the token guard while being a recorded, scoped
+  // exception, not an accidental leak.
+  'strokeImage',
   // AttemptFactIn (nested trajectory record keys) — passed/mistakeId/section
   // overlap the base set above, all already whitelisted.
 };
@@ -137,6 +144,8 @@ TutorFacts _fullyPopulatedFacts() => const TutorFacts(
         'dotVertical': 'below the bowl',
         'dotPlacementOk': false,
       },
+      // Phase 17.1: an opaque base64 image string (authorized GROUND-02 exception).
+      strokeImage: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=',
     );
 
 void main() {
@@ -210,6 +219,9 @@ void main() {
         'bowlDepthRatio',
         'dotHorizontal',
         'dotPlacementOk',
+        // Phase 17.1 image field — the KEY passes the token guard (the value is an
+        // opaque base64 string; the reversal is recorded via the whitelist comment).
+        'strokeImage',
       ]) {
         expect(
           _forbiddenKey.hasMatch(ok),

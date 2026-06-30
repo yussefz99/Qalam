@@ -54,7 +54,7 @@ class TutorPlan {
 /// intent). The ACTION-shape set stays CLOSED — the plan is a payload on the same
 /// four shapes, not a fifth action (GROUND-01).
 sealed class TutorDecision {
-  const TutorDecision({this.plan});
+  const TutorDecision({this.plan, this.verdict});
 
   /// The ACTION tool this decision corresponds to — always one of [TutorTool].
   String get toolName;
@@ -62,6 +62,14 @@ sealed class TutorDecision {
   /// The capable agent's optional next-exercise intent; null on the offline
   /// floor and whenever the agent did not propose a plan.
   final TutorPlan? plan;
+
+  /// Phase 17.1 (owner directive 2026-06-30): the AI's pass/fail when it judged a
+  /// rendered IMAGE of the strokes — "pass" | "needsWork" | null. null on the
+  /// normal scorer-owned path and on the offline floor. When "pass", the client
+  /// may award the star even if the deterministic scorer FAILED the attempt — the
+  /// AI overrules the scorer's (mis-calibrated) verdict (reverses GROUND-01 on the
+  /// image path). The scorer remains the offline fallback when this is null.
+  final String? verdict;
 }
 
 /// `present_activity{coachingLine, letterId}` — show/refresh the current activity
@@ -71,6 +79,7 @@ final class PresentActivity extends TutorDecision {
     required this.coachingLine,
     required this.letterId,
     super.plan,
+    super.verdict,
   });
 
   final String coachingLine;
@@ -82,7 +91,7 @@ final class PresentActivity extends TutorDecision {
 
 /// `say{text}` — speak a single coaching line, no activity change.
 final class Say extends TutorDecision {
-  const Say(this.text, {super.plan});
+  const Say(this.text, {super.plan, super.verdict});
 
   final String text;
 
@@ -92,7 +101,7 @@ final class Say extends TutorDecision {
 
 /// `give_hint{}` — surface the next authored hint for the current activity.
 final class GiveHint extends TutorDecision {
-  const GiveHint({super.plan});
+  const GiveHint({super.plan, super.verdict});
 
   @override
   String get toolName => TutorTool.giveHint;
@@ -101,7 +110,7 @@ final class GiveHint extends TutorDecision {
 /// `advance{}` — move to the next exercise. (The scorer still gates whether a
 /// section may advance; this is the agent REQUESTING it, never overriding it.)
 final class Advance extends TutorDecision {
-  const Advance({super.plan});
+  const Advance({super.plan, super.verdict});
 
   @override
   String get toolName => TutorTool.advance;

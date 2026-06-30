@@ -149,6 +149,24 @@ class ExerciseController extends Notifier<ExerciseState> {
     }
   }
 
+  /// Phase 17.1 (owner directive): the AI image-judge OVERRULED the scorer's FAIL
+  /// and passed the attempt. Promote the current state to a pass — cheer pose, leaf
+  /// tone, the AI's celebration [line], and increment the clean-rep count exactly
+  /// like a scorer pass. Used ONLY when the scorer failed but the AI (judging the
+  /// rendered letter on its own expertise) found it correct — fixing the scorer's
+  /// false negatives on real handwriting. The AI never DOWNGRADES a scorer pass.
+  void upgradeToPass(String line) {
+    final fb = _exercise?.feedback ?? const <String, String>{};
+    final reps = state.cleanReps + 1;
+    state = state.copyWith(
+      phase: ExercisePhase.pass,
+      pose: QalamPose.cheer,
+      tone: ExerciseTone.leaf,
+      line: line.isNotEmpty ? line : (fb['pass'] ?? ''),
+      cleanReps: reps,
+    );
+  }
+
   /// Returns to the prompt/idle state (the "Clear"/"Try again" CTA). The
   /// clean-rep count is preserved (a retry of the same rep, not a reset).
   void reset() {

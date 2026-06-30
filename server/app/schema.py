@@ -136,6 +136,15 @@ class TutorFactsIn(BaseModel):
         description="DERIVED stroke-geometry diff computed on-device (no raw points). Lets the coach name the specific attempt geometry.",
     )
 
+    # --- Phase 17.1: a rendered IMAGE of the child's strokes (owner directive 2026-06-30) ---
+    # base64 PNG. This is the AI-OWNS-PASS/FAIL path: the scorer false-fails correct writing, so the
+    # AI judges the rendered letter on its own expertise (reverses GROUND-01 + GROUND-02 — a rendered
+    # image of handwriting leaves the device; owner-authorized for the demo, consent + ADR for prod).
+    strokeImage: str | None = Field(
+        default=None,
+        description="base64 PNG of the child's rendered strokes; when present the AI judges pass/fail.",
+    )
+
 
 class CoachOut(BaseModel):
     """The /coach response DTO.
@@ -154,4 +163,10 @@ class CoachOut(BaseModel):
     grounded: bool = Field(
         default=True,
         description="True when the action honors the frozen verdict; False if the G3 guard had to rewrite it.",
+    )
+    # Phase 17.1: the AI's pass/fail when it judged a rendered image (owner directive). null on the
+    # normal (scorer-owned) path. "pass" lets the client award the star even if the scorer failed.
+    verdict: str | None = Field(
+        default=None,
+        description='AI verdict when an image was judged: "pass" | "needsWork"; null otherwise.',
     )

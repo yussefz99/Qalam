@@ -79,6 +79,7 @@ class TutorFacts {
     this.clearedTiers = const [],
     this.clearedCompetencies = const [],
     this.strokeDiff,
+    this.strokeImage,
   });
 
   /// The letter family this moment belongs to (e.g. `baa`).
@@ -133,6 +134,15 @@ class TutorFacts {
   /// server's `extra="forbid"` 422s any stray coordinate key.
   final Map<String, Object?>? strokeDiff;
 
+  /// Phase 17.1 (owner directive 2026-06-30): a base64 PNG of the child's rendered
+  /// strokes. This is the AI-OWNS-PASS/FAIL path: the scorer false-fails correct
+  /// writing, so the AI judges the rendered letter on its own expertise and returns
+  /// the verdict. Sending an image of the handwriting REVERSES GROUND-02 (raw
+  /// geometry leaves the device) — owner-authorized for the demo; consent + an ADR
+  /// are required for production. Null on letters/exercises where it does not apply
+  /// (the normal scorer path). Mirrors `TutorFactsIn.strokeImage` (server schema).
+  final String? strokeImage;
+
   /// The whitelisted serialized form. Emits ONLY the ten derived fields (the
   /// eight base + `clearedTiers`/`clearedCompetencies`) — no raw strokes, no PII.
   /// This is the exact shape that crosses the network as the `/coach` request
@@ -152,6 +162,9 @@ class TutorFacts {
         // Phase 17: include the derived diff only when present (omit the key when
         // null so an unchanged payload byte-matches the prior shape).
         if (strokeDiff != null) 'strokeDiff': strokeDiff,
+        // Phase 17.1: the rendered-strokes image (AI-owns-pass/fail path). Omitted
+        // when null so the normal payload shape is unchanged.
+        if (strokeImage != null) 'strokeImage': strokeImage,
       };
 
   /// Alias of [toMap] — same whitelisted shape.

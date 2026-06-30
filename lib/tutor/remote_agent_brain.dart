@@ -126,20 +126,23 @@ class RemoteAgentBrain implements TutorBrain {
         : const <String, Object?>{};
 
     final plan = _planFrom(args);
+    // Phase 17.1: the AI's image-judge verdict ("pass"|"needsWork") rides top-level on CoachOut.
+    final verdict = decoded['verdict'] as String?;
 
     switch (toolName) {
       case TutorTool.say:
-        return Say((args['text'] as String?) ?? '', plan: plan);
+        return Say((args['text'] as String?) ?? '', plan: plan, verdict: verdict);
       case TutorTool.presentActivity:
         return PresentActivity(
           coachingLine: (args['coachingLine'] as String?) ?? '',
           letterId: (args['letterId'] as String?) ?? facts.letterId,
           plan: plan,
+          verdict: verdict,
         );
       case TutorTool.giveHint:
-        return GiveHint(plan: plan);
+        return GiveHint(plan: plan, verdict: verdict);
       case TutorTool.advance:
-        return Advance(plan: plan);
+        return Advance(plan: plan, verdict: verdict);
       default:
         // Unknown / hallucinated tool — never a verdict path (GROUND-01).
         return null;
