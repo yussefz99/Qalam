@@ -53,6 +53,17 @@ Future<void> main() async {
     providerAndroid: kDebugMode
         ? const AndroidDebugProvider()
         : const AndroidPlayIntegrityProvider(),
+    // iOS App Check (the live AI tutor). Without an Apple provider the iPad
+    // produces no App Check token, so the App-Check-gated Cloud Run `/coach`
+    // rejects the call and RemoteAgentBrain silently degrades to the canned
+    // AuthoredFallback floor (= the "canned/wrong feedback" seen on-device).
+    // The DEBUG provider with a fixed token lets a sideloaded dev/demo build
+    // authenticate: register this exact token in Firebase Console → App Check →
+    // com.technion.qalam (iOS app) → Manage debug tokens. Swap to
+    // AppleAppAttestProvider for a real App Store release.
+    providerApple: const AppleDebugProvider(
+      debugToken: 'E2925A26-0602-4C5C-A8D9-9BC80C76FBCE',
+    ),
   );
 
   await AuthService().ensureSignedIn();
