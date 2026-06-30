@@ -198,49 +198,37 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
     ref.read(exerciseControllerProvider.notifier).think();
   }
 
-  /// Apply a scored verdict. GROUND-01: `ExerciseController.applyResult` runs
-  /// FIRST and unchanged — it owns pass/fail + the authored verdict line. ONLY
-  /// AFTER that do we ask the tutor brain for a (possibly richer) coaching line
-  /// and route it into [tutorLineProvider]. The brain can never flip the verdict.
+  /// Apply a scored attempt. Two paths:
+  ///
+  /// * NON-image (other letters / write-mode): the deterministic scorer owns the
+  ///   verdict INSTANTLY (GROUND-01, unchanged) — the local reflex — then the brain
+  ///   supplies a richer line a beat later.
+  /// * Image-judge path (baa, online — Phase 17.1, owner directive): the AI OWNS
+  ///   pass/fail. We DEFER the verdict to the AI response — only the "thinking" beat
+  ///   shows meanwhile — so the offline/scorer feedback never flashes-then-gets-
+  ///   overwritten. The AI verdict drives the star, the line, AND the session
+  ///   trajectory (so the next-question selection reacts to what the AI decided,
+  ///   not the mis-calibrated scorer). The scorer is the OFFLINE fallback: if the
+  ///   brain returns no verdict (offline/timeout/degraded) we apply the scorer floor.
   void _onResult(CheckResult result) {
-    // 1) The scorer's verdict — first, unchanged (GROUND-01).
-    ref.read(exerciseControllerProvider.notifier).applyResult(result);
-    // LATENCY MARK 2 (debug/demo-only): the instant on-screen verdict + star are
-    // applied — the LOCAL reflex. It must land WITHOUT waiting on /coach or TTS
-    // (D-05); the marks below (the spoken line) come a beat later.
-    markLatency(LatencySegment.scorerVerdictRendered);
-
-    // 2) T2: on a clean pass, notify the host so it can increment the graph
-    // node's clean-rep count and check cleared state (T1). Only fires when
-    // graphExerciseId is set (a canonical node id, not a synthetic per-word id)
-    // and the result is a pass — never on a fail (rep counter only grows on
-    // genuine clean passes; Pitfall 2 — never on mere navigation).
-    if (result.passed && widget.graphExerciseId != null) {
-      widget.onGraphNodePassed?.call(widget.graphExerciseId!);
-    }
-
-    // 3) Accumulate the non-PII session trajectory (derived records only). The
-    // section id is the exercise's template `type` (e.g. 'traceLetter'), falling
-    // back to its broad `skill` when no template label is authored.
     final section = widget.exercise.type ?? widget.exercise.skill;
-    _trajectory.add(AttemptFact(
-      passed: result.passed,
-      mistakeId: result.mistakeId,
-      section: section,
-    ));
-    if (!result.passed && result.mistakeId != null) {
-      _recentMistakes.insert(0, result.mistakeId!);
-    }
-
-    // 3) Build the non-PII FACTS via the chokepoint and ask the brain. Phase 17:
-    // attach the DERIVED stroke-geometry diff for THIS attempt (point-free; the
-    // surface already discarded the raw strokes), then clear it so it never leaks
-    // onto a later attempt.
     final strokeDiff = _pendingStrokeDiff;
     _pendingStrokeDiff = null;
-    // Phase 17.1: attach the rendered image (baa) so the AI judges pass/fail.
     final strokeImage = _pendingStrokeImage;
     _pendingStrokeImage = null;
+    // The image-judge path defers the verdict to the AI; every other path keeps the
+    // instant scorer reflex.
+    final aiJudge = strokeImage != null;
+
+    if (!aiJudge) {
+      ref.read(exerciseControllerProvider.notifier).applyResult(result);
+      markLatency(LatencySegment.scorerVerdictRendered);
+      if (result.passed && widget.graphExerciseId != null) {
+        widget.onGraphNodePassed?.call(widget.graphExerciseId!);
+      }
+      _recordAttempt(section, result.passed, result.mistakeId);
+    }
+
     final facts = buildTutorFacts(
       letterId: widget.letter.id,
       section: section,
@@ -255,46 +243,65 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
     );
     brain.next(facts).then((decision) {
       if (!mounted) return;
-      // 4) Route the agent's line into the tutor-owned channel. On an empty line
-      // (the floor had nothing authored) leave it null so the verdict-side line
-      // shows.
       final line = _lineOf(decision);
-      // Phase 17.1 (owner directive): the AI judged the rendered letter and may
-      // OVERRULE the scorer's FAIL. When the AI passes an attempt the scorer
-      // failed, award the pass — this fixes the scorer's false negatives on real
-      // handwriting (a fluent writer's correct baa was being rejected). The AI
-      // never downgrades a scorer pass. Online-only; offline keeps the scorer floor.
-      if (decision.verdict == 'pass' && !result.passed) {
-        ref.read(exerciseControllerProvider.notifier).upgradeToPass(line);
-        if (widget.graphExerciseId != null) {
+
+      if (aiJudge) {
+        // The AI owns pass/fail on this path. A null verdict means the brain
+        // degraded to the offline floor → fall back to the scorer's verdict so
+        // the loop never dead-ends.
+        final verdict = decision.verdict;
+        final passed = verdict == 'pass'
+            ? true
+            : verdict == 'needsWork'
+                ? false
+                : result.passed;
+        ref.read(exerciseControllerProvider.notifier).applyVerdict(
+              passed: passed,
+              line: line,
+              mistakeId: result.mistakeId,
+            );
+        markLatency(LatencySegment.scorerVerdictRendered);
+        if (passed && widget.graphExerciseId != null) {
           widget.onGraphNodePassed?.call(widget.graphExerciseId!);
         }
+        _recordAttempt(section, passed, passed ? null : result.mistakeId);
       }
+
+      // Route the agent's line into the tutor-owned channel. Empty → null so the
+      // verdict-side line shows.
       ref.read(tutorLineProvider.notifier).set(line.isNotEmpty ? line : null);
-      // LATENCY MARK 5 (debug/demo-only): the coaching line is painted into the
-      // bubble (a beat after the instant verdict at mark 2).
       markLatency(LatencySegment.lineRendered);
 
-      // 5) PHASE 16 PRESENCE HOOK (D-05 two clocks): a BEAT after the instant
-      // visual verdict (applyResult already rendered, GROUND-01), SPEAK the
-      // resolved bubble text on BOTH a pass and a miss. Voice the SAME text the
-      // bubble shows — prefer the agent line, else the authored FLOOR line for
-      // this verdict (so airplane-mode coaching speaks — D-04). Fire-and-forget:
-      // a slow or missing synth must NEVER stall the trace loop (ADR-014 display-
-      // only; the speak hook can never flip a verdict).
+      // PHASE 16 PRESENCE HOOK: speak the resolved bubble text (agent line, else
+      // the authored floor for this verdict). Fire-and-forget — never stalls the loop.
       final spokenText = line.isNotEmpty ? line : _floorLineFor(result);
       if (spokenText.isNotEmpty) {
-        // LATENCY MARK 6 (debug/demo-only): the first TTS utterance is kicked off
-        // — the END of the written-stroke → first-TTS budget. Marked just before
-        // the fire-and-forget speak so it is the moment synthesis is requested.
         markLatency(LatencySegment.firstTtsStart);
         unawaited(ref.read(ttsCoachSpeakerProvider).speak(spokenText));
       }
     }).catchError((_) {
-      // The brain never throws, but be defensive: on any error clear the agent
-      // line so the verdict-side authored line is the floor.
-      if (mounted) ref.read(tutorLineProvider.notifier).clear();
+      // The brain never throws, but be defensive. On the image path nothing has
+      // been applied yet, so fall back to the scorer floor here (no earlier flash).
+      if (!mounted) return;
+      if (aiJudge) {
+        ref.read(exerciseControllerProvider.notifier).applyResult(result);
+        if (result.passed && widget.graphExerciseId != null) {
+          widget.onGraphNodePassed?.call(widget.graphExerciseId!);
+        }
+        _recordAttempt(section, result.passed, result.mistakeId);
+      }
+      ref.read(tutorLineProvider.notifier).clear();
     });
+  }
+
+  /// Append a derived (non-PII) attempt record to the session trajectory + recent
+  /// mistakes. On the image-judge path this is called with the AI's verdict (not
+  /// the scorer's) so the next-question selection reacts to what the AI decided.
+  void _recordAttempt(String section, bool passed, String? mistakeId) {
+    _trajectory.add(AttemptFact(passed: passed, mistakeId: mistakeId, section: section));
+    if (!passed && mistakeId != null) {
+      _recentMistakes.insert(0, mistakeId);
+    }
   }
 
   /// Pull the spoken line out of whichever ACTION shape the brain returned.
