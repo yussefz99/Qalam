@@ -12,10 +12,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:crypto/crypto.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import '../providers/auth_providers.dart';
 
 part 'app_database.g.dart';
 
@@ -50,10 +53,12 @@ class LetterMastery extends Table {
 /// (mirrors the AppSettings/LetterMastery no-log convention above).
 class ChildProfiles extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get nicknameId => text()(); // "nick_star" — fixed-set ID, NO real name
+  TextColumn get nicknameId =>
+      text()(); // "nick_star" — fixed-set ID, NO real name
   TextColumn get avatarId => text()(); // "avatar_1".."avatar_6"
   TextColumn get grade => text()(); // kg|grade1|grade2|grade3|grade4plus
-  TextColumn get startingLessonId => text()(); // resolved from grade (default "alif", S1-02)
+  TextColumn get startingLessonId =>
+      text()(); // resolved from grade (default "alif", S1-02)
   IntColumn get createdAt => integer()(); // unix epoch ms
 }
 
@@ -141,8 +146,18 @@ class AppDatabase extends _$AppDatabase {
   /// instance can re-open it (the "simulated restart" of the D-09 test). So
   /// [close] does not tear down an injected executor; the owner closes it.
   AppDatabase([QueryExecutor? executor])
-      : _ownsExecutor = executor == null,
-        super(executor ?? _openConnection());
+    : _ownsExecutor = executor == null,
+      super(executor ?? _openLegacyConnection());
+
+  /// Production database isolated to one Firebase account.
+  AppDatabase.forAccount(String accountId)
+    : _ownsExecutor = true,
+      super(_openAccountConnection(accountId));
+
+  static String accountDatabaseFileName(String accountId) {
+    final digest = sha256.convert(utf8.encode(accountId)).toString();
+    return 'qalam_account_$digest.db';
+  }
 
   final bool _ownsExecutor;
 
@@ -196,10 +211,14 @@ class AppDatabase extends _$AppDatabase {
 
   /// Read a settings value, or null if absent.
   Future<String?> getSetting(String key) async {
-    final row = await (select(appSettings)..where((t) => t.key.equals(key)))
-        .getSingleOrNull();
+    final row = await (select(
+      appSettings,
+    )..where((t) => t.key.equals(key))).getSingleOrNull();
     return row?.value;
   }
+
+  Future<void> deleteSetting(String key) =>
+      (delete(appSettings)..where((t) => t.key.equals(key))).go();
 
   // ---------------------------------------------------------------------------
   // LetterMastery accessors (mirror setSetting/getSetting pattern)
@@ -210,28 +229,25 @@ class AppDatabase extends _$AppDatabase {
   Future<void> recordMastery({
     required String letterId,
     required int cleanReps,
-  }) =>
-      into(letterMastery).insertOnConflictUpdate(
-        LetterMasteryCompanion.insert(
-          letterId: letterId,
-          cleanReps: cleanReps,
-          masteredAt: DateTime.now(),
-        ),
-      );
+  }) => into(letterMastery).insertOnConflictUpdate(
+    LetterMasteryCompanion.insert(
+      letterId: letterId,
+      cleanReps: cleanReps,
+      masteredAt: DateTime.now(),
+    ),
+  );
 
   /// Returns true if the letter has a mastery record.
   Future<bool> isMastered(String letterId) async =>
-      (await (select(letterMastery)
-                ..where((t) => t.letterId.equals(letterId)))
-              .getSingleOrNull()) !=
+      (await (select(
+        letterMastery,
+      )..where((t) => t.letterId.equals(letterId))).getSingleOrNull()) !=
       null;
 
   /// Returns the recorded clean-rep count for the letter, or null if absent.
-  Future<int?> cleanRepsFor(String letterId) async =>
-      (await (select(letterMastery)
-                ..where((t) => t.letterId.equals(letterId)))
-              .getSingleOrNull())
-          ?.cleanReps;
+  Future<int?> cleanRepsFor(String letterId) async => (await (select(
+    letterMastery,
+  )..where((t) => t.letterId.equals(letterId))).getSingleOrNull())?.cleanReps;
 
   // ---------------------------------------------------------------------------
   // ChildProfiles accessors (Phase 5, S1-02 / S1-03)
@@ -248,16 +264,19 @@ class AppDatabase extends _$AppDatabase {
   Future<ChildProfile?> getProfile() async =>
       (select(childProfiles)..limit(1)).getSingleOrNull();
 
-  /// Create the single child profile from fixed-set IDs + a resolved
-  /// startingLessonId. Plain insert (not insertOnConflictUpdate) — onboarding
-  /// happens once.
+  /// Create or replace the device's single child profile from fixed-set IDs.
+  ///
+  /// Replacement is needed when a newly created account completes setup on a
+  /// device that still has a profile from an earlier session.
   Future<int> createProfile({
     required String nicknameId,
     required String avatarId,
     required String grade,
     required String startingLessonId,
-  }) =>
-      into(childProfiles).insert(
+  }) async {
+    return transaction(() async {
+      await delete(childProfiles).go();
+      return into(childProfiles).insert(
         ChildProfilesCompanion.insert(
           nicknameId: nicknameId,
           avatarId: avatarId,
@@ -266,6 +285,18 @@ class AppDatabase extends _$AppDatabase {
           createdAt: DateTime.now().millisecondsSinceEpoch,
         ),
       );
+    });
+  }
+
+  Future<void> updateProfile({
+    required String nicknameId,
+    required String avatarId,
+  }) => (update(childProfiles)..where((t) => t.id.isBiggerThanValue(0))).write(
+    ChildProfilesCompanion(
+      nicknameId: Value(nicknameId),
+      avatarId: Value(avatarId),
+    ),
+  );
 
   // ---------------------------------------------------------------------------
   // LetterReps accessors + watch streams — Phase 6 (D-10 / S1-09, Plan 06-02)
@@ -279,28 +310,28 @@ class AppDatabase extends _$AppDatabase {
   Future<void> setCleanReps({
     required String letterId,
     required int cleanReps,
-  }) =>
-      into(letterReps).insertOnConflictUpdate(
-        LetterRepsCompanion.insert(
-          letterId: letterId,
-          cleanReps: cleanReps,
-          updatedAt: DateTime.now(),
-        ),
-      );
+  }) => into(letterReps).insertOnConflictUpdate(
+    LetterRepsCompanion.insert(
+      letterId: letterId,
+      cleanReps: cleanReps,
+      updatedAt: DateTime.now(),
+    ),
+  );
 
   /// Read the banked clean-rep count for a letter; 0 when never practiced.
   Future<int> getCleanReps(String letterId) async =>
-      (await (select(letterReps)..where((t) => t.letterId.equals(letterId)))
-              .getSingleOrNull())
+      (await (select(
+            letterReps,
+          )..where((t) => t.letterId.equals(letterId))).getSingleOrNull())
           ?.cleanReps ??
       0;
 
   /// Watch the set of mastered letter IDs; emits the current state first, then
   /// on every mastery write — the S1-09 "unlock is immediate" substrate
   /// (RESEARCH Pattern 1: first drift .watch() in the codebase).
-  Stream<Set<String>> watchMasteredLetterIds() => select(letterMastery)
-      .watch()
-      .map((rows) => rows.map((r) => r.letterId).toSet());
+  Stream<Set<String>> watchMasteredLetterIds() => select(
+    letterMastery,
+  ).watch().map((rows) => rows.map((r) => r.letterId).toSet());
 
   /// Watch the banked clean-rep count for one letter; emits 0 while no row
   /// exists, then the new count on every [setCleanReps] write.
@@ -417,18 +448,18 @@ class AppDatabase extends _$AppDatabase {
 
   /// All mastered letters, ordered oldest → newest by masteredAt. Each row
   /// carries the cleanReps + masteredAt the dashboard renders. READ-ONLY.
-  Future<List<LetterMasteryData>> allMastered() => (select(letterMastery)
-        ..orderBy([(t) => OrderingTerm(expression: t.masteredAt)]))
-      .get();
+  Future<List<LetterMasteryData>> allMastered() => (select(
+    letterMastery,
+  )..orderBy([(t) => OrderingTerm(expression: t.masteredAt)])).get();
 
   /// All in-progress letters (cleanReps > 0). A 0-rep row is "not started" and
   /// is excluded. READ-ONLY.
-  Future<List<LetterRep>> allInProgress() =>
-      (select(letterReps)..where((t) => t.cleanReps.isBiggerThanValue(0)))
-          .get();
+  Future<List<LetterRep>> allInProgress() => (select(
+    letterReps,
+  )..where((t) => t.cleanReps.isBiggerThanValue(0))).get();
 }
 
-LazyDatabase _openConnection() {
+LazyDatabase _openLegacyConnection() {
   return LazyDatabase(() async {
     final dir = await getApplicationDocumentsDirectory(); // app-private storage
     final file = File('${dir.path}${Platform.pathSeparator}qalam.db');
@@ -436,10 +467,43 @@ LazyDatabase _openConnection() {
   });
 }
 
+LazyDatabase _openAccountConnection(String accountId) {
+  return LazyDatabase(() async {
+    final dir = await getApplicationDocumentsDirectory();
+    final file = File(
+      '${dir.path}${Platform.pathSeparator}'
+      '${AppDatabase.accountDatabaseFileName(accountId)}',
+    );
+    return NativeDatabase.createInBackground(file);
+  });
+}
+
+/// The stable account-identity key for the local database — the uid for a real
+/// (non-anonymous) account, else a shared `signed-out-guest` namespace.
+///
+/// This recomputes on every `authStateProvider` (`userChanges()`) emission, but
+/// because it returns a plain String, Riverpod only NOTIFIES [appDatabase] when
+/// the value actually changes (`==`). A plain token refresh that keeps the same
+/// uid — e.g. the Forgot-PIN `reauthenticateWithPassword` step — therefore does
+/// NOT churn the database. Watching `authStateProvider` directly here would
+/// recreate (and `close()`) the DB on that refresh, tearing down the live DB and
+/// its Drift `.watch()` streams mid-interaction and crashing the widget tree
+/// (`_dependents.isEmpty`).
+@Riverpod(keepAlive: true)
+String accountDatabaseId(Ref ref) {
+  final authState = ref.watch(authStateProvider);
+  final user =
+      authState.asData?.value ?? ref.read(authServiceProvider).currentUser;
+  return user != null && !user.isAnonymous ? user.uid : 'signed-out-guest';
+}
+
 /// Riverpod-codegen provider exposing the app database (Riverpod-only — D-11).
+/// Rebuilds ONLY when [accountDatabaseId] changes (account identity), never on a
+/// bare token refresh — see that provider's note.
 @Riverpod(keepAlive: true)
 AppDatabase appDatabase(Ref ref) {
-  final db = AppDatabase();
+  final accountId = ref.watch(accountDatabaseIdProvider);
+  final db = AppDatabase.forAccount(accountId);
   ref.onDispose(db.close);
   return db;
 }

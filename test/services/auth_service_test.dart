@@ -100,4 +100,150 @@ void main() {
       expect(returned, same(result));
     });
   });
+
+  // ---------------------------------------------------------------------------
+  // Parent-account flows (owner-approved 2026-06-22). PARENT-only; the child
+  // never reaches these (gated behind the PIN area). Asserted via mocktail so the
+  // link-vs-create branch and the error mapping are pinned exactly.
+  // ---------------------------------------------------------------------------
+  group('AuthService.signUpWithEmail', () {
+    test('creates a fresh account when there is NO anonymous identity', () async {
+      final auth = _MockFirebaseAuth();
+      final cred = _MockUserCredential();
+      final user = _MockUser();
+      when(() => auth.currentUser).thenReturn(null);
+      when(() => auth.createUserWithEmailAndPassword(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+          )).thenAnswer((_) async => cred);
+      when(() => cred.user).thenReturn(user);
+
+      final returned =
+          await AuthService(auth).signUpWithEmail('  a@b.com ', 'secret123');
+
+      expect(returned, same(user));
+      // Email is trimmed before it hits Firebase.
+      verify(() => auth.createUserWithEmailAndPassword(
+            email: 'a@b.com',
+            password: 'secret123',
+          )).called(1);
+    });
+
+    test('LINKS the anonymous identity when one exists (D-09c)', () async {
+      final auth = _MockFirebaseAuth();
+      final anon = _MockUser();
+      final cred = _MockUserCredential();
+      final linked = _MockUser();
+      when(() => auth.currentUser).thenReturn(anon);
+      when(() => anon.isAnonymous).thenReturn(true);
+      when(() => anon.linkWithCredential(any()))
+          .thenAnswer((_) async => cred);
+      when(() => cred.user).thenReturn(linked);
+
+      final returned =
+          await AuthService(auth).signUpWithEmail('p@q.com', 'secret123');
+
+      expect(returned, same(linked));
+      verify(() => anon.linkWithCredential(any())).called(1);
+      verifyNever(() => auth.createUserWithEmailAndPassword(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+          ));
+    });
+
+    test('maps email-already-in-use to a friendly AuthFailure', () async {
+      final auth = _MockFirebaseAuth();
+      when(() => auth.currentUser).thenReturn(null);
+      when(() => auth.createUserWithEmailAndPassword(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+          )).thenThrow(FirebaseAuthException(code: 'email-already-in-use'));
+
+      expect(
+        () => AuthService(auth).signUpWithEmail('a@b.com', 'secret123'),
+        throwsA(isA<AuthFailure>().having(
+          (e) => e.message,
+          'message',
+          contains('already has an account'),
+        )),
+      );
+    });
+  });
+
+  group('AuthService.signInWithEmail', () {
+    test('returns the signed-in user', () async {
+      final auth = _MockFirebaseAuth();
+      final cred = _MockUserCredential();
+      final user = _MockUser();
+      when(() => auth.signInWithEmailAndPassword(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+          )).thenAnswer((_) async => cred);
+      when(() => cred.user).thenReturn(user);
+
+      final returned =
+          await AuthService(auth).signInWithEmail('a@b.com', 'secret123');
+      expect(returned, same(user));
+    });
+
+    test('maps wrong-password to a parent-friendly message', () async {
+      final auth = _MockFirebaseAuth();
+      when(() => auth.signInWithEmailAndPassword(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+          )).thenThrow(FirebaseAuthException(code: 'wrong-password'));
+
+      expect(
+        () => AuthService(auth).signInWithEmail('a@b.com', 'nope'),
+        throwsA(isA<AuthFailure>().having(
+          (e) => e.message,
+          'message',
+          'Email or password is incorrect.',
+        )),
+      );
+    });
+  });
+
+  group('AuthService.signInWithGoogle', () {
+    test('throws a clear AuthFailure when Google is not configured', () async {
+      // googleServerClientId is empty in tests (no --dart-define), so the method
+      // must fail fast with guidance rather than crash in the platform layer.
+      expect(AuthService.googleServerClientId, isEmpty);
+      expect(
+        () => AuthService(_MockFirebaseAuth()).signInWithGoogle(),
+        throwsA(isA<AuthFailure>()),
+      );
+    });
+  });
+
+  group('AuthService.signOut', () {
+    test('signs out then restores an anonymous identity (offline-first)',
+        () async {
+      final auth = _MockFirebaseAuth();
+      when(() => auth.signOut()).thenAnswer((_) async {});
+      // After sign-out there is no user, so ensureSignedIn() re-mints anonymous.
+      when(() => auth.currentUser).thenReturn(null);
+      when(() => auth.signInAnonymously())
+          .thenAnswer((_) async => _MockUserCredential());
+
+      await AuthService(auth).signOut();
+
+      verify(() => auth.signOut()).called(1);
+      verify(() => auth.signInAnonymously()).called(1);
+    });
+  });
+
+  group('AuthService.isSignedInPermanent', () {
+    test('false for an anonymous identity, true for a real account', () {
+      final anon =
+          MockFirebaseAuth(signedIn: true, mockUser: MockUser(isAnonymous: true));
+      expect(AuthService(anon).isSignedInPermanent, isFalse);
+
+      final perm = MockFirebaseAuth(
+        signedIn: true,
+        mockUser: MockUser(isAnonymous: false),
+      );
+      expect(AuthService(perm).isSignedInPermanent, isTrue);
+    });
+  });
 }

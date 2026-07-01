@@ -88,6 +88,9 @@ dependencies:
   json_schema_builder: ^0.1.5
   firebase_app_check: ^0.4.5
   http: ^1.6.0
+  # Parent-account Google sign-in (partner's main, 260622). Verified-publisher
+  # package on pub.dev; used by lib/services/auth_service.dart.
+  google_sign_in: ^7.2.0
 
 dev_dependencies:
   flutter_test:
@@ -124,6 +127,7 @@ flutter:
 
   assets:
     - assets/audio/
+    - assets/avatars/
     - assets/curriculum/
     - assets/fonts/
     - assets/icons/

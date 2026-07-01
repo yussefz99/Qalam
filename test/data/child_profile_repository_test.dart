@@ -44,8 +44,11 @@ void main() {
       final repo1 = ChildProfileRepository(db1);
 
       // No profile yet.
-      expect(await repo1.hasProfile(), isFalse,
-          reason: 'a fresh database has no child profile');
+      expect(
+        await repo1.hasProfile(),
+        isFalse,
+        reason: 'a fresh database has no child profile',
+      );
 
       await repo1.create(
         nicknameId: 'nick_star',
@@ -62,22 +65,35 @@ void main() {
       expect(created.avatarId, 'avatar_1');
       expect(created.grade, 'kg');
       expect(created.startingLessonId, 'lesson_01');
+      await repo1.update(nicknameId: 'نور', avatarId: 'avatar_6');
+      final updated = await repo1.getProfile();
+      expect(updated!.nicknameId, 'نور');
+      expect(updated.avatarId, 'avatar_6');
       await db1.close(); // injected executor stays open (P1 contract)
 
       // "Restart": fresh AppDatabase over the same underlying store.
       final db2 = AppDatabase(shared.executor);
       final repo2 = ChildProfileRepository(db2);
 
-      expect(await repo2.hasProfile(), isTrue,
-          reason: 'the child profile must survive a simulated restart');
+      expect(
+        await repo2.hasProfile(),
+        isTrue,
+        reason: 'the child profile must survive a simulated restart',
+      );
       final reopened = await repo2.getProfile();
       expect(reopened, isNotNull);
-      expect(reopened!.nicknameId, 'nick_star',
-          reason: 'nicknameId must survive simulated restart');
-      expect(reopened.avatarId, 'avatar_1');
+      expect(
+        reopened!.nicknameId,
+        'نور',
+        reason: 'nicknameId must survive simulated restart',
+      );
+      expect(reopened.avatarId, 'avatar_6');
       expect(reopened.grade, 'kg');
-      expect(reopened.startingLessonId, 'lesson_01',
-          reason: 'resolved startingLessonId must survive (S1-02)');
+      expect(
+        reopened.startingLessonId,
+        'lesson_01',
+        reason: 'resolved startingLessonId must survive (S1-02)',
+      );
       await db2.close();
     },
   );

@@ -3029,17 +3029,99 @@ class $AppDatabaseManager {
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// The stable account-identity key for the local database — the uid for a real
+/// (non-anonymous) account, else a shared `signed-out-guest` namespace.
+///
+/// This recomputes on every `authStateProvider` (`userChanges()`) emission, but
+/// because it returns a plain String, Riverpod only NOTIFIES [appDatabase] when
+/// the value actually changes (`==`). A plain token refresh that keeps the same
+/// uid — e.g. the Forgot-PIN `reauthenticateWithPassword` step — therefore does
+/// NOT churn the database. Watching `authStateProvider` directly here would
+/// recreate (and `close()`) the DB on that refresh, tearing down the live DB and
+/// its Drift `.watch()` streams mid-interaction and crashing the widget tree
+/// (`_dependents.isEmpty`).
+
+@ProviderFor(accountDatabaseId)
+final accountDatabaseIdProvider = AccountDatabaseIdProvider._();
+
+/// The stable account-identity key for the local database — the uid for a real
+/// (non-anonymous) account, else a shared `signed-out-guest` namespace.
+///
+/// This recomputes on every `authStateProvider` (`userChanges()`) emission, but
+/// because it returns a plain String, Riverpod only NOTIFIES [appDatabase] when
+/// the value actually changes (`==`). A plain token refresh that keeps the same
+/// uid — e.g. the Forgot-PIN `reauthenticateWithPassword` step — therefore does
+/// NOT churn the database. Watching `authStateProvider` directly here would
+/// recreate (and `close()`) the DB on that refresh, tearing down the live DB and
+/// its Drift `.watch()` streams mid-interaction and crashing the widget tree
+/// (`_dependents.isEmpty`).
+
+final class AccountDatabaseIdProvider
+    extends $FunctionalProvider<String, String, String>
+    with $Provider<String> {
+  /// The stable account-identity key for the local database — the uid for a real
+  /// (non-anonymous) account, else a shared `signed-out-guest` namespace.
+  ///
+  /// This recomputes on every `authStateProvider` (`userChanges()`) emission, but
+  /// because it returns a plain String, Riverpod only NOTIFIES [appDatabase] when
+  /// the value actually changes (`==`). A plain token refresh that keeps the same
+  /// uid — e.g. the Forgot-PIN `reauthenticateWithPassword` step — therefore does
+  /// NOT churn the database. Watching `authStateProvider` directly here would
+  /// recreate (and `close()`) the DB on that refresh, tearing down the live DB and
+  /// its Drift `.watch()` streams mid-interaction and crashing the widget tree
+  /// (`_dependents.isEmpty`).
+  AccountDatabaseIdProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'accountDatabaseIdProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$accountDatabaseIdHash();
+
+  @$internal
+  @override
+  $ProviderElement<String> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  String create(Ref ref) {
+    return accountDatabaseId(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
+String _$accountDatabaseIdHash() => r'7e8de907b06144b0fe4ac83d56e68585d3ff8a51';
+
 /// Riverpod-codegen provider exposing the app database (Riverpod-only — D-11).
+/// Rebuilds ONLY when [accountDatabaseId] changes (account identity), never on a
+/// bare token refresh — see that provider's note.
 
 @ProviderFor(appDatabase)
 final appDatabaseProvider = AppDatabaseProvider._();
 
 /// Riverpod-codegen provider exposing the app database (Riverpod-only — D-11).
+/// Rebuilds ONLY when [accountDatabaseId] changes (account identity), never on a
+/// bare token refresh — see that provider's note.
 
 final class AppDatabaseProvider
     extends $FunctionalProvider<AppDatabase, AppDatabase, AppDatabase>
     with $Provider<AppDatabase> {
   /// Riverpod-codegen provider exposing the app database (Riverpod-only — D-11).
+  /// Rebuilds ONLY when [accountDatabaseId] changes (account identity), never on a
+  /// bare token refresh — see that provider's note.
   AppDatabaseProvider._()
     : super(
         from: null,
@@ -3073,7 +3155,7 @@ final class AppDatabaseProvider
   }
 }
 
-String _$appDatabaseHash() => r'59cce38d45eeaba199eddd097d8e149d66f9f3e1';
+String _$appDatabaseHash() => r'a2206ac0df3fd0f8d0da6932a63514cf295fa8f6';
 
 /// The visible persistence seam (D-09): on first read, write a trivial
 /// non-sensitive sentinel to the DB, then read it back. Home displays the

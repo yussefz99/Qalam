@@ -1,6 +1,15 @@
 // App entrypoint. Thin bootstrap: lock orientation (runtime half of the
 // belt-and-suspenders landscape lock — D-10; the manifest pins the platform
-// half), then run the Riverpod-rooted app. The real root widget lives in app.dart.
+// half), bring up Firebase + App Check, sign in, then run the Riverpod-rooted
+// app. The real root widget lives in app.dart.
+//
+// Account-scoped DB + the onboarding/parent gates now self-configure REACTIVELY
+// from auth state (partner's parent-accounts architecture, origin/main): the
+// account-scoped `appDatabaseProvider` rebuilds on the signed-in UID and
+// `onboardingGate` self-seeds by listening to `authStateProvider`, so this
+// entrypoint no longer does a boot-time `hasProfile()` read or override those
+// gates. The ONLY root override kept here is the App Check token getter, which
+// the cloud tutor needs and which main did not carry.
 
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -10,18 +19,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app.dart';
-import 'data/app_database.dart';
-import 'data/graph_position_repository.dart';
-import 'demo/seeded_demo_state.dart';
 import 'firebase_options.dart';
-import 'providers/parent_providers.dart';
-import 'providers/profile_providers.dart';
-import 'router/app_router.dart' show kDemoMode;
 import 'services/auth_service.dart';
 import 'tutor/tutor_providers.dart';
 
-/// The runtime half of the landscape lock (D-10), extracted so it is awaitable
-/// and testable. Pins the app to landscape (both rotations); never portrait.
 Future<void> lockOrientation() {
   return SystemChrome.setPreferredOrientations(const <DeviceOrientation>[
     DeviceOrientation.landscapeLeft,
@@ -33,12 +34,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await lockOrientation();
 
-  // Bring up Firebase, then sign in anonymously BEFORE the first curriculum read
-  // (Phase 06.1, D-09b). An anonymous identity must exist so Firestore rules can
-  // gate curriculum reads on `request.auth != null`. Zero PII; children never log
-  // in (no login UI — D-09b). ensureSignedIn() is idempotent, so a returning user
-  // keeps their existing anonymous identity. linkWithCredential (D-09c) upgrades
-  // this identity to a permanent account in v2 without losing it.
+  // Bring up Firebase before any auth / App Check / Firestore call (Phase 06.1).
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -66,46 +62,15 @@ Future<void> main() async {
     ),
   );
 
+  // Anonymous auth remains an internal Firebase/offline identity only. The
+  // router requires a permanent account, and persisted app data is selected by
+  // that account's Firebase UID (origin/main parent-accounts architecture).
+  // ensureSignedIn() is idempotent, so a returning user keeps their identity.
   await AuthService().ensureSignedIn();
-
-  // One-time boot read of the onboarding gate flag (Pattern 3): construct the
-  // production DB once, read hasProfile() synchronously-before-first-frame, then
-  // seed both the shared DB and the gate via ProviderScope overrides so the
-  // router's redirect resolves correctly on the very first frame (no async-in-
-  // redirect, no flicker — Pitfall 2/3).
-  final db = AppDatabase();
-  final hasProfile = await db.hasProfile();
-
-  // DEMO-ONLY seed (DEMO-01 / D-12 — Plan 16-06). Gated on the DEMO flag
-  // (`kDemoMode` = `--dart-define=DEMO=true`): it runs ONLY in a demo build,
-  // never on the child-facing default boot (DEMO is false by default, so the
-  // shipped child app never seeds). Runs in debug AND profile/release demo
-  // builds so the demo can launch STANDALONE on-device — a debug build can only
-  // be launched from flutter tooling (iOS 14+), so a profile demo build is what
-  // runs untethered on stage. It arms the reliable hero-moment starting state
-  // (child mid-unit on the wobble form, reps BELOW mastery) so a fail re-surfaces
-  // an easier exercise on cue. It NEVER awards a star — the scorer owns that
-  // (ADR-014). Idempotent: re-running re-arms the same state between demo runs.
-  if (kDemoMode) {
-    await seedDemoState(DriftGraphPositionRepository(db), db: db);
-  }
 
   runApp(
     ProviderScope(
       overrides: [
-        // One shared DB instance for the app lifetime; the provider owns disposal
-        // (Pitfall 7) — do not let AppDatabase be constructed twice.
-        appDatabaseProvider.overrideWith((ref) {
-          ref.onDispose(db.close);
-          return db;
-        }),
-        // Seed the gate from the boot-time read; markProfileCreated() flips it
-        // after onboarding (refreshListenable re-runs the router redirect).
-        onboardingGateProvider.overrideWith((ref) => OnboardingGate(hasProfile)),
-        // Seed the parent gate LOCKED every launch (D-07 per-entry, no session
-        // unlock and no boot DB read). The /parent screen flips it after a
-        // correct PIN and relocks it on "Done"/dispose.
-        parentGateProvider.overrideWith((ref) => ParentGate()),
         // Wire the real App Check token getter at the composition root (the
         // tutor seam's default is null → offline floor). The RemoteAgentBrain
         // sends this limited-use token to the App-Check-gated `/coach`; any

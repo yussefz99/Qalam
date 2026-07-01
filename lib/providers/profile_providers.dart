@@ -34,6 +34,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../data/app_database.dart';
 import '../data/child_profile_repository.dart';
+import 'auth_providers.dart';
 
 part 'profile_providers.g.dart';
 
@@ -57,7 +58,18 @@ class OnboardingGate extends ChangeNotifier {
   bool get hasProfile => _hasProfile;
 
   void markProfileCreated() {
-    _hasProfile = true;
+    setProfileExists(true);
+  }
+
+  /// A newly created account must complete its own child setup, even when this
+  /// device contains a profile left by an earlier anonymous/account session.
+  void requireProfileSetup() {
+    setProfileExists(false);
+  }
+
+  void setProfileExists(bool value) {
+    if (_hasProfile == value) return;
+    _hasProfile = value;
     notifyListeners();
   }
 }
@@ -71,4 +83,26 @@ class OnboardingGate extends ChangeNotifier {
 /// Stream value; the Listenable-as-provider shape is intentional here, so the
 /// diagnostic is ignored for this one declaration.
 @Riverpod(keepAlive: true)
-OnboardingGate onboardingGate(Ref ref) => OnboardingGate(false);
+OnboardingGate onboardingGate(Ref ref) {
+  final gate = OnboardingGate(false);
+  var refreshGeneration = 0;
+
+  ref.listen(authStateProvider, (previous, next) {
+    final generation = ++refreshGeneration;
+    next.whenData((user) async {
+      if (user == null || user.isAnonymous) {
+        gate.setProfileExists(false);
+        return;
+      }
+
+      // Allow the account-scoped database provider to rebuild for this UID.
+      await Future<void>.delayed(Duration.zero);
+      final hasProfile = await ref.read(appDatabaseProvider).hasProfile();
+      if (generation == refreshGeneration) {
+        gate.setProfileExists(hasProfile);
+      }
+    });
+  }, fireImmediately: true);
+
+  return gate;
+}

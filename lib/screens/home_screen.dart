@@ -31,6 +31,7 @@ import '../models/lesson.dart';
 import '../models/letter.dart';
 import '../providers/profile_providers.dart';
 import '../providers/progression_providers.dart';
+import '../providers/journey_providers.dart';
 import '../theme/brand_theme_ext.dart';
 import '../theme/colors.dart';
 import '../theme/dimens.dart';
@@ -53,30 +54,46 @@ class HomeScreen extends StatelessWidget {
             _HomeNavRail(l10n: l10n),
             // Main content area.
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: QalamSpace.space8,
-                  vertical: QalamSpace.space8,
-                ),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 720),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      // Mascot + greeting header.
-                      _GreetingHeader(l10n: l10n),
-                      const SizedBox(height: QalamSpace.space8),
-                      // Today's lesson card — settles in like a prepared
-                      // worksheet, once per arrival (D-13).
-                      _PreparedDeskEntrance(
-                        child: _TodaysLessonCard(l10n: l10n),
+              child: Stack(
+                children: [
+                  SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: QalamSpace.space8,
+                      vertical: QalamSpace.space8,
+                    ),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 980),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          // Mascot + greeting header.
+                          _GreetingHeader(l10n: l10n),
+                          const SizedBox(height: QalamSpace.space8),
+                          // Today's lesson card — settles in like a prepared
+                          // worksheet, once per arrival (D-13).
+                          _PreparedDeskEntrance(
+                            child: _TodaysLessonCard(l10n: l10n),
+                          ),
+                          const SizedBox(height: QalamSpace.space6),
+                          const _HomeSupportingRow(),
+                        ],
                       ),
-                      const SizedBox(height: QalamSpace.space6),
-                      // Persistence seam (round-tripped Drift value).
-                      const _PersistenceProof(),
-                    ],
+                    ),
                   ),
-                ),
+                  Positioned(
+                    top: QalamSpace.space4,
+                    right: QalamSpace.space4,
+                    child: IconButton(
+                      key: const Key('accountButton'),
+                      tooltip: 'Account and settings',
+                      onPressed: () => context.go('/settings'),
+                      icon: const Icon(
+                        Icons.account_circle_outlined,
+                        color: QalamColors.fg,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -99,15 +116,15 @@ class _HomeNavRail extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 120,
+      height: double.infinity,
       decoration: BoxDecoration(
         color: QalamColors.surface,
-        border: Border(
-          right: BorderSide(color: QalamColors.border, width: 1),
-        ),
+        border: Border(right: BorderSide(color: QalamColors.border, width: 1)),
       ),
       padding: const EdgeInsets.symmetric(vertical: QalamSpace.space8),
       child: Column(
         children: <Widget>[
+          // Kid-facing items live at the top of the rail.
           // Home — active.
           _NavItem(
             iconAsset: 'assets/icons/qalam-nib.svg',
@@ -125,14 +142,25 @@ class _HomeNavRail extends StatelessWidget {
             isLocked: false,
             onTap: () => context.go('/journey'),
           ),
-          const SizedBox(height: QalamSpace.space4),
+          // Push the grown-ups control to the foot of the rail — set apart
+          // from the child's own items, the way a teacher's desk sits at the
+          // side of the room.
+          const Spacer(),
+          // Hairline separating the child's area from the grown-up corner.
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: QalamSpace.space3,
+              vertical: QalamSpace.space4,
+            ),
+            child: Divider(height: 1, thickness: 1, color: QalamColors.border),
+          ),
           // Parent — unlocked in Phase 9: routes to the PIN-gated /parent area.
-          // A non-lock glyph (A-02: lock.svg is never shipped for this item).
-          _NavItem(
-            iconAsset: 'assets/icons/ink-drop.svg',
+          // Deliberately styled UNLIKE the kid items: a bordered grown-up
+          // control with a "For grown-ups" caption, so a child reads it as
+          // "not for me" at a glance. A non-lock glyph (A-02: lock.svg is
+          // never shipped for this item).
+          _ParentNavItem(
             label: l10n?.navParent ?? 'Parent',
-            isActive: false,
-            isLocked: false,
             onTap: () => context.go('/parent'),
           ),
         ],
@@ -158,8 +186,9 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color labelColor =
-        isActive ? QalamColors.primary : QalamColors.fgMuted;
+    final Color labelColor = isActive
+        ? QalamColors.primary
+        : QalamColors.fgMuted;
 
     return Opacity(
       opacity: isLocked ? 0.5 : 1.0,
@@ -194,13 +223,67 @@ class _NavItem extends StatelessWidget {
   }
 }
 
+/// The grown-ups-only entry point at the foot of the rail.
+///
+/// Intentionally NOT a `_NavItem`: where the child's Home/Journey items are
+/// big, glyph-forward tap targets, this is a calmer bordered control with a
+/// muted icon and a small "For grown-ups" caption. The different shape is the
+/// signal — a child reads it as "not mine" without needing to be told. The PIN
+/// gate behind `/parent` is the real boundary; this is just the honest door.
+/// (A-02: no lock glyph is ever shipped for this item.)
+class _ParentNavItem extends StatelessWidget {
+  const _ParentNavItem({required this.label, this.onTap});
+
+  final String label;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: QalamSpace.space3),
+      child: Semantics(
+        // The icon carries the meaning now; the screen reader still needs words.
+        label: '$label area — for grown-ups',
+        button: true,
+        child: GestureDetector(
+          key: const Key('parentNavItem'),
+          onTap: onTap,
+          behavior: HitTestBehavior.opaque,
+          child: Container(
+            // Square-ish so the two-figure glyph sits comfortably; a full,
+            // unhurried tap target for an adult thumb.
+            constraints: const BoxConstraints(
+              minHeight: QalamTargets.targetMin,
+            ),
+            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(
+              vertical: QalamSpace.space3,
+              horizontal: QalamSpace.space2,
+            ),
+            decoration: BoxDecoration(
+              color: QalamColors.bgDeep,
+              borderRadius: BorderRadius.circular(QalamRadii.lg),
+              border: Border.all(color: QalamColors.border, width: 1),
+            ),
+            child: ExcludeSemantics(
+              // The adult-and-child figure reads as "grown-ups" on its own —
+              // no written "Parent" needed. (A-02: never a lock glyph.)
+              child: _SafeSvgIcon(
+                asset: 'assets/icons/parent.svg',
+                size: QalamSpace.space10,
+                color: QalamColors.fgMuted,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// Renders an SVG icon with a graceful SizedBox fallback if the asset is missing.
 class _SafeSvgIcon extends StatelessWidget {
-  const _SafeSvgIcon({
-    required this.asset,
-    required this.size,
-    this.color,
-  });
+  const _SafeSvgIcon({required this.asset, required this.size, this.color});
 
   final String asset;
   final double size;
@@ -239,14 +322,10 @@ class _GreetingHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool hasScope =
         context.findAncestorWidgetOfExactType<UncontrolledProviderScope>() !=
-            null;
+        null;
     if (!hasScope) {
       // No-scope fallback (bare harness): static greeting, no avatar.
-      return _GreetingLayout(
-        l10n: l10n,
-        avatarId: null,
-        nicknameLabel: null,
-      );
+      return _GreetingLayout(l10n: l10n, avatarId: null, nicknameLabel: null);
     }
     return _GreetingHeaderReader(l10n: l10n);
   }
@@ -264,7 +343,9 @@ class _GreetingHeaderReader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ref.watch(childProfileProvider).when(
+    return ref
+        .watch(childProfileProvider)
+        .when(
           data: (ChildProfile? profile) {
             if (profile == null) {
               return _GreetingLayout(
@@ -280,16 +361,10 @@ class _GreetingHeaderReader extends ConsumerWidget {
               nicknameLabel: resolveNicknameLabel(profile.nicknameId),
             );
           },
-          loading: () => _GreetingLayout(
-            l10n: l10n,
-            avatarId: null,
-            nicknameLabel: null,
-          ),
-          error: (_, _) => _GreetingLayout(
-            l10n: l10n,
-            avatarId: null,
-            nicknameLabel: null,
-          ),
+          loading: () =>
+              _GreetingLayout(l10n: l10n, avatarId: null, nicknameLabel: null),
+          error: (_, _) =>
+              _GreetingLayout(l10n: l10n, avatarId: null, nicknameLabel: null),
         );
   }
 }
@@ -309,23 +384,6 @@ class _GreetingLayout extends StatelessWidget {
   final String? avatarId;
   final String? nicknameLabel;
 
-  /// Placeholder palette mirrors AvatarGrid so the home avatar matches the one
-  /// picked at onboarding (D-3 — ID→tint in code; never the reward gold).
-  static const List<Color> _placeholderTints = <Color>[
-    QalamColors.primaryTint,
-    QalamColors.successTint,
-    QalamColors.warnSoftTint,
-    QalamColors.bgDeep,
-    QalamColors.border,
-    QalamColors.surface,
-  ];
-
-  Color _tintFor(String id) {
-    final int index = kAvatarIds.indexOf(id);
-    if (index < 0) return QalamColors.primaryTint;
-    return _placeholderTints[index % _placeholderTints.length];
-  }
-
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -338,14 +396,17 @@ class _GreetingLayout extends StatelessWidget {
             width: QalamSpace.space16,
             height: QalamSpace.space16,
             decoration: BoxDecoration(
-              color: _tintFor(avatarId!),
+              color: QalamColors.bg,
               shape: BoxShape.circle,
               border: Border.all(color: QalamColors.border, width: 1),
             ),
-            alignment: Alignment.center,
-            child: Text(
-              avatarId!.split('_').last,
-              style: QalamTextStyles.heading.copyWith(color: QalamColors.fg),
+            clipBehavior: Clip.antiAlias,
+            child: Padding(
+              padding: const EdgeInsets.all(QalamSpace.space1),
+              child: Image.asset(
+                'assets/avatars/$avatarId.png',
+                fit: BoxFit.contain,
+              ),
             ),
           )
         else
@@ -380,10 +441,7 @@ class _GreetingLayout extends StatelessWidget {
                         style: QalamTextStyles.heading,
                       ),
                     ),
-                    ArabicText(
-                      nicknameLabel!,
-                      style: QalamTextStyles.heading,
-                    ),
+                    ArabicText(nicknameLabel!, style: QalamTextStyles.heading),
                   ],
                 )
               else
@@ -573,8 +631,9 @@ class _TodayCardData {
 final _todayCardDataProvider = FutureProvider<_TodayCardData?>((ref) async {
   Future<_TodayCardData> resolve(Lesson lesson) async {
     final item = lesson.items.firstWhere((i) => i.type == 'letter');
-    final letter =
-        await ref.watch(curriculumRepositoryProvider).getLetter(item.ref);
+    final letter = await ref
+        .watch(curriculumRepositoryProvider)
+        .getLetter(item.ref);
     if (letter == null) {
       throw StateError('unknown letter "${item.ref}" in ${lesson.id}');
     }
@@ -592,8 +651,9 @@ final _todayCardDataProvider = FutureProvider<_TodayCardData?>((ref) async {
         .watch(childProfileProvider.future)
         .timeout(const Duration(seconds: 3));
     final lessonId = profile?.startingLessonId ?? 'lesson_01';
-    final lesson =
-        await ref.watch(curriculumRepositoryProvider).getLesson(lessonId);
+    final lesson = await ref
+        .watch(curriculumRepositoryProvider)
+        .getLesson(lessonId);
     if (lesson == null) throw StateError('unknown lesson "$lessonId"');
     return await resolve(lesson);
   }
@@ -614,7 +674,7 @@ class _TodaysLessonCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool hasScope =
         context.findAncestorWidgetOfExactType<UncontrolledProviderScope>() !=
-            null;
+        null;
     if (!hasScope) {
       // No-scope fallback (bare harness): static alif card.
       return _TodayCardLayout(
@@ -640,16 +700,20 @@ class _TodaysLessonCardReader extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ref.watch(_todayCardDataProvider).when(
+    return ref
+        .watch(_todayCardDataProvider)
+        .when(
           data: (_TodayCardData? data) {
             if (data == null) {
               // All-mastered end state (D-11): calm, factual, no totals.
               // Tap goes to the Journey — replay lives there (D-12).
               return _TodayCardLayout(
                 eyebrowText: l10n?.homeAllMasteredEyebrow ?? 'YOUR LETTERS',
-                titleText: l10n?.homeAllMasteredTitle ??
+                titleText:
+                    l10n?.homeAllMasteredTitle ??
                     'You\'ve mastered all your letters.',
-                subtitleText: l10n?.homeAllMasteredBody ??
+                subtitleText:
+                    l10n?.homeAllMasteredBody ??
                     'Visit your journey to practice any letter again.',
                 glyphChar: null,
                 glyphAlpha: 1.0,
@@ -659,25 +723,29 @@ class _TodaysLessonCardReader extends ConsumerWidget {
             }
             // Ink-fill (D-09): the persisted clean-rep depth IS the progress.
             // Reps loading/error degrade silently to 0 (a faint ink wash).
-            final int reps =
-                ref.watch(cleanRepsForLetterProvider(data.letter.id)).when(
-                      data: (int value) => value,
-                      loading: () => 0,
-                      error: (_, _) => 0,
-                    );
+            final int reps = ref
+                .watch(cleanRepsForLetterProvider(data.letter.id))
+                .when(
+                  data: (int value) => value,
+                  loading: () => 0,
+                  error: (_, _) => 0,
+                );
             final int total = data.letter.cleanRepsToAdvance;
-            final double fraction =
-                total <= 0 ? 1.0 : (reps / total).clamp(0.0, 1.0);
+            final double fraction = total <= 0
+                ? 1.0
+                : (reps / total).clamp(0.0, 1.0);
             return _TodayCardLayout(
               eyebrowText: l10n?.homeLessonEyebrow ?? 'TODAY\'S LESSON',
-              titleText: l10n?.homeLessonTitleFor(data.letter.name.display) ??
+              titleText:
+                  l10n?.homeLessonTitleFor(data.letter.name.display) ??
                   'The Letter ${data.letter.name.display}',
               subtitleText:
                   l10n?.homeLessonSubtitle ?? 'Stroke order and tracing',
               glyphChar: data.letter.char,
               // UI-SPEC prescriptive ramp: 0.25 + 0.75 × (reps / total).
               glyphAlpha: 0.25 + 0.75 * fraction,
-              glyphSemantics: l10n?.homeInkFillSemantics(reps, total) ??
+              glyphSemantics:
+                  l10n?.homeInkFillSemantics(reps, total) ??
                   '$reps of $total clean reps',
               // Plan 07-06: baa has a full 6-section Letter Unit, so its
               // today-card opens `/unit?letter=baa` instead of the thin
@@ -688,6 +756,7 @@ class _TodaysLessonCardReader extends ConsumerWidget {
               route: const {'alif', 'baa', 'taa'}.contains(data.letter.id)
                   ? '/unit?letter=${data.letter.id}'
                   : '/practice?lesson=${data.lessonId}',
+              isResume: reps > 0,
             );
           },
           // Loading: blank glyph + blank title, no spinner chrome (UI-SPEC —
@@ -734,6 +803,7 @@ class _TodayCardLayout extends StatelessWidget {
     required this.glyphAlpha,
     required this.glyphSemantics,
     required this.route,
+    this.isResume = false,
   });
 
   final String eyebrowText;
@@ -743,6 +813,7 @@ class _TodayCardLayout extends StatelessWidget {
   final double glyphAlpha;
   final String? glyphSemantics;
   final String? route;
+  final bool isResume;
 
   @override
   Widget build(BuildContext context) {
@@ -806,42 +877,56 @@ class _TodayCardLayout extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      eyebrowText,
-                      style: QalamTextStyles.label,
-                    ),
+                    Text(eyebrowText, style: QalamTextStyles.label),
                     const SizedBox(height: QalamSpace.space2),
                     if (titleText != null)
-                      Text(
-                        titleText!,
-                        style: QalamTextStyles.heading,
-                      )
+                      Text(titleText!, style: QalamTextStyles.heading)
                     else
                       const SizedBox(height: QalamSpace.space8),
                     const SizedBox(height: QalamSpace.space2),
                     if (subtitleText != null)
-                      Text(
-                        subtitleText!,
-                        style: QalamTextStyles.body,
-                      ),
+                      Text(subtitleText!, style: QalamTextStyles.body),
                   ],
                 ),
               ),
-              // Forward-arrow affordance (uses the button shadow as the primary
-              // CTA accent — teal, no gold, no reward token).
+              // Clear action label plus arrow; the whole card remains tappable.
               DecoratedBox(
                 decoration: BoxDecoration(
                   color: QalamColors.primary,
                   borderRadius: BorderRadius.circular(QalamRadii.pill),
                   boxShadow: qalam.buttonShadow,
                 ),
-                child: const SizedBox(
-                  width: QalamTargets.targetComfy,
-                  height: QalamTargets.targetComfy,
-                  child: Icon(
-                    Icons.chevron_right_rounded,
-                    color: QalamColors.fgOnPrimary,
-                    size: QalamSpace.space8,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    minWidth: 156,
+                    minHeight: QalamTargets.targetComfy,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: QalamSpace.space5,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          destination == '/journey'
+                              ? 'View journey'
+                              : isResume
+                              ? 'Continue lesson'
+                              : 'Start lesson',
+                          style: QalamTextStyles.button.copyWith(
+                            color: QalamColors.fgOnPrimary,
+                          ),
+                        ),
+                        const SizedBox(width: QalamSpace.space2),
+                        const Icon(
+                          Icons.chevron_right_rounded,
+                          color: QalamColors.fgOnPrimary,
+                          size: QalamSpace.space8,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -853,44 +938,218 @@ class _TodayCardLayout extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Persistence seam (kept from Phase 1 walking skeleton)
-// ---------------------------------------------------------------------------
+class _JourneyPreviewData {
+  const _JourneyPreviewData({required this.letters, required this.masteredIds});
 
-/// Shows the round-tripped Drift value (the visible persistence seam).
-///
-/// Reads the provider only when a [ProviderScope] is present. The real app
-/// always supplies one (main() wraps QalamApp in ProviderScope); a bare test
-/// harness (the D-05 direction test) does not, so this degrades to an empty
-/// box instead of throwing "No ProviderScope found".
-class _PersistenceProof extends StatelessWidget {
-  const _PersistenceProof();
+  final List<Letter> letters;
+  final Set<String> masteredIds;
+}
+
+final _journeyPreviewProvider = FutureProvider<_JourneyPreviewData>((
+  ref,
+) async {
+  final letters = await ref.watch(journeyLettersProvider.future);
+  final mastered = await ref.watch(masteredLetterIdsProvider.future);
+  return _JourneyPreviewData(letters: letters, masteredIds: mastered);
+});
+
+class _HomeSupportingRow extends StatelessWidget {
+  const _HomeSupportingRow();
 
   @override
   Widget build(BuildContext context) {
     final hasScope =
         context.findAncestorWidgetOfExactType<UncontrolledProviderScope>() !=
-            null;
+        null;
     if (!hasScope) return const SizedBox.shrink();
-    return const _PersistenceProofReader();
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth < 760) {
+          return const Column(
+            children: [
+              _JourneyPreview(),
+              SizedBox(height: QalamSpace.space5),
+              _MascotEncouragement(),
+            ],
+          );
+        }
+        return const Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(flex: 3, child: _JourneyPreview()),
+            SizedBox(width: QalamSpace.space5),
+            Expanded(flex: 2, child: _MascotEncouragement()),
+          ],
+        );
+      },
+    );
   }
 }
 
-class _PersistenceProofReader extends ConsumerWidget {
-  const _PersistenceProofReader();
+class _JourneyPreview extends ConsumerWidget {
+  const _JourneyPreview();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final proof = ref.watch(skeletonProofProvider);
-    final text = proof.when(
-      data: (value) => value,
-      loading: () => '…',
-      error: (_, _) => 'not saved',
+    return GestureDetector(
+      key: const Key('homeJourneyPreview'),
+      onTap: () => context.go('/journey'),
+      child: Container(
+        padding: const EdgeInsets.all(QalamSpace.space6),
+        decoration: BoxDecoration(
+          color: QalamColors.surfaceRaised,
+          borderRadius: BorderRadius.circular(QalamRadii.xl),
+          border: Border.all(color: QalamColors.border),
+        ),
+        child: ref
+            .watch(_journeyPreviewProvider)
+            .when(
+              data: (value) {
+                final visible = value.letters.take(4).toList();
+                final nextIndex = visible.indexWhere(
+                  (letter) => !value.masteredIds.contains(letter.id),
+                );
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Your journey',
+                                style: QalamTextStyles.heading,
+                              ),
+                              const SizedBox(height: QalamSpace.space1),
+                              Text(
+                                '${value.masteredIds.length} of '
+                                '${value.letters.length} letters learned',
+                                style: QalamTextStyles.body.copyWith(
+                                  color: QalamColors.fgMuted,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(
+                          Icons.arrow_forward_rounded,
+                          color: QalamColors.primary,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: QalamSpace.space5),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        for (var index = 0; index < visible.length; index++)
+                          _JourneyLetterDot(
+                            letter: visible[index],
+                            mastered: value.masteredIds.contains(
+                              visible[index].id,
+                            ),
+                            current: index == nextIndex,
+                          ),
+                      ],
+                    ),
+                  ],
+                );
+              },
+              loading: () => const SizedBox(height: 128),
+              error: (error, stackTrace) =>
+                  Text('Open your journey', style: QalamTextStyles.heading),
+            ),
+      ),
     );
-    return Text(
-      text,
-      style: QalamTextStyles.label.copyWith(color: QalamColors.fgMuted),
-      textAlign: TextAlign.center,
+  }
+}
+
+class _JourneyLetterDot extends StatelessWidget {
+  const _JourneyLetterDot({
+    required this.letter,
+    required this.mastered,
+    required this.current,
+  });
+
+  final Letter letter;
+  final bool mastered;
+  final bool current;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: QalamTargets.targetMin,
+      height: QalamTargets.targetMin,
+      decoration: BoxDecoration(
+        color: mastered
+            ? QalamColors.successTint
+            : current
+            ? QalamColors.primaryTint
+            : QalamColors.bgDeep,
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: current ? QalamColors.primary : QalamColors.border,
+          width: current ? 2 : 1,
+        ),
+      ),
+      alignment: Alignment.center,
+      child: mastered
+          ? const Icon(Icons.check_rounded, color: QalamColors.success)
+          : ArabicText(
+              letter.char,
+              display: true,
+              style: QalamTextStyles.arDisplay.copyWith(
+                color: current ? QalamColors.fg : QalamColors.fgMuted,
+                fontSize: 32,
+              ),
+            ),
+    );
+  }
+}
+
+class _MascotEncouragement extends StatelessWidget {
+  const _MascotEncouragement();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: const Key('homeMascotEncouragement'),
+      padding: const EdgeInsets.all(QalamSpace.space5),
+      decoration: BoxDecoration(
+        color: QalamColors.primaryTint,
+        borderRadius: BorderRadius.circular(QalamRadii.xl),
+      ),
+      child: Row(
+        children: [
+          SvgPicture.asset(
+            'assets/mascot/qalam-idle.svg',
+            width: QalamSpace.space20,
+            height: QalamSpace.space20,
+            semanticsLabel: 'Qalam',
+            placeholderBuilder: (_) => const SizedBox(
+              width: QalamSpace.space20,
+              height: QalamSpace.space20,
+            ),
+          ),
+          const SizedBox(width: QalamSpace.space4),
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Ready when you are', style: QalamTextStyles.heading),
+                const SizedBox(height: QalamSpace.space2),
+                Text(
+                  'A little practice today keeps every letter feeling familiar.',
+                  style: QalamTextStyles.body,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

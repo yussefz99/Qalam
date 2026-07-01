@@ -33,6 +33,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../data/app_database.dart';
 import '../data/curriculum_repository.dart';
 import '../features/parent/parent_progress.dart';
+import 'auth_providers.dart';
 
 // Re-export the read-only dashboard view models so the Wave-0 RED contract can
 // reach `ParentProgress` / `ParentLetterRow` through `parent_providers.dart`
@@ -91,7 +92,11 @@ class ParentGate extends ChangeNotifier {
 /// `unsupported_provider_value` flags any non-Future/Stream value; the
 /// Listenable-as-provider shape is intentional here (see file header).
 @Riverpod(keepAlive: true)
-ParentGate parentGate(Ref ref) => ParentGate(); // unlocked: false (default-deny)
+ParentGate parentGate(Ref ref) {
+  final gate = ParentGate();
+  ref.listen(authStateProvider, (_, __) => gate.lock());
+  return gate;
+}
 
 /// The read-only dashboard model: the "N of M" summary counts + the per-letter
 /// rows in curriculum intro order. Hand-written (not codegen) because the

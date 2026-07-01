@@ -50,120 +50,163 @@ ParentProgress _progress({
   required int mastered,
   required int total,
   required List<ParentLetterRow> rows,
-}) =>
-    ParentProgress(mastered: mastered, total: total, rows: rows);
+}) => ParentProgress(mastered: mastered, total: total, rows: rows);
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets(
-      'summary renders "{mastered} of {total} letters mastered" matching the '
-      'seeded counts (denominator NOT hardcoded, T-09-04)', (tester) async {
-    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+    'summary renders "{mastered} of {total} letters mastered" matching the '
+    'seeded counts (denominator NOT hardcoded, T-09-04)',
+    (tester) async {
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
 
-    await tester.pumpWidget(_buildDashboard(_progress(
-      mastered: 3,
-      total: 28,
-      rows: const [
-        ParentLetterRow(
-          letterId: 'alif',
-          displayName: 'alif',
-          mastered: true,
-          cleanReps: 3,
-          masteredAtLabel: 'Jun 1',
+      await tester.pumpWidget(
+        _buildDashboard(
+          _progress(
+            mastered: 3,
+            total: 28,
+            rows: const [
+              ParentLetterRow(
+                letterId: 'alif',
+                displayName: 'alif',
+                mastered: true,
+                cleanReps: 3,
+                masteredAtLabel: 'Jun 1',
+              ),
+            ],
+          ),
         ),
-      ],
-    )));
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
 
-    expect(find.text(l10n.parentSummary(3, 28)), findsOneWidget,
-        reason: 'the summary must reflect the seeded mastered/total counts');
-  });
+      expect(
+        find.text(l10n.parentSummary(3, 28)),
+        findsOneWidget,
+        reason: 'the summary must reflect the seeded mastered/total counts',
+      );
+    },
+  );
 
   testWidgets(
-      'one mastered + one in-progress row each render their status label and '
-      'clean-reps', (tester) async {
-    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+    'one mastered + one in-progress row each render their status label and '
+    'clean-reps',
+    (tester) async {
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
 
-    await tester.pumpWidget(_buildDashboard(_progress(
-      mastered: 1,
-      total: 28,
-      rows: const [
-        ParentLetterRow(
-          letterId: 'alif',
-          displayName: 'alif',
-          mastered: true,
-          cleanReps: 3,
-          masteredAtLabel: 'Jun 1',
+      await tester.pumpWidget(
+        _buildDashboard(
+          _progress(
+            mastered: 1,
+            total: 28,
+            rows: const [
+              ParentLetterRow(
+                letterId: 'alif',
+                displayName: 'alif',
+                mastered: true,
+                cleanReps: 3,
+                masteredAtLabel: 'Jun 1',
+              ),
+              ParentLetterRow(
+                letterId: 'baa',
+                displayName: 'baa',
+                mastered: false,
+                cleanReps: 2,
+                masteredAtLabel: null,
+              ),
+            ],
+          ),
         ),
-        ParentLetterRow(
-          letterId: 'baa',
-          displayName: 'baa',
-          mastered: false,
-          cleanReps: 2,
-          masteredAtLabel: null,
-        ),
-      ],
-    )));
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
 
-    expect(find.text(l10n.parentRowMastered(3, 'Jun 1')), findsOneWidget,
-        reason: 'the mastered row shows "Mastered · N clean reps · date"');
-    expect(find.text(l10n.parentRowInProgress(2)), findsOneWidget,
-        reason: 'the in-progress row shows "In progress · N clean reps"');
-  });
+      expect(
+        find.text(l10n.parentRowMastered(3, 'Jun 1')),
+        findsOneWidget,
+        reason: 'the mastered row shows "Mastered · N clean reps · date"',
+      );
+      expect(
+        find.text(l10n.parentRowInProgress(2)),
+        findsOneWidget,
+        reason: 'the in-progress row shows "In progress · N clean reps"',
+      );
+      expect(find.text('2 letters practiced'), findsOneWidget);
+      expect(find.text('Keep supporting baa'), findsOneWidget);
+    },
+  );
 
   testWidgets(
-      'empty rows render the calm empty-state copy, never a spinner or error '
-      '(D-04)', (tester) async {
-    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+    'empty rows render the calm empty-state copy, never a spinner or error '
+    '(D-04)',
+    (tester) async {
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
 
-    await tester.pumpWidget(_buildDashboard(_progress(
-      mastered: 0,
-      total: 28,
-      rows: const [],
-    )));
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(
+        _buildDashboard(_progress(mastered: 0, total: 28, rows: const [])),
+      );
+      await tester.pumpAndSettle();
 
-    expect(find.text(l10n.parentEmptyTitle), findsOneWidget,
-        reason: 'an empty dashboard shows the calm empty-state title');
-    expect(find.text(l10n.parentEmptyBody), findsOneWidget,
-        reason: 'an empty dashboard shows the empty-state body');
-    expect(find.byType(CircularProgressIndicator), findsNothing,
-        reason: 'the empty state is never a spinner (D-04)');
-  });
+      expect(
+        find.text(l10n.parentEmptyTitle),
+        findsOneWidget,
+        reason: 'an empty dashboard shows the calm empty-state title',
+      );
+      expect(
+        find.text(l10n.parentEmptyBody),
+        findsOneWidget,
+        reason: 'an empty dashboard shows the empty-state body',
+      );
+      expect(
+        find.byType(CircularProgressIndicator),
+        findsNothing,
+        reason: 'the empty state is never a spinner (D-04)',
+      );
+    },
+  );
 
-  testWidgets(
-      'READ-ONLY: there is NO edit / delete / reset affordance (hard '
+  testWidgets('READ-ONLY: there is NO edit / delete / reset affordance (hard '
       'constraint, T-09-04)', (tester) async {
-    await tester.pumpWidget(_buildDashboard(_progress(
-      mastered: 1,
-      total: 28,
-      rows: const [
-        ParentLetterRow(
-          letterId: 'alif',
-          displayName: 'alif',
-          mastered: true,
-          cleanReps: 3,
-          masteredAtLabel: 'Jun 1',
+    await tester.pumpWidget(
+      _buildDashboard(
+        _progress(
+          mastered: 1,
+          total: 28,
+          rows: const [
+            ParentLetterRow(
+              letterId: 'alif',
+              displayName: 'alif',
+              mastered: true,
+              cleanReps: 3,
+              masteredAtLabel: 'Jun 1',
+            ),
+          ],
         ),
-      ],
-    )));
+      ),
+    );
     await tester.pumpAndSettle();
 
     // No destructive icon buttons.
     for (final icon in [Icons.delete, Icons.edit, Icons.restore, Icons.clear]) {
-      expect(find.byIcon(icon), findsNothing,
-          reason: 'the dashboard is read-only — no $icon affordance');
+      expect(
+        find.byIcon(icon),
+        findsNothing,
+        reason: 'the dashboard is read-only — no $icon affordance',
+      );
     }
 
     // No text control matching delete/edit/reset semantics (case-insensitive).
-    final forbidden = RegExp(r'delete|edit|reset|remove|clear', caseSensitive: false);
+    final forbidden = RegExp(
+      r'delete|edit|reset|remove|clear',
+      caseSensitive: false,
+    );
     final labels = tester
         .widgetList<Text>(find.byType(Text))
         .map((t) => t.data ?? '')
         .where((s) => forbidden.hasMatch(s));
-    expect(labels, isEmpty,
-        reason: 'no edit/delete/reset text affordance may appear (read-only)');
+    expect(
+      labels,
+      isEmpty,
+      reason: 'no edit/delete/reset text affordance may appear (read-only)',
+    );
   });
 }

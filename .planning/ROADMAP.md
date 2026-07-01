@@ -2,6 +2,13 @@
 
 ## Overview
 
+> **Scope note (owner override, 2026-06-22):** the "no account" line below was
+> relaxed for **parent accounts only**. Real Email/Password + Google parent
+> sign-in/up is now live (`AuthService` + `lib/screens/parent_auth_screen.dart`),
+> reachable only from behind the PIN-gated parent area. **Children still never log
+> in** (D-09b holds). Foundation scope — the account does not yet gate or sync data.
+> Cloud/tutor remain v2.
+
 Qalam v1 delivers the handwriting-first learning loop: a child traces an Arabic
 letter with a stylus, gets immediate specific on-device feedback on shape and stroke
 order, and advances through the owner's-mother's curriculum — local-only, offline, no

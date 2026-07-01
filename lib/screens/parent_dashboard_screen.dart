@@ -157,6 +157,8 @@ class _DashboardContentState extends ConsumerState<_DashboardContent> {
             l10n.parentSummary(progress.mastered, progress.total),
             style: QalamTextStyles.heading,
           ),
+          const SizedBox(height: QalamSpace.space4),
+          _ParentInsights(progress: progress),
           const SizedBox(height: QalamSpace.space6),
           Expanded(
             child: progress.rows.isEmpty
@@ -182,6 +184,81 @@ class _DashboardContentState extends ConsumerState<_DashboardContent> {
                 ),
               ),
               child: Text(l10n.commonDone, style: QalamTextStyles.button),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ParentInsights extends StatelessWidget {
+  const _ParentInsights({required this.progress});
+
+  final ParentProgress progress;
+
+  @override
+  Widget build(BuildContext context) {
+    final inProgress = progress.rows.where((row) => !row.mastered).toList();
+    final recommendation = inProgress.isNotEmpty
+        ? 'Keep supporting ${inProgress.first.displayName}'
+        : progress.mastered == progress.total
+        ? 'All letters are ready for review'
+        : 'Start the next lesson together';
+    return Row(
+      children: [
+        Expanded(
+          child: _InsightCard(
+            icon: Icons.school_outlined,
+            title: '${progress.rows.length} letters practiced',
+            body: '${progress.mastered} mastered so far',
+          ),
+        ),
+        const SizedBox(width: QalamSpace.space4),
+        Expanded(
+          child: _InsightCard(
+            icon: Icons.lightbulb_outline,
+            title: 'Suggested next step',
+            body: recommendation,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _InsightCard extends StatelessWidget {
+  const _InsightCard({
+    required this.icon,
+    required this.title,
+    required this.body,
+  });
+
+  final IconData icon;
+  final String title;
+  final String body;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(QalamSpace.space4),
+      decoration: BoxDecoration(
+        color: QalamColors.surface,
+        borderRadius: BorderRadius.circular(QalamRadii.lg),
+        border: Border.all(color: QalamColors.border),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: QalamColors.primary),
+          const SizedBox(width: QalamSpace.space3),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: QalamTextStyles.label),
+                const SizedBox(height: QalamSpace.space1),
+                Text(body, style: QalamTextStyles.body),
+              ],
             ),
           ),
         ],

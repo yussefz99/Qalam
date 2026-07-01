@@ -74,5 +74,6 @@ String? resolveNicknameLabel(String nicknameId) {
   for (final NicknameOption option in kNicknames) {
     if (option.id == nicknameId) return option.label;
   }
-  return null;
+  final custom = nicknameId.trim();
+  return custom.isEmpty ? null : custom;
 }

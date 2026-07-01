@@ -81,6 +81,14 @@ signature, not a detail.
   - Source of truth for product feel: `docs/design/kit/` (Qalam Design System).
 - Child safety: collect the minimum child data needed, private by default, under parent
   control. Treat children's data as sensitive in every design decision.
+- **Parent accounts — LIVE (owner override, 2026-06-22).** The earlier "no real
+  accounts in v1" line is lifted: real Email/Password + Google **parent** sign-in/up
+  is now in scope (`AuthService` + `lib/screens/parent_auth_screen.dart`), reachable
+  ONLY from **behind the PIN-gated parent area**. The child-safety core is **unchanged**:
+  **children still NEVER log in** (D-09b child-login ban holds). Sign-up links the boot
+  anonymous identity (D-09c) so local progress is kept; sign-out restores an anonymous
+  identity. Foundation scope — the account does not yet gate or sync any data. Google
+  needs the Firebase console SHA-1 + Web client id (`--dart-define=GOOGLE_SERVER_CLIENT_ID`).
 
 ---
 

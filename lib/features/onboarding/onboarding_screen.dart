@@ -22,7 +22,9 @@
 // invalidate(childProfileProvider) (Home re-reads), then context.go('/').
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../l10n/app_localizations.dart';
@@ -34,8 +36,6 @@ import '../../theme/dimens.dart';
 import '../../theme/text_styles.dart';
 import 'onboarding_data.dart';
 import 'widgets/avatar_grid.dart';
-import 'widgets/grade_chips.dart';
-import 'widgets/nickname_grid.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -46,32 +46,43 @@ class OnboardingScreen extends ConsumerStatefulWidget {
 
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   // The three in-progress selections (all taps; no free-text state anywhere).
-  String? _grade;
   String? _avatarId;
-  String? _nicknameId;
+  final TextEditingController _nickname = TextEditingController();
   bool _submitting = false;
 
-  bool get _isComplete =>
-      _grade != null && _avatarId != null && _nicknameId != null;
+  String? get _validNickname {
+    final value = _nickname.text.trim();
+    return value.runes.length >= 2 && value.runes.length <= 16 ? value : null;
+  }
+
+  bool get _isComplete => _avatarId != null && _validNickname != null;
+
+  @override
+  void dispose() {
+    _nickname.dispose();
+    super.dispose();
+  }
 
   Future<void> _submit() async {
     if (!_isComplete || _submitting) return;
 
-    final grade = _grade!;
+    const grade = 'kg';
     final avatarId = _avatarId!;
-    final nicknameId = _nicknameId!;
+    final nicknameId = _validNickname!;
 
     // Defence-in-depth (T-05-02): only members of the fixed sets may persist,
     // even though the UI can only ever produce in-set values.
-    final validGrade = kGradeKeys.contains(grade);
     final validAvatar = kAvatarIds.contains(avatarId);
-    final validNickname = kNicknames.any((n) => n.id == nicknameId);
-    if (!validGrade || !validAvatar || !validNickname) return;
+    final validNickname =
+        nicknameId.runes.length >= 2 && nicknameId.runes.length <= 16;
+    if (!validAvatar || !validNickname) return;
 
     setState(() => _submitting = true);
 
     final lessonId = resolveStartingLessonId(grade);
-    await ref.read(childProfileRepositoryProvider).create(
+    await ref
+        .read(childProfileRepositoryProvider)
+        .create(
           nicknameId: nicknameId,
           avatarId: avatarId,
           grade: grade,
@@ -104,80 +115,152 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 720),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: QalamColors.surface,
-                    borderRadius: BorderRadius.circular(QalamRadii.xl),
-                    border: Border.all(color: QalamColors.border),
-                    boxShadow: QalamShadows.shadowMd,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(QalamSpace.space5),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        // Heading / warm prompt.
-                        Text(
-                          l10n?.onboardingTitle ?? 'Let\'s set up your learner',
-                          style: QalamTextStyles.heading,
-                        ),
-                        const SizedBox(height: QalamSpace.space2),
-                        Text(
-                          l10n?.onboardingSubtitle ??
-                              'Pick a grade, an avatar, and a nickname.',
-                          style: QalamTextStyles.body,
-                        ),
-                        const SizedBox(height: QalamSpace.space5),
-
-                        // 1. Grade (the parent's pick).
-                        Text(
-                          l10n?.onboardingGradePrompt ?? 'Grade',
-                          style: QalamTextStyles.label,
-                        ),
-                        const SizedBox(height: QalamSpace.space3),
-                        GradeChips(
-                          selected: _grade,
-                          onSelected: (g) => setState(() => _grade = g),
-                        ),
-                        const SizedBox(height: QalamSpace.space5),
-
-                        // 2. Avatar (the child's pick).
-                        Text(
-                          l10n?.onboardingAvatarPrompt ?? 'Pick your avatar',
-                          style: QalamTextStyles.label,
-                        ),
-                        const SizedBox(height: QalamSpace.space3),
-                        AvatarGrid(
-                          selected: _avatarId,
-                          onSelected: (a) => setState(() => _avatarId = a),
-                        ),
-                        const SizedBox(height: QalamSpace.space5),
-
-                        // 3. Nickname (the child's pick).
-                        Text(
-                          l10n?.onboardingNicknamePrompt ?? 'Pick your nickname',
-                          style: QalamTextStyles.label,
-                        ),
-                        const SizedBox(height: QalamSpace.space3),
-                        NicknameGrid(
-                          selected: _nicknameId,
-                          onSelected: (n) => setState(() => _nicknameId = n),
-                        ),
-                        const SizedBox(height: QalamSpace.space5),
-
-                        // 4. "Let's go" CTA — ink-teal pill (no gold), enabled
-                        // only when all three selections are made.
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: _LetsGoButton(
-                            label: l10n?.onboardingSubmit ?? 'Let\'s go',
-                            enabled: _isComplete && !_submitting,
-                            buttonShadow: qalam.buttonShadow,
-                            onTap: _submit,
+                child: _OnboardingEntrance(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: QalamColors.surface,
+                      borderRadius: BorderRadius.circular(QalamRadii.xl),
+                      border: Border.all(color: QalamColors.border),
+                      boxShadow: QalamShadows.shadowMd,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(QalamSpace.space5),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          // Mascot welcome — Qalam (the tutor's persona) greets
+                          // the child on the very first screen, tying onboarding
+                          // to the rest of the app. Leading-mascot Row mirrors the
+                          // home greeting; graceful SizedBox fallback if the asset
+                          // is missing.
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              SvgPicture.asset(
+                                'assets/mascot/qalam-idle.svg',
+                                width: QalamSpace.space16,
+                                height: QalamSpace.space16,
+                                semanticsLabel: 'Qalam',
+                                placeholderBuilder: (_) => const SizedBox(
+                                  width: QalamSpace.space16,
+                                  height: QalamSpace.space16,
+                                ),
+                              ),
+                              const SizedBox(width: QalamSpace.space5),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Text(
+                                      'Who\'s learning with Qalam?',
+                                      style: QalamTextStyles.heading,
+                                    ),
+                                    const SizedBox(height: QalamSpace.space2),
+                                    Text(
+                                      'Create a private learning profile together.',
+                                      style: QalamTextStyles.body,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: QalamSpace.space5),
+
+                          const _StepLabel(
+                            number: '1',
+                            title: 'For your learner',
+                            subtitle: 'Pick a character',
+                          ),
+                          const SizedBox(height: QalamSpace.space3),
+                          Text(
+                            l10n?.onboardingAvatarPrompt ?? 'Pick your avatar',
+                            style: QalamTextStyles.label,
+                          ),
+                          const SizedBox(height: QalamSpace.space3),
+                          AvatarGrid(
+                            selected: _avatarId,
+                            onSelected: (a) => setState(() => _avatarId = a),
+                          ),
+                          const SizedBox(height: QalamSpace.space5),
+
+                          const _StepLabel(
+                            number: '2',
+                            title: 'Choose a nickname',
+                            subtitle: 'Use any short name in Arabic or English',
+                          ),
+                          const SizedBox(height: QalamSpace.space3),
+                          TextField(
+                            key: const Key('onboardingNicknameField'),
+                            controller: _nickname,
+                            maxLength: 16,
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(16),
+                              FilteringTextInputFormatter.deny(
+                                RegExp(r'[\r\n\t]'),
+                              ),
+                            ],
+                            onChanged: (_) => setState(() {}),
+                            textInputAction: TextInputAction.done,
+                            style: QalamTextStyles.body,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: QalamColors.bg,
+                              hintText: 'Example: نور or Sami',
+                              counterText: '',
+                              prefixIcon: const Icon(
+                                Icons.edit_rounded,
+                                color: QalamColors.primary,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(
+                                  QalamRadii.lg,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(
+                                  QalamRadii.lg,
+                                ),
+                                borderSide: const BorderSide(
+                                  color: QalamColors.primary,
+                                  width: 2,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: QalamSpace.space5),
+
+                          _LearnerPreview(
+                            avatarId: _avatarId,
+                            nickname: _validNickname,
+                          ),
+                          const SizedBox(height: QalamSpace.space5),
+
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'The nickname stays private inside this account.',
+                                  style: QalamTextStyles.label.copyWith(
+                                    color: QalamColors.fgMuted,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: QalamSpace.space4),
+                              _LetsGoButton(
+                                label: _isComplete
+                                    ? 'Start learning'
+                                    : 'Choose an avatar and nickname',
+                                enabled: _isComplete && !_submitting,
+                                buttonShadow: qalam.buttonShadow,
+                                onTap: _submit,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -185,6 +268,112 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _StepLabel extends StatelessWidget {
+  const _StepLabel({
+    required this.number,
+    required this.title,
+    required this.subtitle,
+  });
+
+  final String number;
+  final String title;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: QalamSpace.space8,
+          height: QalamSpace.space8,
+          alignment: Alignment.center,
+          decoration: const BoxDecoration(
+            color: QalamColors.primary,
+            shape: BoxShape.circle,
+          ),
+          child: Text(
+            number,
+            style: QalamTextStyles.label.copyWith(
+              color: QalamColors.fgOnPrimary,
+            ),
+          ),
+        ),
+        const SizedBox(width: QalamSpace.space3),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: QalamTextStyles.button),
+            Text(
+              subtitle,
+              style: QalamTextStyles.label.copyWith(color: QalamColors.fgMuted),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _LearnerPreview extends StatelessWidget {
+  const _LearnerPreview({required this.avatarId, required this.nickname});
+
+  final String? avatarId;
+  final String? nickname;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      key: const Key('onboardingLearnerPreview'),
+      duration: QalamMotion.durBase,
+      width: double.infinity,
+      padding: const EdgeInsets.all(QalamSpace.space4),
+      decoration: BoxDecoration(
+        color: QalamColors.primaryTint,
+        borderRadius: BorderRadius.circular(QalamRadii.lg),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: QalamTargets.targetMin,
+            height: QalamTargets.targetMin,
+            decoration: BoxDecoration(
+              color: QalamColors.surface,
+              shape: BoxShape.circle,
+              border: Border.all(color: QalamColors.primary),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: avatarId == null
+                ? Center(child: Text('?', style: QalamTextStyles.heading))
+                : Padding(
+                    padding: const EdgeInsets.all(QalamSpace.space1),
+                    child: Image.asset(
+                      'assets/avatars/$avatarId.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+          ),
+          const SizedBox(width: QalamSpace.space4),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Learner preview', style: QalamTextStyles.label),
+                const SizedBox(height: QalamSpace.space1),
+                Text(
+                  nickname ?? 'Your nickname will appear here',
+                  style: QalamTextStyles.heading,
+                ),
+              ],
+            ),
+          ),
+          if (avatarId != null && nickname != null)
+            const Icon(Icons.check_circle, color: QalamColors.success),
+        ],
       ),
     );
   }
@@ -240,6 +429,76 @@ class _LetsGoButton extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Gentle first-impression entrance: the setup card fades in while sliding up
+/// ~24px (QalamSpace.space6) — `easeOutQuart` over `durSlow` (420ms) — so the
+/// child's very first screen settles in warmly instead of popping onscreen
+/// (mirrors home's prepared-desk beat).
+///
+/// Plays ONCE per arrival; the one-shot decision lives in this State so a parent
+/// rebuild never replays it. Reduced motion (`MediaQuery.disableAnimations`)
+/// skips the controller and renders fully settled immediately.
+class _OnboardingEntrance extends StatefulWidget {
+  const _OnboardingEntrance({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_OnboardingEntrance> createState() => _OnboardingEntranceState();
+}
+
+class _OnboardingEntranceState extends State<_OnboardingEntrance>
+    with SingleTickerProviderStateMixin {
+  AnimationController? _controller;
+  Animation<double>? _progress;
+  bool _played = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_played) return; // once per arrival
+    _played = true;
+    if (MediaQuery.of(context).disableAnimations) return; // settled at once
+    final controller = AnimationController(
+      vsync: this,
+      duration: QalamMotion.durSlow,
+    );
+    _controller = controller;
+    _progress = CurvedAnimation(
+      parent: controller,
+      curve: QalamMotion.easeOutQuart,
+    );
+    controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = _progress;
+    if (progress == null) return widget.child; // reduced motion: settled
+    return AnimatedBuilder(
+      animation: progress,
+      builder: (BuildContext context, Widget? child) {
+        final double v = progress.value;
+        return Opacity(
+          key: const Key('onboardingCardEntranceFade'),
+          opacity: v,
+          child: Transform.translate(
+            // Slide up ~24px as the card settles.
+            offset: Offset(0, QalamSpace.space6 * (1 - v)),
+            child: child,
+          ),
+        );
+      },
+      child: widget.child,
     );
   }
 }

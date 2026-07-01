@@ -28,9 +28,49 @@
   "@settings": {
     "description": "Settings screen heading and nav label."
   },
-  "settingsPlaceholderBody": "Grown-up settings will live here soon.",
-  "@settingsPlaceholderBody": {
-    "description": "Body copy on the Settings placeholder."
+  "settingsSectionAccount": "Account",
+  "@settingsSectionAccount": {
+    "description": "Settings group heading for the account block (email + sign out). Rendered uppercase."
+  },
+  "settingsSectionLearner": "Learner",
+  "@settingsSectionLearner": {
+    "description": "Settings group heading for the learner block (edit profile). Rendered uppercase."
+  },
+  "settingsSectionParent": "Parent",
+  "@settingsSectionParent": {
+    "description": "Settings group heading for the parent block (Parent Area). Rendered uppercase."
+  },
+  "settingsSignedIn": "Signed in",
+  "@settingsSignedIn": {
+    "description": "Subtitle under the parent's email in the account card."
+  },
+  "settingsAccountFallback": "Signed in account",
+  "@settingsAccountFallback": {
+    "description": "Account label shown when the signed-in user has no email on record."
+  },
+  "settingsSignOut": "Sign out",
+  "@settingsSignOut": {
+    "description": "Button that signs the parent out (restores an anonymous identity)."
+  },
+  "settingsEditLearner": "Edit learner profile",
+  "@settingsEditLearner": {
+    "description": "Settings row + dialog title for editing the child's avatar and nickname."
+  },
+  "settingsParentArea": "Parent Area",
+  "@settingsParentArea": {
+    "description": "Settings row that opens the PIN-gated parent area (/parent)."
+  },
+  "settingsBackHome": "Back to Home",
+  "@settingsBackHome": {
+    "description": "Tooltip on the Settings AppBar home button that returns to the child Home."
+  },
+  "editLearnerChooseAvatar": "Choose an avatar",
+  "@editLearnerChooseAvatar": {
+    "description": "Label above the avatar picker in the edit-learner dialog."
+  },
+  "editLearnerNicknameLabel": "Nickname",
+  "@editLearnerNicknameLabel": {
+    "description": "Text-field label for the child's nickname in the edit-learner dialog."
   },
   "databaseError": "Something Didn't Save. Close the app and open it again — your work is kept on this tablet.",
   "@databaseError": {
@@ -763,6 +803,18 @@
   "commonDone": "Done",
   "@commonDone": {
     "description": "Shared exit/confirm CTA label — 'Done' (Button/24px). Phase 9 dashboard exit returns to child Home and RELOCKS the Parent Area (D-07)."
+  },
+  "commonBack": "Back",
+  "@commonBack": {
+    "description": "Shared back-navigation label/tooltip — 'Back'. Used by the Parent Area PIN-gate AppBar back button that returns to child Home (the gate stays locked)."
+  },
+  "commonCancel": "Cancel",
+  "@commonCancel": {
+    "description": "Shared dialog dismiss label — 'Cancel'."
+  },
+  "commonSave": "Save",
+  "@commonSave": {
+    "description": "Shared dialog confirm/save label — 'Save'."
   },
   "promptPlay": "Play",
   "@promptPlay": {
