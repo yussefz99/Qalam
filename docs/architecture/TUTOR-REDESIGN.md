@@ -101,6 +101,72 @@ exercise types, its voice/register, its runtime shape, latency/cost/offline.
 
 ---
 
+## The redesigned architecture — a diagnosis-centric loop  *(the actual "brain" change)*
+
+The old agent (analyze→plan→coach + a boolean image judge) was built for the
+**scorer-owns-verdict** world: the judge answered "is it a baa?" and the coach wrote
+words about it. The redesign is **not** that graph with better prompts — it introduces
+four genuinely new concepts:
+
+**1. A structured `Diagnosis` is the central artifact (not a verdict + a string).**
+Perception produces ONE rich object, and everything else is a *view* of it:
+```
+Diagnosis {
+  strokes: [ { index, label, present, matchesTargetForm, findings:[flat|too-short|curved|…],
+               dot:{present,count,side}, severity, confidence } ],
+  isCorrectForm: bool,        # for the ASKED positional form, not "is it the letter"
+  overallConfidence: 0..1,
+  defectTags: [ "shallow_bowl", "dot_above", "tooth_too_big" ]   # curriculum-vocabulary
+}
+```
+The **verdict**, the **why-explanation** (G7), the **coaching line** (G4), and the
+**ghost-correction** (G9) are all *derived from the same Diagnosis*. Because they share
+one source of truth, they **structurally cannot contradict each other** — that is the
+real grounding fix, not a faithfulness checker bolted on after.
+
+**2. The verdict is a grounded FUNCTION, not the model's say-so.** Under AI-owns-verdict,
+"faithful to the verdict" is circular (the model can't disagree with itself). So the
+verdict = `f(Diagnosis.findings) ∧ geometry-cross-check`: the deterministic scorer/geometry
+becomes an **independent cross-check**, not the boss. Model says pass but geometry says the
+bowl is a flat line → **hold** (needsWork), never a lucky pass. The scorer stops being the
+false-failing judge and becomes the *disagreement sensor* + offline floor. This is the
+honest answer to D3 the contract left circular.
+
+**3. The per-child `LearnerModel` is a real subsystem (the "memory"), not a field.**
+```
+LearnerModel(childId) {
+  skills:  { "baa.medial": {attempts, cleanReps, struggle 0..1, lastSeen}, … },
+  habits:  { "dropsDot": 0.4, "shallowBowl": 0.7, "leftToRight": 0.2 },   # cross-letter tendencies
+}
+```
+It is *written by* each Diagnosis (within-session live + across-session recompile), and it
+*reads into* three places: **perception** (tell the diagnosis what this child tends to get
+wrong), **response** (coach the habit, not just this attempt: "your dot slipped above again —
+remember baa's dot lives underneath"), and **selection** (target weak spots). Derived
+patterns only — never raw strokes (COPPA/G6). This is the biggest missing piece and what
+makes the tutor *personal* (G8) instead of stateless.
+
+**4. Re-decompose the loop around perception, not planning.**
+```
+OLD:  analyze ──▶ plan ──▶ coach                     (scorer owned truth; agent wrote words)
+NEW:  perceive ─▶ diagnose ─▶ ground+verdict ─▶ personalize ─▶ respond ─▶ adapt
+        │            │             │                  │            │          │
+      load child   ONE           verdict = f(findings) update    coach+why+   pick next
+      context +    multimodal    ∧ geometry cross-    LearnerModel ghost from  (target weak
+      form rubric  Diagnosis     check (no circularity)          one Diagnosis  spots)
+```
+This still lives inside LangGraph (reuse the runtime), still keyless-Vertex, still has the
+offline floor — but the **nodes, the state object, and the data flow are new**. That is the
+architecture change you weren't seeing.
+
+**What this changes vs. the AI-SPEC as written:** the AI-SPEC's §4 "collapse judge+coach"
+becomes the `diagnose→respond` span over a shared `Diagnosis`; its `Verdict` model grows into
+the `Diagnosis` above; D3 grounding gets the geometry-cross-check answer; D7/D8 (the learner
+model) get a real schema + read/write points instead of a paragraph. The eval (§5) is
+unchanged — it still gates the same behaviors.
+
+---
+
 ## Process
 
 1. **Design goals** — owner refines G1–G9 (this doc). **Locked 2026-07-01.**
