@@ -1,0 +1,172 @@
+{
+  "_meta": {
+    "title": "ayn curriculum graph - competency + difficulty tier + prerequisites (DRAFT)",
+    "source": "Fresh draft by Codex using the signed baa graph pattern and docs/curriculum/national-curriculum-grade1.md. Vocabulary is [DRAFT] pending owner-mother review.",
+    "sign_off": "DRAFT - awaiting owner-mother sign-off at the tier level. signedOff stays false until she reviews and signs."
+  },
+  "letterId": "ayn",
+  "signedOff": false,
+  "competencies": [
+    {
+      "id": "recognize",
+      "essential": true,
+      "prerequisites": []
+    },
+    {
+      "id": "positionalForms",
+      "essential": true,
+      "prerequisites": [
+        "recognize"
+      ]
+    },
+    {
+      "id": "copyWrite",
+      "essential": true,
+      "prerequisites": [
+        "positionalForms"
+      ]
+    },
+    {
+      "id": "fluentReading",
+      "essential": true,
+      "prerequisites": [
+        "copyWrite"
+      ]
+    },
+    {
+      "id": "wordBuilding",
+      "essential": false,
+      "prerequisites": [
+        "copyWrite"
+      ]
+    },
+    {
+      "id": "grammarTransform",
+      "essential": false,
+      "prerequisites": [
+        "copyWrite"
+      ]
+    }
+  ],
+  "tiers": [
+    "manqul",
+    "manzur",
+    "ghayrManzur"
+  ],
+  "nodes": [
+    {
+      "exerciseId": "ayn.teachCard.meet",
+      "competency": "recognize",
+      "tier": null,
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "ayn.traceLetter.isolated",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "ayn.traceLetter.initial",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "ayn.traceLetter.medial",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "ayn.writeLetter.fromSound",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "ayn.writeLetter.fromPicture",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "ayn.writeLetter.writeForm",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "ayn.connectWord.aynab",
+      "competency": "copyWrite",
+      "tier": "manqul",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "ayn.connectWord.asal",
+      "competency": "copyWrite",
+      "tier": "manqul",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "ayn.completeWord.middle",
+      "competency": "copyWrite",
+      "tier": "manqul",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "ayn.writeWord.copy",
+      "competency": "copyWrite",
+      "tier": "manzur",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "ayn.writeWord.picture",
+      "competency": "copyWrite",
+      "tier": "manzur",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "ayn.writeWord.dictation",
+      "competency": "copyWrite",
+      "tier": "ghayrManzur",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "ayn.buildSentence.hear",
+      "competency": "fluentReading",
+      "tier": "ghayrManzur",
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "ayn.buildSentence.picture",
+      "competency": "fluentReading",
+      "tier": "manzur",
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "ayn.fillBlank.noun",
+      "competency": "wordBuilding",
+      "tier": null,
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "ayn.transformWord.dual",
+      "competency": "grammarTransform",
+      "tier": null,
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "ayn.transformWord.plural",
+      "competency": "grammarTransform",
+      "tier": null,
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "ayn.transformWord.opposite",
+      "competency": "grammarTransform",
+      "tier": null,
+      "minCleanReps": 1
+    }
+  ]
+}
