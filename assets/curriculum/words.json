@@ -1708,6 +1708,83 @@
         "kaaf"
       ],
       "signedOff": false
+    },
+    {
+      "id": "namir",
+      "text": "???",
+      "audio": "word.namir",
+      "image": "img.tiger",
+      "gloss": {
+        "en": "tiger"
+      },
+      "letters": [
+        "noon",
+        "meem",
+        "raa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "nahl",
+      "text": "???",
+      "audio": "word.nahl",
+      "image": "img.bee",
+      "gloss": {
+        "en": "bee"
+      },
+      "letters": [
+        "noon",
+        "haa_c",
+        "laam"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "nahr",
+      "text": "???",
+      "audio": "word.nahr",
+      "image": "img.river",
+      "gloss": {
+        "en": "river"
+      },
+      "letters": [
+        "noon",
+        "haa_f",
+        "raa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "aynab_noon",
+      "text": "???",
+      "audio": "word.aynab",
+      "image": "img.grapes",
+      "gloss": {
+        "en": "grapes"
+      },
+      "letters": [
+        "ayn",
+        "noon",
+        "baa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "safina",
+      "text": "?????",
+      "audio": "word.safina",
+      "image": "img.ship",
+      "gloss": {
+        "en": "ship"
+      },
+      "letters": [
+        "seen",
+        "faa",
+        "yaa",
+        "noon",
+        "taa_marbuta"
+      ],
+      "signedOff": false
     }
   ]
 }
