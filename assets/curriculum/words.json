@@ -771,6 +771,84 @@
         "seen"
       ],
       "signedOff": false
+    },
+    {
+      "id": "shams_sheen",
+      "text": "???",
+      "audio": "word.shams",
+      "image": "img.sun",
+      "gloss": {
+        "en": "sun"
+      },
+      "letters": [
+        "sheen",
+        "meem",
+        "seen"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "shajara",
+      "text": "????",
+      "audio": "word.shajara",
+      "image": "img.tree",
+      "gloss": {
+        "en": "tree"
+      },
+      "letters": [
+        "sheen",
+        "jeem",
+        "raa",
+        "taa_marbuta"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "shubbaak",
+      "text": "????",
+      "audio": "word.shubbaak",
+      "image": "img.window",
+      "gloss": {
+        "en": "window"
+      },
+      "letters": [
+        "sheen",
+        "baa",
+        "alif",
+        "kaaf"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "farasha",
+      "text": "?????",
+      "audio": "word.farasha",
+      "image": "img.butterfly",
+      "gloss": {
+        "en": "butterfly"
+      },
+      "letters": [
+        "faa",
+        "raa",
+        "alif",
+        "sheen",
+        "taa_marbuta"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "aash",
+      "text": "??",
+      "audio": "word.aash",
+      "image": "img.nest",
+      "gloss": {
+        "en": "nest"
+      },
+      "letters": [
+        "ayn",
+        "sheen"
+      ],
+      "signedOff": false
     }
   ]
 }
