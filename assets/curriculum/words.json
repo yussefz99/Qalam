@@ -401,6 +401,81 @@
         "taa_marbuta"
       ],
       "signedOff": false
+    },
+    {
+      "id": "dubb",
+      "text": "??",
+      "audio": "word.dubb",
+      "image": "img.bear",
+      "gloss": {
+        "en": "bear"
+      },
+      "letters": [
+        "daal",
+        "baa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "daar",
+      "text": "???",
+      "audio": "word.daar",
+      "image": "img.house",
+      "gloss": {
+        "en": "house"
+      },
+      "letters": [
+        "daal",
+        "alif",
+        "raa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "dalw",
+      "text": "???",
+      "audio": "word.dalw",
+      "image": "img.bucket",
+      "gloss": {
+        "en": "bucket"
+      },
+      "letters": [
+        "daal",
+        "laam",
+        "waaw"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "yad",
+      "text": "??",
+      "audio": "word.yad",
+      "image": "img.hand",
+      "gloss": {
+        "en": "hand"
+      },
+      "letters": [
+        "yaa",
+        "daal"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "madrasa",
+      "text": "?????",
+      "audio": "word.madrasa",
+      "image": "img.school",
+      "gloss": {
+        "en": "school"
+      },
+      "letters": [
+        "meem",
+        "daal",
+        "raa",
+        "seen",
+        "taa_marbuta"
+      ],
+      "signedOff": false
     }
   ]
 }
