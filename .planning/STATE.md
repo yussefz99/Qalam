@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
 stopped_at: Completed 17-07-PLAN.md
-last_updated: "2026-07-06T16:48:59.678Z"
+last_updated: "2026-07-06T17:06:38.296Z"
 last_activity: 2026-07-06
 progress:
   total_phases: 21
   completed_phases: 14
   total_plans: 90
-  completed_plans: 84
+  completed_plans: 85
   percent: 67
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 17 (build-stroke-aware-coaching-on-device-geo-diff-to-coach) — EXECUTING
-Plan: 9 of 10
+Plan: 10 of 10
 Status: Ready to execute
 Last activity: 2026-07-06
 Next: Phase 17 waves 1–5 complete (17-01 RED contract, 17-02 soft per-stroke verdict, 17-03 per-form multi-criteria scoreLetter + LetterScore, 17-04 server eval gate, 17-05 server criteria/word contract, 17-06 CLIENT criteria/word mirror, 17-09 per-form calibration harness). The criteria/word lockstep is now closed BOTH wire sides (server 17-05 + client 17-06) with zero 422 window — the scorer's structured verdict reaches the coach FACTS. Continue /gsd-execute-phase 17: 17-07 geo-diff cutover (owns the aiJudge/strokeImage seams), 17-08 harden, 17-10 ADR-017 + single Cloud Run re-deploy + HUMAN-UAT mom sign-off (flips STRK-01/GROUND-04).
@@ -102,6 +102,7 @@ Next: Phase 17 waves 1–5 complete (17-01 RED contract, 17-02 soft per-stroke v
 | Phase 17 P09 | 11min | 2 tasks | 2 files |
 | Phase 17 P06 | 15min | 1 tasks | 7 files |
 | Phase 17 P07 | 32 | 2 tasks | 9 files |
+| Phase 17 P08 | 9min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -220,6 +221,10 @@ Recent decisions affecting current work:
 - [Phase 17]: 17-07: geo-diff cutover — the deterministic on-device scorer OWNS pass/fail on EVERY client path (D-A); applyResult runs unconditionally + synchronously in _onResult, the aiJudge deferral is deleted, and brain failure only clears the tutor line (GROUND-01 restored, UAT F2 structurally impossible)
 - [Phase 17]: 17-07: strokeImage is GONE client-side — onStrokeImage/_renderStrokesToBase64Png/TutorFacts field+param+emission/TutorDecision.verdict plumbing all deleted (GROUND-04 surface shrink, client half); removal-ordering satisfied so 17-08 can drop the server field + image_judge.py; a grep-guard + behavioral cutover test make it regression-proof
 - [Phase 17]: 17-07: STRK-01/GROUND-04 NOT checkbox-marked (17-01/03/04/05/06 precedent) — this closes the CLIENT half of GROUND-04; ADR-017 + the single Cloud Run re-deploy (17-10) complete it. write_surface Test 5 reconciled (hanging headless toImage render deleted); full-suite failures 9->8
+- [Phase ?]: 17-08: server retirement (D-A) — strokeImage->image_judge short-circuit deleted from main.py, strokeImage removed from TutorFactsIn, CoachOut.verdict removed, image_judge.py DELETED; no image can reach the server and no verdict can leave it (GROUND-04 server half)
+- [Phase ?]: 17-08: strokeImage joins FORBIDDEN_KEYS — a stale-client image key now 422s BY DESIGN (proven at the DTO + live /coach boundary); the 422 is the structural proof the off-device surface shrank; removal lockstep closed on both wire sides (client 17-07 + server 17-08)
+- [Phase ?]: 17-08: UAT F1 fixed — English helper copy forced textDirection: TextDirection.ltr under the RTL Directionality (meet_section + feedback_panel_v2); ArabicText stays RTL; prompt_header untouched; pinned by meet_section_ltr_test.dart
+- [Phase ?]: 17-08: STRK-01/GROUND-04 NOT checkbox-marked (precedent) — closes the SERVER half of GROUND-04; ADR-017 + single Cloud Run re-deploy (17-10) complete it; requirements-completed stays []
 
 ### Pending Todos
 
@@ -260,6 +265,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-06T16:48:59.672Z
+Last session: 2026-07-06T17:05:45.705Z
 Stopped at: Completed 17-07-PLAN.md
 Resume files: .planning/phases/17-build-stroke-aware-coaching-on-device-geo-diff-to-coach/17-07-PLAN.md (next — geo-diff cutover), .planning/phases/17-build-stroke-aware-coaching-on-device-geo-diff-to-coach/17-06-SUMMARY.md, .planning/phases/17-build-stroke-aware-coaching-on-device-geo-diff-to-coach/17-05-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
