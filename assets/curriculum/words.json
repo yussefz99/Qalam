@@ -692,6 +692,85 @@
         "zaay"
       ],
       "signedOff": false
+    },
+    {
+      "id": "samak",
+      "text": "???",
+      "audio": "word.samak",
+      "image": "img.fish",
+      "gloss": {
+        "en": "fish"
+      },
+      "letters": [
+        "seen",
+        "meem",
+        "kaaf"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "sayyara",
+      "text": "?????",
+      "audio": "word.sayyara",
+      "image": "img.car",
+      "gloss": {
+        "en": "car"
+      },
+      "letters": [
+        "seen",
+        "yaa",
+        "alif",
+        "raa",
+        "taa_marbuta"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "samakah",
+      "text": "????",
+      "audio": "word.samakah",
+      "image": "img.fish",
+      "gloss": {
+        "en": "fish"
+      },
+      "letters": [
+        "seen",
+        "meem",
+        "kaaf",
+        "taa_marbuta"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "kursi",
+      "text": "????",
+      "audio": "word.kursi",
+      "image": "img.chair",
+      "gloss": {
+        "en": "chair"
+      },
+      "letters": [
+        "kaaf",
+        "raa",
+        "seen",
+        "yaa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "shams",
+      "text": "???",
+      "audio": "word.shams",
+      "image": "img.sun",
+      "gloss": {
+        "en": "sun"
+      },
+      "letters": [
+        "sheen",
+        "meem",
+        "seen"
+      ],
+      "signedOff": false
     }
   ]
 }
