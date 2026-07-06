@@ -28,12 +28,52 @@ class Tolerances {
   /// passes at this value; a higher ceiling is MORE permissive (lets a more
   /// bowed stroke pass), a lower ceiling is STRICTER. (Was `_kMaxCurvature =
   /// 0.25`.)
+  ///
+  /// DEPRECATION NOTE: no longer read by `scoreStroke` after Plan 17-02 (the
+  /// chord-curvature proxy was replaced by `shapeDistance` + the soft band
+  /// below); kept as a field so authored letters.json tolerance overrides
+  /// still parse.
   final double maxCurvature;
+
+  /// Soft-band shape threshold: DTW distance at/below which the stroke's shape
+  /// is CERTAINLY CORRECT (`SoftBand.tcc` — Plan 17-02, D-C).
+  ///
+  /// PROVISIONAL (D-D): set from synthetic baa variants, == the
+  /// `SoftBand.shapeDefault` first cut; production values come from the
+  /// mom-labelled calibration set.
+  final double shapeTcc;
+
+  /// Soft-band shape threshold: DTW distance at/above which the stroke's shape
+  /// is CERTAINLY WRONG (`SoftBand.tcw`) — the only shape zone that fails.
+  ///
+  /// PROVISIONAL (D-D): synthetic first cut == `SoftBand.shapeDefault`;
+  /// production values come from the mom-labelled calibration.
+  final double shapeTcw;
+
+  /// Soft-band direction threshold: normalized displacement alignment p (in
+  /// [-1, 1], projected on the reference direction axis) at/above which the
+  /// direction is CERTAINLY CORRECT.
+  ///
+  /// PROVISIONAL (D-D): synthetic; production values come from the
+  /// mom-labelled calibration.
+  final double directionCc;
+
+  /// Soft-band direction threshold: alignment p at/below which the direction
+  /// is CERTAINLY WRONG (an inverted stroke) — the only direction zone that
+  /// fails.
+  ///
+  /// PROVISIONAL (D-D): synthetic; production values come from the
+  /// mom-labelled calibration.
+  final double directionCw;
 
   const Tolerances({
     required this.minRawPoints,
     required this.resampleN,
     required this.maxCurvature,
+    this.shapeTcc = 0.10,
+    this.shapeTcw = 0.15,
+    this.directionCc = 0.3,
+    this.directionCw = -0.3,
   });
 
   /// Named presets. `normal` MUST equal the constants formerly in
@@ -90,11 +130,17 @@ class Tolerances {
     final minRaw = overrides['minRawPoints'] as num?;
     final resample = overrides['resampleN'] as num?;
     final maxCurv = overrides['maxCurvature'] as num?;
+    final shapeTccOv = overrides['shapeTcc'] as num?;
+    final shapeTcwOv = overrides['shapeTcw'] as num?;
 
     return Tolerances(
       minRawPoints: minRaw?.toInt() ?? base.minRawPoints,
       resampleN: resample?.toInt() ?? base.resampleN,
       maxCurvature: maxCurv?.toDouble() ?? base.maxCurvature,
+      shapeTcc: shapeTccOv?.toDouble() ?? base.shapeTcc,
+      shapeTcw: shapeTcwOv?.toDouble() ?? base.shapeTcw,
+      directionCc: base.directionCc,
+      directionCw: base.directionCw,
     );
   }
 }

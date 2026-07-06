@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:qalam/core/scoring/shape_match.dart';
 import 'package:qalam/core/scoring/tolerances.dart';
 
 /// SC#4 — tolerances are DATA, not code.
@@ -67,6 +68,45 @@ void main() {
       expect(t.minRawPoints, equals(6));
       expect(t.maxCurvature, equals(0.25));
       expect(t.resampleN, equals(32));
+    });
+  });
+
+  // ── Plan 17-02 — soft-band knobs are DATA (D-C/D-D) ────────────────────────
+  // PROVISIONAL defaults from synthetic baa variants; production values come
+  // from the mom-labelled calibration set (D-D).
+  group('Tolerances — soft-band knobs (Plan 17-02)', () {
+    test('every preset carries the PROVISIONAL soft-band defaults', () {
+      for (final name in ['loose', 'normal', 'strict']) {
+        final t = Tolerances.preset(name);
+        expect(t.shapeTcc, equals(0.10), reason: '$name.shapeTcc');
+        expect(t.shapeTcw, equals(0.15), reason: '$name.shapeTcw');
+        expect(t.directionCc, equals(0.3), reason: '$name.directionCc');
+        expect(t.directionCw, equals(-0.3), reason: '$name.directionCw');
+      }
+    });
+
+    test('shapeTcc/shapeTcw equal SoftBand.shapeDefault (single source)', () {
+      expect(Tolerances.normal.shapeTcc, equals(SoftBand.shapeDefault.tcc));
+      expect(Tolerances.normal.shapeTcw, equals(SoftBand.shapeDefault.tcw));
+    });
+
+    test('fromJson honors shapeTcc/shapeTcw overrides (round-trip)', () {
+      final t = Tolerances.fromJson(const {
+        'preset': 'normal',
+        'overrides': {'shapeTcc': 0.08, 'shapeTcw': 0.20},
+      });
+      expect(t.shapeTcc, equals(0.08));
+      expect(t.shapeTcw, equals(0.20));
+      // Untouched knobs keep the preset values — overrides are per-knob.
+      expect(t.maxCurvature, equals(0.25));
+      expect(t.directionCc, equals(0.3));
+      expect(t.directionCw, equals(-0.3));
+    });
+
+    test('fromJson with no overrides keeps the soft-band defaults', () {
+      final t = Tolerances.fromJson(const {'preset': 'normal'});
+      expect(t.shapeTcc, equals(0.10));
+      expect(t.shapeTcw, equals(0.15));
     });
   });
 }
