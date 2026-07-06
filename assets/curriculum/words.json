@@ -629,6 +629,69 @@
         "raa"
       ],
       "signedOff": false
+    },
+    {
+      "id": "zayt",
+      "text": "???",
+      "audio": "word.zayt",
+      "image": "img.oil",
+      "gloss": {
+        "en": "oil"
+      },
+      "letters": [
+        "zaay",
+        "yaa",
+        "taa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "zahra",
+      "text": "????",
+      "audio": "word.zahra",
+      "image": "img.flower",
+      "gloss": {
+        "en": "flower"
+      },
+      "letters": [
+        "zaay",
+        "haa_f",
+        "raa",
+        "taa_marbuta"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "zuraafa",
+      "text": "?????",
+      "audio": "word.zuraafa",
+      "image": "img.giraffe",
+      "gloss": {
+        "en": "giraffe"
+      },
+      "letters": [
+        "zaay",
+        "raa",
+        "alif",
+        "faa",
+        "taa_marbuta"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "mawz",
+      "text": "???",
+      "audio": "word.mawz",
+      "image": "img.banana",
+      "gloss": {
+        "en": "banana"
+      },
+      "letters": [
+        "meem",
+        "waaw",
+        "zaay"
+      ],
+      "signedOff": false
     }
   ]
 }
