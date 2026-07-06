@@ -46,7 +46,6 @@ TutorFacts buildTutorFacts({
   List<String> clearedTiers = const [],
   List<String> clearedCompetencies = const [],
   Map<String, Object?>? strokeDiff,
-  String? strokeImage,
 }) {
   return TutorFacts(
     letterId: letterId,
@@ -60,7 +59,6 @@ TutorFacts buildTutorFacts({
     clearedTiers: List<String>.unmodifiable(clearedTiers),
     clearedCompetencies: List<String>.unmodifiable(clearedCompetencies),
     strokeDiff: strokeDiff,
-    strokeImage: strokeImage,
     // Phase 17 (17-06): the STRUCTURED criteria + derived word facts are DERIVED
     // FROM the already-non-PII [result] (the scorer serialized them into the
     // CheckResult) — NOT new parameters. The signature stays the guard: no

@@ -79,7 +79,6 @@ class TutorFacts {
     this.clearedTiers = const [],
     this.clearedCompetencies = const [],
     this.strokeDiff,
-    this.strokeImage,
     this.criteria,
     this.weakestCriterion,
     this.expectedWord,
@@ -138,15 +137,6 @@ class TutorFacts {
   /// server's `extra="forbid"` 422s any stray coordinate key.
   final Map<String, Object?>? strokeDiff;
 
-  /// Phase 17.1 (owner directive 2026-06-30): a base64 PNG of the child's rendered
-  /// strokes. This is the AI-OWNS-PASS/FAIL path: the scorer false-fails correct
-  /// writing, so the AI judges the rendered letter on its own expertise and returns
-  /// the verdict. Sending an image of the handwriting REVERSES GROUND-02 (raw
-  /// geometry leaves the device) — owner-authorized for the demo; consent + an ADR
-  /// are required for production. Null on letters/exercises where it does not apply
-  /// (the normal scorer path). Mirrors `TutorFactsIn.strokeImage` (server schema).
-  final String? strokeImage;
-
   /// Phase 17 (17-06, STRK-01 / D-B / GROUND-04): the STRUCTURED per-criterion
   /// results derived from the scorer's `LetterScore` — each entry is EXACTLY
   /// `{criterion, zone, score}` (the soft zone's enum NAME string), point-free.
@@ -176,8 +166,8 @@ class TutorFacts {
 
   /// The whitelisted serialized form. Emits ONLY the derived fields (the eight
   /// base + `clearedTiers`/`clearedCompetencies`, plus the Phase-17 derived
-  /// `strokeDiff`/`strokeImage`/`criteria`/`weakestCriterion`/`expectedWord`/
-  /// `writtenWord` when present) — no raw strokes, no PII. This is the exact
+  /// `strokeDiff`/`criteria`/`weakestCriterion`/`expectedWord`/`writtenWord` when
+  /// present) — no raw strokes, no PII. This is the exact
   /// shape that crosses the network as the `/coach` request body; its keys +
   /// casing mirror the deployed server `TutorFactsIn` (`server/app/schema.py`)
   /// so `extra="forbid"` returns 200, not 422 (GROUND-02 / the 422 lockstep).
@@ -195,9 +185,6 @@ class TutorFacts {
         // Phase 17: include the derived diff only when present (omit the key when
         // null so an unchanged payload byte-matches the prior shape).
         if (strokeDiff != null) 'strokeDiff': strokeDiff,
-        // Phase 17.1: the rendered-strokes image (AI-owns-pass/fail path). Omitted
-        // when null so the normal payload shape is unchanged.
-        if (strokeImage != null) 'strokeImage': strokeImage,
         // Phase 17 (17-06): the STRUCTURED criteria + derived word facts. Emitted
         // ONLY when present so an unchanged payload byte-matches the prior shape
         // (the 422 lockstep, Pitfall 1). The key strings byte-match the server

@@ -42,13 +42,11 @@ const _whitelist = <String>{
   // a nested object whose own keys are listed in [_strokeDiffKeys]. The field
   // itself is non-PII; raw strokes never leave the device, only this derived map.
   'strokeDiff',
-  // Phase 17.1 (owner directive 2026-06-30): a base64 PNG of the rendered strokes
-  // — the AI-owns-pass/fail path. This DELIBERATELY relaxes GROUND-02 (a rendered
-  // image of the handwriting leaves the device) — owner-authorized; consent + an
-  // ADR are required for production. The value is an opaque base64 string (no
-  // coordinate KEYS), so it passes the token guard while being a recorded, scoped
-  // exception, not an accidental leak.
-  'strokeImage',
+  // Phase 17 (17-07, D-A / GROUND-04): `strokeImage` is GONE. The Phase-17.1
+  // rendered-handwriting-image (AI-owns-pass/fail) path is RETIRED — the scorer
+  // owns the verdict on-device, so no image of the child's handwriting ever leaves
+  // the device (a net privacy win; the client half of the GROUND-04 surface
+  // shrink). `stroke_image_grep_guard_test.dart` pins its absence from lib/.
   // Phase 17 (17-06, STRK-01/D-B/GROUND-04): the STRUCTURED per-criterion result
   // + derived word facts. `criteria` is a list of point-free records whose own
   // keys are listed in [_criteriaKeys]; the three scalars are derived strings. All
@@ -161,8 +159,6 @@ TutorFacts _fullyPopulatedFacts() => const TutorFacts(
         'dotVertical': 'below the bowl',
         'dotPlacementOk': false,
       },
-      // Phase 17.1: an opaque base64 image string (authorized GROUND-02 exception).
-      strokeImage: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=',
       // Phase 17 (17-06): a representative DERIVED criteria list exercising every
       // nested key — {criterion, zone, score} scalars ONLY (never a coordinate) —
       // plus the weakest criterion + the F6 word facts (derived TEXT, no geometry).
@@ -250,9 +246,6 @@ void main() {
         'bowlDepthRatio',
         'dotHorizontal',
         'dotPlacementOk',
-        // Phase 17.1 image field — the KEY passes the token guard (the value is an
-        // opaque base64 string; the reversal is recorded via the whitelist comment).
-        'strokeImage',
         // Phase 17 (17-06) criteria + word mirror keys — must PASS the guard
         // (`criterion`, never `name`; no key contains a `point` substring).
         'criteria',

@@ -158,12 +158,6 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
   /// Never holds raw strokes (the surface discards those) — only the derived map.
   Map<String, Object?>? _pendingStrokeDiff;
 
-  /// Phase 17.1 (owner directive): a base64 PNG of the current attempt's strokes
-  /// (baa only), set by [WriteSurface.onStrokeImage], attached to the coach FACTS
-  /// so the AI judges pass/fail, then cleared. The AI verdict can OVERRULE a scorer
-  /// fail (fixing false negatives on correct writing).
-  String? _pendingStrokeImage;
-
   bool get _isTeachCard => widget.exercise.surface == null;
 
   @override
@@ -187,12 +181,6 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
     _pendingStrokeDiff = diff;
   }
 
-  /// Phase 17.1: stash the rendered-strokes image (baa) for the current attempt,
-  /// attached to the coach FACTS so the AI judges pass/fail (owner directive).
-  void _onStrokeImage(String? imageB64) {
-    _pendingStrokeImage = imageB64;
-  }
-
   void _onValidating() {
     // LATENCY MARK 1 (debug/demo-only): the child lifted the stylus and the
     // letter is complete — the start of the written-stroke → first-TTS path.
@@ -200,36 +188,27 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
     ref.read(exerciseControllerProvider.notifier).think();
   }
 
-  /// Apply a scored attempt. Two paths:
-  ///
-  /// * NON-image (other letters / write-mode): the deterministic scorer owns the
-  ///   verdict INSTANTLY (GROUND-01, unchanged) — the local reflex — then the brain
-  ///   supplies a richer line a beat later.
-  /// * Image-judge path (baa, online — Phase 17.1, owner directive): the AI OWNS
-  ///   pass/fail. We DEFER the verdict to the AI response — only the "thinking" beat
-  ///   shows meanwhile — so the offline/scorer feedback never flashes-then-gets-
-  ///   overwritten. The AI verdict drives the star, the line, AND the session
-  ///   trajectory (so the next-question selection reacts to what the AI decided,
-  ///   not the mis-calibrated scorer). The scorer is the OFFLINE fallback: if the
-  ///   brain returns no verdict (offline/timeout/degraded) we apply the scorer floor.
+  /// Apply a scored attempt. The deterministic on-device scorer OWNS pass/fail on
+  /// EVERY path (D-A — this REVERSES the Phase-17.1 AI-owns-pass/fail image judge):
+  /// the verdict + star render INSTANTLY and synchronously from [result] (GROUND-01,
+  /// the local reflex) — never deferred to, and never overturned by, a model. The
+  /// brain then supplies a richer coaching LINE a beat later (the WORDS only); a
+  /// cold, slow, offline, or failing server can affect ONLY that line, never the
+  /// verdict or the star. This is the structural fix for UAT F2 (no more
+  /// flash-then-overwrite: nothing is ever applied twice).
   void _onResult(CheckResult result) {
     final section = widget.exercise.type ?? widget.exercise.skill;
     final strokeDiff = _pendingStrokeDiff;
     _pendingStrokeDiff = null;
-    final strokeImage = _pendingStrokeImage;
-    _pendingStrokeImage = null;
-    // The image-judge path defers the verdict to the AI; every other path keeps the
-    // instant scorer reflex.
-    final aiJudge = strokeImage != null;
 
-    if (!aiJudge) {
-      ref.read(exerciseControllerProvider.notifier).applyResult(result);
-      markLatency(LatencySegment.scorerVerdictRendered);
-      if (result.passed && widget.graphExerciseId != null) {
-        widget.onGraphNodePassed?.call(widget.graphExerciseId!);
-      }
-      _recordAttempt(section, result.passed, result.mistakeId);
+    // The scorer verdict applies UNCONDITIONALLY and synchronously — the instant
+    // reflex (D-A / GROUND-01). No path waits on the network.
+    ref.read(exerciseControllerProvider.notifier).applyResult(result);
+    markLatency(LatencySegment.scorerVerdictRendered);
+    if (result.passed && widget.graphExerciseId != null) {
+      widget.onGraphNodePassed?.call(widget.graphExerciseId!);
     }
+    _recordAttempt(section, result.passed, result.mistakeId);
 
     final facts = buildTutorFacts(
       letterId: widget.letter.id,
@@ -238,7 +217,6 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
       recentMistakes: List<String>.unmodifiable(_recentMistakes),
       trajectory: List<AttemptFact>.unmodifiable(_trajectory),
       strokeDiff: strokeDiff,
-      strokeImage: strokeImage,
     );
     // The cloud agent's coaching prompt is baa-specific (Phase 14-17 was scoped to
     // baa), so it must run ONLY for baa — for any other letter it speaks baa
@@ -253,30 +231,9 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
       if (!mounted) return;
       final line = _lineOf(decision);
 
-      if (aiJudge) {
-        // The AI owns pass/fail on this path. A null verdict means the brain
-        // degraded to the offline floor → fall back to the scorer's verdict so
-        // the loop never dead-ends.
-        final verdict = decision.verdict;
-        final passed = verdict == 'pass'
-            ? true
-            : verdict == 'needsWork'
-                ? false
-                : result.passed;
-        ref.read(exerciseControllerProvider.notifier).applyVerdict(
-              passed: passed,
-              line: line,
-              mistakeId: result.mistakeId,
-            );
-        markLatency(LatencySegment.scorerVerdictRendered);
-        if (passed && widget.graphExerciseId != null) {
-          widget.onGraphNodePassed?.call(widget.graphExerciseId!);
-        }
-        _recordAttempt(section, passed, passed ? null : result.mistakeId);
-      }
-
       // Route the agent's line into the tutor-owned channel. Empty → null so the
-      // verdict-side line shows.
+      // verdict-side authored line shows. The verdict/star are already applied and
+      // are NOT touched here — the brain only enriches the WORDS (D-A).
       ref.read(tutorLineProvider.notifier).set(line.isNotEmpty ? line : null);
       markLatency(LatencySegment.lineRendered);
 
@@ -288,23 +245,17 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
         unawaited(ref.read(ttsCoachSpeakerProvider).speak(spokenText));
       }
     }).catchError((_) {
-      // The brain never throws, but be defensive. On the image path nothing has
-      // been applied yet, so fall back to the scorer floor here (no earlier flash).
+      // The brain never throws, but be defensive. The scorer verdict is already
+      // applied and STANDS; a brain failure only clears the (absent) tutor line —
+      // never a flash-then-overwrite, never a verdict reversal (D-A).
       if (!mounted) return;
-      if (aiJudge) {
-        ref.read(exerciseControllerProvider.notifier).applyResult(result);
-        if (result.passed && widget.graphExerciseId != null) {
-          widget.onGraphNodePassed?.call(widget.graphExerciseId!);
-        }
-        _recordAttempt(section, result.passed, result.mistakeId);
-      }
       ref.read(tutorLineProvider.notifier).clear();
     });
   }
 
   /// Append a derived (non-PII) attempt record to the session trajectory + recent
-  /// mistakes. On the image-judge path this is called with the AI's verdict (not
-  /// the scorer's) so the next-question selection reacts to what the AI decided.
+  /// mistakes. Always called with the deterministic scorer's verdict (D-A) so the
+  /// next-question selection reacts to the on-device decision, never a model's.
   void _recordAttempt(String section, bool passed, String? mistakeId) {
     _trajectory.add(AttemptFact(passed: passed, mistakeId: mistakeId, section: section));
     if (!passed && mistakeId != null) {
@@ -434,7 +385,6 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
         onValidating: _onValidating,
         onResult: _onResult,
         onStrokeDiff: _onStrokeDiff,
-        onStrokeImage: _onStrokeImage,
         canvasController: _canvasController,
         watchMeLabel: widget.strings.watchMe,
       );

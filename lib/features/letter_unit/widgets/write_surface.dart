@@ -24,9 +24,6 @@
 // are scored and discarded here (T-07-04-01) — only the verdict leaves.
 
 import 'dart:async';
-import 'dart:convert';
-import 'dart:math' as math;
-import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -58,7 +55,6 @@ class WriteSurface extends ConsumerStatefulWidget {
     required this.letter,
     this.onResult,
     this.onStrokeDiff,
-    this.onStrokeImage,
     this.onValidating,
     this.canvasController,
     this.watchMeLabel = 'Watch me',
@@ -90,13 +86,6 @@ class WriteSurface extends ConsumerStatefulWidget {
   /// host has the diff in hand when it builds the coach FACTS. The raw strokes are
   /// still discarded here; only this derived map leaves the surface.
   final void Function(Map<String, Object?>? diff)? onStrokeDiff;
-
-  /// Phase 17.1 (owner directive): a base64 PNG of the child's rendered strokes —
-  /// or null when none applies (non-baa / write-mode). Fires just BEFORE [onResult]
-  /// so the host can attach it to the coach FACTS for the AI to judge pass/fail.
-  /// Rendering an image of the handwriting reverses GROUND-02 (owner-authorized for
-  /// the demo). Scoped to baa here (the judge prompt is baa-specific).
-  final void Function(String? imageB64)? onStrokeImage;
 
   /// Called the instant the child finishes the letter, BEFORE the (async)
   /// validator resolves — lets the host show the "thinking" beat.
@@ -230,78 +219,8 @@ class _WriteSurfaceState extends ConsumerState<WriteSurface> {
         strokeDiff = null;
       }
     }
-    // Phase 17.1 (owner directive): for baa, render the strokes to a small image so
-    // the AI can judge pass/fail on its own expertise (the scorer false-fails real
-    // writing). baa-only — the judge prompt is baa-specific. Best-effort → null on
-    // any failure, so the server then falls back to the scorer path. Reverses
-    // GROUND-02 (a rendered image of the handwriting leaves the device).
-    String? strokeImage;
-    if (_isTrace && widget.letter.id == 'baa') {
-      try {
-        strokeImage = await _renderStrokesToBase64Png(strokes);
-      } catch (_) {
-        strokeImage = null;
-      }
-      if (!mounted) return;
-    }
-    widget.onStrokeImage?.call(strokeImage);
     widget.onStrokeDiff?.call(strokeDiff);
     widget.onResult?.call(result);
-  }
-
-  /// Render the child's [strokes] (pixel-space Offsets) to a frame-filled PNG —
-  /// dark ink on white, the same shape the AI image-judge was validated against:
-  /// uniform-scaled to ~70% of a 320px canvas, centered, round caps/joins so a
-  /// dot-tap reads as a round mark. Returns a base64 string, or null if empty.
-  /// The raw strokes never leave the surface — only this rendered image does.
-  Future<String?> _renderStrokesToBase64Png(List<List<Offset>> strokes) async {
-    final pts = [for (final s in strokes) ...s];
-    if (pts.isEmpty) return null;
-    var minX = double.infinity, minY = double.infinity;
-    var maxX = -double.infinity, maxY = -double.infinity;
-    for (final p in pts) {
-      minX = math.min(minX, p.dx);
-      maxX = math.max(maxX, p.dx);
-      minY = math.min(minY, p.dy);
-      maxY = math.max(maxY, p.dy);
-    }
-    const size = 320.0;
-    final w = maxX - minX, h = maxY - minY;
-    final scale = size * 0.70 / math.max(math.max(w, h), 1e-6);
-    final ox = (size - w * scale) / 2 - minX * scale;
-    final oy = (size - h * scale) / 2 - minY * scale;
-    Offset map(Offset p) => Offset(p.dx * scale + ox, p.dy * scale + oy);
-
-    final recorder = ui.PictureRecorder();
-    final canvas = Canvas(recorder);
-    canvas.drawRect(
-      const Rect.fromLTWH(0, 0, size, size),
-      Paint()..color = const Color(0xFFFFFFFF),
-    );
-    final ink = Paint()
-      ..color = const Color(0xFF0F0F0F)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 11
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round;
-    for (final s in strokes) {
-      if (s.isEmpty) continue;
-      if (s.length == 1) {
-        canvas.drawCircle(map(s.first), 8, Paint()..color = const Color(0xFF0F0F0F));
-        continue;
-      }
-      final path = Path()..moveTo(map(s.first).dx, map(s.first).dy);
-      for (final p in s.skip(1)) {
-        final q = map(p);
-        path.lineTo(q.dx, q.dy);
-      }
-      canvas.drawPath(path, ink);
-    }
-    final image = await recorder.endRecording().toImage(size.toInt(), size.toInt());
-    final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
-    image.dispose();
-    if (bytes == null) return null;
-    return base64Encode(bytes.buffer.asUint8List());
   }
 
   @override

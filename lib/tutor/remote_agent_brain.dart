@@ -126,23 +126,24 @@ class RemoteAgentBrain implements TutorBrain {
         : const <String, Object?>{};
 
     final plan = _planFrom(args);
-    // Phase 17.1: the AI's image-judge verdict ("pass"|"needsWork") rides top-level on CoachOut.
-    final verdict = decoded['verdict'] as String?;
-
+    // Phase 17 (D-A): the client no longer reads a model verdict. The deterministic
+    // on-device scorer OWNS pass/fail (the image-judge reversal is retired); an
+    // absent `verdict` field is expected — the normal path never carried one, and
+    // 17-08 deletes it from the server `CoachOut`. This parser reads ONLY toolName +
+    // args, so a present-or-absent verdict key changes nothing.
     switch (toolName) {
       case TutorTool.say:
-        return Say((args['text'] as String?) ?? '', plan: plan, verdict: verdict);
+        return Say((args['text'] as String?) ?? '', plan: plan);
       case TutorTool.presentActivity:
         return PresentActivity(
           coachingLine: (args['coachingLine'] as String?) ?? '',
           letterId: (args['letterId'] as String?) ?? facts.letterId,
           plan: plan,
-          verdict: verdict,
         );
       case TutorTool.giveHint:
-        return GiveHint(plan: plan, verdict: verdict);
+        return GiveHint(plan: plan);
       case TutorTool.advance:
-        return Advance(plan: plan, verdict: verdict);
+        return Advance(plan: plan);
       default:
         // Unknown / hallucinated tool — never a verdict path (GROUND-01).
         return null;
