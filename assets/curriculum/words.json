@@ -116,6 +116,85 @@
         "alif",
         "meem"
       ]
+    },
+    {
+      "id": "thalab",
+      "text": "ثعلب",
+      "audio": "word.thalab",
+      "image": "img.fox",
+      "gloss": {
+        "en": "fox"
+      },
+      "letters": [
+        "thaa",
+        "ayn",
+        "laam",
+        "baa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "thalj",
+      "text": "ثلج",
+      "audio": "word.thalj",
+      "image": "img.snow",
+      "gloss": {
+        "en": "snow"
+      },
+      "letters": [
+        "thaa",
+        "laam",
+        "jeem"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "thuban",
+      "text": "ثعبان",
+      "audio": "word.thuban",
+      "image": "img.snake",
+      "gloss": {
+        "en": "snake"
+      },
+      "letters": [
+        "thaa",
+        "ayn",
+        "baa",
+        "alif",
+        "noon"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "thawm",
+      "text": "ثوم",
+      "audio": "word.thawm",
+      "image": "img.garlic",
+      "gloss": {
+        "en": "garlic"
+      },
+      "letters": [
+        "thaa",
+        "waaw",
+        "meem"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "muthallath",
+      "text": "مثلث",
+      "audio": "word.muthallath",
+      "image": "img.triangle",
+      "gloss": {
+        "en": "triangle"
+      },
+      "letters": [
+        "meem",
+        "thaa",
+        "laam",
+        "thaa"
+      ],
+      "signedOff": false
     }
   ]
 }

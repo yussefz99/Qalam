@@ -1557,6 +1557,615 @@
         "wrongOrder": "Keep the words in order: الأسدُ كبير."
       },
       "signedOff": true
+    },
+    {
+      "id": "thaa.teachCard.meet",
+      "type": "teachCard",
+      "skill": "comprehension",
+      "_note": "SUPPORT section: PromptHeader only, no WriteSurface.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "This card just teaches — the sound and the shapes."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.thaa"
+        },
+        {
+          "kind": "image",
+          "imageId": "img.fox",
+          "caption": "ثَعْلَب · tha'lab"
+        },
+        {
+          "kind": "forms",
+          "char": "ث",
+          "forms": [
+            "isolated",
+            "initial",
+            "medial",
+            "final"
+          ]
+        }
+      ],
+      "surface": null,
+      "expected": null,
+      "check": null,
+      "feedback": null,
+      "signedOff": false
+    },
+    {
+      "id": "thaa.traceLetter.isolated",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Sweep the boat, then three dots on top — one, two, three."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.thaa"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "isolated",
+        "demo": true
+      },
+      "expected": {
+        "glyph": {
+          "char": "ث",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "Beautiful — a deep boat and three neat dots. أحسنت!",
+        "shallowBowl": "A little more curve in the boat — try again, slower.",
+        "noDot": "Good boat — now three dots above it, like a little triangle."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "thaa.traceLetter.initial",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "The starting thaa — flat and low, three dots on top."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.thaa"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "initial",
+        "demo": true
+      },
+      "expected": {
+        "glyph": {
+          "char": "ث",
+          "form": "initial"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "Beautiful — smooth and clean. أحسنت!",
+        "shallowBowl": "A little more curve — try again, slower.",
+        "noDot": "Good shape — now the three dots."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "thaa.traceLetter.medial",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "A little tooth in the middle, three dots above."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.thaa"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "medial",
+        "demo": true
+      },
+      "expected": {
+        "glyph": {
+          "char": "ث",
+          "form": "medial"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "Beautiful — smooth and clean. أحسنت!",
+        "shallowBowl": "A little more curve — try again, slower.",
+        "noDot": "Good shape — now the three dots."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "thaa.writeLetter.fromSound",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen, then write the letter the word starts with."
+        },
+        {
+          "kind": "audio",
+          "audioId": "word.thalab"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ث",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongLetter": "Listen again — which letter makes that sound?"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "thaa.writeLetter.fromPicture",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the letter this picture's word starts with."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.snow",
+          "caption": "ثَلْج"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ث",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongLetter": "Listen again — which letter makes that sound?"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "thaa.writeLetter.writeForm",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write thaa in its isolated form."
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ث",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongLetter": "Three dots on top — try thaa again."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "thaa.writeWord.dictation",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen and write the whole word."
+        },
+        {
+          "kind": "audio",
+          "audioId": "word.thalj"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "ثَلْج"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "ثَلْج — from memory. Real writing! أحسنت!",
+        "incomplete": "Look again and write all of its letters.",
+        "missingDot": "Close — your thaa needs its three dots. Listen again: ثَلْج."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "thaa.writeWord.copy",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Copy the word."
+        },
+        {
+          "kind": "text",
+          "text": "ثوم"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "ثوم"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "ثوم — neatly done. أحسنت!",
+        "incomplete": "Look again and write all of its letters.",
+        "wrongWord": "That's a different word — look again and try ثوم."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "thaa.writeWord.picture",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the word for the picture."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.fox",
+          "caption": "ثَعْلَب"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "ثعلب"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "ثعلب — from memory. Real writing! أحسنت!",
+        "incomplete": "Look again and write all of its letters.",
+        "wrongWord": "That's a different word — look at the picture and try again."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "thaa.connectWord.thalab",
+      "type": "connectWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Join the letters into one connected word."
+        },
+        {
+          "kind": "text",
+          "text": "ث  ع  ل  ب"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "ثعلب"
+        }
+      },
+      "check": "sequence+joinContinuity",
+      "feedback": {
+        "pass": "ثعلب — joined beautifully. أحسنت!",
+        "lifted": "Keep the letters joined — one flowing word, no lifts."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "thaa.connectWord.thawm",
+      "type": "connectWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Join the letters into one connected word."
+        },
+        {
+          "kind": "text",
+          "text": "ث  و  م"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "ثوم"
+        }
+      },
+      "check": "sequence+joinContinuity",
+      "feedback": {
+        "pass": "ثوم — joined beautifully. أحسنت!",
+        "lifted": "Keep the letters joined — one flowing word, no lifts."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "thaa.completeWord.middle",
+      "type": "completeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Fill in the missing thaa to finish the word."
+        },
+        {
+          "kind": "text",
+          "text": "مثلث"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "word": {
+          "text": "مثلث"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "Complete! مثلث. أحسنت!",
+        "incomplete": "Fill in the missing thaa to finish the word."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "thaa.transformWord.dual",
+      "type": "transformWord",
+      "skill": "grammar",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "One becomes two. Write the dual of ثعلب."
+        },
+        {
+          "kind": "rule",
+          "label": "Dual · مثنى"
+        },
+        {
+          "kind": "text",
+          "text": "ثعلب"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "ثعلبان"
+        }
+      },
+      "check": "sequence+transformRule",
+      "feedback": {
+        "pass": "ثعلبان — أحسنت!",
+        "missingEnding": "Add the ending: ثعلبان."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "thaa.transformWord.plural",
+      "type": "transformWord",
+      "skill": "grammar",
+      "_review": "BROKEN PLURAL — confirm form with owner-mother (ثعالب).",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the plural of ثعلب."
+        },
+        {
+          "kind": "rule",
+          "label": "Plural · جمع"
+        },
+        {
+          "kind": "text",
+          "text": "ثعلب"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "ثعالب"
+        }
+      },
+      "check": "sequence+transformRule",
+      "feedback": {
+        "pass": "ثعالب — أحسنت!",
+        "missingEnding": "Look again — the plural is ثعالب."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "thaa.transformWord.opposite",
+      "type": "transformWord",
+      "skill": "grammar",
+      "_review": "Opposite pair ثقيل→خفيف — confirm appropriate.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the opposite of ثقيل."
+        },
+        {
+          "kind": "rule",
+          "label": "Opposite · ضد"
+        },
+        {
+          "kind": "text",
+          "text": "ثقيل"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "خفيف"
+        }
+      },
+      "check": "sequence+transformRule",
+      "feedback": {
+        "pass": "خفيف — أحسنت!",
+        "wrongWord": "The opposite of heavy is light — خفيف."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "thaa.fillBlank.noun",
+      "type": "fillBlank",
+      "skill": "vocabulary",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the word that completes the sentence."
+        },
+        {
+          "kind": "text",
+          "text": "ثلج"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "ثلج"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "Yes! أحسنت!",
+        "wrongWord": "Read the sentence again and pick the word that fits."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "thaa.buildSentence.hear",
+      "type": "buildSentence",
+      "skill": "syntax",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen to the sentence, then write it in order."
+        },
+        {
+          "kind": "audio",
+          "audioId": "sentence.aththalju-baarid"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "sentence"
+      },
+      "expected": {
+        "words": [
+          "الثَّلْجُ",
+          "بارِد"
+        ]
+      },
+      "check": "order+sequence",
+      "feedback": {
+        "pass": "الثَّلْجُ بارِد — “the snow is cold.” A whole sentence! أحسنت!",
+        "wrongOrder": "Keep the words in order: الثَّلْجُ بارِد."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "thaa.buildSentence.picture",
+      "type": "buildSentence",
+      "skill": "syntax",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the sentence for the picture, word by word."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.snake",
+          "caption": "ثُعْبان"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "sentence"
+      },
+      "expected": {
+        "words": [
+          "الثُّعْبانُ",
+          "طَويل"
+        ]
+      },
+      "check": "order+sequence",
+      "feedback": {
+        "pass": "الثُّعْبانُ طَويل — a whole sentence! أحسنت!",
+        "wrongOrder": "Keep the words in order: الثُّعْبانُ طَويل."
+      },
+      "signedOff": false
     }
   ]
 }
