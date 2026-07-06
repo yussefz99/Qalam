@@ -927,6 +927,82 @@
         "alif"
       ],
       "signedOff": false
+    },
+    {
+      "id": "difdaa",
+      "text": "????",
+      "audio": "word.difdaa",
+      "image": "img.frog",
+      "gloss": {
+        "en": "frog"
+      },
+      "letters": [
+        "daad",
+        "faa",
+        "daal",
+        "ayn"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "dars",
+      "text": "???",
+      "audio": "word.dars",
+      "image": "img.tooth",
+      "gloss": {
+        "en": "molar"
+      },
+      "letters": [
+        "daad",
+        "raa",
+        "seen"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "bayd",
+      "text": "???",
+      "audio": "word.bayd",
+      "image": "img.eggs",
+      "gloss": {
+        "en": "eggs"
+      },
+      "letters": [
+        "baa",
+        "yaa",
+        "daad"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "marad",
+      "text": "???",
+      "audio": "word.marad",
+      "image": "img.sick",
+      "gloss": {
+        "en": "sickness"
+      },
+      "letters": [
+        "meem",
+        "raa",
+        "daad"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "ard",
+      "text": "???",
+      "audio": "word.ard",
+      "image": "img.ground",
+      "gloss": {
+        "en": "ground"
+      },
+      "letters": [
+        "alif",
+        "raa",
+        "daad"
+      ],
+      "signedOff": false
     }
   ]
 }
