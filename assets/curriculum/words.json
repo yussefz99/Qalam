@@ -195,6 +195,68 @@
         "thaa"
       ],
       "signedOff": false
+    },
+    {
+      "id": "jamal",
+      "text": "جمل",
+      "audio": "word.jamal",
+      "image": "img.camel",
+      "gloss": {
+        "en": "camel"
+      },
+      "letters": [
+        "jeem",
+        "meem",
+        "laam"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "jazar",
+      "text": "جزر",
+      "audio": "word.jazar",
+      "image": "img.carrots",
+      "gloss": {
+        "en": "carrots"
+      },
+      "letters": [
+        "jeem",
+        "zaay",
+        "raa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "jabal",
+      "text": "جبل",
+      "audio": "word.jabal",
+      "image": "img.mountain",
+      "gloss": {
+        "en": "mountain"
+      },
+      "letters": [
+        "jeem",
+        "baa",
+        "laam"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "dajaja",
+      "text": "دجاجة",
+      "audio": "word.dajaja",
+      "image": "img.hen",
+      "gloss": {
+        "en": "hen"
+      },
+      "letters": [
+        "daal",
+        "jeem",
+        "alif",
+        "jeem",
+        "taa_marbuta"
+      ],
+      "signedOff": false
     }
   ]
 }

@@ -2166,6 +2166,617 @@
         "wrongOrder": "Keep the words in order: الثُّعْبانُ طَويل."
       },
       "signedOff": false
+    },
+    {
+      "id": "jeem.teachCard.meet",
+      "type": "teachCard",
+      "skill": "comprehension",
+      "_note": "SUPPORT section: PromptHeader only, no WriteSurface.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "This card just teaches — the sound and the shapes."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.jeem"
+        },
+        {
+          "kind": "image",
+          "imageId": "img.camel",
+          "caption": "جَمَل · jamal"
+        },
+        {
+          "kind": "forms",
+          "char": "ج",
+          "forms": [
+            "isolated",
+            "initial",
+            "medial",
+            "final"
+          ]
+        }
+      ],
+      "surface": null,
+      "expected": null,
+      "check": null,
+      "feedback": null,
+      "signedOff": false
+    },
+    {
+      "id": "jeem.traceLetter.isolated",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Curl a round belly, then one dot inside, underneath."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.jeem"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "isolated",
+        "demo": true
+      },
+      "expected": {
+        "glyph": {
+          "char": "ج",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "Beautiful — a round belly and the dot tucked inside. أحسنت!",
+        "wrongShape": "Round the belly more — let it curl down and around.",
+        "noDot": "Good curl — now one dot inside, below the line."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "jeem.traceLetter.initial",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "The starting jeem — a small curl, dot underneath."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.jeem"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "initial",
+        "demo": true
+      },
+      "expected": {
+        "glyph": {
+          "char": "ج",
+          "form": "initial"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "Beautiful — smooth and clean. أحسنت!",
+        "wrongShape": "Round the curl a little more — try again, slower.",
+        "noDot": "Good shape — now the dot underneath."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "jeem.traceLetter.medial",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "In the middle of a word — connect, curl, dot underneath."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.jeem"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "medial",
+        "demo": true
+      },
+      "expected": {
+        "glyph": {
+          "char": "ج",
+          "form": "medial"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "Beautiful — smooth and clean. أحسنت!",
+        "wrongShape": "Keep the belly round as you connect — try again, slower.",
+        "noDot": "Good shape — now the dot underneath."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "jeem.writeLetter.fromSound",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen, then write the letter the word starts with."
+        },
+        {
+          "kind": "audio",
+          "audioId": "word.jamal"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ج",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongLetter": "Listen again — which letter makes that sound?"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "jeem.writeLetter.fromPicture",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the letter this picture's word starts with."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.carrots",
+          "caption": "جَزَر"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ج",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongLetter": "Listen again — which letter makes that sound?"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "jeem.writeLetter.writeForm",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write jeem in its isolated form."
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ج",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongLetter": "One dot inside, underneath — try jeem again."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "jeem.writeWord.dictation",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen and write the whole word."
+        },
+        {
+          "kind": "audio",
+          "audioId": "word.jamal"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "جَمَل"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "جَمَل — from memory. Real writing! أحسنت!",
+        "incomplete": "Look again and write all of its letters.",
+        "missingDot": "Close — your jeem needs its dot underneath. Listen again: جَمَل."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "jeem.writeWord.copy",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Copy the word."
+        },
+        {
+          "kind": "text",
+          "text": "جبل"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "جبل"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "جبل — neatly done. أحسنت!",
+        "incomplete": "Look again and write all of its letters.",
+        "wrongWord": "That's a different word — look again and try جبل."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "jeem.writeWord.picture",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the word for the picture."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.camel",
+          "caption": "جَمَل"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "جمل"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "جمل — from memory. Real writing! أحسنت!",
+        "incomplete": "Look again and write all of its letters.",
+        "wrongWord": "That's a different word — look at the picture and try again."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "jeem.connectWord.jamal",
+      "type": "connectWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Join the letters into one connected word."
+        },
+        {
+          "kind": "text",
+          "text": "ج  م  ل"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "جمل"
+        }
+      },
+      "check": "sequence+joinContinuity",
+      "feedback": {
+        "pass": "جمل — joined beautifully. أحسنت!",
+        "lifted": "Keep the letters joined — one flowing word, no lifts."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "jeem.connectWord.dajaja",
+      "type": "connectWord",
+      "skill": "spelling",
+      "_note": "medial jeem joins on both sides — the harder, valuable case.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Join the letters into one connected word."
+        },
+        {
+          "kind": "text",
+          "text": "د  ج  ا  ج  ة"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "دجاجة"
+        }
+      },
+      "check": "sequence+joinContinuity",
+      "feedback": {
+        "pass": "دجاجة — both jeems joined! أحسنت!",
+        "lifted": "Keep the letters joined — one flowing word, no lifts."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "jeem.completeWord.final",
+      "type": "completeWord",
+      "skill": "spelling",
+      "_note": "final jeem; reuses the crown picture/word from baa/taa.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Fill in the missing jeem to finish the word."
+        },
+        {
+          "kind": "text",
+          "text": "تاج"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "word": {
+          "text": "تاج"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "Complete! تاج. أحسنت!",
+        "incomplete": "Fill in the missing jeem to finish the word."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "jeem.transformWord.dual",
+      "type": "transformWord",
+      "skill": "grammar",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "One becomes two. Write the dual of جمل."
+        },
+        {
+          "kind": "rule",
+          "label": "Dual · مثنى"
+        },
+        {
+          "kind": "text",
+          "text": "جمل"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "جملان"
+        }
+      },
+      "check": "sequence+transformRule",
+      "feedback": {
+        "pass": "جملان — أحسنت!",
+        "missingEnding": "Add the ending: جملان."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "jeem.transformWord.plural",
+      "type": "transformWord",
+      "skill": "grammar",
+      "_review": "BROKEN PLURAL — confirm form with owner-mother (جبال).",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the plural of جبل."
+        },
+        {
+          "kind": "rule",
+          "label": "Plural · جمع"
+        },
+        {
+          "kind": "text",
+          "text": "جبل"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "جبال"
+        }
+      },
+      "check": "sequence+transformRule",
+      "feedback": {
+        "pass": "جبال — أحسنت!",
+        "missingEnding": "Look again — the plural is جبال."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "jeem.transformWord.opposite",
+      "type": "transformWord",
+      "skill": "grammar",
+      "_review": "Opposite pair جميل→قبيح — confirm appropriate for age.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the opposite of جميل."
+        },
+        {
+          "kind": "rule",
+          "label": "Opposite · ضد"
+        },
+        {
+          "kind": "text",
+          "text": "جميل"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "قبيح"
+        }
+      },
+      "check": "sequence+transformRule",
+      "feedback": {
+        "pass": "قبيح — أحسنت!",
+        "wrongWord": "The opposite of beautiful is قبيح."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "jeem.fillBlank.noun",
+      "type": "fillBlank",
+      "skill": "vocabulary",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the word that completes the sentence."
+        },
+        {
+          "kind": "text",
+          "text": "جمل"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "جمل"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "Yes! أحسنت!",
+        "wrongWord": "Read the sentence again and pick the word that fits."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "jeem.buildSentence.hear",
+      "type": "buildSentence",
+      "skill": "syntax",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen to the sentence, then write it in order."
+        },
+        {
+          "kind": "audio",
+          "audioId": "sentence.aljamalu-kabeer"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "sentence"
+      },
+      "expected": {
+        "words": [
+          "الجَمَلُ",
+          "كَبير"
+        ]
+      },
+      "check": "order+sequence",
+      "feedback": {
+        "pass": "الجَمَلُ كَبير — “the camel is big.” A whole sentence! أحسنت!",
+        "wrongOrder": "Keep the words in order: الجَمَلُ كَبير."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "jeem.buildSentence.picture",
+      "type": "buildSentence",
+      "skill": "syntax",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the sentence for the picture, word by word."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.mountain",
+          "caption": "جَبَل"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "sentence"
+      },
+      "expected": {
+        "words": [
+          "الجَبَلُ",
+          "عالٍ"
+        ]
+      },
+      "check": "order+sequence",
+      "feedback": {
+        "pass": "الجَبَلُ عالٍ — a whole sentence! أحسنت!",
+        "wrongOrder": "Keep the words in order: الجَبَلُ عالٍ."
+      },
+      "signedOff": false
     }
   ]
 }
