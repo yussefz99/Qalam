@@ -1554,6 +1554,84 @@
         "kaaf"
       ],
       "signedOff": false
+    },
+    {
+      "id": "laymun",
+      "text": "?????",
+      "audio": "word.laymun",
+      "image": "img.lemon",
+      "gloss": {
+        "en": "lemon"
+      },
+      "letters": [
+        "laam",
+        "yaa",
+        "meem",
+        "waaw",
+        "noon"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "laban",
+      "text": "???",
+      "audio": "word.laban",
+      "image": "img.yogurt",
+      "gloss": {
+        "en": "yogurt"
+      },
+      "letters": [
+        "laam",
+        "baa",
+        "noon"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "lisaan",
+      "text": "????",
+      "audio": "word.lisaan",
+      "image": "img.tongue",
+      "gloss": {
+        "en": "tongue"
+      },
+      "letters": [
+        "laam",
+        "seen",
+        "alif",
+        "noon"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "qalam_laam",
+      "text": "???",
+      "audio": "word.qalam",
+      "image": "img.pen",
+      "gloss": {
+        "en": "pen"
+      },
+      "letters": [
+        "qaaf",
+        "laam",
+        "meem"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "jabal_laam",
+      "text": "???",
+      "audio": "word.jabal",
+      "image": "img.mountain",
+      "gloss": {
+        "en": "mountain"
+      },
+      "letters": [
+        "jeem",
+        "baa",
+        "laam"
+      ],
+      "signedOff": false
     }
   ]
 }

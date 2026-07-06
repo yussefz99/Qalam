@@ -1,0 +1,172 @@
+{
+  "_meta": {
+    "title": "laam curriculum graph - competency + difficulty tier + prerequisites (DRAFT)",
+    "source": "Fresh draft by Codex using the signed baa graph pattern and docs/curriculum/national-curriculum-grade1.md. Vocabulary is [DRAFT] pending owner-mother review.",
+    "sign_off": "DRAFT - awaiting owner-mother sign-off at the tier level. signedOff stays false until she reviews and signs."
+  },
+  "letterId": "laam",
+  "signedOff": false,
+  "competencies": [
+    {
+      "id": "recognize",
+      "essential": true,
+      "prerequisites": []
+    },
+    {
+      "id": "positionalForms",
+      "essential": true,
+      "prerequisites": [
+        "recognize"
+      ]
+    },
+    {
+      "id": "copyWrite",
+      "essential": true,
+      "prerequisites": [
+        "positionalForms"
+      ]
+    },
+    {
+      "id": "fluentReading",
+      "essential": true,
+      "prerequisites": [
+        "copyWrite"
+      ]
+    },
+    {
+      "id": "wordBuilding",
+      "essential": false,
+      "prerequisites": [
+        "copyWrite"
+      ]
+    },
+    {
+      "id": "grammarTransform",
+      "essential": false,
+      "prerequisites": [
+        "copyWrite"
+      ]
+    }
+  ],
+  "tiers": [
+    "manqul",
+    "manzur",
+    "ghayrManzur"
+  ],
+  "nodes": [
+    {
+      "exerciseId": "laam.teachCard.meet",
+      "competency": "recognize",
+      "tier": null,
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "laam.traceLetter.isolated",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "laam.traceLetter.initial",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "laam.traceLetter.medial",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "laam.writeLetter.fromSound",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "laam.writeLetter.fromPicture",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "laam.writeLetter.writeForm",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "laam.connectWord.laymun",
+      "competency": "copyWrite",
+      "tier": "manqul",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "laam.connectWord.laban",
+      "competency": "copyWrite",
+      "tier": "manqul",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "laam.completeWord.middle",
+      "competency": "copyWrite",
+      "tier": "manqul",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "laam.writeWord.copy",
+      "competency": "copyWrite",
+      "tier": "manzur",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "laam.writeWord.picture",
+      "competency": "copyWrite",
+      "tier": "manzur",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "laam.writeWord.dictation",
+      "competency": "copyWrite",
+      "tier": "ghayrManzur",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "laam.buildSentence.hear",
+      "competency": "fluentReading",
+      "tier": "ghayrManzur",
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "laam.buildSentence.picture",
+      "competency": "fluentReading",
+      "tier": "manzur",
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "laam.fillBlank.noun",
+      "competency": "wordBuilding",
+      "tier": null,
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "laam.transformWord.dual",
+      "competency": "grammarTransform",
+      "tier": null,
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "laam.transformWord.plural",
+      "competency": "grammarTransform",
+      "tier": null,
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "laam.transformWord.opposite",
+      "competency": "grammarTransform",
+      "tier": null,
+      "minCleanReps": 1
+    }
+  ]
+}
