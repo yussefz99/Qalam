@@ -185,14 +185,13 @@ class TutorFactsIn(BaseModel):
         description="ML Kit's recognized transcription of what the child wrote (DERIVED text, never geometry).",
     )
 
-    # --- Phase 17.1: a rendered IMAGE of the child's strokes (owner directive 2026-06-30) ---
-    # base64 PNG. This is the AI-OWNS-PASS/FAIL path: the scorer false-fails correct writing, so the
-    # AI judges the rendered letter on its own expertise (reverses GROUND-01 + GROUND-02 — a rendered
-    # image of handwriting leaves the device; owner-authorized for the demo, consent + ADR for prod).
-    strokeImage: str | None = Field(
-        default=None,
-        description="base64 PNG of the child's rendered strokes; when present the AI judges pass/fail.",
-    )
+    # --- RETIRED by Plan 17-08 under D-A (scorer owns pass/fail; ADR-017 at 17-10) ---
+    # The Phase-17.1 rendered-image field (base64 PNG → AI-owns-verdict) is DELETED here. Under D-A
+    # the deterministic on-device scorer owns pass/fail, so no rendered image of child handwriting
+    # may reach the server — a net privacy win (GROUND-04 surface shrink, server half). The client
+    # stopped sending it in 17-07 (client-first removal ordering, RESEARCH Pattern 3); with the field
+    # gone from this extra="forbid" DTO, a stale client that still posts the retired image key now
+    # 422s BY DESIGN — the only live client is the same-phase demo build, cut over first (T-17-18).
 
 
 class CoachOut(BaseModel):
@@ -211,11 +210,9 @@ class CoachOut(BaseModel):
     source: Literal["agent"] = Field(default="agent", description="Who produced this line.")
     grounded: bool = Field(
         default=True,
-        description="True when the action honors the frozen verdict; False if the G3 guard had to rewrite it.",
+        description="True when the action honors the scorer's frozen pass/fail; False if the G3 guard had to rewrite it.",
     )
-    # Phase 17.1: the AI's pass/fail when it judged a rendered image (owner directive). null on the
-    # normal (scorer-owned) path. "pass" lets the client award the star even if the scorer failed.
-    verdict: str | None = Field(
-        default=None,
-        description='AI verdict when an image was judged: "pass" | "needsWork"; null otherwise.',
-    )
+    # NOTE: the Phase-17.1 AI pass/fail field is RETIRED here (Plan 17-08, D-A). Under D-A the
+    # scorer owns pass/fail, so no response field may carry a model pass/fail for the client to
+    # honor over the scorer — the elevation-of-privilege surface (T-17-16) is closed by construction.
+    # 17-07 verified the Dart parser tolerates its absence (the normal path never carried one).

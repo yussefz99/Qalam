@@ -81,36 +81,11 @@ async def coach(
     facts = facts_in.model_dump()
     config = {"configurable": {"thread_id": "stateless"}}
 
-    # Phase 17.1 (owner directive): when the client sends a rendered IMAGE, the AI OWNS pass/fail —
-    # the scorer false-fails correct writing, so the AI judges the letter on its own expertise and
-    # returns a verdict + line. Bypasses the scorer-bounded graph. Reverses GROUND-01/02 (owner-
-    # authorized for the demo). On timeout/error -> 503 so the client degrades to the scorer floor.
-    if facts_in.strokeImage:
-        from app.image_judge import judge_baa_image
-
-        try:
-            judged = await asyncio.wait_for(
-                asyncio.to_thread(judge_baa_image, facts_in.strokeImage),
-                timeout=_TIMEOUT_SECONDS,
-            )
-        except asyncio.TimeoutError:
-            logger.warning("image-judge timed out after %ss; client degrades to scorer.", _TIMEOUT_SECONDS)
-            raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="judge_timeout")
-        except Exception as exc:  # noqa: BLE001
-            logger.exception("image-judge failed: %s", type(exc).__name__)
-            raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="judge_error")
-        logger.warning(
-            "image-judge decision: letterId=%s verdict=%s line=%r",
-            facts_in.letterId, judged["verdict"], judged["line"][:200],
-        )
-        return CoachOut(
-            toolName="say",
-            args={"text": judged["line"]},
-            source="agent",
-            grounded=True,
-            verdict=judged["verdict"],
-        )
-
+    # Retired by Plan 17-08 under D-A (the deterministic scorer owns pass/fail; ADR-017 at 17-10):
+    # the Phase-17.1 rendered-image → AI-owns-verdict short-circuit is DELETED. The client stopped
+    # sending the image in 17-07 (client-first removal ordering, RESEARCH Pattern 3), and the field
+    # is gone from TutorFactsIn, so a stale client that still posts the retired image key now 422s
+    # BY DESIGN under extra="forbid". The normal scorer-bounded graph path below is all that remains.
     try:
         result = await asyncio.wait_for(
             _graph().ainvoke({"facts": facts, "log": []}, config),

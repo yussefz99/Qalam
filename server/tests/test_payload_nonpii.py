@@ -65,7 +65,11 @@ GRAPH_POSITION_FIELDS = ["clearedTiers", "clearedCompetencies"]
 CRITERIA_WORD_FIELDS = ["criteria", "weakestCriterion", "expectedWord", "writtenWord"]
 
 # The geometry/PII keys that must NEVER be accepted on either model.
-FORBIDDEN_KEYS = ["strokes", "x", "y", "offsets", "nickname", "childName"]
+# `strokeImage` joins the list at Plan 17-08 (D-A): the Phase-17.1 rendered-image field was
+# DELETED from TutorFactsIn, so an image key is now an unknown field — the 422 is the PROOF the
+# off-device child-data surface shrank (GROUND-04 server half; a rendered image can no longer
+# reach the server). The client stopped sending it in 17-07 (client-first removal ordering).
+FORBIDDEN_KEYS = ["strokes", "x", "y", "offsets", "nickname", "childName", "strokeImage"]
 
 # The tightened coordinate/PII token guard — the SERVER mirror of the Dart regex
 # in test/tutor/payload_nonpii_test.dart (`\b[xy]\b|stroke|offset|coord|point|raw|
@@ -158,6 +162,16 @@ def test_graph_position_fields_default_empty_when_omitted():
 def test_tutorfactsin_rejects_each_nonwhitelisted_key(bad_key):
     """Any non-whitelisted / PII key at the top level is a ValidationError (422)."""
     payload = {**LEGIT_FACTS, bad_key: [[1, 2], [3, 4]] if bad_key in {"strokes", "offsets"} else 1}
+    with pytest.raises(ValidationError):
+        TutorFactsIn.model_validate(payload)
+
+
+def test_strokeimage_key_is_now_rejected_422():
+    """Plan 17-08 (D-A): the retired Phase-17.1 rendered-image field is DELETED from the DTO, so a
+    payload carrying an image key is now an unknown field → ValidationError (422). This 422 is the
+    structural PROOF that the off-device child-data surface shrank — a rendered image of child
+    handwriting can no longer reach the server (GROUND-04 server half; ADR-017 at 17-10)."""
+    payload = {**LEGIT_FACTS, "strokeImage": "data:image/png;base64,AAAA"}
     with pytest.raises(ValidationError):
         TutorFactsIn.model_validate(payload)
 

@@ -139,7 +139,10 @@ async def test_enlarged_payload_accepted_returns_in_set_action(client, monkeypat
 # --- 2. Extra / PII keys -> 422 (extra=forbid) on the top-level model and the nested model. ---
 
 
-@pytest.mark.parametrize("bad_key", ["strokes", "x", "y", "childName", "nickname"])
+# `strokeImage` is in the list from Plan 17-08 (D-A): the retired Phase-17.1 rendered-image field
+# was deleted from TutorFactsIn, so an image key now 422s over the live /coach boundary too — the
+# server can no longer receive a rendered image of child handwriting (GROUND-04 server half).
+@pytest.mark.parametrize("bad_key", ["strokes", "x", "y", "childName", "nickname", "strokeImage"])
 async def test_top_level_extra_key_rejected_422(client, monkeypatch, bad_key):
     _patch_coach(monkeypatch, [{"name": "say", "args": {"text": "hi"}}])
     body = dict(ENLARGED_FAIL_FACTS)
