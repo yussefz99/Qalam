@@ -25,7 +25,8 @@ precedent).**
 
 ## Tests
 
-### 1. Cloud Run re-deploy of the Phase-17 contract  *(PENDING — deploy blocked in this session)*
+### 1. Cloud Run re-deploy of the Phase-17 contract  *(PASSED 2026-07-06 — rev qalam-tutor-00021-7zm)*
+result: deployed: rev 00021 (qalam-tutor-00021-7zm), 100% traffic, /health 200, unauth /coach + strokeImage probe both 401. Owner-authorized interactive deploy (AskUserQuestion "Yes, deploy now"), 2026-07-06.
 expected: The live `qalam-tutor` service is running revision **`qalam-tutor-00020-txt`**
   (the pre-Phase-17 contract — still has the retired image path). Both wire sides are now
   consistent in-repo (client 17-07 + server 17-08: criteria accepted, `strokeImage`/
@@ -136,9 +137,9 @@ resume_signal: "consent copy: drafted / approved" (with a pointer to the copy)
 ## Summary
 
 total: 7
-passed: 0
+passed: 1
 issues: 0
-pending: 7
+pending: 6
 skipped: 0
 blocked: 0
 
