@@ -80,6 +80,10 @@ class TutorFacts {
     this.clearedCompetencies = const [],
     this.strokeDiff,
     this.strokeImage,
+    this.criteria,
+    this.weakestCriterion,
+    this.expectedWord,
+    this.writtenWord,
   });
 
   /// The letter family this moment belongs to (e.g. `baa`).
@@ -143,11 +147,40 @@ class TutorFacts {
   /// (the normal scorer path). Mirrors `TutorFactsIn.strokeImage` (server schema).
   final String? strokeImage;
 
-  /// The whitelisted serialized form. Emits ONLY the ten derived fields (the
-  /// eight base + `clearedTiers`/`clearedCompetencies`) — no raw strokes, no PII.
-  /// This is the exact shape that crosses the network as the `/coach` request
-  /// body; its keys + casing mirror the deployed server `TutorFactsIn`
-  /// (`server/app/schema.py`) so `extra="forbid"` returns 200, not 422 (GROUND-02).
+  /// Phase 17 (17-06, STRK-01 / D-B / GROUND-04): the STRUCTURED per-criterion
+  /// results derived from the scorer's `LetterScore` — each entry is EXACTLY
+  /// `{criterion, zone, score}` (the soft zone's enum NAME string), point-free.
+  /// Lets the coach name the FAILED (`certainlyWrong`) criterion or, on a pass,
+  /// the weakest one (D-B). Null when the check ran no criteria (omit-when-null).
+  /// Mirrors `TutorFactsIn.criteria` / `CriterionIn` (`server/app/schema.py`)
+  /// byte-for-byte — the 422 lockstep (Pitfall 1); the server's nested
+  /// `extra="forbid"` 422s any stray coordinate key inside a criterion (GROUND-04).
+  final List<Map<String, Object?>>? criteria;
+
+  /// Phase 17 (17-06): the name of the lowest-score criterion — the single
+  /// coaching target (D-B). Null when [criteria] is null/empty. Mirrors
+  /// `TutorFactsIn.weakestCriterion` (`server/app/schema.py`).
+  final String? weakestCriterion;
+
+  /// Phase 17 (17-06, F6): the curriculum's expected word on the word path —
+  /// DERIVED text, never geometry. Populated on BOTH pass and fail so the coach
+  /// can praise the specific word too. Null on non-word checks. Mirrors
+  /// `TutorFactsIn.expectedWord` (`server/app/schema.py`).
+  final String? expectedWord;
+
+  /// Phase 17 (17-06, F6): the recogniser's transcription of what the child
+  /// wrote on the word path — DERIVED text (an ML Kit transcription of a
+  /// curriculum word), never geometry. Populated on BOTH pass and fail. Null on
+  /// non-word checks. Mirrors `TutorFactsIn.writtenWord` (`server/app/schema.py`).
+  final String? writtenWord;
+
+  /// The whitelisted serialized form. Emits ONLY the derived fields (the eight
+  /// base + `clearedTiers`/`clearedCompetencies`, plus the Phase-17 derived
+  /// `strokeDiff`/`strokeImage`/`criteria`/`weakestCriterion`/`expectedWord`/
+  /// `writtenWord` when present) — no raw strokes, no PII. This is the exact
+  /// shape that crosses the network as the `/coach` request body; its keys +
+  /// casing mirror the deployed server `TutorFactsIn` (`server/app/schema.py`)
+  /// so `extra="forbid"` returns 200, not 422 (GROUND-02 / the 422 lockstep).
   Map<String, Object?> toMap() => {
         'letterId': letterId,
         'section': section,
@@ -165,6 +198,14 @@ class TutorFacts {
         // Phase 17.1: the rendered-strokes image (AI-owns-pass/fail path). Omitted
         // when null so the normal payload shape is unchanged.
         if (strokeImage != null) 'strokeImage': strokeImage,
+        // Phase 17 (17-06): the STRUCTURED criteria + derived word facts. Emitted
+        // ONLY when present so an unchanged payload byte-matches the prior shape
+        // (the 422 lockstep, Pitfall 1). The key strings byte-match the server
+        // `TutorFactsIn` field names (`server/app/schema.py`).
+        if (criteria != null) 'criteria': criteria,
+        if (weakestCriterion != null) 'weakestCriterion': weakestCriterion,
+        if (expectedWord != null) 'expectedWord': expectedWord,
+        if (writtenWord != null) 'writtenWord': writtenWord,
       };
 
   /// Alias of [toMap] — same whitelisted shape.

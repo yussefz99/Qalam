@@ -28,6 +28,15 @@ import 'tutor_facts.dart';
 /// derivation): the source of truth is the persisted position, not the session.
 /// They mirror `TutorFactsIn.clearedTiers`/`clearedCompetencies`
 /// (`server/app/schema.py`) byte-for-byte — the 422 lockstep (Pitfall 1).
+///
+/// Phase 17 (17-06, STRK-01 / D-B / GROUND-04): the STRUCTURED `criteria` +
+/// `weakestCriterion` and the F6 `expectedWord`/`writtenWord` are read straight
+/// off [result] — the validator already serialized the scorer's `LetterScore`
+/// into the non-PII `CheckResult`. Deriving them here (NOT via a new parameter)
+/// keeps the signature the guard: no stroke/Offset/word parameter exists, so raw
+/// geometry can never reach the model. They mirror `TutorFactsIn.criteria` /
+/// `weakestCriterion` / `expectedWord` / `writtenWord` (`server/app/schema.py`)
+/// byte-for-byte — the 422 lockstep (Pitfall 1).
 TutorFacts buildTutorFacts({
   required String letterId,
   required String section,
@@ -52,6 +61,15 @@ TutorFacts buildTutorFacts({
     clearedCompetencies: List<String>.unmodifiable(clearedCompetencies),
     strokeDiff: strokeDiff,
     strokeImage: strokeImage,
+    // Phase 17 (17-06): the STRUCTURED criteria + derived word facts are DERIVED
+    // FROM the already-non-PII [result] (the scorer serialized them into the
+    // CheckResult) — NOT new parameters. The signature stays the guard: no
+    // stroke/Offset/word parameter can reach the model; only what the validator
+    // already froze into the CheckResult travels. Omit-when-null in TutorFacts.
+    criteria: result.criteria,
+    weakestCriterion: result.weakestCriterion,
+    expectedWord: result.expectedWord,
+    writtenWord: result.writtenWord,
   );
 }
 

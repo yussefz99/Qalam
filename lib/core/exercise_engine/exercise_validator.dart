@@ -126,10 +126,24 @@ Future<CheckResult> _validateGlyph(
   // surface's guideForm. Threading it fixes UAT F5 at the scorer (D-A) — an
   // isolated bowl offered for a medial slot now fails its own per-form reference.
   final form = exercise.expected?.glyph?.form ?? guideForm;
-  final result = await scoreLetter(strokes, letter, form: form);
-  if (result.passed) return const CheckResult.pass();
+  final score = await scoreLetter(strokes, letter, form: form);
 
-  return CheckResult.fail(_mapMistake(result.mistakeId, exercise));
+  // Phase 17 (17-06, D-B): carry the scorer's STRUCTURED per-criterion result
+  // into the CheckResult — on a PASS too, so the coach can name the weakest
+  // criterion even when praising (never invents a verdict; coaches the decided
+  // one). Point-free {criterion, zone, score} scalars only (GROUND-04).
+  final criteria = _serializeCriteria(score);
+  final weakest = score.weakest?.criterion;
+
+  if (score.passed) {
+    return CheckResult.pass(criteria: criteria, weakestCriterion: weakest);
+  }
+
+  return CheckResult.fail(
+    _mapMistake(score.mistakeId, exercise),
+    criteria: criteria,
+    weakestCriterion: weakest,
+  );
 }
 
 // ── base: sequence ───────────────────────────────────────────────────────────
@@ -152,38 +166,75 @@ Future<CheckResult> _validateSequence(
   String? guideForm,
   bool penLiftedBetweenLetters = false,
 }) async {
+  // Phase 17 (17-06, F6): the word path's DERIVED text facts — the curriculum's
+  // expected word and the recogniser's transcription — travel with EVERY
+  // sequence verdict (pass AND fail) so the coach can name the specific word
+  // difference OR praise the exact word. Pure text, never geometry.
+  final expectedWord = exercise.expected?.word;
+
   // joinContinuity first: a lifted pen is the specific, authored "lifted" miss.
   if (exercise.check!.hasJoinContinuity && penLiftedBetweenLetters) {
-    return CheckResult.fail(_pickKey(exercise, const ['lifted']));
+    return CheckResult.fail(
+      _pickKey(exercise, const ['lifted']),
+      expectedWord: expectedWord,
+      writtenWord: writtenWord,
+    );
   }
 
   // positionalForm modifier on a sequence (e.g. baa.connectWord.kitaab).
   final formMiss = _checkPositionalForm(exercise, writtenForm);
-  if (formMiss != null) return CheckResult.fail(formMiss);
+  if (formMiss != null) {
+    return CheckResult.fail(
+      formMiss,
+      expectedWord: expectedWord,
+      writtenWord: writtenWord,
+    );
+  }
 
-  final expectedWord = exercise.expected?.word;
   if (expectedWord != null && writtenWord != null) {
     if (writtenWord != expectedWord) {
-      return CheckResult.fail(_sequenceMiss(expectedWord, writtenWord, exercise));
+      return CheckResult.fail(
+        _sequenceMiss(expectedWord, writtenWord, exercise),
+        expectedWord: expectedWord,
+        writtenWord: writtenWord,
+      );
     }
   }
 
   // transformRule modifier on a sequence (dual/plural/opposite).
   final transformMiss = _checkTransformRule(exercise, writtenWord);
-  if (transformMiss != null) return CheckResult.fail(transformMiss);
+  if (transformMiss != null) {
+    return CheckResult.fail(
+      transformMiss,
+      expectedWord: expectedWord,
+      writtenWord: writtenWord,
+    );
+  }
 
   // Whole-word strokes that reduce to a single glyph → reuse the glyph scorer
   // as the geometric leg (keeps the "one core scorer" promise honest). Resolve
-  // the asked form the same way the glyph base does (Pattern 2).
+  // the asked form the same way the glyph base does (Pattern 2). This leg carries
+  // the STRUCTURED criteria (D-B) on both pass and fail.
   if (letter != null && strokes.isNotEmpty && expectedWord == null) {
     final form = exercise.expected?.glyph?.form ?? guideForm;
-    final result = await scoreLetter(strokes, letter, form: form);
-    if (!result.passed) {
-      return CheckResult.fail(_mapMistake(result.mistakeId, exercise));
+    final score = await scoreLetter(strokes, letter, form: form);
+    if (!score.passed) {
+      return CheckResult.fail(
+        _mapMistake(score.mistakeId, exercise),
+        criteria: _serializeCriteria(score),
+        weakestCriterion: score.weakest?.criterion,
+      );
     }
+    return CheckResult.pass(
+      criteria: _serializeCriteria(score),
+      weakestCriterion: score.weakest?.criterion,
+    );
   }
 
-  return const CheckResult.pass();
+  return CheckResult.pass(
+    expectedWord: expectedWord,
+    writtenWord: writtenWord,
+  );
 }
 
 // ── base: order ──────────────────────────────────────────────────────────────
@@ -246,6 +297,24 @@ String? _checkTransformRule(ExerciseSpec exercise, String? writtenWord) {
     exercise,
     const ['missingEnding', 'wrongForm', 'wrongAntonym', 'wrongWord'],
   );
+}
+
+// ── derived criteria serialization (Phase 17 / 17-06) ────────────────────────
+
+/// Serialize the scorer's STRUCTURED [LetterScore.criteria] into the derived,
+/// POINT-FREE wire records the [CheckResult] carries (D-B / GROUND-04): each
+/// entry is EXACTLY `{criterion, zone, score}` — the criterion label, the soft
+/// zone's enum NAME string (`certainlyCorrect`/`fuzzy`/`certainlyWrong`), and
+/// the continuous 1.0→0.0 score. Never a coordinate. Returns null when the score
+/// ran no criteria, so the CheckResult omits the key (omit-when-null → the
+/// payload byte-matches the prior shape). Mirrors the server `CriterionIn`
+/// (`server/app/schema.py`) byte-for-byte (Pitfall 1 — the 422 lockstep).
+List<Map<String, Object?>>? _serializeCriteria(LetterScore score) {
+  if (score.criteria.isEmpty) return null;
+  return [
+    for (final c in score.criteria)
+      {'criterion': c.criterion, 'zone': c.zone.name, 'score': c.score},
+  ];
 }
 
 // ── mistakeId resolution ─────────────────────────────────────────────────────
