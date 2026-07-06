@@ -55,9 +55,19 @@ LEGIT_CRITERIA_FACTS = {
 # The four new fields — their NAMES must be accepted and must carry no PII/geometry token.
 NEW_FIELDS = ["criteria", "weakestCriterion", "expectedWord", "writtenWord"]
 
+# The three CriterionIn wire keys — the nested record's field NAMES.
+CRITERION_KEYS = ["criterion", "zone", "score"]
+
 # The SERVER mirror of the Dart coordinate/PII token guard (test/tutor/payload_nonpii_test.dart):
-# a standalone x/y, or any of stroke/offset/coord/point/raw/nick/name. None of the new field NAMES
-# (nor the criterion/zone id values) may trip it.
+# a standalone x/y, or any of stroke/offset/coord/point/raw/nick/name.
+#
+# SCOPE — we scan wire KEY NAMES, plus the free-form zone/word VALUES, but NEVER the criterion
+# VALUE strings. The criterion identifiers 'strokeCount' / 'strokeOrder' legitimately contain the
+# substring 'stroke' — they NAME the stroke-count / stroke-order criteria; they are fixed derived
+# labels, not coordinate leaks. This matches the existing precedent: StrokeDiffIn already carries a
+# field literally named `strokeCount`, which this token scan does not flag. GROUND-04's real teeth
+# are `extra="forbid"` on the keys (no UNEXPECTED / coordinate key is representable); the token scan
+# is a second belt on the KEY names and on the free-form text values.
 _PII_TOKEN_RE = re.compile(r"\b[xy]\b|stroke|offset|coord|point|raw|nick|name", re.IGNORECASE)
 
 
@@ -118,18 +128,26 @@ def test_fully_populated_payload_validates():
 
 
 def test_new_field_names_and_ids_carry_no_pii():
-    """The four new field NAMES trip no PII/stroke token, and the criterion/zone id values
-    (derived, non-PII) trip none either — the GROUND-04 regression over the enlarged contract."""
+    """The new wire KEY names — the four TutorFactsIn fields AND the three nested CriterionIn keys —
+    trip no PII/coordinate token, and the free-form zone/word VALUES trip none either (the GROUND-04
+    regression over the enlarged contract). We do NOT scan the criterion VALUE strings: 'strokeCount'
+    / 'strokeOrder' are fixed derived labels that legitimately contain 'stroke' (see the module note;
+    StrokeDiffIn.strokeCount is the same-shaped precedent)."""
     for field in NEW_FIELDS:
         assert not _PII_TOKEN_RE.search(field), (
             f"the Phase-17 field name {field!r} matches the PII/stroke guard"
         )
+    for key in CRITERION_KEYS:
+        assert not _PII_TOKEN_RE.search(key), (
+            f"the nested CriterionIn key {key!r} matches the PII/stroke guard"
+        )
     facts = TutorFactsIn.model_validate(LEGIT_CRITERIA_FACTS)
+    # The zone VALUES are a fixed non-PII enum; scan them (they are clean).
     for crit in facts.criteria:
-        assert not _PII_TOKEN_RE.search(crit.criterion), crit.criterion
         assert not _PII_TOKEN_RE.search(crit.zone), crit.zone
-    # weakestCriterion is a plain criterion-name id (never PII).
-    assert not _PII_TOKEN_RE.search(facts.weakestCriterion)
+    # The derived word-fact text values carry no coordinate token either.
+    assert not _PII_TOKEN_RE.search(facts.expectedWord)
+    assert not _PII_TOKEN_RE.search(facts.writtenWord)
 
 
 # --- extra="forbid" is pinned as config on CriterionIn, not incidental -----------------------

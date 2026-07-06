@@ -81,6 +81,29 @@ class StrokeDiffIn(BaseModel):
     dotPlacementOk: bool | None = None
 
 
+class CriterionIn(BaseModel):
+    """One DERIVED per-criterion scoring result (Phase 17 / STRK-01 / D-B / GROUND-04).
+
+    Mirrors the Dart `CriterionResult` {criterion, zone, score} (lib/core/scoring/scoring_models.dart);
+    the Plan 17-06 client mirror (lib/tutor/tutor_facts.dart) copies these names byte-for-byte
+    (Pitfall 1 — the 422 lockstep). `extra="forbid"` + ONLY scalar/string fields means a leaked
+    coordinate/point key NESTED inside a criterion record is a 422 (GROUND-04): raw stroke geometry
+    can never ride in on a criterion entry.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    criterion: str = Field(
+        description="Which criterion was scored: 'strokeCount' | 'strokeOrder' | 'shape' | "
+        "'direction' | 'dot' (the OWNER-CONFIRMED D-C amendment set, 2026-07-05).",
+    )
+    zone: str = Field(
+        description="The soft zone the criterion landed in: 'certainlyCorrect' | 'fuzzy' | "
+        "'certainlyWrong' (only certainlyWrong fails).",
+    )
+    score: float = Field(description="Continuous 1.0 (perfect) -> 0.0 (certainly wrong).")
+
+
 class TutorFactsIn(BaseModel):
     """The FINAL, enlarged, non-PII request contract for POST /coach.
 
@@ -134,6 +157,32 @@ class TutorFactsIn(BaseModel):
     strokeDiff: StrokeDiffIn | None = Field(
         default=None,
         description="DERIVED stroke-geometry diff computed on-device (no raw points). Lets the coach name the specific attempt geometry.",
+    )
+
+    # --- Phase 17 (17-05, locked D-B): the STRUCTURED per-criterion result + derived word facts ---
+    # The scorer (Plan 17-03) now emits LetterScore.criteria (five criteria) + the weakest one — the
+    # structured coaching input D-B requires. These four fields carry it (plus the F6 word path) to
+    # the coach. ALL optional/defaulted => ADDITIVE (strict-superset): an OLD client that sends none
+    # of them still validates — no 422 window. Deploy direction: additive — the server ships FIRST,
+    # the Dart mirror (lib/tutor/tutor_facts.dart) follows in Plan 17-06, which copies these field
+    # NAMES byte-for-byte (Pitfall 1 — the 422 lockstep). GROUND-04: criteria are point-free scalars
+    # (CriterionIn forbids extras) and the word facts are DERIVED text, never geometry.
+    criteria: list[CriterionIn] = Field(
+        default_factory=list,
+        description="DERIVED per-criterion results (strokeCount/strokeOrder/shape/direction/dot). "
+        "Lets the coach name the FAILED (certainlyWrong) criterion or, on a pass, the weakest one.",
+    )
+    weakestCriterion: str | None = Field(
+        default=None,
+        description="Name of the lowest-score criterion — the coaching target (D-B); null when absent.",
+    )
+    expectedWord: str | None = Field(
+        default=None,
+        description="The curriculum's expected word for the F6 word path (DERIVED text, never geometry).",
+    )
+    writtenWord: str | None = Field(
+        default=None,
+        description="ML Kit's recognized transcription of what the child wrote (DERIVED text, never geometry).",
     )
 
     # --- Phase 17.1: a rendered IMAGE of the child's strokes (owner directive 2026-06-30) ---
