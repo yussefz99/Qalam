@@ -1,10 +1,20 @@
-# gold_set.jsonl — (verdict, learner-state) → ideal-coaching gold examples for the register/Arabic
-# LLM-judge calibration (D5 + correct-Arabic). CLAUDE-DRAFTED, AWAITING MOM SIGN-OFF (Plan 16-05).
+# gold_set.jsonl — (verdict, derived stroke facts, learner-state) → coaching gold examples for the
+# LLM-judge calibration (register / correct-Arabic / semantic_faithfulness / no_false_geometry /
+# specificity) and the STRK-01 two-arm baseline fixtures (run_baseline.py).
 #
-# STATUS: every line is "signed": false / "drafted_by": "claude". The owner's mother (a graduate-
-# degreed Arabic teacher) REVIEWS and SIGNS each line in 16-05; the sign-off gate flips
-# "signed": true. NOTHING register-shaping ships unsigned (CLAUDE.md curriculum-authority rule).
-# DO NOT mark these signed in this plan.
+# PROVENANCE: Phase 17 regrow for stroke-level coaching — supersedes the Phase-16 pending
+# sign-off scope; the owner's mother re-signs the WHOLE set (EVAL-03). Every line is
+# "signed": false / "drafted_by": "claude" — the re-sign is the 17-10 HUMAN gate (15-07
+# precedent, T-17-08). NOTHING register-shaping ships unsigned (CLAUDE.md curriculum-authority
+# rule). DO NOT flip "signed" in any autonomous plan.
+#
+# STROKE-LEVEL CASES: each carries a `strokeDiff` of DERIVED, point-free facts restricted to the
+# `StrokeDiffIn` vocabulary (server/app/schema.py) — no coordinates can even be expressed
+# (GROUND-04 / T-17-09). Labels starting "adversarial" are TRAP cases run_judge checks
+# individually on their `trapDimension` (the judge must score them BELOW threshold): the
+# canonical `adv_broken_but_pass` no-false-geometry trap and the F3 full-Arabic register trap.
+# Cases with a `coaching` key carry a LIVE-style line (paraphrase probes / trap lines); cases
+# with `idealCoaching` carry the authored gold label.
 #
 # D-10 NO-TRAINING CONSTRAINT (14-AI-SPEC §1b): this gold set is SYNTHETIC / AUTHORED, non-PII (no
 # raw strokes, no child name/nickname — only frozen FACTS). It MUST NOT be used to train or
@@ -22,3 +32,16 @@
 {"letterId": "baa", "section": "writeWord.dictation", "passed": true, "mistakeId": null, "expectedFix": null, "idealCoaching": "باب — from memory, no guide. Real writing! أحسنت!", "label": "gold_register", "signed": false, "drafted_by": "claude"}
 {"letterId": "baa", "section": "connectWord.kitaab", "passed": true, "mistakeId": null, "expectedFix": null, "idealCoaching": "كتاب — “book,” joined in one go. أحسنت!", "label": "gold_register", "signed": false, "drafted_by": "claude"}
 {"letterId": "baa", "section": "traceLetter.isolated", "passed": false, "mistakeId": "shallowBowl", "expectedFix": "deeper curve", "idealCoaching": "Almost — the bottom is a little flat. Round it into a deeper bowl, slower this time.", "label": "gold_register", "signed": false, "drafted_by": "claude"}
+# --- Phase 17 regrow: stroke-level cases (derived strokeDiff facts, StrokeDiffIn keys only) ---
+{"id": "stroke_shallow_bowl", "letterId": "baa", "section": "traceLetter.isolated", "passed": false, "mistakeId": "shallowBowl", "expectedFix": "deeper curve", "strokeDiff": {"summary": "bowl much shallower than the reference; dot placed correctly below", "bowlDepthRatio": 0.35, "bowlDepthVerdict": "much shallower", "dotPresent": true, "dotVertical": "below the bowl", "dotPlacementOk": true}, "idealCoaching": "The bottom stayed almost flat — let the middle dip lower, like a little boat.", "label": "gold_stroke", "signed": false, "drafted_by": "claude"}
+{"id": "stroke_right_side_flat", "letterId": "baa", "section": "traceLetter.isolated", "passed": false, "mistakeId": "shallowBowl", "expectedFix": "deeper curve", "strokeDiff": {"summary": "right side of the bowl flat while the left side curves", "bowlDepthVerdict": "shallower", "bowlSymmetry": "right side flat, left side curves fine", "dotPresent": true, "dotVertical": "below the bowl", "dotPlacementOk": true}, "idealCoaching": "Your left half curves nicely — now let the right side dip down to match it.", "label": "gold_stroke", "signed": false, "drafted_by": "claude"}
+{"id": "stroke_dot_left", "letterId": "baa", "section": "traceLetter.isolated", "passed": false, "mistakeId": "dotMisplaced", "expectedFix": "dot", "strokeDiff": {"summary": "good bowl; dot landed left of center", "bowlDepthVerdict": "matches", "dotPresent": true, "dotHorizontal": "left of center", "dotVertical": "below the bowl", "dotPlacementOk": false}, "idealCoaching": "The bowl is just right — your dot slid to the left. Aim it right under the middle.", "label": "gold_stroke", "signed": false, "drafted_by": "claude"}
+{"id": "stroke_dot_above", "letterId": "baa", "section": "traceLetter.isolated", "passed": false, "mistakeId": "dotMisplaced", "expectedFix": "dot", "strokeDiff": {"summary": "good bowl; dot placed ABOVE the bowl — reads as a different letter", "bowlDepthVerdict": "matches", "dotPresent": true, "dotHorizontal": "centered", "dotVertical": "above the bowl", "dotPlacementOk": false}, "idealCoaching": "Careful — your dot floated up on top. Baa keeps its dot underneath the bowl.", "label": "gold_stroke", "signed": false, "drafted_by": "claude"}
+{"id": "stroke_tail_present", "letterId": "baa", "section": "traceLetter.initial", "passed": false, "mistakeId": "hasTail", "expectedFix": "tail", "strokeDiff": {"summary": "stroke flicks up into a tail at the end; initial form stops flat", "bowlDepthVerdict": "matches", "tailPresent": true, "dotPresent": true, "dotPlacementOk": true}, "idealCoaching": "You added a small tail at the end — the starting baa stops flat. Lift the pen sooner.", "label": "gold_stroke", "signed": false, "drafted_by": "claude"}
+{"id": "stroke_too_big", "letterId": "baa", "section": "traceLetter.medial", "passed": false, "mistakeId": "tooBig", "expectedFix": "smaller", "strokeDiff": {"summary": "letter drawn much larger than the guide", "sizeVerdict": "too big", "bowlDepthVerdict": "matches", "dotPresent": true, "dotPlacementOk": true}, "idealCoaching": "The shape is right — now shrink it to a small tooth that fits between the lines.", "label": "gold_stroke", "signed": false, "drafted_by": "claude"}
+# --- Phase 17 regrow: paraphrase-FAITHFUL probes (semantic_faithfulness must PASS these lines) ---
+{"id": "paraphrase_faithful_bowl", "letterId": "baa", "section": "traceLetter.isolated", "passed": false, "mistakeId": "shallowBowl", "expectedFix": "deeper curve", "strokeDiff": {"summary": "bowl much shallower than the reference", "bowlDepthRatio": 0.4, "bowlDepthVerdict": "much shallower", "dotPresent": true, "dotPlacementOk": true}, "coaching": "Round the bottom into a fuller bowl — slower this time.", "label": "gold_paraphrase_faithful", "signed": false, "drafted_by": "claude"}
+{"id": "paraphrase_faithful_join", "letterId": "baa", "section": "connectWord.baab", "passed": false, "mistakeId": "lifted", "expectedFix": "join", "strokeDiff": {"summary": "body drawn in two separate pieces; pen lifted mid-word", "bodySegments": 2, "directionChild": "rightToLeft", "directionReference": "rightToLeft"}, "coaching": "Keep the pen down so baa flows into the next letter in one smooth stroke.", "label": "gold_paraphrase_faithful", "signed": false, "drafted_by": "claude"}
+# --- Phase 17 regrow: TRAP cases (judge must score BELOW threshold on trapDimension) ---
+{"id": "adv_broken_but_pass", "letterId": "baa", "section": "traceLetter.isolated", "passed": true, "mistakeId": null, "expectedFix": null, "trapDimension": "no_false_geometry", "strokeDiff": {"summary": "bowl almost flat — barely dips below the rim", "bowlDepthRatio": 0.2, "bowlDepthVerdict": "much shallower", "dotPresent": true, "dotVertical": "below the bowl", "dotPlacementOk": true}, "coaching": "What a deep, smooth bowl — perfectly rounded all the way down. أحسنت!", "label": "adversarial_false_geometry", "signed": false, "drafted_by": "claude"}
+{"id": "adv_full_arabic_guidance", "letterId": "baa", "section": "traceLetter.isolated", "passed": false, "mistakeId": "shallowBowl", "expectedFix": "deeper curve", "trapDimension": "correct_arabic", "strokeDiff": {"summary": "bowl much shallower than the reference", "bowlDepthVerdict": "much shallower", "dotPresent": true, "dotPlacementOk": true}, "coaching": "اجعل القوس أعمق في الأسفل وحاول مرة أخرى ببطء من فضلك.", "label": "adversarial_full_arabic", "signed": false, "drafted_by": "claude"}

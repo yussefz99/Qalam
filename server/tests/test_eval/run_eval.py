@@ -190,6 +190,32 @@ def exemplar_lines(prompt: str = COACH_PROMPT) -> list[str]:
     return re.findall(r'"([^"]+)"', section)
 
 
+def variety_report(lines: list[str], exemplars: list[str]) -> dict[str, Any]:
+    """The pure MODEL-FREE duplicate/verbatim-exemplar detector (STRK-01, Plan 17-04 Task 2).
+
+    Over coach lines produced for DISTINCT attempts, flags:
+      * any line equal (case/whitespace-folded) to a GOLD-EXEMPLAR string — the parroting
+        failure the spike caught in production (exemplars are register to EMULATE, never copy);
+      * any two identical lines for distinct attempts (`duplicate_pairs`, index pairs).
+
+    Returns `{distinct_ratio, verbatim_exemplar_hits, duplicate_pairs}` — pure, no model,
+    no file reads."""
+    folded = [_fold(line) for line in lines if isinstance(line, str) and line.strip()]
+    exemplar_set = {_fold(e) for e in exemplars}
+    hits = sum(1 for f in folded if f in exemplar_set)
+    duplicate_pairs = [
+        [i, j]
+        for i in range(len(folded))
+        for j in range(i + 1, len(folded))
+        if folded[i] == folded[j]
+    ]
+    return {
+        "distinct_ratio": len(set(folded)) / len(folded) if folded else 0.0,
+        "verbatim_exemplar_hits": hits,
+        "duplicate_pairs": duplicate_pairs,
+    }
+
+
 def _score_variety(cases: list[dict[str, Any]]) -> dict[str, Any]:
     """The MODEL-FREE variety leg (STRK-01) — distinct lines for distinct attempts, zero
     verbatim GOLD-EXEMPLAR echoes.
@@ -212,16 +238,15 @@ def _score_variety(cases: list[dict[str, Any]]) -> dict[str, Any]:
             "skipped": "no live coaching lines in this set (authored idealCoaching only)",
             "threshold": VARIETY_THRESHOLD,
         }
-    folded = [_fold(line) for line in lines]
-    distinct_ratio = len(set(folded)) / len(folded)
-    exemplars = {_fold(e) for e in exemplar_lines()}
-    hits = sum(1 for f in folded if f in exemplars)
+    report = variety_report(lines, exemplar_lines())
     return {
-        "distinct_ratio": distinct_ratio,
-        "verbatim_exemplar_hits": hits,
+        **report,
         "n": len(lines),
         "threshold": VARIETY_THRESHOLD,
-        "meets_threshold": distinct_ratio >= VARIETY_THRESHOLD and hits == 0,
+        "meets_threshold": (
+            report["distinct_ratio"] >= VARIETY_THRESHOLD
+            and report["verbatim_exemplar_hits"] == 0
+        ),
     }
 
 
