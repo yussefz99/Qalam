@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
-stopped_at: Completed 17-09-PLAN.md
-last_updated: "2026-07-06T13:20:20.369Z"
+stopped_at: Completed 17-06-PLAN.md
+last_updated: "2026-07-06T16:22:40.827Z"
 last_activity: 2026-07-06
 progress:
   total_phases: 21
   completed_phases: 14
   total_plans: 90
-  completed_plans: 82
+  completed_plans: 83
   percent: 67
 ---
 
@@ -26,10 +26,10 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 17 (build-stroke-aware-coaching-on-device-geo-diff-to-coach) — EXECUTING
-Plan: 7 of 10
+Plan: 8 of 10
 Status: Ready to execute
 Last activity: 2026-07-06
-Next: Phase 17 waves 1–3 complete (17-01 RED contract, 17-02 soft per-stroke verdict, 17-04 server eval gate, 17-03 per-form multi-criteria scoreLetter + LetterScore). scoreLetter now emits the structured coaching input (LetterScore.criteria + weakest) end-to-end from the validator. Continue /gsd-execute-phase 17 for the coach-wire waves (17-05/17-06 transport criteria to the coach FACTS, 17-07 geo-diff cutover, 17-08/17-09 harden + harness, 17-10 ADR-017 + HUMAN-UAT mom sign-off).
+Next: Phase 17 waves 1–5 complete (17-01 RED contract, 17-02 soft per-stroke verdict, 17-03 per-form multi-criteria scoreLetter + LetterScore, 17-04 server eval gate, 17-05 server criteria/word contract, 17-06 CLIENT criteria/word mirror, 17-09 per-form calibration harness). The criteria/word lockstep is now closed BOTH wire sides (server 17-05 + client 17-06) with zero 422 window — the scorer's structured verdict reaches the coach FACTS. Continue /gsd-execute-phase 17: 17-07 geo-diff cutover (owns the aiJudge/strokeImage seams), 17-08 harden, 17-10 ADR-017 + single Cloud Run re-deploy + HUMAN-UAT mom sign-off (flips STRK-01/GROUND-04).
 
 ## Performance Metrics
 
@@ -100,6 +100,7 @@ Next: Phase 17 waves 1–3 complete (17-01 RED contract, 17-02 soft per-stroke v
 | Phase 17 P03 | 9min | 2 tasks | 5 files |
 | Phase 17 P05 | 12min | 2 tasks | 7 files |
 | Phase 17 P09 | 11min | 2 tasks | 2 files |
+| Phase 17 P06 | 15min | 1 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -211,6 +212,10 @@ Recent decisions affecting current work:
 - [Phase 17]: 17-05: STRK-01/GROUND-04 NOT checkbox-marked (17-01/03/04 precedent) — SERVER half only; client mirror (17-06) + ADR-017 (17-10) complete GROUND-04
 - [Phase 17]: 17-09: calibration harness widened to per letter x form (baa 4 forms + taa); the REAL scoreLetter scored per form with a per-cell FN/FP confusion table; the F5 form-confusion cell is ASSERTED ZERO in Dart (isolated bowl for medial/final -> shape certainlyWrong at the scorer, D-A)
 - [Phase 17]: 17-09: threshold-FIT report derives suggested per-form tcc=max(good)/tcw=min(shape-bad) from the labelled distance distributions, PROVISIONAL + PRINTS ONLY (never mutates Tolerances/letters.json, git diff lib empty, T-17-20); dot/count-defective bad excluded from the SHAPE fit (their body shape is correct). Production bands still come from mom-labelled captures (D-D, 17-10)
+- [Phase ?]: 17-06: client mirror of criteria/weakestCriterion/expectedWord/writtenWord byte-for-byte vs server/app/schema.py — CheckResult carries them derived-only, TutorFacts emits omit-when-null; the 422 criteria/word lockstep closes with zero window (server landed first, 17-05)
+- [Phase ?]: 17-06: CheckResult == stays verdict-only (passed+mistakeId) so the additive facts are source-compatible with zero test edits; validator serializes LetterScore.criteria (zone.name) + weakest on pass AND fail (D-B); word facts travel with EVERY sequence verdict incl. the clean pass (F6 specific praise)
+- [Phase ?]: 17-06: buildTutorFacts derives all four FROM result — NO new parameter (the signature stays the non-PII guard; no stroke/Offset/word param can reach the model); scaffold call-site unchanged; aiJudge/strokeImage seams left untouched for 17-07
+- [Phase ?]: 17-06: STRK-01/GROUND-04 NOT checkbox-marked (17-01/03/04/05 precedent) — this closes the CLIENT half of GROUND-04; ADR-017 + the single live re-deploy (17-10) complete it, the phase verifier flips the boxes
 
 ### Pending Todos
 
@@ -251,6 +256,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-06T13:20:07.563Z
-Stopped at: Completed 17-09-PLAN.md
-Resume files: .planning/phases/06.1-firebase-curriculum-backend/06.1-05-PLAN.md (next), .planning/phases/06.1-firebase-curriculum-backend/06.1-03-PLAN.md (pending), .planning/phases/06.1-firebase-curriculum-backend/06.1-04-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
+Last session: 2026-07-06T16:21:38.941Z
+Stopped at: Completed 17-06-PLAN.md
+Resume files: .planning/phases/17-build-stroke-aware-coaching-on-device-geo-diff-to-coach/17-07-PLAN.md (next — geo-diff cutover), .planning/phases/17-build-stroke-aware-coaching-on-device-geo-diff-to-coach/17-06-SUMMARY.md, .planning/phases/17-build-stroke-aware-coaching-on-device-geo-diff-to-coach/17-05-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
