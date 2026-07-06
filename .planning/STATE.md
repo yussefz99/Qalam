@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
-stopped_at: Completed 16-03-PLAN.md (eval gate)
-last_updated: "2026-07-06T07:27:59.604Z"
-last_activity: 2026-07-06 -- Phase 17 planning complete
+stopped_at: Completed 17-01-PLAN.md
+last_updated: "2026-07-06T10:23:52.980Z"
+last_activity: 2026-07-06
 progress:
   total_phases: 21
   completed_phases: 14
   total_plans: 90
-  completed_plans: 76
+  completed_plans: 77
   percent: 67
 ---
 
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
-**Current focus:** Phase 16 — build-presence-voice-eval-gate-demo-harden
+**Current focus:** Phase 17 — build-stroke-aware-coaching-on-device-geo-diff-to-coach
 
 ## Current Position
 
-Phase: 16 (build-presence-voice-eval-gate-demo-harden) — EXECUTING (paused at human-gate boundary)
-Plan: 16-01 ✓, 16-02 ✓, 16-03 ✓ complete · 16-04 code landed (Task 3 device-gated) · 16-05 pending mom sign-off · 16-06 Task 1 landed (Tasks 2-4 device/Enable/judge-gated)
+Phase: 17 (build-stroke-aware-coaching-on-device-geo-diff-to-coach) — EXECUTING
+Plan: 2 of 10
 Status: Ready to execute
-Last activity: 2026-07-06 -- Phase 17 planning complete
+Last activity: 2026-07-06
 Next: work the 6 items in 16-HUMAN-UAT.md (device latency, mom gold sign-off → judge calibration, on-device demo-harden, Claude Model-Garden Enable, coach bake-off + ADR-016). After the gold sign-off + Model-Garden Enable land, re-run /gsd-execute-phase 16 to finish the two autonomous tail tasks (16-05 Task 2 calibration, 16-06 Task 4 bake-off+ADR), then /gsd-verify-work 16 → mark complete.
 
 ## Performance Metrics
@@ -94,6 +94,7 @@ Next: work the 6 items in 16-HUMAN-UAT.md (device latency, mom gold sign-off →
 | Phase 16 P01 | 8min | 2 tasks | 7 files |
 | Phase 16 P03 | 14min | 3 tasks | 7 files |
 | Phase 16 P02 | ~6min | 3 tasks | 5 files |
+| Phase 17 P01 | 26min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -189,6 +190,8 @@ Recent decisions affecting current work:
 - [Phase ?]: [16-01]: Wave-0 RED contract authored (Nyquist) — test/tutor/tts_coach_speaker_test.dart (segmentByScript + TtsCoachSpeaker over an injectable TtsEngine) and server/tests/test_eval/test_eval_harness.py (score_eval_set over 4 §5 dims; model-free faithfulness leg==1.0; Vertex-judge leg skipped in -m code) both RED by missing symbol. The eval RED test fails the full -m code suite until 16-03 ships run_eval.py — intended state.
 - [Phase ?]: [16-03]: Eval gate shipped — grew faithfulness to full baa coverage (6 mistakeIds x faithful/praise-on-fail/wrong-fix) with a zero-tolerance D1==100% assertion (D-08); run_eval scores all four 14-AI-SPEC §5 dims (D1/D2 model-free, D5/correct-Arabic via a gemini-2.5-flash Vertex judge != coach); make eval is the local pre-merge gate (not CI), bake-off-ready by env-swap; gold_set.jsonl is Claude-drafted signed:false awaiting mom sign-off in 16-05; faithfulness.py untouched (lexicon already covered the probes, model-free floor preserved).
 - [Phase 16-02]: On-device coach voice shipped (PRES-02) — flutter_tts ^4.2.5 (human-approved legitimacy gate, verified publisher dlutton/eyedeadevelopment.com). segmentByScript splits a mixed en/ar line into ordered (locale,text) runs (Arabic block U+0600–06FF + presentation forms to ar, else en-US); TtsCoachSpeaker over an injectable TtsEngine seam checks isLanguageAvailable(ar) ONCE per line, per-run setLanguage+speak with awaitSpeakCompletion(true), skips the ar run when no Arabic voice so English still speaks (D-06). Display-only (ADR-014): speak() swallows everything, never throws/blocks. ttsCoachSpeakerProvider (Riverpod Provider + ref.onDispose) + NoopTtsCoachSpeaker mirror the audio seam. 16-01 RED tests GREEN with zero test edits; TTS_SERVICE queries entry added for Android 11+ discoverability.
+- [Phase 17]: 17-01: CriterionResult field pinned as 'criterion' (never 'name', never *point*) so the future wire payload passes the non-PII token guards by construction; degenerate tooShort strokes exempt from the shape+direction criteria assertion (firm floor short-circuits before geometry)
+- [Phase 17]: 17-01: STRK-01 deliberately NOT checkbox-marked at the Wave-0 contract plan — it spans 17-02..17-09; the plan landing the final leg (or the phase verifier) flips it
 
 ### Pending Todos
 
@@ -229,6 +232,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-29T13:20:57.614Z
-Stopped at: Completed 16-03-PLAN.md (eval gate)
+Last session: 2026-07-06T10:23:52.974Z
+Stopped at: Completed 17-01-PLAN.md
 Resume files: .planning/phases/06.1-firebase-curriculum-backend/06.1-05-PLAN.md (next), .planning/phases/06.1-firebase-curriculum-backend/06.1-03-PLAN.md (pending), .planning/phases/06.1-firebase-curriculum-backend/06.1-04-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
