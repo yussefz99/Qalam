@@ -1477,6 +1477,83 @@
         "qaaf"
       ],
       "signedOff": false
+    },
+    {
+      "id": "kalb",
+      "text": "???",
+      "audio": "word.kalb",
+      "image": "img.dog",
+      "gloss": {
+        "en": "dog"
+      },
+      "letters": [
+        "kaaf",
+        "laam",
+        "baa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "kaas",
+      "text": "???",
+      "audio": "word.kaas",
+      "image": "img.cup",
+      "gloss": {
+        "en": "cup"
+      },
+      "letters": [
+        "kaaf",
+        "alif",
+        "seen"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "kitaab_kaaf",
+      "text": "????",
+      "audio": "word.kitaab",
+      "image": "img.book",
+      "gloss": {
+        "en": "book"
+      },
+      "letters": [
+        "kaaf",
+        "taa",
+        "alif",
+        "baa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "samakah_kaaf",
+      "text": "????",
+      "audio": "word.samakah",
+      "image": "img.fish",
+      "gloss": {
+        "en": "fish"
+      },
+      "letters": [
+        "seen",
+        "meem",
+        "kaaf",
+        "taa_marbuta"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "malik",
+      "text": "???",
+      "audio": "word.malik",
+      "image": "img.king",
+      "gloss": {
+        "en": "king"
+      },
+      "letters": [
+        "meem",
+        "laam",
+        "kaaf"
+      ],
+      "signedOff": false
     }
   ]
 }
