@@ -52,10 +52,14 @@ def coach(state: TutorState) -> dict:
     insight = state.get("insight", {})
     plan = state.get("plan")
 
-    # Phase 17 (STRK-01): when the FACTS carry a derived strokeDiff, append the stroke addendum so
-    # the coach names the specific geometry (and stops parroting the exemplars). No strokeDiff ->
-    # byte-identical to the prior behavior (the existing flow is unchanged).
-    system_prompt = COACH_PROMPT + (COACH_STROKE_ADDENDUM if facts.get("strokeDiff") else "")
+    # Phase 17 (STRK-01, 17-05): when the FACTS carry ANY derived evidence of THIS attempt — a
+    # strokeDiff, the structured per-criterion `criteria`, or the F6 `writtenWord` — append the
+    # stroke addendum so the coach names the specific failed criterion / geometry / word difference
+    # (and stops parroting the exemplars) in the English-primary register. No derived evidence ->
+    # byte-identical to the prior behavior (the existing flow is unchanged). The G2/G3/G4 guards
+    # below are the structural grounding backstop and are UNAFFECTED by this trigger.
+    has_derived_facts = facts.get("strokeDiff") or facts.get("criteria") or facts.get("writtenWord")
+    system_prompt = COACH_PROMPT + (COACH_STROKE_ADDENDUM if has_derived_facts else "")
 
     coach_with_tools = build_coach_with_tools()
     resp = coach_with_tools.invoke(

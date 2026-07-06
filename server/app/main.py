@@ -151,11 +151,17 @@ async def coach(
     # on-device geometry is reaching the server and cross-check the scorer's verdict (e.g.
     # dotPresent vs a noDot verdict). Non-PII derived data — safe to log.
     _sd = facts_in.strokeDiff.model_dump(exclude_none=True) if facts_in.strokeDiff else None
+    # Phase 17 (17-05): also log the DERIVED per-criterion result + the weakest criterion (the
+    # D-B coaching target) so we can confirm the structured scorer output is reaching the coach.
+    # Same non-PII posture as _sd: exclude_none, derived-only scalars — no child geometry.
+    _criteria = [c.model_dump(exclude_none=True) for c in facts_in.criteria] or None
     logger.warning(
-        "coach decision: passed=%s mistakeId=%s strokeDiff=%s tool=%s grounded=%s line=%r",
+        "coach decision: passed=%s mistakeId=%s strokeDiff=%s criteria=%s weakest=%s tool=%s grounded=%s line=%r",
         facts_in.passed,
         facts_in.mistakeId,
         _sd,
+        _criteria,
+        facts_in.weakestCriterion,
         out.toolName,
         out.grounded,
         _line[:200],
