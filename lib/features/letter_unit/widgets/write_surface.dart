@@ -35,6 +35,7 @@ import '../../../core/exercise_engine/check_result.dart';
 import '../../../core/exercise_engine/exercise_validator.dart';
 import '../../../core/recognition/handwriting_recognizer.dart';
 import '../../../core/recognition/ml_kit_recognizer.dart';
+import '../../../core/scoring/reference_resolution.dart';
 import '../../../models/exercise.dart';
 import '../../../models/letter.dart';
 import '../../../services/model_download_service.dart';
@@ -156,18 +157,16 @@ class _WriteSurfaceState extends ConsumerState<WriteSurface> {
   /// shows (the blank ruled line).
   List<StrokeSpec> get _referenceStrokes {
     if (!_isTrace) return const <StrokeSpec>[];
-    return _formStrokes ?? widget.letter.referenceStrokes;
+    return _formStrokes;
   }
 
-  /// The guideForm's reference strokes from [Letter.contextualForms], or null.
-  List<StrokeSpec>? get _formStrokes {
-    final form = widget.surface.guideForm;
-    final ctx = widget.letter.contextualForms;
-    if (form == null || ctx == null) return null;
-    final f = ctx[form];
-    if (f == null || f.referenceStrokes.isEmpty) return null;
-    return f.referenceStrokes;
-  }
+  /// The guideForm's reference strokes, via the ONE shared resolver (Pitfall 7)
+  /// — so the canvas completion count, [computeStrokeDiff], and the scorer all
+  /// agree on the same per-form reference (a taa medial completing at 3 strokes
+  /// matches the scorer's expected count). `resolveReferenceStrokes` already
+  /// falls back to the letter's base reference for a null/empty per-form slot.
+  List<StrokeSpec> get _formStrokes =>
+      resolveReferenceStrokes(widget.letter, widget.surface.guideForm);
 
   /// Glyph box width/height per the prototype (components.js glyphSize 150 for a
   /// glyph unit, 130 otherwise). The surface fills its slot; this sizes the
@@ -216,6 +215,7 @@ class _WriteSurfaceState extends ConsumerState<WriteSurface> {
       pixelStrokes,
       letter: widget.letter,
       writtenWord: writtenWord,
+      guideForm: widget.surface.guideForm,
     );
     if (!mounted) return;
     // Phase 17: derive the point-free stroke-geometry diff from the just-captured

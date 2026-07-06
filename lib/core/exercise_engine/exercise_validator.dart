@@ -49,6 +49,12 @@ import 'exercise_check.dart';
 ///
 /// [penLiftedBetweenLetters] is the joinContinuity signal: true when the child
 /// lifted the pen between letters of a word that must be written joined.
+///
+/// [guideForm] is the surface's asked positional form (`Surface.guideForm`) —
+/// the scorer's reference is resolved for this form when the exercise's expected
+/// glyph does not name one (write mode paints no dotted guide but still has an
+/// asked form). The VALIDATOR owns form resolution for scoring (RESEARCH
+/// Pattern 2).
 Future<CheckResult> validateExercise(
   ExerciseSpec exercise,
   List<List<List<double>>> strokes, {
@@ -56,6 +62,7 @@ Future<CheckResult> validateExercise(
   String? writtenWord,
   List<String>? writtenWords,
   String? writtenForm,
+  String? guideForm,
   bool penLiftedBetweenLetters = false,
 }) async {
   final check = exercise.check;
@@ -69,6 +76,7 @@ Future<CheckResult> validateExercise(
         strokes,
         letter,
         writtenForm: writtenForm,
+        guideForm: guideForm,
       );
     case 'sequence':
       return _validateSequence(
@@ -77,6 +85,7 @@ Future<CheckResult> validateExercise(
         letter,
         writtenWord: writtenWord,
         writtenForm: writtenForm,
+        guideForm: guideForm,
         penLiftedBetweenLetters: penLiftedBetweenLetters,
       );
     case 'order':
@@ -99,6 +108,7 @@ Future<CheckResult> _validateGlyph(
   List<List<List<double>>> strokes,
   Letter? letter, {
   String? writtenForm,
+  String? guideForm,
 }) async {
   // positionalForm: the matched contextual form must equal the expected form.
   // Checked BEFORE geometry so a right-shape-wrong-form attempt reports the
@@ -111,7 +121,12 @@ Future<CheckResult> _validateGlyph(
     return CheckResult.fail(_genericMiss(exercise));
   }
 
-  final result = await scoreLetter(strokes, letter);
+  // The VALIDATOR owns form resolution for scoring (RESEARCH Pattern 2): the
+  // asked positional form is the exercise's expected glyph form, else the
+  // surface's guideForm. Threading it fixes UAT F5 at the scorer (D-A) — an
+  // isolated bowl offered for a medial slot now fails its own per-form reference.
+  final form = exercise.expected?.glyph?.form ?? guideForm;
+  final result = await scoreLetter(strokes, letter, form: form);
   if (result.passed) return const CheckResult.pass();
 
   return CheckResult.fail(_mapMistake(result.mistakeId, exercise));
@@ -134,6 +149,7 @@ Future<CheckResult> _validateSequence(
   Letter? letter, {
   String? writtenWord,
   String? writtenForm,
+  String? guideForm,
   bool penLiftedBetweenLetters = false,
 }) async {
   // joinContinuity first: a lifted pen is the specific, authored "lifted" miss.
@@ -157,9 +173,11 @@ Future<CheckResult> _validateSequence(
   if (transformMiss != null) return CheckResult.fail(transformMiss);
 
   // Whole-word strokes that reduce to a single glyph → reuse the glyph scorer
-  // as the geometric leg (keeps the "one core scorer" promise honest).
+  // as the geometric leg (keeps the "one core scorer" promise honest). Resolve
+  // the asked form the same way the glyph base does (Pattern 2).
   if (letter != null && strokes.isNotEmpty && expectedWord == null) {
-    final result = await scoreLetter(strokes, letter);
+    final form = exercise.expected?.glyph?.form ?? guideForm;
+    final result = await scoreLetter(strokes, letter, form: form);
     if (!result.passed) {
       return CheckResult.fail(_mapMistake(result.mistakeId, exercise));
     }

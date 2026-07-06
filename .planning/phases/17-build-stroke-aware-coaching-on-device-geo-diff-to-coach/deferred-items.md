@@ -22,3 +22,15 @@ curriculum data or golden/font drift):
    `write_surface_test` Test 5 (pinned as pre-existing in 17-PATTERNS.md §9).
 4. `test/core/scoring/letter_scorer_per_form_test.dart` — RED **by design**
    (17-01 Task-2 contract; 17-03 turns it green). Not a defect.
+
+## Observed during 17-03 (2026-07-06)
+
+1. `lib/core/exercise_engine/check_result.dart:43` — info-level
+   `prefer_initializing_formals` lint (a constructor assigns a parameter to a
+   field instead of using an initializing formal). Surfaced when analyzing the
+   whole `lib/core/exercise_engine/` directory; the file is NOT touched by 17-03
+   (out of scope per the executor SCOPE BOUNDARY). The two files 17-03 actually
+   modified (`exercise_validator.dart`, `write_surface.dart`) analyze clean.
+   Pre-existing; left for a lint-sweep quick task.
+   - `letter_scorer_per_form_test.dart` is now GREEN (contract satisfied); item 4
+     above is resolved by 17-03.
