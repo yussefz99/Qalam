@@ -1399,6 +1399,84 @@
         "faa"
       ],
       "signedOff": false
+    },
+    {
+      "id": "qalam",
+      "text": "???",
+      "audio": "word.qalam",
+      "image": "img.pen",
+      "gloss": {
+        "en": "pen"
+      },
+      "letters": [
+        "qaaf",
+        "laam",
+        "meem"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "qamar_qaaf",
+      "text": "???",
+      "audio": "word.qamar",
+      "image": "img.moon",
+      "gloss": {
+        "en": "moon"
+      },
+      "letters": [
+        "qaaf",
+        "meem",
+        "raa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "qird",
+      "text": "???",
+      "audio": "word.qird",
+      "image": "img.monkey",
+      "gloss": {
+        "en": "monkey"
+      },
+      "letters": [
+        "qaaf",
+        "raa",
+        "daal"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "baqara",
+      "text": "????",
+      "audio": "word.baqara",
+      "image": "img.cow",
+      "gloss": {
+        "en": "cow"
+      },
+      "letters": [
+        "baa",
+        "qaaf",
+        "raa",
+        "taa_marbuta"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "sunduq_qaaf",
+      "text": "?????",
+      "audio": "word.sunduq",
+      "image": "img.box",
+      "gloss": {
+        "en": "box"
+      },
+      "letters": [
+        "saad",
+        "noon",
+        "daal",
+        "waaw",
+        "qaaf"
+      ],
+      "signedOff": false
     }
   ]
 }
