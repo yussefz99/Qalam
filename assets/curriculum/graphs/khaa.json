@@ -1,0 +1,172 @@
+{
+  "_meta": {
+    "title": "khaa curriculum graph - competency + difficulty tier + prerequisites (DRAFT)",
+    "source": "Fresh draft by Codex using the signed baa graph pattern, docs/curriculum/national-curriculum-grade1.md, and the draft ? ? ? family note in docs/curriculum/drafts/thaa-jeem-haa-DRAFT.md. Vocabulary is [DRAFT] pending owner-mother review.",
+    "sign_off": "DRAFT - awaiting owner-mother sign-off at the tier level. signedOff stays false until she reviews and signs."
+  },
+  "letterId": "khaa",
+  "signedOff": false,
+  "competencies": [
+    {
+      "id": "recognize",
+      "essential": true,
+      "prerequisites": []
+    },
+    {
+      "id": "positionalForms",
+      "essential": true,
+      "prerequisites": [
+        "recognize"
+      ]
+    },
+    {
+      "id": "copyWrite",
+      "essential": true,
+      "prerequisites": [
+        "positionalForms"
+      ]
+    },
+    {
+      "id": "fluentReading",
+      "essential": true,
+      "prerequisites": [
+        "copyWrite"
+      ]
+    },
+    {
+      "id": "wordBuilding",
+      "essential": false,
+      "prerequisites": [
+        "copyWrite"
+      ]
+    },
+    {
+      "id": "grammarTransform",
+      "essential": false,
+      "prerequisites": [
+        "copyWrite"
+      ]
+    }
+  ],
+  "tiers": [
+    "manqul",
+    "manzur",
+    "ghayrManzur"
+  ],
+  "nodes": [
+    {
+      "exerciseId": "khaa.teachCard.meet",
+      "competency": "recognize",
+      "tier": null,
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "khaa.traceLetter.isolated",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "khaa.traceLetter.initial",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "khaa.traceLetter.medial",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "khaa.writeLetter.fromSound",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "khaa.writeLetter.fromPicture",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "khaa.writeLetter.writeForm",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "khaa.connectWord.khubz",
+      "competency": "copyWrite",
+      "tier": "manqul",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "khaa.connectWord.khaatam",
+      "competency": "copyWrite",
+      "tier": "manqul",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "khaa.completeWord.middle",
+      "competency": "copyWrite",
+      "tier": "manqul",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "khaa.writeWord.copy",
+      "competency": "copyWrite",
+      "tier": "manzur",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "khaa.writeWord.picture",
+      "competency": "copyWrite",
+      "tier": "manzur",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "khaa.writeWord.dictation",
+      "competency": "copyWrite",
+      "tier": "ghayrManzur",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "khaa.buildSentence.hear",
+      "competency": "fluentReading",
+      "tier": "ghayrManzur",
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "khaa.buildSentence.picture",
+      "competency": "fluentReading",
+      "tier": "manzur",
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "khaa.fillBlank.noun",
+      "competency": "wordBuilding",
+      "tier": null,
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "khaa.transformWord.dual",
+      "competency": "grammarTransform",
+      "tier": null,
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "khaa.transformWord.plural",
+      "competency": "grammarTransform",
+      "tier": null,
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "khaa.transformWord.opposite",
+      "competency": "grammarTransform",
+      "tier": null,
+      "minCleanReps": 1
+    }
+  ]
+}

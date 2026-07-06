@@ -322,6 +322,85 @@
         "haa_c"
       ],
       "signedOff": false
+    },
+    {
+      "id": "khubz",
+      "text": "???",
+      "audio": "word.khubz",
+      "image": "img.bread",
+      "gloss": {
+        "en": "bread"
+      },
+      "letters": [
+        "khaa",
+        "baa",
+        "zaay"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "kharuf",
+      "text": "????",
+      "audio": "word.kharuf",
+      "image": "img.sheep",
+      "gloss": {
+        "en": "sheep"
+      },
+      "letters": [
+        "khaa",
+        "raa",
+        "waaw",
+        "faa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "khiyar",
+      "text": "????",
+      "audio": "word.khiyar",
+      "image": "img.cucumber",
+      "gloss": {
+        "en": "cucumber"
+      },
+      "letters": [
+        "khaa",
+        "yaa",
+        "alif",
+        "raa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "khaatam",
+      "text": "????",
+      "audio": "word.khaatam",
+      "image": "img.ring",
+      "gloss": {
+        "en": "ring"
+      },
+      "letters": [
+        "khaa",
+        "alif",
+        "taa",
+        "meem"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "nakhla",
+      "text": "????",
+      "audio": "word.nakhla",
+      "image": "img.palm-tree",
+      "gloss": {
+        "en": "palm tree"
+      },
+      "letters": [
+        "noon",
+        "khaa",
+        "laam",
+        "taa_marbuta"
+      ],
+      "signedOff": false
     }
   ]
 }
