@@ -257,6 +257,71 @@
         "taa_marbuta"
       ],
       "signedOff": false
+    },
+    {
+      "id": "hisaan",
+      "text": "حصان",
+      "audio": "word.hisaan",
+      "image": "img.horse",
+      "gloss": {
+        "en": "horse"
+      },
+      "letters": [
+        "haa_c",
+        "saad",
+        "alif",
+        "noon"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "hoot",
+      "text": "حوت",
+      "audio": "word.hoot",
+      "image": "img.whale",
+      "gloss": {
+        "en": "whale"
+      },
+      "letters": [
+        "haa_c",
+        "waaw",
+        "taa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "miftaah",
+      "text": "مفتاح",
+      "audio": "word.miftaah",
+      "image": "img.key",
+      "gloss": {
+        "en": "key"
+      },
+      "letters": [
+        "meem",
+        "faa",
+        "taa",
+        "alif",
+        "haa_c"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "tuffah",
+      "text": "تفاح",
+      "audio": "word.tuffah",
+      "image": "img.apple",
+      "gloss": {
+        "en": "apple"
+      },
+      "letters": [
+        "taa",
+        "faa",
+        "faa",
+        "alif",
+        "haa_c"
+      ],
+      "signedOff": false
     }
   ]
 }
