@@ -780,17 +780,42 @@ and the eval grows to score stroke-level coaching. Validated by the stroke-aware
 
 **Deferred (NOT in this phase)**: sending raw strokes or rendered images to the model (spike rejected image; on-device derived diff chosen); enriching the `analyze` node with geometric struggle tags (later follow-up); letters beyond baa; the **cheap-win prompt fix** (exemplars as register guidance, never copied) — ships separately first as a `/gsd:quick`, a prerequisite, not part of this phase.
 **Canonical refs**: docs/architecture/STROKE-AWARE-COACH-SPIKE-BRIEF.md; .planning/spikes/SPIKE-FINDINGS.md; .planning/spikes/MANIFEST.md; .planning/spikes/_lib/geometry.py; server/app/faithfulness.py; server/app/schema.py; server/app/nodes/coach.py; server/app/prompts.py
-**Plans**: 8 plans in 6 waves
-
+**Plans**: 10 plans in 8 waves
 Plans:
+**Wave 1**
+
 - [ ] 17-01-PLAN.md — Wave-0 RED contract: soft-verdict + per-form scorer tests
-- [ ] 17-02-PLAN.md — DTW shape-match into the per-stroke scorer (soft 3-zone verdict)
-- [ ] 17-03-PLAN.md — Per-form multi-criteria letter scorer + validator form threading
 - [ ] 17-04-PLAN.md — EVAL-03 semantic faithfulness gate + no-false-geometry + two-arm STRK-01 baseline
-- [ ] 17-05-PLAN.md — Structured criteria + word facts on the wire; criterion-aware English-primary addendum
-- [ ] 17-06-PLAN.md — Verdict cutover: scorer owns pass/fail, image path retired, F1 RTL fix
-- [ ] 17-07-PLAN.md — Calibration harness per letter × form + threshold-fit report
-- [ ] 17-08-PLAN.md — ADR-017 + re-deploy + HUMAN-UAT ledger + baseline reconciliation
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 17-02-PLAN.md — DTW shape-match into the per-stroke scorer (soft 3-zone verdict)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 17-03-PLAN.md — Per-form multi-criteria letter scorer + validator form threading
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
+- [ ] 17-05-PLAN.md — Coaching contract, server side FIRST: criteria + word-facts DTO, criterion-aware addendum
+- [ ] 17-09-PLAN.md — Calibration harness per letter × form + threshold-fit report
+
+**Wave 5** *(blocked on Wave 4 completion)*
+
+- [ ] 17-06-PLAN.md — Coaching contract, client mirror: CheckResult → TutorFacts + lockstep guards
+
+**Wave 6** *(blocked on Wave 5 completion)*
+
+- [ ] 17-07-PLAN.md — Client verdict cutover: scorer owns pass/fail, image render deleted, D-A behavioral test
+
+**Wave 7** *(blocked on Wave 6 completion)*
+
+- [ ] 17-08-PLAN.md — Server image-path retirement + F1 RTL fix
+
+**Wave 8** *(blocked on Wave 7 completion)*
+
+- [ ] 17-10-PLAN.md — ADR-017 + re-deploy + HUMAN-UAT ledger + baseline reconciliation
+
 **UI hint**: no — server + client-contract + on-device diff; no new screens.
 **Research hint**: no — the spike already validated representation, grounding, latency, and privacy; this phase implements the spike's verdict.
 
@@ -807,6 +832,6 @@ Plans:
 | 14. BUILD — TutorBrain spine + grounding invariant | 4/4 | Complete   | 2026-06-22 |
 | 15. BUILD — dynamic grounded exercise selection on baa | 8/7 | Complete    | 2026-06-28 |
 | 16. BUILD — presence + voice + eval gate + demo-harden | 3/6 | In Progress|  |
-| 17. BUILD — stroke-aware coaching (on-device geo-diff → coach) | 0/8 | Not started | - |
+| 17. BUILD — stroke-aware coaching (on-device geo-diff → coach) | 0/10 | Not started | - |
 
 **Coverage:** the 14 original v2.0 requirements map across Phases 14–16; Phase 17 (added 2026-06-30 from the stroke-aware spike) adds STRK-01 / GROUND-04 / EVAL-03. The three spikes (11–13) own no requirements by design. See REQUIREMENTS.md → v2.0 Traceability.
