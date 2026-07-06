@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
-status: executing
+status: verifying
 stopped_at: Completed 17-07-PLAN.md
-last_updated: "2026-07-06T17:06:38.296Z"
+last_updated: "2026-07-06T17:32:54.777Z"
 last_activity: 2026-07-06
 progress:
   total_phases: 21
-  completed_phases: 14
+  completed_phases: 15
   total_plans: 90
-  completed_plans: 85
-  percent: 67
+  completed_plans: 86
+  percent: 71
 ---
 
 # Project State
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 
 Phase: 17 (build-stroke-aware-coaching-on-device-geo-diff-to-coach) — EXECUTING
 Plan: 10 of 10
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-07-06
 Next: Phase 17 waves 1–5 complete (17-01 RED contract, 17-02 soft per-stroke verdict, 17-03 per-form multi-criteria scoreLetter + LetterScore, 17-04 server eval gate, 17-05 server criteria/word contract, 17-06 CLIENT criteria/word mirror, 17-09 per-form calibration harness). The criteria/word lockstep is now closed BOTH wire sides (server 17-05 + client 17-06) with zero 422 window — the scorer's structured verdict reaches the coach FACTS. Continue /gsd-execute-phase 17: 17-07 geo-diff cutover (owns the aiJudge/strokeImage seams), 17-08 harden, 17-10 ADR-017 + single Cloud Run re-deploy + HUMAN-UAT mom sign-off (flips STRK-01/GROUND-04).
 
@@ -103,6 +103,7 @@ Next: Phase 17 waves 1–5 complete (17-01 RED contract, 17-02 soft per-stroke v
 | Phase 17 P06 | 15min | 1 tasks | 7 files |
 | Phase 17 P07 | 32 | 2 tasks | 9 files |
 | Phase 17 P08 | 9min | 2 tasks | 7 files |
+| Phase 17 P10 | 30min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -225,6 +226,9 @@ Recent decisions affecting current work:
 - [Phase ?]: 17-08: strokeImage joins FORBIDDEN_KEYS — a stale-client image key now 422s BY DESIGN (proven at the DTO + live /coach boundary); the 422 is the structural proof the off-device surface shrank; removal lockstep closed on both wire sides (client 17-07 + server 17-08)
 - [Phase ?]: 17-08: UAT F1 fixed — English helper copy forced textDirection: TextDirection.ltr under the RTL Directionality (meet_section + feedback_panel_v2); ArabicText stays RTL; prompt_header untouched; pinned by meet_section_ltr_test.dart
 - [Phase ?]: 17-08: STRK-01/GROUND-04 NOT checkbox-marked (precedent) — closes the SERVER half of GROUND-04; ADR-017 + single Cloud Run re-deploy (17-10) complete it; requirements-completed stays []
+- [Phase ?]: 17-10: ADR-017 records D-A verdict-authority + softened GROUND-02 (derived diff crosses, raw strokes/images never); image_judge.py deleted-not-demoted; §5 OWNER-CONFIRMED kinematics-descoped
+- [Phase ?]: 17-10: Cloud Run re-deploy is a PENDING human gate — auto-mode classifier blocked the production gcloud run deploy; gcloud IS authed + /health 200 on rev qalam-tutor-00020-txt, so demo unaffected; recorded as first HUMAN-UAT item (NOT faked). make eval judge+baseline deferred (no ADC, gold 0/47 signed)
+- [Phase ?]: 17-10: STRK-01/GROUND-04/EVAL-03 NOT checkbox-marked (phase precedent + genuine pending gates: deploy / two-arm baseline / mother gold re-sign); /gsd-verify-work 17 flips them once the HUMAN-UAT gates close. Phase 17 autonomous-complete; verification baseline flutter 748/8-known, server -m code 109/1-skip
 
 ### Pending Todos
 
@@ -265,6 +269,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-06T17:05:45.705Z
+Last session: 2026-07-06T17:32:07.985Z
 Stopped at: Completed 17-07-PLAN.md
 Resume files: .planning/phases/17-build-stroke-aware-coaching-on-device-geo-diff-to-coach/17-07-PLAN.md (next — geo-diff cutover), .planning/phases/17-build-stroke-aware-coaching-on-device-geo-diff-to-coach/17-06-SUMMARY.md, .planning/phases/17-build-stroke-aware-coaching-on-device-geo-diff-to-coach/17-05-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
