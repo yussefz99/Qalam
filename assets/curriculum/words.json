@@ -1003,6 +1003,87 @@
         "daad"
       ],
       "signedOff": false
+    },
+    {
+      "id": "taair",
+      "text": "????",
+      "audio": "word.taair",
+      "image": "img.bird",
+      "gloss": {
+        "en": "bird"
+      },
+      "letters": [
+        "taa_h",
+        "alif",
+        "yaa",
+        "raa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "tifl",
+      "text": "???",
+      "audio": "word.tifl",
+      "image": "img.child",
+      "gloss": {
+        "en": "child"
+      },
+      "letters": [
+        "taa_h",
+        "faa",
+        "laam"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "tamaatim",
+      "text": "?????",
+      "audio": "word.tamaatim",
+      "image": "img.tomatoes",
+      "gloss": {
+        "en": "tomatoes"
+      },
+      "letters": [
+        "taa_h",
+        "meem",
+        "alif",
+        "taa_h",
+        "meem"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "batata",
+      "text": "?????",
+      "audio": "word.batata",
+      "image": "img.potato",
+      "gloss": {
+        "en": "potato"
+      },
+      "letters": [
+        "baa",
+        "taa_h",
+        "alif",
+        "taa_h",
+        "alif"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "matbakh",
+      "text": "????",
+      "audio": "word.matbakh",
+      "image": "img.kitchen",
+      "gloss": {
+        "en": "kitchen"
+      },
+      "letters": [
+        "meem",
+        "taa_h",
+        "baa",
+        "khaa"
+      ],
+      "signedOff": false
     }
   ]
 }
