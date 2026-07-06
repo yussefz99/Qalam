@@ -38,6 +38,17 @@ agent decides pass/fail**.
 - **D-F — Coaching model is an open bake-off, decided later**: on-device Gemma
   (coaching-only) vs Gemini-on-Vertex, on the mother's register rubric. Not a
   blocker for the scorer work.
+- **D-C amendment — kinematics descoped, position folded (OWNER-CONFIRMED
+  2026-07-05, plan-phase checkpoint):** `StrokeCanvas` captures no timestamps, so
+  the kinematics criterion is DESCOPED this phase — never fake speed from point
+  spacing. Position folds into the firm dot-placement check. The five scored
+  criteria are **shape / direction / strokeOrder / strokeCount / dot**. FOLLOW-UP
+  (recorded): add `PointerEvent.timeStamp` capture in a later phase so kinematics
+  can join with real data. Recorded in ADR-017.
+- **A2 confirmed — demo scores unsigned forms (OWNER-CONFIRMED 2026-07-05,
+  plan-phase checkpoint):** the demo MAY score baa initial/medial/final against
+  form-level `signedOff:false` references (guides already render them). The
+  mother's sign-off stays the recorded PRODUCTION gate (17-HUMAN-UAT + ADR-017).
 
 ## Build increments (for the planner to break into tasks)
 

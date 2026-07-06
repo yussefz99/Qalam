@@ -566,7 +566,7 @@ marked superseded in the doc).
 | A4 | The spike's specificity/variety scoring approach (distinct-line counting + judged localization) is acceptable as STRK-01's "measurably beats baseline" instrument | Validation Architecture | Owner may want a different metric definition `[ASSUMED]` |
 | A5 | `image_judge.py` should be deleted rather than kept advisory (image was the worst spike arm; keeping it re-opens the consent reversal) | Pattern 4 | If the owner wants it as a corroborator, keep behind a flag — CONTEXT permits either `[ASSUMED — recommend delete]` |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **ADR numbering + scope** — one ADR covering both the GROUND-02 softening (derived diff
    crosses the wire — required by GROUND-04 acceptance) and the D-A un-reversal (scorer owns
@@ -574,25 +574,35 @@ marked superseded in the doc).
    informally reserved (16-06 bake-off). Recommendation: a single Phase-17 ADR at the next
    free number covering the verdict-authority decision + the derived-diff data flow, since
    they are one architectural story; verify the number at plan time.
+   **RESOLVED (plan-phase 2026-07-05):** one ADR — ADR-017 — covering both, written by Plan 17-10.
 2. **Kinematics criterion (the 5th of F1's five)** — no timestamps in capture.
    Recommendation: score shape/direction/order/count + dot this phase (all data available);
    record kinematics as a follow-up needing `PointerEvent.timeStamp` capture; per-point
    spacing at fixed sampling rate is a weak proxy — don't fake it.
+   **RESOLVED (owner-confirmed 2026-07-05, D-C amendment):** descoped; the five criteria are
+   shape/direction/strokeOrder/strokeCount/dot; follow-up recorded — add PointerEvent.timeStamp
+   capture in a later phase so kinematics can join with real data.
 3. **"Position" criterion definition** — Hamdi's position = placement vs reference lines. In
    trace mode child strokes and the painted guide share pixel space, so raw-space offset IS
    computable pre-normalization. Recommendation: treat position as the existing relative
    checks (dot above/below via combined bbox — already firm) + optionally a body-vs-guide
    offset in trace mode; don't over-engineer for write mode (no guide exists).
+   **RESOLVED (owner-confirmed 2026-07-05, D-C amendment):** position folded into the firm
+   dot-placement check.
 4. **Phase-16 open human gates** — Phase 17 nominally executes after 16 closes; 16 is paused
    at 6 human/hardware gates. What's unclear: whether the owner wants 17 planned/executed on
    its own branch in parallel. Recommendation: plan 17 now (this research), branch fresh, and
    flag the dependency at execution kickoff.
+   **RESOLVED:** planned now; the phase-17 branch is created from the phase-16 branch tip at
+   execution kickoff (17-01/17-04 kickoff notes).
 5. **F1 (RTL rendering of English helper lines) and F6 (word-path coaching depth)** — both in
    the UAT punch-list this phase must fix, both outside the scorer core. F1 is a small
    bidi/textDirection UI fix; F6 needs the word path's derived facts enriched (recognized
    `writtenWord` vs expected — derived, non-PII) so the coach can say something specific.
    Recommendation: include as small tasks in the coaching-contract plan; word-fact enrichment
    follows the same 422-lockstep pattern.
+   **RESOLVED:** F1 → Plan 17-08 (LTR fix + widget test); F6 → Plans 17-05/17-06
+   (expectedWord/writtenWord derived word facts).
 
 ## Environment Availability
 
