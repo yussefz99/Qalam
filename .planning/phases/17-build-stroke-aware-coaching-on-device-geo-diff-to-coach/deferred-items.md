@@ -34,3 +34,23 @@ curriculum data or golden/font drift):
    Pre-existing; left for a lint-sweep quick task.
    - `letter_scorer_per_form_test.dart` is now GREEN (contract satisfied); item 4
      above is resolved by 17-03.
+
+## Observed during 17-07 (2026-07-06)
+
+1. `lib/features/letter_unit/letter_unit_screen.dart` (lines 389–484) — 12
+   info-level `unnecessary_brace_in_string_interps` lints. Surfaced when running
+   the plan's verify `flutter analyze lib/tutor/ lib/features/letter_unit/`. The
+   file is NOT in 17-07's touch set (out of scope per the executor SCOPE
+   BOUNDARY). The six files 17-07 actually modified — `exercise_scaffold.dart`,
+   `write_surface.dart`, `tutor_facts.dart`, `tutor_facts_builder.dart`,
+   `tutor_decision.dart`, `remote_agent_brain.dart` — analyze clean ("No issues
+   found!"). Pre-existing; left for a lint-sweep quick task.
+2. `write_surface_test.dart` Test 5 is now GREEN (the hanging `toImage` PNG
+   render is deleted by the cutover) — the 17-02/17-03 deferred item #3 line
+   about it being pre-existing-failing is RESOLVED by 17-07. Full-suite failure
+   count dropped 9 → 8 (baseline minus write_surface, recorded for 17-10).
+3. `applyVerdict` in `lib/features/letter_unit/exercise_controller.dart` is now
+   DEAD (its only caller — the deleted aiJudge block — is gone). Left in place:
+   `exercise_controller.dart` is NOT in 17-07's file scope, and an unused public
+   method raises no analyze warning. Flagged for a follow-up removal alongside
+   the ADR-017 cleanup (17-10).

@@ -806,7 +806,7 @@ Plans:
 
 **Wave 6** *(blocked on Wave 5 completion)*
 
-- [ ] 17-07-PLAN.md — Client verdict cutover: scorer owns pass/fail, image render deleted, D-A behavioral test
+- [x] 17-07-PLAN.md — Client verdict cutover: scorer owns pass/fail, image render deleted, D-A behavioral test
 
 **Wave 7** *(blocked on Wave 6 completion)*
 
@@ -832,6 +832,6 @@ Plans:
 | 14. BUILD — TutorBrain spine + grounding invariant | 4/4 | Complete   | 2026-06-22 |
 | 15. BUILD — dynamic grounded exercise selection on baa | 8/7 | Complete    | 2026-06-28 |
 | 16. BUILD — presence + voice + eval gate + demo-harden | 3/6 | In Progress|  |
-| 17. BUILD — stroke-aware coaching (on-device geo-diff → coach) | 7/10 | In Progress|  |
+| 17. BUILD — stroke-aware coaching (on-device geo-diff → coach) | 8/10 | In Progress|  |
 
 **Coverage:** the 14 original v2.0 requirements map across Phases 14–16; Phase 17 (added 2026-06-30 from the stroke-aware spike) adds STRK-01 / GROUND-04 / EVAL-03. The three spikes (11–13) own no requirements by design. See REQUIREMENTS.md → v2.0 Traceability.
