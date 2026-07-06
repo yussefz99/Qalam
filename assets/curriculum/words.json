@@ -1318,6 +1318,87 @@
         "raa"
       ],
       "signedOff": false
+    },
+    {
+      "id": "fil",
+      "text": "???",
+      "audio": "word.fil",
+      "image": "img.elephant",
+      "gloss": {
+        "en": "elephant"
+      },
+      "letters": [
+        "faa",
+        "yaa",
+        "laam"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "fustuq",
+      "text": "????",
+      "audio": "word.fustuq",
+      "image": "img.pistachio",
+      "gloss": {
+        "en": "pistachio"
+      },
+      "letters": [
+        "faa",
+        "seen",
+        "taa",
+        "qaaf"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "farasha_faa",
+      "text": "?????",
+      "audio": "word.farasha",
+      "image": "img.butterfly",
+      "gloss": {
+        "en": "butterfly"
+      },
+      "letters": [
+        "faa",
+        "raa",
+        "alif",
+        "sheen",
+        "taa_marbuta"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "miftaah_faa",
+      "text": "?????",
+      "audio": "word.miftaah",
+      "image": "img.key",
+      "gloss": {
+        "en": "key"
+      },
+      "letters": [
+        "meem",
+        "faa",
+        "taa",
+        "alif",
+        "haa_c"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "kharoof",
+      "text": "????",
+      "audio": "word.kharuf",
+      "image": "img.sheep",
+      "gloss": {
+        "en": "sheep"
+      },
+      "letters": [
+        "khaa",
+        "raa",
+        "waaw",
+        "faa"
+      ],
+      "signedOff": false
     }
   ]
 }
