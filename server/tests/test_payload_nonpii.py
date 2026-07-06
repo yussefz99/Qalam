@@ -22,7 +22,7 @@ from pydantic import ValidationError
 
 pytestmark = pytest.mark.code
 
-from app.schema import AttemptFactIn, TutorFactsIn
+from app.schema import AttemptFactIn, CriterionIn, TutorFactsIn
 
 # A LEGIT, fully-populated enlarged payload — the exact field set from
 # server/app/schema.py (6 base + a populated trajectory + strengthTags + the two
@@ -45,10 +45,24 @@ LEGIT_FACTS = {
     # TutorFacts whitelist byte-for-byte (Pitfall 1 — the 422 lockstep).
     "clearedTiers": ["manqul", "manzur"],
     "clearedCompetencies": ["recognize", "positionalForms"],
+    # Phase 17 (17-05 server / 17-06 Dart): the DERIVED per-criterion result +
+    # word facts. `criteria` records are the CriterionIn {criterion, zone, score}
+    # mirror; weakestCriterion is the coaching target (D-B); the two word facts
+    # are derived text (never geometry). All non-PII; nested extra="forbid".
+    "criteria": [
+        {"criterion": "shape", "zone": "certainlyWrong", "score": 0.0},
+        {"criterion": "dot", "zone": "certainlyCorrect", "score": 1.0},
+    ],
+    "weakestCriterion": "shape",
+    "expectedWord": "باب",
+    "writtenWord": "داد",
 }
 
 # The graph-position field names — they must be ACCEPTED and must carry no PII.
 GRAPH_POSITION_FIELDS = ["clearedTiers", "clearedCompetencies"]
+
+# The Phase-17 field names — they must be ACCEPTED and must carry no PII.
+CRITERIA_WORD_FIELDS = ["criteria", "weakestCriterion", "expectedWord", "writtenWord"]
 
 # The geometry/PII keys that must NEVER be accepted on either model.
 FORBIDDEN_KEYS = ["strokes", "x", "y", "offsets", "nickname", "childName"]
@@ -64,7 +78,7 @@ _PII_TOKEN_RE = re.compile(r"\b[xy]\b|stroke|offset|coord|point|raw|nick|name", 
 
 def test_tutorfactsin_accepts_the_legit_enlarged_payload():
     """The day-one-final enlarged payload (trajectory + strengthTags + the two
-    Phase-15 graph-position fields) validates."""
+    Phase-15 graph-position fields + the Phase-17 criteria/word facts) validates."""
     facts = TutorFactsIn.model_validate(LEGIT_FACTS)
     assert facts.letterId == "baa"
     assert len(facts.trajectory) == 2
@@ -72,6 +86,44 @@ def test_tutorfactsin_accepts_the_legit_enlarged_payload():
     # The two Phase-15 fields are accepted and round-trip their id string-lists.
     assert facts.clearedTiers == ["manqul", "manzur"]
     assert facts.clearedCompetencies == ["recognize", "positionalForms"]
+    # The four Phase-17 fields are accepted and round-trip.
+    assert len(facts.criteria) == 2
+    assert facts.criteria[0].criterion == "shape"
+    assert facts.weakestCriterion == "shape"
+    assert facts.expectedWord == "باب"
+    assert facts.writtenWord == "داد"
+
+
+def test_criteria_and_word_fields_carry_no_pii():
+    """The four Phase-17 fields — their NAMES and the criterion/zone id values — trip no
+    PII/stroke token (GROUND-04 regression over the enlarged wire contract)."""
+    facts = TutorFactsIn.model_validate(LEGIT_FACTS)
+    dumped = facts.model_dump()
+    for field in CRITERIA_WORD_FIELDS:
+        assert field in dumped, f"{field} must serialize on the server DTO"
+        assert not _PII_TOKEN_RE.search(field), (
+            f"the Phase-17 field name {field!r} matches the PII/stroke guard"
+        )
+    # The criterion/zone id values are derived, non-PII strings.
+    for crit in facts.criteria:
+        assert not _PII_TOKEN_RE.search(crit.criterion), crit.criterion
+        assert not _PII_TOKEN_RE.search(crit.zone), crit.zone
+
+
+def test_leaked_key_inside_a_criterion_entry_is_rejected():
+    """A leaked geometry/PII key INSIDE a criteria record is rejected (nested forbid on
+    CriterionIn) — raw points can never ride in on a criterion entry (GROUND-04)."""
+    payload = {
+        **LEGIT_FACTS,
+        "criteria": [{"criterion": "shape", "zone": "certainlyWrong", "score": 0.0, "y": 1}],
+    }
+    with pytest.raises(ValidationError):
+        TutorFactsIn.model_validate(payload)
+
+
+def test_extra_forbid_is_pinned_on_criterionin():
+    """extra=forbid stays on CriterionIn (the nested Phase-17 regression guard)."""
+    assert CriterionIn.model_config.get("extra") == "forbid"
 
 
 def test_graph_position_fields_carry_no_pii():
