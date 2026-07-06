@@ -1785,6 +1785,84 @@
         "taa_marbuta"
       ],
       "signedOff": false
+    },
+    {
+      "id": "hadiyya",
+      "text": "????",
+      "audio": "word.hadiyya",
+      "image": "img.gift",
+      "gloss": {
+        "en": "gift"
+      },
+      "letters": [
+        "haa_f",
+        "daal",
+        "yaa",
+        "taa_marbuta"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "haram",
+      "text": "???",
+      "audio": "word.haram",
+      "image": "img.pyramid",
+      "gloss": {
+        "en": "pyramid"
+      },
+      "letters": [
+        "haa_f",
+        "raa",
+        "meem"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "hilal",
+      "text": "????",
+      "audio": "word.hilal",
+      "image": "img.crescent",
+      "gloss": {
+        "en": "crescent"
+      },
+      "letters": [
+        "haa_f",
+        "laam",
+        "alif",
+        "laam"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "wajh",
+      "text": "???",
+      "audio": "word.wajh",
+      "image": "img.face",
+      "gloss": {
+        "en": "face"
+      },
+      "letters": [
+        "waaw",
+        "jeem",
+        "haa_f"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "miyah",
+      "text": "????",
+      "audio": "word.miyah",
+      "image": "img.water",
+      "gloss": {
+        "en": "water"
+      },
+      "letters": [
+        "meem",
+        "yaa",
+        "alif",
+        "haa_f"
+      ],
+      "signedOff": false
     }
   ]
 }
