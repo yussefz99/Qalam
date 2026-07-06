@@ -476,6 +476,82 @@
         "taa_marbuta"
       ],
       "signedOff": false
+    },
+    {
+      "id": "dhayl",
+      "text": "???",
+      "audio": "word.dhayl",
+      "image": "img.tail",
+      "gloss": {
+        "en": "tail"
+      },
+      "letters": [
+        "dhaal",
+        "yaa",
+        "laam"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "dhira",
+      "text": "????",
+      "audio": "word.dhira",
+      "image": "img.arm",
+      "gloss": {
+        "en": "arm"
+      },
+      "letters": [
+        "dhaal",
+        "raa",
+        "alif",
+        "ayn"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "dhahab",
+      "text": "???",
+      "audio": "word.dhahab",
+      "image": "img.gold",
+      "gloss": {
+        "en": "gold"
+      },
+      "letters": [
+        "dhaal",
+        "haa_f",
+        "baa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "udhun",
+      "text": "???",
+      "audio": "word.udhun",
+      "image": "img.ear",
+      "gloss": {
+        "en": "ear"
+      },
+      "letters": [
+        "alif",
+        "dhaal",
+        "noon"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "dhura",
+      "text": "???",
+      "audio": "word.dhura",
+      "image": "img.corn",
+      "gloss": {
+        "en": "corn"
+      },
+      "letters": [
+        "dhaal",
+        "raa",
+        "taa_marbuta"
+      ],
+      "signedOff": false
     }
   ]
 }
