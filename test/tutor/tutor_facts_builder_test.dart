@@ -33,7 +33,21 @@ const _whitelist = <String>{
   // mirroring server/app/schema.py TutorFactsIn (Pitfall 1 — the 422 lockstep).
   'clearedTiers',
   'clearedCompetencies',
+  // Phase 17 (17-06, STRK-01/D-B/GROUND-04): the criteria + word mirror fields —
+  // top-level, omit-when-null. `criteria` is a list of point-free records whose
+  // own keys live in [_criteriaKeys]; the three word/weakest scalars are strings.
+  // All mirror server/app/schema.py TutorFactsIn byte-for-byte (the 422 lockstep).
+  'criteria',
+  'weakestCriterion',
+  'expectedWord',
+  'writtenWord',
 };
+
+/// The keys allowed INSIDE each derived [criteria] entry (Phase 17 / 17-06).
+/// EXACTLY {criterion, zone, score} scalars — NO coordinate keys. Mirrors the
+/// server `CriterionIn` (`server/app/schema.py`); `criterion` (never `name`) and
+/// the absence of any `point` substring keep the token guard green by construction.
+const _criteriaKeys = <String>{'criterion', 'zone', 'score'};
 
 /// Matches a key that would smell like raw stroke geometry or PII.
 ///
@@ -106,6 +120,65 @@ void main() {
           reason: 'TutorFacts key "$k" matches a forbidden stroke/PII pattern',
         );
       }
+    });
+
+    test('derives the criteria + word mirror facts from the CheckResult (17-06): '
+        'toMap emits them with only {criterion,zone,score} per entry', () {
+      final facts = buildTutorFacts(
+        letterId: 'baa',
+        section: 'writeWord',
+        result: const CheckResult(
+          passed: false,
+          mistakeId: 'shallowBowl',
+          criteria: [
+            {'criterion': 'shape', 'zone': 'certainlyWrong', 'score': 0.1},
+            {'criterion': 'direction', 'zone': 'fuzzy', 'score': 0.7},
+          ],
+          weakestCriterion: 'shape',
+          expectedWord: 'باب',
+          writtenWord: 'بب',
+        ),
+      );
+
+      final map = facts.toMap();
+      // (a) the four mirror fields reached the payload (derived FROM the result).
+      expect(map['criteria'], isA<List<Object?>>());
+      expect(map['weakestCriterion'], 'shape');
+      expect(map['expectedWord'], 'باب');
+      expect(map['writtenWord'], 'بب');
+      // (b) each criteria entry carries EXACTLY {criterion, zone, score}.
+      for (final entry in (map['criteria'] as List)) {
+        expect((entry as Map).keys.toSet(), {'criterion', 'zone', 'score'});
+      }
+      // (c) no emitted key (nested included) escapes the whitelist ∪ criteria keys.
+      expect(
+        _allKeys(map).difference(_whitelist.union(_criteriaKeys)),
+        isEmpty,
+        reason:
+            'criteria-bearing TutorFacts leaked a non-whitelisted key: ${_allKeys(map)}',
+      );
+      // (d) no emitted key (top-level or nested) trips the stroke/PII token guard.
+      for (final k in _allKeys(map)) {
+        expect(
+          _forbiddenKey.hasMatch(k),
+          isFalse,
+          reason: 'criteria payload key "$k" trips the stroke/PII guard',
+        );
+      }
+    });
+
+    test('omits the criteria + word facts when the CheckResult carries none '
+        '(17-06 omit-when-null: byte-identical to the pre-plan shape)', () {
+      final facts = buildTutorFacts(
+        letterId: 'baa',
+        section: 'traceLetter',
+        result: const CheckResult.fail('shallowBowl'),
+      );
+      final map = facts.toMap();
+      expect(map.containsKey('criteria'), isFalse);
+      expect(map.containsKey('weakestCriterion'), isFalse);
+      expect(map.containsKey('expectedWord'), isFalse);
+      expect(map.containsKey('writtenWord'), isFalse);
     });
 
     test('the tightened guard FAILS real geometry/PII keys, PASSES legit fields',

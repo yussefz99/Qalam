@@ -41,7 +41,20 @@ String _lineOf(TutorDecision d) => switch (d) {
 TutorFacts _missFacts() => buildTutorFacts(
       letterId: 'baa',
       section: 'traceLetter',
-      result: const CheckResult.fail('shallowBowl'),
+      // Phase 17 (17-06): the CheckResult carries the DERIVED criteria + word
+      // facts (scorer → validator → builder), so the sent body exercises the
+      // full mirror of server/app/schema.py TutorFactsIn (Pitfall 1).
+      result: const CheckResult(
+        passed: false,
+        mistakeId: 'shallowBowl',
+        criteria: [
+          {'criterion': 'shape', 'zone': 'certainlyWrong', 'score': 0.0},
+          {'criterion': 'direction', 'zone': 'certainlyCorrect', 'score': 1.0},
+        ],
+        weakestCriterion: 'shape',
+        expectedWord: 'باب',
+        writtenWord: 'بب',
+      ),
       recentMistakes: const ['shallowBowl'],
       trajectory: const [
         AttemptFact(passed: false, mistakeId: 'shallowBowl', section: 'traceLetter'),
@@ -180,7 +193,8 @@ void main() {
     final sentBody = jsonDecode(captured.body) as Map<String, Object?>;
     // Byte-for-byte the non-PII whitelist — no extra key that would 422 under
     // the server's extra=forbid. The two Phase-15 graph-position fields
-    // (clearedTiers/clearedCompetencies) mirror server/app/schema.py (Pitfall 1).
+    // (clearedTiers/clearedCompetencies) and the four Phase-17 criteria/word
+    // fields (17-06) mirror server/app/schema.py (Pitfall 1).
     expect(sentBody, facts.toJson());
     expect(sentBody.keys.toSet(), {
       'letterId',
@@ -193,7 +207,16 @@ void main() {
       'strengthTags',
       'clearedTiers',
       'clearedCompetencies',
+      // Phase 17 (17-06): the criteria + word mirror fields, present because the
+      // CheckResult above carries them (omit-when-null otherwise).
+      'criteria',
+      'weakestCriterion',
+      'expectedWord',
+      'writtenWord',
     });
+    // Each criteria entry carries EXACTLY the CriterionIn keys (point-free).
+    final criterion = (sentBody['criteria'] as List).first as Map;
+    expect(criterion.keys.toSet(), {'criterion', 'zone', 'score'});
   });
 }
 

@@ -49,9 +49,26 @@ const _whitelist = <String>{
   // coordinate KEYS), so it passes the token guard while being a recorded, scoped
   // exception, not an accidental leak.
   'strokeImage',
+  // Phase 17 (17-06, STRK-01/D-B/GROUND-04): the STRUCTURED per-criterion result
+  // + derived word facts. `criteria` is a list of point-free records whose own
+  // keys are listed in [_criteriaKeys]; the three scalars are derived strings. All
+  // mirror server/app/schema.py TutorFactsIn byte-for-byte (Pitfall 1 — the 422
+  // lockstep). GROUND-04: criteria hold only {criterion,zone,score} scalars, the
+  // word facts are DERIVED text, never geometry.
+  'criteria',
+  'weakestCriterion',
+  'expectedWord',
+  'writtenWord',
   // AttemptFactIn (nested trajectory record keys) — passed/mistakeId/section
   // overlap the base set above, all already whitelisted.
 };
+
+/// The keys allowed INSIDE each derived [criteria] entry (Phase 17 / 17-06). All
+/// are derived scalars/strings — NO coordinate keys. Mirrors the server
+/// `CriterionIn` (`server/app/schema.py`); the server `extra="forbid"` 422s any
+/// stray coordinate key nested in a criterion, and the token guard below
+/// independently catches one. `criterion` (never `name`) keeps the guard green.
+const _criteriaKeys = <String>{'criterion', 'zone', 'score'};
 
 /// The keys allowed INSIDE the derived [strokeDiff] object (Phase 17). All are
 /// derived scalars/strings/booleans — NO coordinate keys. Mirrors the server
@@ -146,6 +163,19 @@ TutorFacts _fullyPopulatedFacts() => const TutorFacts(
       },
       // Phase 17.1: an opaque base64 image string (authorized GROUND-02 exception).
       strokeImage: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=',
+      // Phase 17 (17-06): a representative DERIVED criteria list exercising every
+      // nested key — {criterion, zone, score} scalars ONLY (never a coordinate) —
+      // plus the weakest criterion + the F6 word facts (derived TEXT, no geometry).
+      criteria: <Map<String, Object?>>[
+        {'criterion': 'strokeCount', 'zone': 'certainlyCorrect', 'score': 1.0},
+        {'criterion': 'strokeOrder', 'zone': 'certainlyCorrect', 'score': 1.0},
+        {'criterion': 'shape', 'zone': 'certainlyWrong', 'score': 0.0},
+        {'criterion': 'direction', 'zone': 'fuzzy', 'score': 0.62},
+        {'criterion': 'dot', 'zone': 'certainlyCorrect', 'score': 1.0},
+      ],
+      weakestCriterion: 'shape',
+      expectedWord: 'باب',
+      writtenWord: 'بب',
     );
 
 void main() {
@@ -156,12 +186,13 @@ void main() {
       final keys = _allKeys(json);
 
       // Sanity: the scan actually descended into the trajectory records AND the
-      // nested strokeDiff object.
+      // nested strokeDiff object AND the nested criteria records (17-06).
       expect(keys, containsAll(<String>{'trajectory', 'passed', 'mistakeId', 'section'}));
       expect(keys, containsAll(<String>{'strokeDiff', 'bowlDepthVerdict', 'dotHorizontal'}));
+      expect(keys, containsAll(<String>{'criteria', 'criterion', 'zone', 'score', 'weakestCriterion'}));
 
       expect(
-        keys.difference(_whitelist.union(_strokeDiffKeys)),
+        keys.difference(_whitelist.union(_strokeDiffKeys).union(_criteriaKeys)),
         isEmpty,
         reason: 'TutorFacts leaked a non-whitelisted key (incl. nested): $keys',
       );
@@ -222,6 +253,15 @@ void main() {
         // Phase 17.1 image field — the KEY passes the token guard (the value is an
         // opaque base64 string; the reversal is recorded via the whitelist comment).
         'strokeImage',
+        // Phase 17 (17-06) criteria + word mirror keys — must PASS the guard
+        // (`criterion`, never `name`; no key contains a `point` substring).
+        'criteria',
+        'criterion',
+        'zone',
+        'score',
+        'weakestCriterion',
+        'expectedWord',
+        'writtenWord',
       ]) {
         expect(
           _forbiddenKey.hasMatch(ok),
