@@ -1863,6 +1863,82 @@
         "haa_f"
       ],
       "signedOff": false
+    },
+    {
+      "id": "warda",
+      "text": "????",
+      "audio": "word.warda",
+      "image": "img.rose",
+      "gloss": {
+        "en": "rose"
+      },
+      "letters": [
+        "waaw",
+        "raa",
+        "daal",
+        "taa_marbuta"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "waled",
+      "text": "???",
+      "audio": "word.waled",
+      "image": "img.boy",
+      "gloss": {
+        "en": "boy"
+      },
+      "letters": [
+        "waaw",
+        "laam",
+        "daal"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "wajh_waaw",
+      "text": "???",
+      "audio": "word.wajh",
+      "image": "img.face",
+      "gloss": {
+        "en": "face"
+      },
+      "letters": [
+        "waaw",
+        "jeem",
+        "haa_f"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "mawz_waaw",
+      "text": "???",
+      "audio": "word.mawz",
+      "image": "img.banana",
+      "gloss": {
+        "en": "banana"
+      },
+      "letters": [
+        "meem",
+        "waaw",
+        "zaay"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "suuq",
+      "text": "???",
+      "audio": "word.suuq",
+      "image": "img.market",
+      "gloss": {
+        "en": "market"
+      },
+      "letters": [
+        "seen",
+        "waaw",
+        "qaaf"
+      ],
+      "signedOff": false
     }
   ]
 }
