@@ -62,7 +62,8 @@ class SoftBand {
   ///
   /// PROVISIONAL — set from synthetic baa variants, NOT real children: correct
   /// bowls (shaky 0.036, deeper 0.095) sit at/below TCC=0.10 and pass outright;
-  /// a flat "line" bowl (0.161) sits at/above TCW=0.15 and fails; 0.10–0.15 is the
+  /// a flat "line" bowl (0.371 under the anchored normalization) sits at/above
+  /// TCW=0.15 and fails; 0.10–0.15 is the
   /// tolerant fuzzy middle. These two numbers MUST be recalibrated from the
   /// owner's-mother-labelled correct-vs-wrong distance distributions before
   /// production (the research names labelled child samples as the hard input).
@@ -93,6 +94,16 @@ class SoftBand {
 /// scores near 0) but preserves aspect ratio (a flat "line" bowl vs a round bowl
 /// differ), so it distinguishes a shallow bowl from a deep one.
 ///
+/// Normalization here is ANCHORED (bbox-min → 0 on both axes, no special
+/// case) rather than the shared [normalizeToUnitBox]'s zero-extent-axis → 0.5
+/// centering. The centering convention is DISCONTINUOUS at zero extent: a
+/// perfectly vertical child line (width exactly 0 → x = 0.5) compared against
+/// a hairline-width font-extracted reference (width ≈ 0.001 → x anchored ≈ 0)
+/// would read as ~0.5 apart on every point and certainly-wrong — a false fail
+/// for a PERFECT stroke (the real authored alif exposed this). Anchoring both
+/// sides at bbox-min is continuous as extent → 0, so hairline and exact-zero
+/// widths agree.
+///
 /// Returns [double.infinity] for a degenerate stroke (< 2 points) so a
 /// pen-slip cannot masquerade as a perfect match.
 double shapeDistance(
@@ -103,9 +114,38 @@ double shapeDistance(
   if (childStroke.length < 2 || referenceStroke.length < 2) {
     return double.infinity;
   }
-  final a = normalizeToUnitBox(resample(childStroke, n));
-  final b = normalizeToUnitBox(resample(referenceStroke, n));
+  final a = _anchoredUnitBox(resample(childStroke, n));
+  final b = _anchoredUnitBox(resample(referenceStroke, n));
   return _dtw(a, b) / n;
+}
+
+/// Unit-box normalization for cross-stroke comparison: translate bbox-min to
+/// the origin and scale the longest side to 1.0, preserving aspect ratio —
+/// with NO zero-extent special case (see [shapeDistance] for why the shared
+/// [normalizeToUnitBox]'s 0.5-centering convention cannot be used here). A
+/// fully degenerate stroke (all points coincident) maps to the origin; the
+/// < 2-point guard in [shapeDistance] already returns infinity before that
+/// matters.
+List<List<double>> _anchoredUnitBox(List<List<double>> pts) {
+  if (pts.isEmpty) return [];
+
+  var minX = double.infinity, minY = double.infinity;
+  var maxX = double.negativeInfinity, maxY = double.negativeInfinity;
+  for (final p in pts) {
+    if (p[0] < minX) minX = p[0];
+    if (p[0] > maxX) maxX = p[0];
+    if (p[1] < minY) minY = p[1];
+    if (p[1] > maxY) maxY = p[1];
+  }
+
+  final scale = math.max(maxX - minX, maxY - minY);
+  if (scale <= 0) {
+    // All points coincident — map to the origin (guarded upstream anyway).
+    return [for (final _ in pts) [0.0, 0.0]];
+  }
+  return [
+    for (final p in pts) [(p[0] - minX) / scale, (p[1] - minY) / scale],
+  ];
 }
 
 /// Classic Dynamic-Time-Warping total cost between two point sequences, using a

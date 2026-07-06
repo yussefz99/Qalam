@@ -23,6 +23,7 @@
 /// SECURITY (T-04-03 / T-01-05): child points live only in local variables here;
 /// nothing is printed, logged, or persisted. Only the derived [LetterResult]
 /// leaves this function.
+library;
 
 import 'dart:math' as math;
 

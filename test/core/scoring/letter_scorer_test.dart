@@ -326,8 +326,11 @@ void main() {
   // no-override path must stay byte-for-byte Phase-4 behavior.
 
   /// A baa whose body bows ~0.21 in unit-box space (depth 31.5px over a 152px
-  /// chord): passes `normal` (0.25) and the letter's own 0.30, FAILS `strict`
-  /// (0.18). The discriminating fixture for override-wins resolution.
+  /// chord). Under the Plan 17-02 DTW shape criterion this bow sits CLOSE to
+  /// the reference boat (d ≈ 0.023 — well inside the default soft band
+  /// tcc 0.10 / tcw 0.15), so it passes the letter's own tolerances and the
+  /// presets; an explicitly TIGHTER shape-band override fails it. Still the
+  /// discriminating fixture for override-wins resolution.
   List<List<List<double>>> bowedBaa() => [
         // body (right→left, deep-but-honest bow: apex 31.5px below chord)
         List<List<double>>.generate(
@@ -364,22 +367,36 @@ void main() {
   });
 
   group('scoreLetter — optional tolerances override (Plan 06-04)', () {
-    test('no override → letter.tolerances applies (bowed baa passes at 0.30)',
+    test('no override → letter.tolerances applies (bowed baa passes)',
         () async {
       final result = await scoreLetter(bowedBaa(), baaLetter());
       expect(result.passed, isTrue,
-          reason: 'letter.tolerances (maxCurvature 0.30) absorbs a 0.21 bow');
+          reason: 'letter.tolerances (default shape band tcw 0.15) absorbs '
+              'the bow (d ≈ 0.023)');
     });
 
-    test('override WINS over letter.tolerances: strict fails the same bow',
-        () async {
+    // Reconciled in Plan 17-02: the original used Tolerances.preset('strict')
+    // whose maxCurvature (0.18) tripped the retired chord proxy. Presets now
+    // share the PROVISIONAL soft-band defaults (per-preset bands come from the
+    // mom-labelled calibration, D-D), so the override-wins plumbing is proven
+    // with an explicitly TIGHTER shape band instead — same intent: the
+    // override argument must beat letter.tolerances.
+    test('override WINS over letter.tolerances: a tighter shape band fails '
+        'the same bow', () async {
       final result = await scoreLetter(
         bowedBaa(),
         baaLetter(),
-        tolerances: Tolerances.preset('strict'),
+        tolerances: const Tolerances(
+          minRawPoints: 10,
+          resampleN: 32,
+          maxCurvature: 0.18, // parse-compat only — not read by scoreStroke
+          shapeTcc: 0.005,
+          shapeTcw: 0.015, // < d ≈ 0.023 → certainly wrong
+        ),
       );
       expect(result.passed, isFalse,
-          reason: 'strict (0.18) must override letter.tolerances (0.30)');
+          reason: 'the tighter band (tcw 0.015 < d ≈ 0.023) must override '
+              'letter.tolerances (default band passes this bow)');
       expect(result.mistakeId, equals(MistakeId.tooCurved));
     });
 
