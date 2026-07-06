@@ -1,28 +1,39 @@
 /// Pure Dart, no dart:ui, no Flutter imports.
 ///
-/// THE SPINE (Plan 04-02) — the whole-letter scoring orchestrator.
+/// THE SPINE (Plan 04-02; PER-FORM + multi-criteria in Plan 17-03) — the
+/// whole-letter scoring orchestrator.
 ///
 /// `scoreLetter` wraps the per-stroke leaf `scoreStroke`
-/// (geometric_stroke_scorer.dart) to evaluate a multi-stroke letter end to end:
-///   1. COUNT  — child must draw the same number of strokes as the reference.
-///   2. ORDER  — the body/dot draw sequence must match the reference's.
-///   3. SHAPE  — each body stroke is delegated to `scoreStroke`, threaded with
-///               the letter's per-letter `Tolerances` (SC#4 — data, not consts).
-///   4. DOT    — dot count + RELATIVE position (above/below the body) checked
-///               after normalising the WHOLE letter together (combined bbox), so
-///               a baa-dot-below vs taa-dots-above distinction survives
-///               (Pitfall 2 — the ب/ت/ث distinction).
-///   5. IDENTITY — an OPTIONAL, ADVISORY-ONLY ML Kit gate (D-04): rejects only a
-///               CONFIDENTLY-different letter on an otherwise-good geometric
-///               pass; weak/low-confidence evidence is ignored, never overriding
-///               a pass (Pitfall 1).
+/// (geometric_stroke_scorer.dart) to evaluate a multi-stroke letter end to end
+/// against the reference for the ASKED positional [form] (`resolveReferenceStrokes`,
+/// the ONE shared resolver — Pitfall 7). It emits a structured [LetterScore]:
+/// FIVE per-criterion results plus the weakest (lowest-score) one — the coaching
+/// input D-B requires — while `passed`/`mistakeId` keep their Phase-4 semantics.
 ///
-/// First-failing-predicate, returns a [LetterResult] — the same shape as
-/// `scoreStroke`'s [StrokeResult], one level up.
+/// The five criteria are the OWNER-CONFIRMED D-C amendment of 2026-07-05
+/// (kinematics DESCOPED — capture has no timestamps; position folded into the
+/// firm dot check; strokeCount is the fifth; ADR-017 records it):
+///   1. strokeCount (FIRM) — same number of strokes as the reference.
+///   2. strokeOrder (FIRM) — the body/dot draw sequence matches.
+///   3. shape (SOFT) — the aggregate of every body stroke's `scoreStroke` shape
+///                     criterion (worst zone / min score wins).
+///   4. direction (SOFT) — the aggregate of every body stroke's direction
+///                     criterion.
+///   5. dot (FIRM, identity-bearing) — dot count + RELATIVE position (above/below
+///                     the body) after WHOLE-letter combined-bbox normalisation,
+///                     so baa-dot-below vs taa-dots-above survives (Pitfall 2/3).
+/// COUNT/ORDER/DOT stay FIRM (categorical certainlyWrong / 0.0); only shape and
+/// direction are soft. `passed` is false iff any FIRM criterion fails OR a soft
+/// criterion is certainly-wrong; `mistakeId` is the first failing criterion in
+/// the existing section order (verdict parity with Phase 4). An OPTIONAL,
+/// ADVISORY-ONLY ML Kit identity gate (D-04) may still REJECT an otherwise-good
+/// geometric pass on CONFIDENT disagreement (never rescue; weak evidence ignored,
+/// Pitfall 1).
 ///
-/// SECURITY (T-04-03 / T-01-05): child points live only in local variables here;
-/// nothing is printed, logged, or persisted. Only the derived [LetterResult]
-/// leaves this function.
+/// SECURITY (T-04-03 / T-01-05 / T-17-06): child points live only in local
+/// variables here; nothing is printed, logged, or persisted. Only the derived
+/// [LetterScore] — verdict + `{criterion, zone, score}` scalars, never a
+/// coordinate — leaves this function.
 library;
 
 import 'dart:math' as math;
@@ -30,7 +41,9 @@ import 'dart:math' as math;
 import '../../models/letter.dart';
 import '../recognition/handwriting_recognizer.dart';
 import 'geometric_stroke_scorer.dart';
+import 'reference_resolution.dart';
 import 'scoring_models.dart';
+import 'shape_match.dart';
 import 'tolerances.dart';
 
 /// Confidence at or above which an ML Kit candidate is trusted enough to reject
@@ -43,40 +56,60 @@ const double _kIdentityConfidenceFloor = 0.5;
 /// line always carries far more samples than a single tap.
 const int _kDotPointCeiling = 3;
 
-/// Scores a whole captured letter against [letter]'s authored reference.
+/// Scores a whole captured letter against [letter]'s authored reference for the
+/// asked positional [form], returning the structured [LetterScore].
 ///
 /// [childStrokes] is the per-letter capture: a list of strokes, each a list of
-/// `[x, y]` pixel-coordinate pairs in capture order. [recognizer], when supplied,
-/// applies the advisory-only ML Kit identity gate AFTER a geometric pass (D-04).
+/// `[x, y]` pixel-coordinate pairs in capture order. [form], when non-null,
+/// selects the per-form reference + tolerances via `resolveReferenceStrokes` /
+/// `resolveTolerances` (the ONE shared resolver — Pitfall 7); a null/absent form
+/// (or an authored-empty per-form list) falls back to the letter's base
+/// reference, preserving Phase-4 behavior for the practice path. [recognizer],
+/// when supplied, applies the advisory-only ML Kit identity gate AFTER a
+/// geometric pass (D-04).
 ///
-/// Returns [LetterResult.pass] when count, order, every body stroke's shape, and
-/// the dot predicate all hold (and the identity gate, if present, does not
-/// confidently disagree); otherwise the first failing [MistakeId].
+/// The returned [LetterScore] `passed` is true when count, order, every body
+/// stroke's shape/direction, and the dot predicate all hold (and the identity
+/// gate, if present, does not confidently disagree); `mistakeId` is the first
+/// failing criterion in the existing section order. [LetterScore.criteria] and
+/// [LetterScore.weakest] carry the structured coaching input (D-B).
 ///
-/// [tolerances], when supplied, OVERRIDES the letter's own tolerances block —
-/// the seam through which the practice flow's per-rep ramp preset (D-18/D-19,
-/// Plan 06-04) reaches the scorer without moving scoring policy out of
-/// lib/core. Resolution order: override → letter.tolerances → normal. Omitting
-/// it preserves Phase-4 behavior byte-for-byte.
-Future<LetterResult> scoreLetter(
+/// [tolerances], when supplied, OVERRIDES the letter's own (and per-form) block
+/// — the seam through which the practice flow's per-rep ramp preset (D-18/D-19,
+/// Plan 06-04) reaches the scorer. Resolution order: override →
+/// contextualForms[form].tolerances → letter.tolerances → normal.
+Future<LetterScore> scoreLetter(
   List<List<List<double>>> childStrokes,
   Letter letter, {
+  String? form,
   HandwritingRecognizer? recognizer,
   Tolerances? tolerances,
 }) async {
-  final reference = [...letter.referenceStrokes]
+  // ── PER-FORM RESOLUTION (Pitfall 7 — the one shared resolver) ───────────────
+  final reference = [...resolveReferenceStrokes(letter, form)]
     ..sort((a, b) => a.order.compareTo(b.order));
-  final resolvedTolerances =
-      tolerances ?? letter.tolerances ?? Tolerances.normal;
+  final resolvedTolerances = resolveTolerances(letter, form, tolerances);
 
-  // ── 1. COUNT ───────────────────────────────────────────────────────────────
+  // ── 1. strokeCount criterion (FIRM) ─────────────────────────────────────────
   // Firm regardless of how lenient the shape tolerance is (Pitfall 4): a baa is
-  // two parts; one stroke (or three) is the wrong letter shape, full stop.
+  // two parts; one stroke (or three) is the wrong letter shape, full stop. A
+  // count mismatch short-circuits — only the strokeCount criterion is meaningful
+  // (the others can't be aligned to the reference by index).
   if (childStrokes.length != reference.length) {
-    return const LetterResult.fail(MistakeId.wrongStrokeCount);
+    const count = CriterionResult(
+      criterion: 'strokeCount',
+      zone: ShapeZone.certainlyWrong,
+      score: 0.0,
+    );
+    return const LetterScore(
+      passed: false,
+      mistakeId: MistakeId.wrongStrokeCount,
+      criteria: [count],
+      weakest: count,
+    );
   }
 
-  // ── 2. ORDER ─────────────────────────────────────────────────────────────��─
+  // ── 2. strokeOrder criterion (FIRM) ─────────────────────────────────────────
   // The reference draw sequence is body strokes first, then dots last (the
   // validator's check 5b). Classify each child stroke as a dot (a tap — very few
   // points) or a body stroke and require the SAME sequence as the reference. A
@@ -89,42 +122,151 @@ Future<LetterResult> scoreLetter(
   for (var i = 0; i < reference.length; i++) {
     final refIsDot = reference[i].type == 'dot';
     if (refIsDot != childIsDot[i]) {
-      return const LetterResult.fail(MistakeId.wrongStrokeOrder);
+      const count = CriterionResult(
+        criterion: 'strokeCount',
+        zone: ShapeZone.certainlyCorrect,
+        score: 1.0,
+      );
+      const order = CriterionResult(
+        criterion: 'strokeOrder',
+        zone: ShapeZone.certainlyWrong,
+        score: 0.0,
+      );
+      return const LetterScore(
+        passed: false,
+        mistakeId: MistakeId.wrongStrokeOrder,
+        criteria: [count, order],
+        weakest: order,
+      );
     }
   }
 
-  // ── 3. SHAPE (per body stroke) ───────────────────────────────────────────────
-  // Delegate each body stroke to the leaf scorer, threaded with the letter's
-  // tolerances (SC#4). Dots are not shape-scored (a tap has no direction/curve).
+  // Count + order are firm-passed from here on.
+  const countCrit = CriterionResult(
+    criterion: 'strokeCount',
+    zone: ShapeZone.certainlyCorrect,
+    score: 1.0,
+  );
+  const orderCrit = CriterionResult(
+    criterion: 'strokeOrder',
+    zone: ShapeZone.certainlyCorrect,
+    score: 1.0,
+  );
+
+  // ── 3 + 4. SHAPE + DIRECTION criteria (SOFT — aggregated over body strokes) ──
+  // Delegate each body stroke to the leaf `scoreStroke` (threaded with the
+  // resolved tolerances, SC#4) and aggregate its shape + direction criteria:
+  // the WORST zone / MIN score wins (one certainly-wrong body stroke makes the
+  // whole letter certainly-wrong for that axis). Dots are not shape/direction
+  // scored (a tap has no curve/direction). The first failing body stroke's
+  // mistakeId is remembered for verdict parity (scoreStroke already orders
+  // direction-then-shape within a stroke).
+  var shapeCrit = const CriterionResult(
+    criterion: 'shape',
+    zone: ShapeZone.certainlyCorrect,
+    score: 1.0,
+  );
+  var directionCrit = const CriterionResult(
+    criterion: 'direction',
+    zone: ShapeZone.certainlyCorrect,
+    score: 1.0,
+  );
+  MistakeId? bodyMistake;
   for (var i = 0; i < reference.length; i++) {
     if (reference[i].type == 'dot') continue;
-    final result = scoreStroke(childStrokes[i], reference[i], resolvedTolerances);
+    final result =
+        scoreStroke(childStrokes[i], reference[i], resolvedTolerances);
+    final s = _pickCriterion(result.criteria, 'shape');
+    final d = _pickCriterion(result.criteria, 'direction');
+    if (s != null) shapeCrit = _worst(shapeCrit, s);
+    if (d != null) directionCrit = _worst(directionCrit, d);
     if (!result.passed) {
-      return LetterResult.fail(result.mistakeId ?? MistakeId.fallback);
+      bodyMistake ??= result.mistakeId ?? MistakeId.fallback;
+      // The firm tooShort floor short-circuits before geometry → empty criteria.
+      // Fold it into the shape criterion as certainly-wrong so the aggregate
+      // reflects the failure (the mistakeId stays tooShort).
+      if (result.criteria.isEmpty) {
+        shapeCrit = _worst(
+          shapeCrit,
+          const CriterionResult(
+            criterion: 'shape',
+            zone: ShapeZone.certainlyWrong,
+            score: 0.0,
+          ),
+        );
+      }
     }
   }
 
-  // ── 4. DOT (count + relative position) ───────────────────────────────────────
+  // ── 5. DOT criterion (FIRM, identity-bearing — Pitfall 3) ───────────────────
   // Normalise the WHOLE letter together (combined bbox) so the dot's position
-  // RELATIVE to the body survives normalisation (Pitfall 2). Then check the dot
-  // sits on the correct side of the body (below for baa, above for taa/thaa).
-  final dotResult = _checkDots(childStrokes, reference);
-  if (dotResult != null) {
-    return LetterResult.fail(dotResult);
-  }
+  // RELATIVE to the body survives normalisation (Pitfall 2). A dot on the wrong
+  // side (or a missing/extra dot) is categorically wrong — certainlyWrong / 0.0,
+  // never fuzzy. A letter with no dots reports a trivially-satisfied dot criterion.
+  final dotMistake = _checkDots(childStrokes, reference);
+  final dotCrit = dotMistake != null
+      ? const CriterionResult(
+          criterion: 'dot',
+          zone: ShapeZone.certainlyWrong,
+          score: 0.0,
+        )
+      : const CriterionResult(
+          criterion: 'dot',
+          zone: ShapeZone.certainlyCorrect,
+          score: 1.0,
+        );
 
-  // ── 5. IDENTITY (advisory-only ML Kit gate — D-04) ───────────────────────────
+  final criteria = <CriterionResult>[
+    countCrit,
+    orderCrit,
+    shapeCrit,
+    directionCrit,
+    dotCrit,
+  ];
+
+  // Verdict: first failing criterion in the existing section order. Body strokes
+  // (direction-then-shape, already resolved by scoreStroke) precede the dot
+  // section, matching Phase-4 precedence.
+  MistakeId? mistake = bodyMistake ?? dotMistake;
+
+  // ── IDENTITY (advisory-only ML Kit gate — D-04) ─────────────────────────────
   // Only consulted AFTER a full geometric pass, and only able to REJECT (never
   // rescue). A confidently-different candidate fails as wrongLetterIdentity; a
   // low-confidence or matching candidate leaves the geometric pass intact.
-  if (recognizer != null) {
-    final identity = await _identityGate(childStrokes, letter, recognizer);
-    if (identity != null) {
-      return LetterResult.fail(identity);
-    }
+  if (mistake == null && recognizer != null) {
+    mistake = await _identityGate(childStrokes, letter, recognizer);
   }
 
-  return const LetterResult.pass();
+  return LetterScore(
+    passed: mistake == null,
+    mistakeId: mistake,
+    criteria: criteria,
+    weakest: _weakest(criteria),
+  );
+}
+
+/// The first criterion in [criteria] whose `criterion` field equals [name], or
+/// null when absent (a stroke that short-circuited before geometry carries none).
+CriterionResult? _pickCriterion(List<CriterionResult> criteria, String name) {
+  for (final c in criteria) {
+    if (c.criterion == name) return c;
+  }
+  return null;
+}
+
+/// The worse of two same-axis criteria: the lower score (a certainly-wrong body
+/// stroke drags the letter-level aggregate down). Score and zone are derived
+/// from the same distance, so the lower score carries the worse zone.
+CriterionResult _worst(CriterionResult a, CriterionResult b) =>
+    b.score < a.score ? b : a;
+
+/// The minimum-score criterion in [criteria] — the coaching target (D-B).
+CriterionResult _weakest(List<CriterionResult> criteria) {
+  var w = criteria.first;
+  for (final c in criteria) {
+    if (c.score < w.score) w = c;
+  }
+  return w;
 }
 
 /// Classify each child stroke as a dot (true) or a body stroke (false) by RELATIVE

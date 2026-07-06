@@ -94,3 +94,38 @@ class LetterResult {
   /// A passing letter result (no mistake).
   const LetterResult.pass() : passed = true, mistakeId = null;
 }
+
+/// The STRUCTURED whole-letter score (Plan 17-03, D-B / the D-C amendment of
+/// 2026-07-05).
+///
+/// Extends [LetterResult] so every existing caller stays source-compatible —
+/// including practice_screen.dart's explicit `LetterResult` annotation and the
+/// validator's `result.passed`/`result.mistakeId` reads: those two fields keep
+/// their exact Phase-4 semantics (Pitfall 2). What [LetterScore] ADDS is the
+/// coaching input D-B requires:
+///   • [criteria] — the five owner-confirmed per-criterion results
+///     (strokeCount / strokeOrder / shape / direction / dot). COUNT, ORDER and
+///     the dot check are FIRM (categorical certainlyWrong/0.0); shape and
+///     direction are the SOFT geometry criteria.
+///   • [weakest]  — the lowest-score criterion, the coach's single target.
+///
+/// The list carries only `{criterion, zone, score}` scalars — never a
+/// coordinate (T-17-06): the non-PII wire-token guards forbid a `point`
+/// substring by construction.
+class LetterScore extends LetterResult {
+  /// The per-criterion soft-zone results. On a full evaluation this is the five
+  /// entries above; on a firm short-circuit (a count/order fail) it carries the
+  /// criteria that actually ran (the failing firm criterion first).
+  final List<CriterionResult> criteria;
+
+  /// The minimum-score criterion in [criteria] — the coaching target (D-B).
+  /// Null only when [criteria] is empty (never, for a scored letter).
+  final CriterionResult? weakest;
+
+  const LetterScore({
+    required super.passed,
+    super.mistakeId,
+    this.criteria = const [],
+    this.weakest,
+  });
+}
