@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
-stopped_at: Completed 17-02-PLAN.md
-last_updated: "2026-07-06T12:08:38.774Z"
+stopped_at: Completed 17-03-PLAN.md
+last_updated: "2026-07-06T12:39:07.457Z"
 last_activity: 2026-07-06
 progress:
   total_phases: 21
   completed_phases: 14
   total_plans: 90
-  completed_plans: 78
-  percent: 67
+  completed_plans: 80
+  percent: 89
 ---
 
 # Project State
@@ -26,10 +26,10 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 17 (build-stroke-aware-coaching-on-device-geo-diff-to-coach) — EXECUTING
-Plan: 4 of 10
+Plan: 5 of 10
 Status: Ready to execute
 Last activity: 2026-07-06
-Next: work the 6 items in 16-HUMAN-UAT.md (device latency, mom gold sign-off → judge calibration, on-device demo-harden, Claude Model-Garden Enable, coach bake-off + ADR-016). After the gold sign-off + Model-Garden Enable land, re-run /gsd-execute-phase 16 to finish the two autonomous tail tasks (16-05 Task 2 calibration, 16-06 Task 4 bake-off+ADR), then /gsd-verify-work 16 → mark complete.
+Next: Phase 17 waves 1–3 complete (17-01 RED contract, 17-02 soft per-stroke verdict, 17-04 server eval gate, 17-03 per-form multi-criteria scoreLetter + LetterScore). scoreLetter now emits the structured coaching input (LetterScore.criteria + weakest) end-to-end from the validator. Continue /gsd-execute-phase 17 for the coach-wire waves (17-05/17-06 transport criteria to the coach FACTS, 17-07 geo-diff cutover, 17-08/17-09 harden + harness, 17-10 ADR-017 + HUMAN-UAT mom sign-off).
 
 ## Performance Metrics
 
@@ -97,6 +97,7 @@ Next: work the 6 items in 16-HUMAN-UAT.md (device latency, mom gold sign-off →
 | Phase 17 P01 | 26min | 2 tasks | 2 files |
 | Phase 17 P04 | 33min | 2 tasks | 9 files |
 | Phase 17 P02 | 26min | 2 tasks | 7 files |
+| Phase 17 P03 | 9min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -201,6 +202,7 @@ Recent decisions affecting current work:
 - [Phase 17]: 17-02: shapeDistance normalization ANCHORED (bbox-min, no zero-extent 0.5-centering) — the shared normalizeToUnitBox centering convention is discontinuous at zero width and false-failed a PERFECT straight alif vs the hairline font-extracted reference (d 0.4998 -> 0.0002); flat-line-vs-bowl separation strengthened 0.161 -> 0.371, all soft-band zone contracts hold
 - [Phase 17]: 17-02: all Tolerances presets share the PROVISIONAL soft-band defaults (0.10/0.15/0.3/-0.3), so the loose/strict ramp temporarily has NO shape discrimination until the mom-labelled calibration sets per-preset bands (D-D); the letter_scorer_test override-wins case re-expressed with an explicit tighter shape band (sanctioned reconciliation of the retired chord proxy)
 - [Phase 17]: 17-02: strokeDirectionInverted re-expressed over the soft alignment (fails only at p <= directionCw); chord-curvature predicate REMOVED (no callers); maxCurvature kept parse-compat only; strokeCurvatureExceedsThreshold check-string pairing with tooCurved preserved (Pitfall 2)
+- [Phase 17]: 17-03: scoreLetter is per-form (resolveReferenceStrokes/resolveTolerances — the ONE shared resolver, Pitfall 7) and returns LetterScore extends LetterResult with 5 criteria (strokeCount/strokeOrder/shape/direction/dot) + weakest (D-B, coaching target); COUNT/ORDER/dot FIRM, shape/direction SOFT; the F5 form-blind verdict now fails at the SCORER (D-A); validator threads expected.glyph.form ?? guideForm; 17-01 RED contract GREEN with zero test edits
 
 ### Pending Todos
 
@@ -241,6 +243,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-06T12:08:38.768Z
+Last session: 2026-07-06T12:39:07.451Z
 Stopped at: Completed 17-02-PLAN.md
 Resume files: .planning/phases/06.1-firebase-curriculum-backend/06.1-05-PLAN.md (next), .planning/phases/06.1-firebase-curriculum-backend/06.1-03-PLAN.md (pending), .planning/phases/06.1-firebase-curriculum-backend/06.1-04-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
