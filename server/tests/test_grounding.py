@@ -40,6 +40,19 @@ class _FakeBoundCoach:
         return _FakeResp(self._tool_calls)
 
 
+class _CapturingBoundCoach:
+    """Like _FakeBoundCoach but records the messages it was invoked with, so a test can assert
+    what the coach node placed in the SystemMessage (the Phase-17 addendum trigger, 17-05)."""
+
+    def __init__(self, tool_calls):
+        self._tool_calls = tool_calls
+        self.messages = None
+
+    def invoke(self, messages):
+        self.messages = messages
+        return _FakeResp(self._tool_calls)
+
+
 class _FakeStructured:
     def __init__(self, obj):
         self._obj = obj
@@ -287,3 +300,73 @@ async def test_endpoint_degrades_on_structured_error(monkeypatch):
 
     assert resp.status_code == 503  # structured non-200 -> client AuthoredFallback (never a 200-empty)
     _graph.cache_clear()
+
+
+# --- Phase 17 (STRK-01, 17-05): the criterion-aware addendum trigger ----------------------
+# The coach appends COACH_STROKE_ADDENDUM when the FACTS carry any DERIVED evidence of THIS
+# attempt — strokeDiff OR the structured `criteria` OR the F6 `writtenWord`. The trigger is
+# additive: label-only facts append nothing (prior behavior byte-identical). The G2/G3/G4
+# guards are unaffected by the trigger (regression-pinned below).
+
+_CRITERIA_FAIL = [
+    {"criterion": "strokeCount", "zone": "certainlyCorrect", "score": 1.0},
+    {"criterion": "shape", "zone": "certainlyWrong", "score": 0.0},
+    {"criterion": "dot", "zone": "certainlyCorrect", "score": 1.0},
+]
+
+
+def _capture_system_prompt(monkeypatch, facts, tool_calls):
+    import app.nodes.coach as coach_mod
+
+    fake = _CapturingBoundCoach(tool_calls)
+    monkeypatch.setattr(coach_mod, "build_coach_with_tools", lambda: fake)
+    coach({"facts": facts})
+    return fake.messages[0].content
+
+
+def test_addendum_appended_on_criteria_without_strokediff(monkeypatch):
+    """FACTS carrying only the structured `criteria` (no strokeDiff) still triggers the stroke
+    addendum — the STRK-01 transport of the per-criterion result to the coach."""
+    from app.prompts import COACH_STROKE_ADDENDUM
+
+    facts = {**FAIL_FACTS, "criteria": _CRITERIA_FAIL, "weakestCriterion": "shape"}
+    assert "strokeDiff" not in facts
+    system_prompt = _capture_system_prompt(
+        monkeypatch, facts, [{"name": "say", "args": {"text": "deeper curve"}}]
+    )
+    assert COACH_STROKE_ADDENDUM in system_prompt
+
+
+def test_addendum_appended_on_writtenword_only(monkeypatch):
+    """FACTS carrying only the F6 word facts (writtenWord/expectedWord, no strokeDiff/criteria)
+    still triggers the addendum so word/sentence coaching can be specific (UAT F6)."""
+    from app.prompts import COACH_STROKE_ADDENDUM
+
+    facts = {**PASS_FACTS, "expectedWord": "باب", "writtenWord": "داد"}
+    assert "strokeDiff" not in facts and "criteria" not in facts
+    system_prompt = _capture_system_prompt(
+        monkeypatch, facts, [{"name": "say", "args": {"text": "so close"}}]
+    )
+    assert COACH_STROKE_ADDENDUM in system_prompt
+
+
+def test_no_addendum_when_no_derived_facts(monkeypatch):
+    """A label-only payload (no strokeDiff/criteria/writtenWord) appends NOTHING — the prior
+    behavior stays byte-identical (the addendum trigger is purely additive)."""
+    from app.prompts import COACH_PROMPT, COACH_STROKE_ADDENDUM
+
+    system_prompt = _capture_system_prompt(
+        monkeypatch, FAIL_FACTS, [{"name": "say", "args": {"text": "deeper curve"}}]
+    )
+    assert system_prompt == COACH_PROMPT
+    assert COACH_STROKE_ADDENDUM not in system_prompt
+
+
+def test_g3_advance_on_fail_still_rewritten_with_criteria(monkeypatch):
+    """Guards regression: the G3 advance-on-fail verdict lock still fires on a criteria-bearing
+    fail — the addendum trigger never weakens the guard ladder (G2/G3/G4 byte-unchanged)."""
+    facts = {**FAIL_FACTS, "criteria": _CRITERIA_FAIL, "weakestCriterion": "shape"}
+    _patch_coach_only(monkeypatch, [{"name": "advance", "args": {}}])
+    out = coach({"facts": facts})
+    assert out["decision"]["name"] == "say"  # never advance on a fail, even with criteria
+    assert out["grounded"] is False
