@@ -1939,6 +1939,85 @@
         "qaaf"
       ],
       "signedOff": false
+    },
+    {
+      "id": "yad_yaa",
+      "text": "??",
+      "audio": "word.yad",
+      "image": "img.hand",
+      "gloss": {
+        "en": "hand"
+      },
+      "letters": [
+        "yaa",
+        "daal"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "yamin",
+      "text": "????",
+      "audio": "word.yamin",
+      "image": "img.right-side",
+      "gloss": {
+        "en": "right side"
+      },
+      "letters": [
+        "yaa",
+        "meem",
+        "yaa",
+        "noon"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "yasmin",
+      "text": "??????",
+      "audio": "word.yasmin",
+      "image": "img.jasmine",
+      "gloss": {
+        "en": "jasmine"
+      },
+      "letters": [
+        "yaa",
+        "alif",
+        "seen",
+        "meem",
+        "yaa",
+        "noon"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "bayt_yaa",
+      "text": "???",
+      "audio": "word.bayt",
+      "image": "img.house",
+      "gloss": {
+        "en": "house"
+      },
+      "letters": [
+        "baa",
+        "yaa",
+        "taa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "kursi_yaa",
+      "text": "????",
+      "audio": "word.kursi",
+      "image": "img.chair",
+      "gloss": {
+        "en": "chair"
+      },
+      "letters": [
+        "kaaf",
+        "raa",
+        "seen",
+        "yaa"
+      ],
+      "signedOff": false
     }
   ]
 }
