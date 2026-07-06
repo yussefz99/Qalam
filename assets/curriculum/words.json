@@ -1084,6 +1084,83 @@
         "khaa"
       ],
       "signedOff": false
+    },
+    {
+      "id": "zarf",
+      "text": "???",
+      "audio": "word.zarf",
+      "image": "img.envelope",
+      "gloss": {
+        "en": "envelope"
+      },
+      "letters": [
+        "zhaa",
+        "raa",
+        "faa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "zill",
+      "text": "??",
+      "audio": "word.zill",
+      "image": "img.shadow",
+      "gloss": {
+        "en": "shadow"
+      },
+      "letters": [
+        "zhaa",
+        "laam"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "zaby",
+      "text": "???",
+      "audio": "word.zaby",
+      "image": "img.gazelle",
+      "gloss": {
+        "en": "gazelle"
+      },
+      "letters": [
+        "zhaa",
+        "baa",
+        "yaa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "nazzara",
+      "text": "?????",
+      "audio": "word.nazzara",
+      "image": "img.glasses",
+      "gloss": {
+        "en": "glasses"
+      },
+      "letters": [
+        "noon",
+        "zhaa",
+        "alif",
+        "raa",
+        "taa_marbuta"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "hafiz",
+      "text": "????",
+      "audio": "word.hafiz",
+      "image": "img.guard",
+      "gloss": {
+        "en": "guard"
+      },
+      "letters": [
+        "haa_c",
+        "alif",
+        "faa",
+        "zhaa"
+      ],
+      "signedOff": false
     }
   ]
 }
