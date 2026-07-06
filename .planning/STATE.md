@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
-stopped_at: Completed 17-04-PLAN.md
-last_updated: "2026-07-06T11:39:22.811Z"
+stopped_at: Completed 17-02-PLAN.md
+last_updated: "2026-07-06T12:08:38.774Z"
 last_activity: 2026-07-06
 progress:
   total_phases: 21
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 17 (build-stroke-aware-coaching-on-device-geo-diff-to-coach) — EXECUTING
-Plan: 3 of 10
+Plan: 4 of 10
 Status: Ready to execute
 Last activity: 2026-07-06
 Next: work the 6 items in 16-HUMAN-UAT.md (device latency, mom gold sign-off → judge calibration, on-device demo-harden, Claude Model-Garden Enable, coach bake-off + ADR-016). After the gold sign-off + Model-Garden Enable land, re-run /gsd-execute-phase 16 to finish the two autonomous tail tasks (16-05 Task 2 calibration, 16-06 Task 4 bake-off+ADR), then /gsd-verify-work 16 → mark complete.
@@ -96,6 +96,7 @@ Next: work the 6 items in 16-HUMAN-UAT.md (device latency, mom gold sign-off →
 | Phase 16 P02 | ~6min | 3 tasks | 5 files |
 | Phase 17 P01 | 26min | 2 tasks | 2 files |
 | Phase 17 P04 | 33min | 2 tasks | 9 files |
+| Phase 17 P02 | 26min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -197,6 +198,9 @@ Recent decisions affecting current work:
 - [Phase 17]: [17-04] Rule-1 fix: D1 gate subset broadened to all NON-adversarial cases — the label=='faithful' filter was EMPTY over the gold set (faithfulness_rate([])==0.0 would hard-fail every make-eval judge run; latent 16-03 landmine)
 - [Phase 17]: [17-04] Adversarial trap cases (adv_broken_but_pass, F3 full-Arabic) carry trapDimension and are judged INDIVIDUALLY — judge must score them BELOW threshold (caught) — never averaged into gate means; variety/praise-floor exclude them
 - [Phase 17]: [17-04] Gold set regrown stroke-level (10 new cases, ALL signed:false, StrokeDiffIn-vocabulary facts only); mother re-signs the WHOLE set at 17-10; make eval judge+baseline legs DEFERRED to 17-10 (ADC absent this session; structure verified via make -n)
+- [Phase 17]: 17-02: shapeDistance normalization ANCHORED (bbox-min, no zero-extent 0.5-centering) — the shared normalizeToUnitBox centering convention is discontinuous at zero width and false-failed a PERFECT straight alif vs the hairline font-extracted reference (d 0.4998 -> 0.0002); flat-line-vs-bowl separation strengthened 0.161 -> 0.371, all soft-band zone contracts hold
+- [Phase 17]: 17-02: all Tolerances presets share the PROVISIONAL soft-band defaults (0.10/0.15/0.3/-0.3), so the loose/strict ramp temporarily has NO shape discrimination until the mom-labelled calibration sets per-preset bands (D-D); the letter_scorer_test override-wins case re-expressed with an explicit tighter shape band (sanctioned reconciliation of the retired chord proxy)
+- [Phase 17]: 17-02: strokeDirectionInverted re-expressed over the soft alignment (fails only at p <= directionCw); chord-curvature predicate REMOVED (no callers); maxCurvature kept parse-compat only; strokeCurvatureExceedsThreshold check-string pairing with tooCurved preserved (Pitfall 2)
 
 ### Pending Todos
 
@@ -237,6 +241,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-06T11:39:22.806Z
-Stopped at: Completed 17-04-PLAN.md
+Last session: 2026-07-06T12:08:38.768Z
+Stopped at: Completed 17-02-PLAN.md
 Resume files: .planning/phases/06.1-firebase-curriculum-backend/06.1-05-PLAN.md (next), .planning/phases/06.1-firebase-curriculum-backend/06.1-03-PLAN.md (pending), .planning/phases/06.1-firebase-curriculum-backend/06.1-04-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)

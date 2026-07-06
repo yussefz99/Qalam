@@ -789,7 +789,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 17-02-PLAN.md — DTW shape-match into the per-stroke scorer (soft 3-zone verdict)
+- [x] 17-02-PLAN.md — DTW shape-match into the per-stroke scorer (soft 3-zone verdict)
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -832,6 +832,6 @@ Plans:
 | 14. BUILD — TutorBrain spine + grounding invariant | 4/4 | Complete   | 2026-06-22 |
 | 15. BUILD — dynamic grounded exercise selection on baa | 8/7 | Complete    | 2026-06-28 |
 | 16. BUILD — presence + voice + eval gate + demo-harden | 3/6 | In Progress|  |
-| 17. BUILD — stroke-aware coaching (on-device geo-diff → coach) | 2/10 | In Progress|  |
+| 17. BUILD — stroke-aware coaching (on-device geo-diff → coach) | 3/10 | In Progress|  |
 
 **Coverage:** the 14 original v2.0 requirements map across Phases 14–16; Phase 17 (added 2026-06-30 from the stroke-aware spike) adds STRK-01 / GROUND-04 / EVAL-03. The three spikes (11–13) own no requirements by design. See REQUIREMENTS.md → v2.0 Traceability.
