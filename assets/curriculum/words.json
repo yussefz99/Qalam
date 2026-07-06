@@ -1238,6 +1238,86 @@
         "taa_marbuta"
       ],
       "signedOff": false
+    },
+    {
+      "id": "ghazal",
+      "text": "????",
+      "audio": "word.ghazal",
+      "image": "img.deer",
+      "gloss": {
+        "en": "deer"
+      },
+      "letters": [
+        "ghayn",
+        "zaay",
+        "alif",
+        "laam"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "ghayma",
+      "text": "????",
+      "audio": "word.ghayma",
+      "image": "img.cloud",
+      "gloss": {
+        "en": "cloud"
+      },
+      "letters": [
+        "ghayn",
+        "yaa",
+        "meem",
+        "taa_marbuta"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "ghurab",
+      "text": "????",
+      "audio": "word.ghurab",
+      "image": "img.crow",
+      "gloss": {
+        "en": "crow"
+      },
+      "letters": [
+        "ghayn",
+        "raa",
+        "alif",
+        "baa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "babbagha",
+      "text": "?????",
+      "audio": "word.babbagha",
+      "image": "img.parrot",
+      "gloss": {
+        "en": "parrot"
+      },
+      "letters": [
+        "baa",
+        "baa",
+        "ghayn",
+        "alif"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "sagheer",
+      "text": "????",
+      "audio": "word.sagheer",
+      "image": "img.small",
+      "gloss": {
+        "en": "small"
+      },
+      "letters": [
+        "saad",
+        "ghayn",
+        "yaa",
+        "raa"
+      ],
+      "signedOff": false
     }
   ]
 }
