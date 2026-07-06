@@ -797,7 +797,7 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 17-05-PLAN.md — Coaching contract, server side FIRST: criteria + word-facts DTO, criterion-aware addendum
+- [x] 17-05-PLAN.md — Coaching contract, server side FIRST: criteria + word-facts DTO, criterion-aware addendum
 - [ ] 17-09-PLAN.md — Calibration harness per letter × form + threshold-fit report
 
 **Wave 5** *(blocked on Wave 4 completion)*
@@ -832,6 +832,6 @@ Plans:
 | 14. BUILD — TutorBrain spine + grounding invariant | 4/4 | Complete   | 2026-06-22 |
 | 15. BUILD — dynamic grounded exercise selection on baa | 8/7 | Complete    | 2026-06-28 |
 | 16. BUILD — presence + voice + eval gate + demo-harden | 3/6 | In Progress|  |
-| 17. BUILD — stroke-aware coaching (on-device geo-diff → coach) | 4/10 | In Progress|  |
+| 17. BUILD — stroke-aware coaching (on-device geo-diff → coach) | 5/10 | In Progress|  |
 
 **Coverage:** the 14 original v2.0 requirements map across Phases 14–16; Phase 17 (added 2026-06-30 from the stroke-aware spike) adds STRK-01 / GROUND-04 / EVAL-03. The three spikes (11–13) own no requirements by design. See REQUIREMENTS.md → v2.0 Traceability.
