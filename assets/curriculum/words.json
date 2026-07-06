@@ -552,6 +552,83 @@
         "taa_marbuta"
       ],
       "signedOff": false
+    },
+    {
+      "id": "ras",
+      "text": "???",
+      "audio": "word.ras",
+      "image": "img.head",
+      "gloss": {
+        "en": "head"
+      },
+      "letters": [
+        "raa",
+        "alif",
+        "seen"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "rijl",
+      "text": "???",
+      "audio": "word.rijl",
+      "image": "img.leg",
+      "gloss": {
+        "en": "leg"
+      },
+      "letters": [
+        "raa",
+        "jeem",
+        "laam"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "rumman",
+      "text": "????",
+      "audio": "word.rumman",
+      "image": "img.pomegranate",
+      "gloss": {
+        "en": "pomegranate"
+      },
+      "letters": [
+        "raa",
+        "meem",
+        "alif",
+        "noon"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "qamar",
+      "text": "???",
+      "audio": "word.qamar",
+      "image": "img.moon",
+      "gloss": {
+        "en": "moon"
+      },
+      "letters": [
+        "qaaf",
+        "meem",
+        "raa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "sareer",
+      "text": "????",
+      "audio": "word.sareer",
+      "image": "img.bed",
+      "gloss": {
+        "en": "bed"
+      },
+      "letters": [
+        "seen",
+        "raa",
+        "yaa",
+        "raa"
+      ],
+      "signedOff": false
     }
   ]
 }
