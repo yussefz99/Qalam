@@ -117,6 +117,38 @@ def evaluate_faithfulness(path: Union[str, pathlib.Path]) -> dict[str, Any]:
     }
 
 
+def evaluate_praise_floor(cases: list[dict[str, Any]]) -> dict[str, Any]:
+    """Phase 17 (EVAL-03) — the PRAISE-LEXICON floor WITHOUT the expected-fix substring rule.
+
+    The spike (SPIKE-FINDINGS) measured the expected-fix SUBSTRING rule false-flagging
+    0.55–0.73 of correct paraphrases ("deeper bowl" instead of the literal "deeper curve")
+    with ZERO real contradictions — so for LIVE coach lines the substring rule is retired
+    AS THE GATE. What remains zero-tolerance and model-free is praise-on-fail: a FAIL whose
+    coaching contains any ``_PRAISE`` token (incl. the Arabic أحسنت) is flagged.
+
+    ``evaluate_faithfulness`` above is UNCHANGED — it still applies both rules over the
+    pinned fixture set (`tests/fixtures/faithfulness_set.jsonl`), where the substring rule
+    is valid because the fixture strings are authored to carry the token.
+
+    Each case carries ``passed`` and ``coaching`` (or ``idealCoaching`` for gold-set lines).
+    Returns the same report shape as ``evaluate_faithfulness``:
+    ``{faithful, flagged, total, rate}``. Pure offline — no model, no auth, no network.
+    """
+    flagged: list[dict[str, Any]] = []
+    for case in cases:
+        line = str(case.get("coaching") or case.get("idealCoaching") or "").lower()
+        if not case.get("passed", False) and any(p in line for p in _PRAISE):
+            flagged.append(case)
+    total = len(cases)
+    faithful = total - len(flagged)
+    return {
+        "faithful": faithful,
+        "flagged": flagged,
+        "total": total,
+        "rate": faithful / total if total else 0.0,
+    }
+
+
 if __name__ == "__main__":  # pragma: no cover - offline convenience reporter
     _default_set = (
         pathlib.Path(__file__).resolve().parents[1]
