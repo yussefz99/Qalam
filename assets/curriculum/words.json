@@ -849,6 +849,84 @@
         "sheen"
       ],
       "signedOff": false
+    },
+    {
+      "id": "sunduq",
+      "text": "?????",
+      "audio": "word.sunduq",
+      "image": "img.box",
+      "gloss": {
+        "en": "box"
+      },
+      "letters": [
+        "saad",
+        "noon",
+        "daal",
+        "waaw",
+        "qaaf"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "sabr",
+      "text": "???",
+      "audio": "word.sabr",
+      "image": "img.cactus",
+      "gloss": {
+        "en": "patience"
+      },
+      "letters": [
+        "saad",
+        "baa",
+        "raa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "saqar",
+      "text": "???",
+      "audio": "word.saqar",
+      "image": "img.falcon",
+      "gloss": {
+        "en": "falcon"
+      },
+      "letters": [
+        "saad",
+        "qaaf",
+        "raa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "qamis",
+      "text": "????",
+      "audio": "word.qamis",
+      "image": "img.shirt",
+      "gloss": {
+        "en": "shirt"
+      },
+      "letters": [
+        "qaaf",
+        "meem",
+        "yaa",
+        "saad"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "asaa",
+      "text": "???",
+      "audio": "word.asaa",
+      "image": "img.stick",
+      "gloss": {
+        "en": "stick"
+      },
+      "letters": [
+        "ayn",
+        "saad",
+        "alif"
+      ],
+      "signedOff": false
     }
   ]
 }
