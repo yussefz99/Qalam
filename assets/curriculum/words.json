@@ -1632,6 +1632,82 @@
         "laam"
       ],
       "signedOff": false
+    },
+    {
+      "id": "mama",
+      "text": "????",
+      "audio": "word.mama",
+      "image": "img.mother",
+      "gloss": {
+        "en": "mom"
+      },
+      "letters": [
+        "meem",
+        "alif",
+        "meem",
+        "alif"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "mawz_meem",
+      "text": "???",
+      "audio": "word.mawz",
+      "image": "img.banana",
+      "gloss": {
+        "en": "banana"
+      },
+      "letters": [
+        "meem",
+        "waaw",
+        "zaay"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "matar",
+      "text": "???",
+      "audio": "word.matar",
+      "image": "img.rain",
+      "gloss": {
+        "en": "rain"
+      },
+      "letters": [
+        "meem",
+        "taa_h",
+        "raa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "qamar_meem",
+      "text": "???",
+      "audio": "word.qamar",
+      "image": "img.moon",
+      "gloss": {
+        "en": "moon"
+      },
+      "letters": [
+        "qaaf",
+        "meem",
+        "raa"
+      ],
+      "signedOff": false
+    },
+    {
+      "id": "samak_meem",
+      "text": "???",
+      "audio": "word.samak",
+      "image": "img.fish",
+      "gloss": {
+        "en": "fish"
+      },
+      "letters": [
+        "seen",
+        "meem",
+        "kaaf"
+      ],
+      "signedOff": false
     }
   ]
 }
