@@ -231,6 +231,13 @@ class _MorphCard extends StatelessWidget {
                         child: Text(
                           current.explain,
                           textAlign: TextAlign.center,
+                          // UAT F1: this English helper line sits under the app's
+                          // RTL Directionality, so without an explicit LTR the
+                          // trailing period jumps to the left ("On its own…" →
+                          // ".On its own…"). Force LTR on the ENGLISH copy only;
+                          // the Arabic glyph above renders through ArabicText and
+                          // stays RTL. Pinned by meet_section_ltr_test.dart.
+                          textDirection: TextDirection.ltr,
                           style: QalamTextStyles.button.copyWith(
                             fontSize: 18, // .morph-explain
                             fontWeight: FontWeight.w500,

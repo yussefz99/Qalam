@@ -90,6 +90,10 @@ class FeedbackPanelV2 extends StatelessWidget {
         Flexible(
           child: Text(
             idleHint,
+            // UAT F1: the idle hint ("Nothing to write — this card teaches." /
+            // "Write on the surface …") is English guidance under the app's RTL
+            // Directionality — force LTR so the trailing period doesn't jump left.
+            textDirection: TextDirection.ltr,
             style: QalamTextStyles.body.copyWith(
               fontSize: 14, // .fb-hint font-size:14px
               fontWeight: FontWeight.w600,
@@ -223,6 +227,8 @@ class _Line extends StatelessWidget {
       // is the one RTL island that shapes Arabic and isolates digits correctly.
       return ArabicText(line, style: style, textAlign: TextAlign.start);
     }
-    return Text(line, style: style);
+    // UAT F1: a pure-English tutor line under the app's RTL Directionality —
+    // force LTR so the trailing period stays on the right.
+    return Text(line, style: style, textDirection: TextDirection.ltr);
   }
 }
