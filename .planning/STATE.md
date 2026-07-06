@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
-stopped_at: Completed 17-01-PLAN.md
-last_updated: "2026-07-06T10:23:52.980Z"
+stopped_at: Completed 17-04-PLAN.md
+last_updated: "2026-07-06T11:39:22.811Z"
 last_activity: 2026-07-06
 progress:
   total_phases: 21
   completed_phases: 14
   total_plans: 90
-  completed_plans: 77
+  completed_plans: 78
   percent: 67
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 17 (build-stroke-aware-coaching-on-device-geo-diff-to-coach) — EXECUTING
-Plan: 2 of 10
+Plan: 3 of 10
 Status: Ready to execute
 Last activity: 2026-07-06
 Next: work the 6 items in 16-HUMAN-UAT.md (device latency, mom gold sign-off → judge calibration, on-device demo-harden, Claude Model-Garden Enable, coach bake-off + ADR-016). After the gold sign-off + Model-Garden Enable land, re-run /gsd-execute-phase 16 to finish the two autonomous tail tasks (16-05 Task 2 calibration, 16-06 Task 4 bake-off+ADR), then /gsd-verify-work 16 → mark complete.
@@ -95,6 +95,7 @@ Next: work the 6 items in 16-HUMAN-UAT.md (device latency, mom gold sign-off →
 | Phase 16 P03 | 14min | 3 tasks | 7 files |
 | Phase 16 P02 | ~6min | 3 tasks | 5 files |
 | Phase 17 P01 | 26min | 2 tasks | 2 files |
+| Phase 17 P04 | 33min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -192,6 +193,10 @@ Recent decisions affecting current work:
 - [Phase 16-02]: On-device coach voice shipped (PRES-02) — flutter_tts ^4.2.5 (human-approved legitimacy gate, verified publisher dlutton/eyedeadevelopment.com). segmentByScript splits a mixed en/ar line into ordered (locale,text) runs (Arabic block U+0600–06FF + presentation forms to ar, else en-US); TtsCoachSpeaker over an injectable TtsEngine seam checks isLanguageAvailable(ar) ONCE per line, per-run setLanguage+speak with awaitSpeakCompletion(true), skips the ar run when no Arabic voice so English still speaks (D-06). Display-only (ADR-014): speak() swallows everything, never throws/blocks. ttsCoachSpeakerProvider (Riverpod Provider + ref.onDispose) + NoopTtsCoachSpeaker mirror the audio seam. 16-01 RED tests GREEN with zero test edits; TTS_SERVICE queries entry added for Android 11+ discoverability.
 - [Phase 17]: 17-01: CriterionResult field pinned as 'criterion' (never 'name', never *point*) so the future wire payload passes the non-PII token guards by construction; degenerate tooShort strokes exempt from the shape+direction criteria assertion (firm floor short-circuits before geometry)
 - [Phase 17]: 17-01: STRK-01 deliberately NOT checkbox-marked at the Wave-0 contract plan — it spans 17-02..17-09; the plan landing the final leg (or the phase verifier) flips it
+- [Phase 17]: [17-04] Eval gate goes semantic: names_fix (substring) demoted to ADVISORY; D1 live-line leg = evaluate_praise_floor (praise-lexicon only, evaluate_faithfulness byte-unchanged); semantic_faithfulness/no_false_geometry/specificity judge legs + model-free variety leg join gate_passes
+- [Phase 17]: [17-04] Rule-1 fix: D1 gate subset broadened to all NON-adversarial cases — the label=='faithful' filter was EMPTY over the gold set (faithfulness_rate([])==0.0 would hard-fail every make-eval judge run; latent 16-03 landmine)
+- [Phase 17]: [17-04] Adversarial trap cases (adv_broken_but_pass, F3 full-Arabic) carry trapDimension and are judged INDIVIDUALLY — judge must score them BELOW threshold (caught) — never averaged into gate means; variety/praise-floor exclude them
+- [Phase 17]: [17-04] Gold set regrown stroke-level (10 new cases, ALL signed:false, StrokeDiffIn-vocabulary facts only); mother re-signs the WHOLE set at 17-10; make eval judge+baseline legs DEFERRED to 17-10 (ADC absent this session; structure verified via make -n)
 
 ### Pending Todos
 
@@ -232,6 +237,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-06T10:23:52.974Z
-Stopped at: Completed 17-01-PLAN.md
+Last session: 2026-07-06T11:39:22.806Z
+Stopped at: Completed 17-04-PLAN.md
 Resume files: .planning/phases/06.1-firebase-curriculum-backend/06.1-05-PLAN.md (next), .planning/phases/06.1-firebase-curriculum-backend/06.1-03-PLAN.md (pending), .planning/phases/06.1-firebase-curriculum-backend/06.1-04-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
