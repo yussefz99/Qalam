@@ -239,7 +239,16 @@ class _WriteSurfaceState extends ConsumerState<WriteSurface> {
             borderRadius: BorderRadius.circular(24),
             border: Border.all(color: QalamTokens.aquaEdge),
           ),
-          clipBehavior: Clip.antiAlias,
+          // Defect-1 (bottom-edge false-fail): the writebox must NEVER truncate
+          // the child's ink. The capture layer already keeps points drawn slightly
+          // below the box un-clamped (StrokeCanvas has no bounds clamp — verified
+          // by stroke_canvas_test's "does not clamp" guard), and the shape verdict
+          // is bbox-normalised / position-invariant (position_invariance_test). A
+          // hard `Clip.antiAlias` here was the ONLY place a low bowl got visibly
+          // cut at the box bottom — making a well-formed low baa LOOK shallow (the
+          // owner's "ink shifts upward after pen-up"). Render the full stroke
+          // un-shifted so what the child sees matches what the scorer measures.
+          clipBehavior: Clip.none,
           child: Stack(
             children: [
               // write-mode ruled baseline (the blank line, no guide glyph).

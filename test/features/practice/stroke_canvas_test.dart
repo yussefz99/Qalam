@@ -134,6 +134,62 @@ void main() {
     });
 
     testWidgets(
+        '4. capture does NOT clamp points drawn below the canvas rect (Defect-1)',
+        (WidgetTester tester) async {
+      // The bottom-edge false-fail root-cause probe: a child who writes slightly
+      // LOW drags the stylus past the canvas bottom edge. The capture layer must
+      // keep those below-rect points verbatim (no clamp to the rect) so the bowl
+      // bottom survives to the position-invariant scorer. A clamp here would
+      // flatten the bowl and read "much shallower" (the on-device log symptom).
+      List<Offset>? captured;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Column(
+              children: [
+                SizedBox(
+                  width: 300,
+                  height: 200, // the canvas rect: local y in [0 .. 200]
+                  child: StrokeCanvas(
+                    key: const Key('canvas'),
+                    referenceStrokes: _alifStrokes,
+                    onStrokeSubmitted: (pts) => captured = pts,
+                    acceptTouch: false,
+                  ),
+                ),
+                // a sibling BELOW so the drag ends over a different widget.
+                const SizedBox(
+                    width: 300, height: 200, child: ColoredBox(color: Colors.red)),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final Rect rect = tester.getRect(find.byKey(const Key('canvas')));
+      final TestGesture g = await tester.startGesture(
+        Offset(rect.center.dx, rect.bottom - 20),
+        kind: PointerDeviceKind.stylus,
+      );
+      // Drag DOWN past the bottom edge into the red sibling (+60px below).
+      await g.moveTo(Offset(rect.center.dx, rect.bottom - 5));
+      await g.moveTo(Offset(rect.center.dx, rect.bottom + 20));
+      await g.moveTo(Offset(rect.center.dx, rect.bottom + 60));
+      await g.up();
+      await tester.pumpAndSettle();
+
+      expect(captured, isNotNull);
+      final double maxLocalY =
+          captured!.map((o) => o.dy).reduce((a, b) => a > b ? a : b);
+      // The captured local y extends BELOW the canvas height (200) — the
+      // below-rect points were kept, not clamped up to the edge.
+      expect(maxLocalY, greaterThan(rect.height),
+          reason: 'points dragged below the canvas rect must be captured '
+              'un-clamped (local y > canvas height), or a low bowl reads shallow.');
+    });
+
+    testWidgets(
         '3. touch stroke ACCEPTED when acceptTouch: true (debug-finger flag)',
         (WidgetTester tester) async {
       List<Offset>? captured;
