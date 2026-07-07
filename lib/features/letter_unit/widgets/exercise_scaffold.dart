@@ -160,6 +160,16 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
 
   bool get _isTeachCard => widget.exercise.surface == null;
 
+  /// Phase 17.2 (owner directive 2026-07-07): baa is the LIVE-AGENT path. On it
+  /// the cloud coach's line is the ONLY feedback words shown — the authored
+  /// (offline) line NEVER renders, not first, not on error/timeout, and is
+  /// never spoken. The feedback words area stays empty until the agent line
+  /// arrives, then shows ONLY that line (in both the tutor bubble and the bottom
+  /// feedback bar). Non-agent letters (alif etc.) keep the instant authored line
+  /// via [AuthoredFallbackBrain]. Gated on the letter id exactly like the brain
+  /// selection in [_onResult] (Phase 14-17 coaching was scoped to baa).
+  bool get _isAgentPath => widget.letter.id == 'baa';
+
   @override
   void initState() {
     super.initState();
@@ -205,6 +215,13 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
     // reflex (D-A / GROUND-01). No path waits on the network.
     ref.read(exerciseControllerProvider.notifier).applyResult(result);
     markLatency(LatencySegment.scorerVerdictRendered);
+    // Phase 17.2: reset the tutor-owned WORDS channel so the feedback area is
+    // EMPTY until the fresh line resolves. On the baa/agent path this is the
+    // whole point — no authored line ever shows, so the area waits (and the
+    // bubble hides) until the agent line lands. On non-agent letters the bubble
+    // and bottom bar read the instant authored `state.line`, so this clear is
+    // invisible there. The verdict/star are already applied and stand (D-A).
+    ref.read(tutorLineProvider.notifier).clear();
     if (result.passed && widget.graphExerciseId != null) {
       widget.onGraphNodePassed?.call(widget.graphExerciseId!);
     }
@@ -224,7 +241,7 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
     // AuthoredFallbackBrain, which returns the letter's OWN authored feedback line.
     // (Generalizing the agent beyond baa is the agent-driven-unit work for next.)
     final feedback = widget.exercise.feedback ?? const <String, String>{};
-    final TutorBrain brain = widget.letter.id == 'baa'
+    final TutorBrain brain = _isAgentPath
         ? ref.read(tutorBrainFactoryProvider)(feedback)
         : AuthoredFallbackBrain(feedback: feedback);
     brain.next(facts).then((decision) {
@@ -237,9 +254,13 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
       ref.read(tutorLineProvider.notifier).set(line.isNotEmpty ? line : null);
       markLatency(LatencySegment.lineRendered);
 
-      // PHASE 16 PRESENCE HOOK: speak the resolved bubble text (agent line, else
-      // the authored floor for this verdict). Fire-and-forget — never stalls the loop.
-      final spokenText = line.isNotEmpty ? line : _floorLineFor(result);
+      // PHASE 16 PRESENCE HOOK: speak the resolved bubble text. On the agent path
+      // (baa) the ONLY voice is the agent's line — never the authored floor
+      // (owner directive 2026-07-07): if the agent returned nothing, stay silent.
+      // Non-agent letters still voice the authored floor. Fire-and-forget — never
+      // stalls the loop.
+      final spokenText =
+          line.isNotEmpty ? line : (_isAgentPath ? '' : _floorLineFor(result));
       if (spokenText.isNotEmpty) {
         markLatency(LatencySegment.firstTtsStart);
         unawaited(ref.read(ttsCoachSpeakerProvider).speak(spokenText));
@@ -310,6 +331,9 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(exerciseControllerProvider);
+    // The tutor-owned coaching line (the WORDS channel). On the agent path it is
+    // the ONLY source of feedback words for both the bubble and the bottom bar.
+    final agentLine = ref.watch(tutorLineProvider);
     final s = widget.strings;
 
     return Directionality(
@@ -323,18 +347,23 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
             // ── left: the tutor column (.ex-tutor) ──────────────────────────
             SizedBox(
               width: 258, // .ex-tutor width:258px
-              child: _TutorColumn(state: state, strings: s),
+              child: _TutorColumn(
+                state: state,
+                strings: s,
+                isAgentPath: _isAgentPath,
+              ),
             ),
             const SizedBox(width: 24), // .ex-scaffold gap:24
             // ── right: the main column (.ex-main) ───────────────────────────
-            Expanded(child: _mainColumn(state, s)),
+            Expanded(child: _mainColumn(state, s, agentLine)),
           ],
         ),
       ),
     );
   }
 
-  Widget _mainColumn(ExerciseState state, ExerciseScaffoldStrings s) {
+  Widget _mainColumn(
+      ExerciseState state, ExerciseScaffoldStrings s, String? agentLine) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -370,7 +399,7 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
         Expanded(child: _centerSurface()),
         // FeedbackPanel + CTA (bottom) — .ex-foot.
         const SizedBox(height: 12),
-        _foot(state, s),
+        _foot(state, s, agentLine),
       ],
     );
   }
@@ -393,7 +422,8 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
     return widget.customSurface?.call(context) ?? const SizedBox.shrink();
   }
 
-  Widget _foot(ExerciseState state, ExerciseScaffoldStrings s) {
+  Widget _foot(
+      ExerciseState state, ExerciseScaffoldStrings s, String? agentLine) {
     // teachCard: NO graded FeedbackPanel — just the teach hint + a support CTA.
     if (_isTeachCard) {
       return Row(
@@ -416,10 +446,19 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
       _ => FeedbackState.idle,
     };
 
+    // The WORDS shown in the bottom bar. On the agent path (baa) they come ONLY
+    // from the tutor channel ([agentLine]) — empty until the agent line arrives,
+    // then the agent line (the SAME text the bubble shows); the authored line
+    // never appears here (owner directive 2026-07-07, fixes the Phase-14 bottom-
+    // bar-pins-authored issue). Non-agent letters keep the instant authored
+    // `state.line`. The verdict FACE (pass star / fix ✕) still comes from the
+    // scorer-owned [fbState], so the star renders instantly with empty words.
+    final footLine = _isAgentPath ? (agentLine ?? '') : state.line;
+
     return Row(
       children: [
         Expanded(
-          child: FeedbackPanelV2(state: fbState, line: state.line),
+          child: FeedbackPanelV2(state: fbState, line: footLine),
         ),
         const SizedBox(width: 14), // .ex-foot gap:14
         ..._ctaFor(state.phase, s),
@@ -459,10 +498,18 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
 /// (GROUND-01: the scorer owns the verdict); ONLY the bubble TEXT is replaced by
 /// the agent's line when one is present.
 class _TutorColumn extends ConsumerWidget {
-  const _TutorColumn({required this.state, required this.strings});
+  const _TutorColumn({
+    required this.state,
+    required this.strings,
+    this.isAgentPath = false,
+  });
 
   final ExerciseState state;
   final ExerciseScaffoldStrings strings;
+
+  /// Phase 17.2: on the agent path (baa) the bubble shows ONLY the agent's line
+  /// and never the authored floor — see [_bubbleText] (owner directive).
+  final bool isAgentPath;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -569,10 +616,13 @@ class _TutorColumn extends ConsumerWidget {
   String _bubbleText(String? agentLine) {
     if (state.phase == ExercisePhase.pass ||
         state.phase == ExercisePhase.fix) {
-      // Prefer the agent's line on a verdict; degrade to the authored verdict
-      // line (the floor) when no agent line is set.
+      // Prefer the agent's line on a verdict.
       if (agentLine != null && agentLine.trim().isNotEmpty) return agentLine;
-      return state.line;
+      // On the agent path (baa) the authored floor NEVER shows — the words area
+      // stays empty (the bubble hides) until the agent line arrives (owner
+      // directive 2026-07-07). Non-agent letters degrade to the authored verdict
+      // line (the instant offline floor).
+      return isAgentPath ? '' : state.line;
     }
     return state.line; // idle line set by the host via the controller, if any.
   }

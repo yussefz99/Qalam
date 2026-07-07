@@ -22,6 +22,7 @@ import 'package:qalam/features/letter_unit/widgets/feedback_panel_v2.dart';
 import 'package:qalam/features/letter_unit/widgets/write_surface.dart';
 import 'package:qalam/models/exercise.dart';
 import 'package:qalam/providers/audio_providers.dart';
+import 'package:qalam/tutor/tutor_providers.dart';
 
 import 'section_test_support.dart';
 
@@ -141,6 +142,11 @@ void main() {
     container.read(exerciseControllerProvider.notifier)
       ..load(_writeWordExercise())
       ..applyResult(const CheckResult.pass());
+    // Phase 17.2 (owner directive): baa's praise WORDS flow through the tutor
+    // channel now (the offline floor delivers the authored line here); set it as
+    // that floor would, then assert the panel renders it beside the star.
+    container.read(tutorLineProvider.notifier)
+        .set('باب — from memory, no guide. Real writing! أحسنت!');
     await tester.pumpAndSettle();
 
     // One quiet star + the authored praise on a pass.

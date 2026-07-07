@@ -60,6 +60,37 @@ Letter _baa() {
   );
 }
 
+/// A NON-agent letter (alif). Phase 17.2 routes baa's feedback WORDS through the
+/// live-agent channel ([tutorLineProvider]); these controller-driven pass/fail
+/// tests set `state.line` directly (never through the agent), so they exercise a
+/// non-agent letter — the path where the authored line still renders instantly
+/// in the panel. (The baa/agent path is pinned in exercise_scaffold_cutover_test.)
+Letter _alif() {
+  const body = StrokeSpec(
+    order: 1,
+    label: 'stem',
+    type: 'line',
+    points: [
+      [0.5, 0.2],
+      [0.5, 0.8],
+    ],
+    direction: 'topToBottom',
+  );
+  return const Letter(
+    id: 'alif',
+    char: 'ا',
+    name: LetterName(ar: 'ألف', display: 'alif'),
+    introOrder: 1,
+    forms: LetterForms(isolated: 'ا', initial: 'ا', medial: 'ـا', final_: 'ـا'),
+    referenceStrokes: [body],
+    cleanRepsToAdvance: 1,
+    commonMistakes: [],
+    mistakesStatus: 'placeholder',
+    signedOff: false,
+    contextualForms: {'isolated': Form(referenceStrokes: [body])},
+  );
+}
+
 Exercise _graded() => const Exercise(
       id: 'baa.traceLetter',
       skill: 'formation',
@@ -132,7 +163,7 @@ void main() {
       (tester) async {
     await _pump(
       tester,
-      ExerciseScaffold(exercise: _graded(), letter: _baa()),
+      ExerciseScaffold(exercise: _graded(), letter: _alif()),
     );
 
     // Drive the controller to a pass (as the WriteSurface would on a clean rep).
@@ -168,7 +199,7 @@ void main() {
       (tester) async {
     await _pump(
       tester,
-      ExerciseScaffold(exercise: _graded(), letter: _baa()),
+      ExerciseScaffold(exercise: _graded(), letter: _alif()),
     );
 
     final ctx = tester.element(find.byType(ExerciseScaffold));

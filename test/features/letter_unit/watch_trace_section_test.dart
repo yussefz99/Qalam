@@ -21,6 +21,7 @@ import 'package:qalam/features/letter_unit/widgets/feedback_panel_v2.dart';
 import 'package:qalam/features/letter_unit/widgets/write_surface.dart';
 import 'package:qalam/features/practice/widgets/stroke_order_animation.dart';
 import 'package:qalam/providers/audio_providers.dart';
+import 'package:qalam/tutor/tutor_providers.dart';
 
 import 'section_test_support.dart';
 
@@ -94,6 +95,12 @@ void main() {
     container.read(exerciseControllerProvider.notifier)
       ..load(traceIsolatedExercise())
       ..applyResult(const CheckResult.fail('shallowBowl'));
+    // Phase 17.2 (owner directive): baa's feedback WORDS now flow through the
+    // tutor channel — the RemoteAgentBrain's offline floor delivers the authored
+    // line here (the scaffold no longer renders `state.line` on the baa path).
+    // Set it as that floor would, then assert the panel renders it.
+    container.read(tutorLineProvider.notifier).set(
+        'A little shallow — give the bowl a deeper curve. Try again, slower.');
     await tester.pumpAndSettle();
 
     // The SPECIFIC authored fix (from EXERCISE-CONFIGS.json), in the panel.
@@ -119,6 +126,11 @@ void main() {
     container.read(exerciseControllerProvider.notifier)
       ..load(traceIsolatedExercise())
       ..applyResult(const CheckResult.pass());
+    // Phase 17.2 (owner directive): baa's praise WORDS flow through the tutor
+    // channel now (the offline floor delivers the authored line here); set it as
+    // that floor would, then assert the panel renders it beside the star.
+    container.read(tutorLineProvider.notifier)
+        .set('Beautiful — a deep, smooth bowl. أحسنت!');
     await tester.pumpAndSettle();
 
     expect(find.byIcon(Icons.star_rounded), findsOneWidget);
