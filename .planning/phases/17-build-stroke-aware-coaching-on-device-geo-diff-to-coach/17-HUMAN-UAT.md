@@ -56,9 +56,10 @@ why_human: `gcloud` is authenticated in this environment (`qalam1481@gmail.com`,
 resume_signal: "deployed: rev <NNNNN>, /health 200" (with the new revision name)
 
 ### 2. Device re-walk of UAT F1–F6 on the tablet/iPad  *(new build)*
-expected: Build the demo on the tablet/iPad (`--dart-define=DEMO=true
-  --dart-define=TUTOR_BASE_URL=https://qalam-tutor-ogtudswkjq-uc.a.run.app`) and re-walk the
-  `docs/testing/UAT-FULL-2026-07-01.md` punch-list:
+expected: Build the REAL app on the tablet/iPad (`--dart-define=TUTOR_BASE_URL=https://qalam-tutor-ogtudswkjq-uc.a.run.app`,
+  **no DEMO flag** — the referenced UAT script itself says "no DEMO"; `DEMO=true` boots the phase-02.1.1
+  MOCKED walkthrough at /demo/home which contains none of Phase 17. Owner caught this 2026-07-07.)
+  Re-walk the `docs/testing/UAT-FULL-2026-07-01.md` punch-list:
   - **F1** — English helper copy ("On its own…", "Nothing to write…") reads **left-to-right**
     (trailing period no longer jumps left); fixed 17-08, pinned by `meet_section_ltr_test.dart`.
   - **F2** — the cold-start flash-then-overwrite is **impossible by construction**: the verdict +
