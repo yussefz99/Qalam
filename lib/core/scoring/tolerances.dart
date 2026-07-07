@@ -38,16 +38,26 @@ class Tolerances {
   /// Soft-band shape threshold: DTW distance at/below which the stroke's shape
   /// is CERTAINLY CORRECT (`SoftBand.tcc` — Plan 17-02, D-C).
   ///
-  /// PROVISIONAL (D-D): set from synthetic baa variants, == the
-  /// `SoftBand.shapeDefault` first cut; production values come from the
-  /// mom-labelled calibration set.
+  /// PROVISIONAL (D-D): == the `SoftBand.shapeDefault` cut. WIDENED 0.10 → 0.12
+  /// on 2026-07-07 (pre-demo) after the owner's own correct baa false-failed on
+  /// device — real good-but-shallow bowls read further from the deep authored
+  /// reference than the synthetic seed, so more genuinely-good writing now lands
+  /// certainly-correct. Production values still come from the mom-labelled
+  /// calibration set.
   final double shapeTcc;
 
   /// Soft-band shape threshold: DTW distance at/above which the stroke's shape
   /// is CERTAINLY WRONG (`SoftBand.tcw`) — the only shape zone that fails.
   ///
-  /// PROVISIONAL (D-D): synthetic first cut == `SoftBand.shapeDefault`;
-  /// production values come from the mom-labelled calibration.
+  /// PROVISIONAL (D-D): == the `SoftBand.shapeDefault` cut. WIDENED 0.15 → 0.16
+  /// on 2026-07-07 (pre-demo) to stop false-failing real good baa (owner report:
+  /// shape read certainly-wrong for a correct, slightly-shallow bowl). 0.16 is
+  /// the MAX safe widen: the calibration-harness fit report puts the tightest
+  /// synthetic shape-bad (a flat "line" bowl in the FINAL form) at d≈0.1626 and
+  /// the F5 form-confusion trap (isolated bowl offered for medial/final) at
+  /// d≈0.2838 — both stay certainly-wrong at tcw=0.16, so the F5 separation is
+  /// intact. Pushing tcw to/beyond 0.1626 would let the flat-bowl error pass;
+  /// a larger widen needs the mom-labelled real-child captures (D-D).
   final double shapeTcw;
 
   /// Soft-band direction threshold: normalized displacement alignment p (in
@@ -70,8 +80,8 @@ class Tolerances {
     required this.minRawPoints,
     required this.resampleN,
     required this.maxCurvature,
-    this.shapeTcc = 0.10,
-    this.shapeTcw = 0.15,
+    this.shapeTcc = 0.12,
+    this.shapeTcw = 0.16,
     this.directionCc = 0.3,
     this.directionCw = -0.3,
   });

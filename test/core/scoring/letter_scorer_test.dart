@@ -328,7 +328,7 @@ void main() {
   /// A baa whose body bows ~0.21 in unit-box space (depth 31.5px over a 152px
   /// chord). Under the Plan 17-02 DTW shape criterion this bow sits CLOSE to
   /// the reference boat (d ≈ 0.023 — well inside the default soft band
-  /// tcc 0.10 / tcw 0.15), so it passes the letter's own tolerances and the
+  /// tcc 0.12 / tcw 0.16), so it passes the letter's own tolerances and the
   /// presets; an explicitly TIGHTER shape-band override fails it. Still the
   /// discriminating fixture for override-wins resolution.
   List<List<List<double>>> bowedBaa() => [
@@ -371,7 +371,7 @@ void main() {
         () async {
       final result = await scoreLetter(bowedBaa(), baaLetter());
       expect(result.passed, isTrue,
-          reason: 'letter.tolerances (default shape band tcw 0.15) absorbs '
+          reason: 'letter.tolerances (default shape band tcw 0.16) absorbs '
               'the bow (d ≈ 0.023)');
     });
 

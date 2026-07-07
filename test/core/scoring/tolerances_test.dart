@@ -78,8 +78,8 @@ void main() {
     test('every preset carries the PROVISIONAL soft-band defaults', () {
       for (final name in ['loose', 'normal', 'strict']) {
         final t = Tolerances.preset(name);
-        expect(t.shapeTcc, equals(0.10), reason: '$name.shapeTcc');
-        expect(t.shapeTcw, equals(0.15), reason: '$name.shapeTcw');
+        expect(t.shapeTcc, equals(0.12), reason: '$name.shapeTcc');
+        expect(t.shapeTcw, equals(0.16), reason: '$name.shapeTcw');
         expect(t.directionCc, equals(0.3), reason: '$name.directionCc');
         expect(t.directionCw, equals(-0.3), reason: '$name.directionCw');
       }
@@ -105,8 +105,8 @@ void main() {
 
     test('fromJson with no overrides keeps the soft-band defaults', () {
       final t = Tolerances.fromJson(const {'preset': 'normal'});
-      expect(t.shapeTcc, equals(0.10));
-      expect(t.shapeTcw, equals(0.15));
+      expect(t.shapeTcc, equals(0.12));
+      expect(t.shapeTcw, equals(0.16));
     });
   });
 }

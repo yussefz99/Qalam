@@ -60,14 +60,19 @@ class SoftBand {
   /// First-cut shape band for a resampled/unit-box DTW distance (average
   /// per-aligned-point distance in unit-box space).
   ///
-  /// PROVISIONAL — set from synthetic baa variants, NOT real children: correct
-  /// bowls (shaky 0.036, deeper 0.095) sit at/below TCC=0.10 and pass outright;
-  /// a flat "line" bowl (0.371 under the anchored normalization) sits at/above
-  /// TCW=0.15 and fails; 0.10–0.15 is the
-  /// tolerant fuzzy middle. These two numbers MUST be recalibrated from the
-  /// owner's-mother-labelled correct-vs-wrong distance distributions before
-  /// production (the research names labelled child samples as the hard input).
-  static const SoftBand shapeDefault = SoftBand(tcc: 0.10, tcw: 0.15);
+  /// PROVISIONAL — the single source the `Tolerances` soft-band defaults mirror.
+  /// WIDENED 2026-07-07 (pre-demo) from tcc/tcw 0.10/0.15 → 0.12/0.16 after the
+  /// owner's own correct baa false-failed on device: a real, slightly-shallow
+  /// bowl read certainly-wrong against the deep authored reference. Correct
+  /// bowls sit at/below TCC=0.12 and pass outright; a flat "line" bowl (0.371
+  /// under the anchored normalization) still sits far above TCW=0.16 and fails.
+  /// 0.16 is the MAX safe widen: the calibration harness's tightest synthetic
+  /// shape-bad (a flat bowl in the FINAL form) is d≈0.1626 and the F5
+  /// form-confusion trap is d≈0.2838 — both stay certainly-wrong at 0.16.
+  /// These two numbers MUST still be recalibrated from the owner's-mother-
+  /// labelled correct-vs-wrong distance distributions before production (the
+  /// research names labelled child samples as the hard input).
+  static const SoftBand shapeDefault = SoftBand(tcc: 0.12, tcw: 0.16);
 
   /// The zone [distance] falls into.
   ShapeZone zoneFor(double distance) {
