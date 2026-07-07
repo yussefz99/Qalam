@@ -372,6 +372,10 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(exerciseControllerProvider);
+    // Hold a LIVE listener on the graph: a one-shot read (initState) does not
+    // keep an unlistened FutureProvider resolved on-device, so
+    // _legalNextExerciseIds() saw null and the agent never received candidates.
+    ref.watch(curriculumGraphProvider);
     // The tutor-owned coaching line (the WORDS channel). On the agent path it is
     // the ONLY source of feedback words for both the bubble and the bottom bar.
     final agentLine = ref.watch(tutorLineProvider);
