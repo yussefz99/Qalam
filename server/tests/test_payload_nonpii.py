@@ -149,6 +149,28 @@ def test_graph_position_fields_carry_no_pii():
             )
 
 
+def test_legal_next_exercise_ids_accepted_and_carry_no_pii():
+    """Phase 17.2 (demo): the graph-legal next-exercise candidate list is ACCEPTED and its NAME +
+    every id VALUE trip no PII/stroke token — exercise ids are curriculum constants, never geometry
+    or child data (GROUND-02 over the enlarged wire contract)."""
+    payload = {
+        **LEGIT_FACTS,
+        "legalNextExerciseIds": ["baa.traceLetter.isolated", "baa.writeWord.dictation"],
+    }
+    facts = TutorFactsIn.model_validate(payload)
+    assert facts.legalNextExerciseIds == ["baa.traceLetter.isolated", "baa.writeWord.dictation"]
+    assert not _PII_TOKEN_RE.search("legalNextExerciseIds")
+    for eid in facts.legalNextExerciseIds:
+        assert not _PII_TOKEN_RE.search(eid), f"candidate id {eid!r} trips the PII/stroke guard"
+
+
+def test_legal_next_exercise_ids_default_none_when_omitted():
+    """Omitting the field is backward-compatible (an OLD client that predates 17.2): it defaults to
+    None, never a 422 — the additive-deploy safety (server ships FIRST, client follows)."""
+    facts = TutorFactsIn.model_validate({"letterId": "baa", "section": "traceLetter", "passed": True})
+    assert facts.legalNextExerciseIds is None
+
+
 def test_graph_position_fields_default_empty_when_omitted():
     """Omitting the two fields is backward-compatible: they default to [] (a fresh
     child at the graph root), never a 422 — the standalone-redeploy safety."""

@@ -27,7 +27,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 
 from app.curriculum import is_authored
 from app.models import build_coach_model
-from app.prompts import COACH_PROMPT, COACH_STROKE_ADDENDUM
+from app.prompts import COACH_NEXT_EXERCISE_ADDENDUM, COACH_PROMPT, COACH_STROKE_ADDENDUM
 from app.state import TutorState
 from app.tools import ACTION_TOOL_NAMES, ACTION_TOOLS
 
@@ -59,7 +59,16 @@ def coach(state: TutorState) -> dict:
     # byte-identical to the prior behavior (the existing flow is unchanged). The G2/G3/G4 guards
     # below are the structural grounding backstop and are UNAFFECTED by this trigger.
     has_derived_facts = facts.get("strokeDiff") or facts.get("criteria") or facts.get("writtenWord")
-    system_prompt = COACH_PROMPT + (COACH_STROKE_ADDENDUM if has_derived_facts else "")
+    # Phase 17.2 (demo): the client sent the graph-legal next-exercise candidates → let the coach ALSO
+    # propose the next exercise FROM that list (Option B: announce it in the line). Purely additive — no
+    # candidates → the addendum is not appended and the prior behavior is byte-identical. The rail below
+    # strips any proposed id that is not in this list, so an illegal/hallucinated id is never forwarded.
+    legal_next = facts.get("legalNextExerciseIds") or []
+    system_prompt = (
+        COACH_PROMPT
+        + (COACH_STROKE_ADDENDUM if has_derived_facts else "")
+        + (COACH_NEXT_EXERCISE_ADDENDUM if legal_next else "")
+    )
 
     coach_with_tools = build_coach_with_tools()
     resp = coach_with_tools.invoke(
@@ -101,5 +110,22 @@ def coach(state: TutorState) -> dict:
             args.get("letter_id"),
         )
         name, args, grounded = "say", {"text": _GROUNDED_RETRY_LINE}, False
+
+    # Phase 17.2 next-exercise RAIL: the coach MAY add a `nextExerciseId` arg proposing the child's next
+    # exercise — accept it ONLY when it is in the client-provided candidate list; otherwise STRIP it (and
+    # the now-orphaned `rationale`) so an ILLEGAL / hallucinated / off-graph id is NEVER forwarded to the
+    # client. The id is the only thing the client acts on (it re-checks legality too, D-04 defence-in-depth);
+    # the spoken line is advisory, so it is left as-is. A guard rewrite to `say` above carries no
+    # nextExerciseId, so this is a no-op there. Empty candidate list → any proposed id is stripped (fail
+    # closed). Logged at info for the demo trace.
+    proposed_next = args.get("nextExerciseId")
+    if proposed_next is not None and proposed_next not in legal_next:
+        logger.info(
+            "17.2 next-exercise rail: stripped proposed nextExerciseId=%r (not in candidates %r).",
+            proposed_next,
+            legal_next,
+        )
+        args.pop("nextExerciseId", None)
+        args.pop("rationale", None)
 
     return {"decision": {"name": name, "args": args}, "grounded": grounded, "log": ["coach"]}

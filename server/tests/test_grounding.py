@@ -370,3 +370,96 @@ def test_g3_advance_on_fail_still_rewritten_with_criteria(monkeypatch):
     out = coach({"facts": facts})
     assert out["decision"]["name"] == "say"  # never advance on a fail, even with criteria
     assert out["grounded"] is False
+
+
+# --- Phase 17.2 (demo): the next-exercise proposal addendum + the candidate-list RAIL ------
+# When the FACTS carry `legalNextExerciseIds`, the coach ALSO proposes the next exercise FROM that
+# list (Option B: announced in the line). The RAIL in coach.py strips any proposed nextExerciseId
+# NOT in the candidate list, so an illegal / hallucinated / off-graph id is NEVER forwarded.
+
+_CANDIDATES = ["baa.traceLetter.isolated", "baa.writeWord.dictation"]
+_FAIL_WITH_CANDIDATES = {**FAIL_FACTS, "legalNextExerciseIds": _CANDIDATES}
+
+
+def test_next_exercise_addendum_appended_when_candidates_present(monkeypatch):
+    """FACTS carrying `legalNextExerciseIds` append the next-exercise addendum so the coach can
+    propose the next step FROM the graph (17.2 demo). Additive: no candidates → not appended."""
+    from app.prompts import COACH_NEXT_EXERCISE_ADDENDUM
+
+    system_prompt = _capture_system_prompt(
+        monkeypatch, _FAIL_WITH_CANDIDATES, [{"name": "say", "args": {"text": "deeper curve"}}]
+    )
+    assert COACH_NEXT_EXERCISE_ADDENDUM in system_prompt
+
+
+def test_no_next_exercise_addendum_without_candidates(monkeypatch):
+    """A payload with no `legalNextExerciseIds` appends no next-exercise addendum — the prior
+    behavior stays byte-identical (the trigger is purely additive)."""
+    from app.prompts import COACH_NEXT_EXERCISE_ADDENDUM
+
+    system_prompt = _capture_system_prompt(
+        monkeypatch, FAIL_FACTS, [{"name": "say", "args": {"text": "deeper curve"}}]
+    )
+    assert COACH_NEXT_EXERCISE_ADDENDUM not in system_prompt
+
+
+def test_next_exercise_rail_keeps_a_legal_proposed_id(monkeypatch):
+    """A proposed nextExerciseId that IS in the candidate list is forwarded untouched (with its
+    rationale) — the client acts on the graph-legal pick."""
+    _patch_coach_only(
+        monkeypatch,
+        [
+            {
+                "name": "say",
+                "args": {
+                    "text": "Lovely deep bowl — ready for the next form?",
+                    "nextExerciseId": "baa.writeWord.dictation",
+                    "rationale": "clean pass, move forward",
+                },
+            }
+        ],
+    )
+    out = coach({"facts": _FAIL_WITH_CANDIDATES})
+    assert out["decision"]["name"] == "say"
+    assert out["decision"]["args"]["nextExerciseId"] == "baa.writeWord.dictation"
+    assert out["decision"]["args"]["rationale"] == "clean pass, move forward"
+
+
+def test_next_exercise_rail_strips_an_illegal_proposed_id(monkeypatch):
+    """A proposed nextExerciseId NOT in the candidate list is STRIPPED (with its now-orphaned
+    rationale) and never forwarded — the coach can never smuggle an off-graph exercise to the
+    client. The spoken line is advisory and left as-is."""
+    _patch_coach_only(
+        monkeypatch,
+        [
+            {
+                "name": "say",
+                "args": {
+                    "text": "Deeper curve at the bottom — try that dot once more.",
+                    "nextExerciseId": "baa.fake.notInGraph",  # NOT in _CANDIDATES
+                    "rationale": "hallucinated pick",
+                },
+            }
+        ],
+    )
+    out = coach({"facts": _FAIL_WITH_CANDIDATES})
+    assert out["decision"]["name"] == "say"
+    assert "nextExerciseId" not in out["decision"]["args"]  # stripped — never forwarded
+    assert "rationale" not in out["decision"]["args"]  # the orphaned rationale goes too
+    assert out["decision"]["args"]["text"]  # the advisory line survives unchanged
+
+
+def test_next_exercise_rail_strips_any_id_when_no_candidates_provided(monkeypatch):
+    """With no `legalNextExerciseIds` in the FACTS, ANY proposed id is stripped (fail closed) —
+    the coach may never forward an id the client did not authorize."""
+    _patch_coach_only(
+        monkeypatch,
+        [
+            {
+                "name": "say",
+                "args": {"text": "deeper curve", "nextExerciseId": "baa.traceLetter.isolated"},
+            }
+        ],
+    )
+    out = coach({"facts": FAIL_FACTS})  # no candidate list at all
+    assert "nextExerciseId" not in out["decision"]["args"]

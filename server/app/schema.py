@@ -185,6 +185,19 @@ class TutorFactsIn(BaseModel):
         description="ML Kit's recognized transcription of what the child wrote (DERIVED text, never geometry).",
     )
 
+    # --- Phase 17.2 (demo, owner directive 2026-07-07): the graph-LEGAL next-exercise candidates ---
+    # The client computes the SAME set its selection router would accept (CurriculumGraph.isLegalSelection
+    # over the child's cleared tiers/competencies) and sends it so the coach can propose the NEXT exercise
+    # FROM the graph rather than invent one. Exercise ids are CURRICULUM CONSTANTS — non-PII (no geometry,
+    # no child data). OPTIONAL + default None => ADDITIVE / backward-compatible: an OLD client that omits it
+    # still validates (no 422 window — deploy the server FIRST, the client follows). The coach node rails
+    # any proposed nextExerciseId against THIS list; an id outside it is stripped and never forwarded.
+    legalNextExerciseIds: list[str] | None = Field(
+        default=None,
+        description="Graph-legal next-exercise candidate ids the coach must pick FROM (non-PII curriculum "
+        "constants); null/omitted when the client sends none.",
+    )
+
     # --- RETIRED by Plan 17-08 under D-A (scorer owns pass/fail; ADR-017 at 17-10) ---
     # The Phase-17.1 rendered-image field (base64 PNG → AI-owns-verdict) is DELETED here. Under D-A
     # the deterministic on-device scorer owns pass/fail, so no rendered image of child handwriting

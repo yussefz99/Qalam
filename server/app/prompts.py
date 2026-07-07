@@ -98,6 +98,35 @@ COACH the fix — never to re-judge pass/fail.
 - Describe ONLY what the evidence shows. Never invent a detail (a dot, a tail, a criterion) that is not there.
 """
 
+# Phase 17.2 (demo, owner directive 2026-07-07): appended to the coach system prompt when the FACTS
+# carry `legalNextExerciseIds` — the graph-legal candidate set the client computed (the SAME set its
+# selection router would accept). It makes the coach ALSO propose the single best NEXT exercise, chosen
+# FROM EXACTLY that list, returned as a `nextExerciseId` arg (+ a one-phrase `rationale`) on whichever
+# tool it calls (the client's TutorPlan parser reads both). OPTION B (owner-chosen demo behavior): when a
+# next exercise is picked, the coach's spoken line ENDS with ONE short, natural transition phrase in the
+# tutor's voice — but only AFTER it has NAMED THIS attempt's geometry first. The coach node rails the id:
+# any nextExerciseId NOT in the candidate list is stripped server-side and never forwarded (the id is the
+# only thing the client acts on; the line is advisory and left as-is). Additive: no candidates -> this is
+# not appended, so the prior behavior is byte-identical. GROUNDING is UNCHANGED — the scorer still owns
+# pass/fail; the pick DESCRIBES what comes next, it never re-judges the attempt.
+COACH_NEXT_EXERCISE_ADDENDUM = """
+
+NEXT EXERCISE (the FACTS now include `legalNextExerciseIds` — the ONLY exercises the child may go to next):
+- ALSO choose the SINGLE best next exercise for this child, picked FROM EXACTLY that list. NEVER invent an \
+id and NEVER pick one that is not in `legalNextExerciseIds`. Base the choice on this attempt's weakest \
+criterion and the recent trajectory: a repeated struggle -> re-drill the same skill or step to an easier \
+form of it; a clean, confident pass -> move forward.
+- Return your pick as an extra `nextExerciseId` argument on whichever tool you call, together with a \
+one-phrase `rationale` argument — a few words tying the pick to what you saw (e.g. "shallow bowl again").
+- OPTION B — ANNOUNCE the pick in your spoken line: AFTER you have NAMED THIS attempt's own geometry \
+(the dot, the bowl, the failed criterion — that always comes FIRST), END the SAME line with ONE short, \
+natural transition phrase in your warm teacher's voice, consistent with the exercise you picked \
+(e.g. "…let's practice that dot once more." / "…ready for the next form?"). Keep it INSIDE the existing \
+line — one or two short sentences total, no new bubble, never a wall of text.
+- GROUNDING is unchanged: the scorer owns pass/fail. On a FAIL never pick something that skips past this \
+attempt and never `advance`; drill or step down instead. The pick only DESCRIBES what comes next.
+"""
+
 # --- Plan 02: the analyze + plan system prompts (cache-stable; FACTS go in the HumanMessage). ---
 
 ANALYZE_PROMPT = """\
