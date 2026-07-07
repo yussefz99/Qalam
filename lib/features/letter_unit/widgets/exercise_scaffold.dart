@@ -77,6 +77,33 @@ class ExerciseScaffoldStrings {
   final String teachCardHint;
 }
 
+/// DEMO (17.2) — the "Teacher's Eye": what the tutor saw on the LAST attempt,
+/// made visible. Presenter chrome for the demo: read-only, additive, fed only
+/// by data the client already holds (the scorer's criteria, the point-free
+/// geometry summary, and the agent's next-exercise pick + rationale).
+class TutorInsight {
+  const TutorInsight({this.criteria, this.diffSummary, this.pick, this.rationale});
+  final List<Map<String, Object?>>? criteria;
+  final String? diffSummary;
+  final String? pick;
+  final String? rationale;
+}
+
+/// A [Notifier] (Riverpod 3 dropped `StateProvider`) mirroring the
+/// [tutorLineProvider] pattern: `.set(insight)` / `.clear()`.
+class TutorInsightNotifier extends Notifier<TutorInsight?> {
+  @override
+  TutorInsight? build() => null;
+
+  void set(TutorInsight? insight) => state = insight;
+
+  void clear() => state = null;
+}
+
+final tutorInsightProvider =
+    NotifierProvider<TutorInsightNotifier, TutorInsight?>(
+        TutorInsightNotifier.new);
+
 /// The exercise page. Drive it by passing the [exercise], the [letter] for the
 /// glyph scorer/guide, and the [ribbon] position. The host listens for advance
 /// via [onNext] (pass) and supplies the audio tap handler.
@@ -186,6 +213,8 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
       ref.read(curriculumGraphProvider);
       // Clear any stale agent line from a prior exercise.
       ref.read(tutorLineProvider.notifier).clear();
+      // Clear the stale Teacher's Eye insight too (demo chrome).
+      ref.read(tutorInsightProvider.notifier).clear();
       // Stop any in-flight coach voice from the prior exercise so a fresh idle is
       // silent (the visual is reset; the voice must not carry over). Fire-and-
       // forget — never block the build (ADR-014 display-only).
@@ -230,6 +259,15 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
     // and bottom bar read the instant authored `state.line`, so this clear is
     // invisible there. The verdict/star are already applied and stand (D-A).
     ref.read(tutorLineProvider.notifier).clear();
+    // DEMO "Teacher's Eye": publish what the scorer just saw (criteria + the
+    // point-free geometry summary). The agent's pick merges in when the brain
+    // resolves. Agent path only — presenter chrome, read-only.
+    if (_isAgentPath) {
+      ref.read(tutorInsightProvider.notifier).set(TutorInsight(
+            criteria: result.criteria,
+            diffSummary: strokeDiff?['summary'] as String?,
+          ));
+    }
     if (result.passed && widget.graphExerciseId != null) {
       widget.onGraphNodePassed?.call(widget.graphExerciseId!);
     }
@@ -269,6 +307,19 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
       // are NOT touched here — the brain only enriches the WORDS (D-A).
       ref.read(tutorLineProvider.notifier).set(line.isNotEmpty ? line : null);
       markLatency(LatencySegment.lineRendered);
+
+      // DEMO "Teacher's Eye": merge the agent's next-exercise pick + rationale
+      // into the insight (keeps the criteria/diff already published at verdict).
+      final plan = decision.plan;
+      if (_isAgentPath && plan?.nextExerciseId != null) {
+        final cur = ref.read(tutorInsightProvider);
+        ref.read(tutorInsightProvider.notifier).set(TutorInsight(
+              criteria: cur?.criteria,
+              diffSummary: cur?.diffSummary,
+              pick: plan!.nextExerciseId,
+              rationale: plan.rationale,
+            ));
+      }
 
       // PHASE 16 PRESENCE HOOK: speak the resolved bubble text. On the agent path
       // (baa) the ONLY voice is the agent's line — never the authored floor
@@ -323,6 +374,85 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
         ))
           node.exerciseId,
     ];
+  }
+
+  /// DEMO (17.2) — the "Teacher's Eye" strip. Renders the last attempt's five
+  /// criterion zones, the point-free geometry read, and the agent's pick +
+  /// rationale. Presenter chrome: read-only, additive, hidden until the first
+  /// attempt publishes an insight.
+  Widget _teacherEye() {
+    final insight = ref.watch(tutorInsightProvider);
+    if (insight == null) return const SizedBox.shrink();
+    String mark(Object? zone) => switch (zone) {
+          'certainlyCorrect' => '✓',
+          'fuzzy' => '~',
+          _ => '✗',
+        };
+    const labels = <String, String>{
+      'strokeCount': 'Strokes',
+      'strokeOrder': 'Order',
+      'shape': 'Shape',
+      'direction': 'Dir',
+      'dot': 'Dot',
+    };
+    final criteria = insight.criteria;
+    final critLine = (criteria == null || criteria.isEmpty)
+        ? null
+        : criteria
+            .map((c) =>
+                '${labels[c['criterion']] ?? c['criterion']} ${mark(c['zone'])}')
+            .join('  ');
+    final small = QalamTextStyles.label.copyWith(
+      fontSize: 11.5,
+      height: 1.35,
+      color: QalamTokens.fgMuted,
+    );
+    return Container(
+      margin: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
+      decoration: BoxDecoration(
+        color: QalamTokens.surfaceRaised,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: QalamTokens.aquaEdge),
+      ),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('WHAT THE TUTOR SAW',
+                style: small.copyWith(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.1,
+                  color: QalamTokens.inkTeal,
+                )),
+            if (critLine != null) ...[
+              const SizedBox(height: 4),
+              Text(critLine,
+                  style: small.copyWith(
+                      color: QalamTokens.fg, fontWeight: FontWeight.w700)),
+            ],
+            if (insight.diffSummary != null) ...[
+              const SizedBox(height: 3),
+              Text(insight.diffSummary!,
+                  maxLines: 2, overflow: TextOverflow.ellipsis, style: small),
+            ],
+            if (insight.pick != null) ...[
+              const SizedBox(height: 3),
+              Text(
+                '➜ next: ${insight.pick}'
+                '${insight.rationale != null ? ' — ${insight.rationale}' : ''}',
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: small.copyWith(
+                    color: QalamTokens.inkTeal, fontWeight: FontWeight.w700),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
   }
 
   /// Pull the spoken line out of whichever ACTION shape the brain returned.
@@ -392,10 +522,17 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
             // ── left: the tutor column (.ex-tutor) ──────────────────────────
             SizedBox(
               width: 258, // .ex-tutor width:258px
-              child: _TutorColumn(
-                state: state,
-                strings: s,
-                isAgentPath: _isAgentPath,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _TutorColumn(
+                    state: state,
+                    strings: s,
+                    isAgentPath: _isAgentPath,
+                  ),
+                  // DEMO "Teacher's Eye" — what the tutor saw (agent path only).
+                  if (_isAgentPath) _teacherEye(),
+                ],
               ),
             ),
             const SizedBox(width: 24), // .ex-scaffold gap:24
