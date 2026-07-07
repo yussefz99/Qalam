@@ -35,6 +35,7 @@ logger = logging.getLogger("qalam.tutor.nodes")
 
 # A grounded fallback line when a guard rewrites the forced action. Short, warm, specific.
 _GROUNDED_RETRY_LINE = "Almost — let's try this one more time, slower. You're getting closer."
+_PASS_FALLBACK_LINE = "أحسنت! That was a good one — ready for the next step?"
 
 
 def build_coach_with_tools():
@@ -110,6 +111,20 @@ def coach(state: TutorState) -> dict:
             args.get("letter_id"),
         )
         name, args, grounded = "say", {"text": _GROUNDED_RETRY_LINE}, False
+
+    # 17.2 always-speak rail: the client renders ONLY the agent's words on the agent path (owner
+    # directive 2026-07-07 — the authored floor is retired there), so a word-less action
+    # (give_hint/advance, or say with an empty text) renders as SILENCE on-device and reads as a
+    # hang. Coerce those to a spoken `say`, verdict-aware, PRESERVING args so a legal
+    # nextExerciseId/rationale survives the rewrite. Runs after G2–G4 (which already produce
+    # spoken says) and before the next-exercise rail (which validates the surviving args).
+    if name in ("give_hint", "advance") or (name == "say" and not str(args.get("text") or "").strip()):
+        _text = str(args.get("text") or "").strip()
+        if not _text:
+            _text = _PASS_FALLBACK_LINE if facts.get("passed", False) else _GROUNDED_RETRY_LINE
+        logger.info("17.2 always-speak rail: coerced word-less %r to spoken say.", name)
+        name = "say"
+        args = {**args, "text": _text}
 
     # Phase 17.2 next-exercise RAIL: the coach MAY add a `nextExerciseId` arg proposing the child's next
     # exercise — accept it ONLY when it is in the client-provided candidate list; otherwise STRIP it (and

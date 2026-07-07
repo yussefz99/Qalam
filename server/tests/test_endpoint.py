@@ -181,14 +181,17 @@ async def test_advance_on_fail_rewritten_to_grounded_say(client, monkeypatch):
 
 
 async def test_advance_on_pass_is_allowed(client, monkeypatch):
-    """advance is legitimate on a PASS verdict — the guard must NOT rewrite it."""
+    """advance on a PASS stays grounded (G3 silent) but is coerced to a SPOKEN say by the
+    17.2 always-speak rail — a word-less action renders as silence on-device now that the
+    authored floor is retired (owner directive 2026-07-07)."""
     _patch_coach(monkeypatch, [{"name": "advance", "args": {}}])
 
     resp = await client.post("/coach", json=ENLARGED_PASS_FACTS, headers=VALID_AUTH_HEADERS)
 
     assert resp.status_code == 200, resp.text
     body = resp.json()
-    assert body["toolName"] == "advance"
+    assert body["toolName"] == "say"
+    assert body["args"].get("text")  # never word-less
     assert body["grounded"] is True
 
 

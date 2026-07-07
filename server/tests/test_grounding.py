@@ -136,9 +136,14 @@ def test_coach_advance_on_fail_rewritten(monkeypatch):
 
 
 def test_coach_advance_on_pass_allowed(monkeypatch):
+    # 17.2 always-speak rail: advance on a PASS is semantically fine (G3 does not fire,
+    # grounded stays True), but a WORD-LESS action renders as silence on-device now that
+    # the authored floor is retired (owner directive 2026-07-07) — so it is coerced to a
+    # spoken `say` with a verdict-aware line, args preserved.
     _patch_coach_only(monkeypatch, [{"name": "advance", "args": {}}])
     out = coach({"facts": PASS_FACTS})
-    assert out["decision"]["name"] == "advance"
+    assert out["decision"]["name"] == "say"
+    assert out["decision"]["args"].get("text")  # never word-less
     assert out["grounded"] is True
 
 
@@ -244,7 +249,9 @@ async def test_clean_pass_skips_plan(monkeypatch):
     assert "analyze" in result["log"]
     assert "plan" not in result["log"]
     assert "coach" in result["log"]
-    assert result["decision"]["name"] == "advance"
+    # 17.2 always-speak rail: the word-less advance is coerced to a spoken say.
+    assert result["decision"]["name"] == "say"
+    assert result["decision"]["args"].get("text")
 
 
 async def test_struggle_runs_plan(monkeypatch):
