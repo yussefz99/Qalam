@@ -57,6 +57,10 @@ const _whitelist = <String>{
   'weakestCriterion',
   'expectedWord',
   'writtenWord',
+  // Phase 17.2 (demo): the graph-legal next-exercise candidates — a top-level,
+  // omit-when-empty string-list of curriculum-id constants (non-PII: no geometry,
+  // no child data). Mirrors server/app/schema.py TutorFactsIn.legalNextExerciseIds.
+  'legalNextExerciseIds',
   // AttemptFactIn (nested trajectory record keys) — passed/mistakeId/section
   // overlap the base set above, all already whitelisted.
 };
@@ -172,6 +176,13 @@ TutorFacts _fullyPopulatedFacts() => const TutorFacts(
       weakestCriterion: 'shape',
       expectedWord: 'باب',
       writtenWord: 'بب',
+      // Phase 17.2 (demo): the graph-legal next-exercise candidates — non-PII
+      // curriculum-id constants. Populated so the exact-key-set assertion below
+      // exercises this emitted field too.
+      legalNextExerciseIds: <String>[
+        'baa.traceLetter.isolated',
+        'baa.writeWord.dictation',
+      ],
     );
 
 void main() {
@@ -255,6 +266,9 @@ void main() {
         'weakestCriterion',
         'expectedWord',
         'writtenWord',
+        // Phase 17.2 (demo) candidate field — must PASS the guard (non-PII;
+        // "next"/"Exercise" contain no word-boundary x/y, no PII token).
+        'legalNextExerciseIds',
       ]) {
         expect(
           _forbiddenKey.hasMatch(ok),

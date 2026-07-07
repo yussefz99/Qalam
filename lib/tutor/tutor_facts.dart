@@ -83,6 +83,7 @@ class TutorFacts {
     this.weakestCriterion,
     this.expectedWord,
     this.writtenWord,
+    this.legalNextExerciseIds = const [],
   });
 
   /// The letter family this moment belongs to (e.g. `baa`).
@@ -164,6 +165,17 @@ class TutorFacts {
   /// non-word checks. Mirrors `TutorFactsIn.writtenWord` (`server/app/schema.py`).
   final String? writtenWord;
 
+  /// Phase 17.2 (demo, owner directive 2026-07-07): the graph-LEGAL next-exercise
+  /// candidate ids for the child's CURRENT durable position — the SAME set the
+  /// selection router would accept (`CurriculumGraph.isLegalSelection` over the
+  /// cleared tiers/competencies; the client re-checks any agent pick against it).
+  /// Sent so the cloud coach can propose the NEXT exercise FROM the graph rather
+  /// than invent one. Exercise ids are curriculum constants — non-PII (no
+  /// geometry, no child data). Emitted ONLY when non-empty (omit-when-empty so an
+  /// unchanged payload byte-matches the prior shape — the 422 lockstep, Pitfall 1);
+  /// mirrors `TutorFactsIn.legalNextExerciseIds` (`server/app/schema.py`).
+  final List<String> legalNextExerciseIds;
+
   /// The whitelisted serialized form. Emits ONLY the derived fields (the eight
   /// base + `clearedTiers`/`clearedCompetencies`, plus the Phase-17 derived
   /// `strokeDiff`/`criteria`/`weakestCriterion`/`expectedWord`/`writtenWord` when
@@ -193,6 +205,11 @@ class TutorFacts {
         if (weakestCriterion != null) 'weakestCriterion': weakestCriterion,
         if (expectedWord != null) 'expectedWord': expectedWord,
         if (writtenWord != null) 'writtenWord': writtenWord,
+        // Phase 17.2 (demo): the graph-legal next-exercise candidates. Emitted
+        // ONLY when non-empty so an unchanged payload byte-matches the prior
+        // shape; the key string byte-matches the server `TutorFactsIn` field name.
+        if (legalNextExerciseIds.isNotEmpty)
+          'legalNextExerciseIds': legalNextExerciseIds,
       };
 
   /// Alias of [toMap] — same whitelisted shape.

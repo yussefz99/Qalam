@@ -46,6 +46,7 @@ TutorFacts buildTutorFacts({
   List<String> clearedTiers = const [],
   List<String> clearedCompetencies = const [],
   Map<String, Object?>? strokeDiff,
+  List<String> legalNextExerciseIds = const [],
 }) {
   return TutorFacts(
     letterId: letterId,
@@ -68,6 +69,10 @@ TutorFacts buildTutorFacts({
     weakestCriterion: result.weakestCriterion,
     expectedWord: result.expectedWord,
     writtenWord: result.writtenWord,
+    // Phase 17.2 (demo): the graph-legal next-exercise candidates — threaded
+    // straight through (non-PII curriculum-id strings), so the coach can propose
+    // the next exercise FROM the graph. Omit-when-empty is handled in TutorFacts.
+    legalNextExerciseIds: List<String>.unmodifiable(legalNextExerciseIds),
   );
 }
 

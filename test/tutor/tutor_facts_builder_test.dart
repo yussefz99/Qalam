@@ -41,6 +41,10 @@ const _whitelist = <String>{
   'weakestCriterion',
   'expectedWord',
   'writtenWord',
+  // Phase 17.2 (demo): the graph-legal next-exercise candidates — a top-level,
+  // omit-when-empty string-list of curriculum-id constants (non-PII). Mirrors
+  // server/app/schema.py TutorFactsIn.legalNextExerciseIds (the 422 lockstep).
+  'legalNextExerciseIds',
 };
 
 /// The keys allowed INSIDE each derived [criteria] entry (Phase 17 / 17-06).
@@ -165,6 +169,42 @@ void main() {
           reason: 'criteria payload key "$k" trips the stroke/PII guard',
         );
       }
+    });
+
+    test('threads legalNextExerciseIds onto the payload (17.2 demo) and omits it '
+        'when empty (byte-identical to the pre-plan shape)', () {
+      final withCandidates = buildTutorFacts(
+        letterId: 'baa',
+        section: 'traceLetter',
+        result: const CheckResult.fail('shallowBowl'),
+        legalNextExerciseIds: const [
+          'baa.traceLetter.isolated',
+          'baa.writeWord.dictation',
+        ],
+      );
+      final map = withCandidates.toMap();
+      // (a) the candidate list reached the payload, threaded straight through.
+      expect(
+        map['legalNextExerciseIds'],
+        const ['baa.traceLetter.isolated', 'baa.writeWord.dictation'],
+      );
+      // (b) no emitted key (top-level or nested) escapes the whitelist …
+      expect(
+        _allKeys(map).difference(_whitelist.union(_criteriaKeys)),
+        isEmpty,
+        reason: 'candidate-bearing TutorFacts leaked a key: ${_allKeys(map)}',
+      );
+      // (c) … nor trips the stroke/PII token guard (the ids are values, not keys).
+      for (final k in _allKeys(map)) {
+        expect(_forbiddenKey.hasMatch(k), isFalse, reason: k);
+      }
+      // (d) omit-when-empty: no candidates → the key is absent entirely.
+      final none = buildTutorFacts(
+        letterId: 'baa',
+        section: 'traceLetter',
+        result: const CheckResult.fail('shallowBowl'),
+      );
+      expect(none.toMap().containsKey('legalNextExerciseIds'), isFalse);
     });
 
     test('omits the criteria + word facts when the CheckResult carries none '
