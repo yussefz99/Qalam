@@ -358,24 +358,44 @@ String _mapMistake(MistakeId? id, ExerciseSpec exercise) {
     MistakeId.fallback: [],
   };
   final candidates = candidatesByMistake[id ?? MistakeId.fallback] ?? const [];
-  return _pickKey(exercise, candidates);
+  // A pure GEOMETRY mistake (shape/direction/count/order/dot) must never resolve
+  // to a TAIL-specific authored key. `computeStrokeDiff` derives `tailPresent`
+  // independently; labelling a shallow-bowl / wrong-count fail as `hasTail` when
+  // the diff says `tailPresent:false` contradicts the facts and misleads the
+  // coach (live-log 10:56:46 / 10:56:56 mislabelled two shape fails as hasTail).
+  // 'hasTail' is a legitimate miss ONLY via the positionalForm path (a wrong-form
+  // attempt CAN carry a tail) — it must not leak in as the geometry `_genericMiss`
+  // floor. None of the geometry candidate lists name it, so this only prunes the
+  // fallback floor, keeping the scorer's mistakeId in agreement with the diff.
+  return _pickKey(exercise, candidates, exclude: _tailKeys);
 }
 
-/// Returns the first [candidates] key the exercise authored; if none match,
-/// falls back to a generic authored miss key (never `pass`, never raw text).
-String _pickKey(ExerciseSpec exercise, List<String> candidates) {
+/// Tail-specific authored keys a pure geometry mistake must not borrow — see
+/// [_mapMistake]. Kept available to the positionalForm path (which passes no
+/// exclude), where a wrong-form attempt may genuinely carry a tail.
+const _tailKeys = <String>{'hasTail'};
+
+/// Returns the first [candidates] key the exercise authored (skipping any in
+/// [exclude]); if none match, falls back to a generic authored miss key (never
+/// `pass`, never an excluded key, never raw text).
+String _pickKey(
+  ExerciseSpec exercise,
+  List<String> candidates, {
+  Set<String> exclude = const <String>{},
+}) {
   for (final c in candidates) {
-    if (exercise.feedback.containsKey(c)) return c;
+    if (!exclude.contains(c) && exercise.feedback.containsKey(c)) return c;
   }
-  return _genericMiss(exercise);
+  return _genericMiss(exercise, exclude: exclude);
 }
 
 /// The exercise's most-generic authored miss: the first feedback key that is not
-/// the reserved `pass` praise key. Guarantees a CheckResult.fail always points
-/// at AUTHORED copy.
-String _genericMiss(ExerciseSpec exercise) {
+/// the reserved `pass` praise key (nor in [exclude]). Guarantees a
+/// CheckResult.fail always points at AUTHORED copy.
+String _genericMiss(ExerciseSpec exercise,
+    {Set<String> exclude = const <String>{}}) {
   for (final key in exercise.feedback.keys) {
-    if (key != 'pass') return key;
+    if (key != 'pass' && !exclude.contains(key)) return key;
   }
   // No authored miss line at all → a stable sentinel (still not raw scorer text).
   return 'tryAgain';

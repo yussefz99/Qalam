@@ -119,6 +119,27 @@ void main() {
       expect(s.feedback.keys, contains(r.mistakeId));
       expect(r.mistakeId, isNot('pass'));
     });
+
+    // WR-01 addendum (Defect-2): a GEOMETRY fail must never borrow a
+    // tail-specific authored key as its generic-miss floor. baa.traceLetter.initial
+    // authors ONLY {pass, hasTail}, so before the fix a shape/count fail fell
+    // through `_genericMiss` to 'hasTail' — contradicting the strokeDiff's
+    // `tailPresent:false` (live-log 10:56:46/10:56:56). The scorer's mistakeId
+    // must now AGREE with the diff.
+    test('geometry fail on an only-hasTail exercise does NOT mislabel as hasTail',
+        () async {
+      final s = spec('baa.traceLetter.initial');
+      // Precondition: this exercise's sole authored miss is the tail line (the trap).
+      expect(s.feedback.keys.where((k) => k != 'pass').toList(), equals(['hasTail']));
+
+      // baaNoDot() → wrong stroke count → a pure geometry mistake.
+      final r = await validateExercise(s, baaNoDot(), letter: baaLetter());
+      expect(r.passed, isFalse);
+      expect(r.mistakeId, isNot('hasTail'),
+          reason: 'a geometry fail must not claim a tail the diff did not see.');
+      // Falls to the honest no-authored-geometry-line sentinel, not the tail line.
+      expect(r.mistakeId, 'tryAgain');
+    });
   });
 
   group('modifier: positionalForm', () {

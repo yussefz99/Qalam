@@ -149,13 +149,29 @@ class _WriteSurfaceState extends ConsumerState<WriteSurface> {
     return _formStrokes;
   }
 
-  /// The guideForm's reference strokes, via the ONE shared resolver (Pitfall 7)
+  /// The ONE asked positional form (WR-01 fix). The child must be graded against
+  /// the form they are ASKED to write: the exercise's `expected.glyph.form` when
+  /// authored, else the surface's `guideForm`. This is the SAME rule the
+  /// validator applies for scoring (`exercise_validator._validateGlyph`), so a
+  /// single value now drives the dotted guide, the canvas completion count,
+  /// [computeStrokeDiff], AND the verdict — they can never diverge.
+  ///
+  /// Before this fix the guide + diff resolved against `surface.guideForm` only
+  /// while the scorer resolved against `expected.glyph.form ?? guideForm`; an
+  /// exercise authored with the two differing would make the child trace/diff
+  /// form A but be scored against form B (a false shape/count fail plus a coach
+  /// diff that contradicts the verdict). Undermines the "one shared resolver"
+  /// invariant (reference_resolution.dart header / Pitfall 7).
+  String? get _askedForm =>
+      widget.exercise.expected?.glyph?.form ?? widget.surface.guideForm;
+
+  /// The asked form's reference strokes, via the ONE shared resolver (Pitfall 7)
   /// — so the canvas completion count, [computeStrokeDiff], and the scorer all
   /// agree on the same per-form reference (a taa medial completing at 3 strokes
   /// matches the scorer's expected count). `resolveReferenceStrokes` already
   /// falls back to the letter's base reference for a null/empty per-form slot.
   List<StrokeSpec> get _formStrokes =>
-      resolveReferenceStrokes(widget.letter, widget.surface.guideForm);
+      resolveReferenceStrokes(widget.letter, _askedForm);
 
   /// Glyph box width/height per the prototype (components.js glyphSize 150 for a
   /// glyph unit, 130 otherwise). The surface fills its slot; this sizes the
@@ -204,7 +220,7 @@ class _WriteSurfaceState extends ConsumerState<WriteSurface> {
       pixelStrokes,
       letter: widget.letter,
       writtenWord: writtenWord,
-      guideForm: widget.surface.guideForm,
+      guideForm: _askedForm, // WR-01: the SAME asked form the guide + diff use.
     );
     if (!mounted) return;
     // Phase 17: derive the point-free stroke-geometry diff from the just-captured
