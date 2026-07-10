@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
 status: verifying
-stopped_at: Completed 17-07-PLAN.md
-last_updated: "2026-07-06T17:32:54.777Z"
+stopped_at: Phase 18 context gathered
+last_updated: "2026-07-10T19:56:53.339Z"
 last_activity: 2026-07-06
 progress:
-  total_phases: 21
+  total_phases: 22
   completed_phases: 15
   total_plans: 90
   completed_plans: 86
-  percent: 71
+  percent: 68
 ---
 
 # Project State
@@ -110,6 +110,7 @@ Next: Phase 17 waves 1–5 complete (17-01 RED contract, 17-02 soft per-stroke v
 ### Roadmap Evolution
 
 - Phase 17 added (2026-06-30): **BUILD — stroke-aware coaching (on-device geo-diff → coach)**, appended to v2.0 from the stroke-aware spike verdict (GATE: BUILD `geo_diff`; image rejected; grounding held). Reqs STRK-01 / GROUND-04 / EVAL-03. Depends on Phase 16 (executes after 16 closes). Agent approach locked: client computes the derived diff on-device (raw strokes stay local), coach node verbalizes it (coach-only v1).
+- Phase 18 added (2026-07-10): **BUILD — the living tutor: per-child dynamic exercise selection** — two-timescale child model, remediation arcs, and just-this-part micro-drills, railed to the curriculum graph. Appended to v2.0; depends on Phase 17. Not planned yet.
 
 ### Decisions
 
@@ -269,6 +270,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-06T17:32:07.985Z
-Stopped at: Completed 17-07-PLAN.md
+Last session: 2026-07-10T19:56:53.332Z
+Stopped at: Phase 18 context gathered
 Resume files: .planning/phases/17-build-stroke-aware-coaching-on-device-geo-diff-to-coach/17-07-PLAN.md (next — geo-diff cutover), .planning/phases/17-build-stroke-aware-coaching-on-device-geo-diff-to-coach/17-06-SUMMARY.md, .planning/phases/17-build-stroke-aware-coaching-on-device-geo-diff-to-coach/17-05-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
