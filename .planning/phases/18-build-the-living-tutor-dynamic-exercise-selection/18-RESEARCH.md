@@ -502,9 +502,13 @@ if (from < 6) {
 **If this table were empty:** it is not — these are the items discuss-phase / the planner must confirm
 (especially A2, A3, A4 which touch pedagogy and the mother's sign-off).
 
-## Open Questions
+## Open Questions (RESOLVED)
+
+> All 4 questions were resolved during planning (plan set 18-01 … 18-11, committed 31c7e3a).
 
 1. **Word-attempt evidence granularity (Req 7).**
+   - **RESOLVED:** 18-02 Task 1 + 18-05 Task 2 — coarse per-letter signal tagged `source:"word"`;
+     the 5 geometric criteria are reserved for isolated-letter attempts (`source:"letter"`).
    - What we know: word attempts (`check:"sequence"`) produce a word-level verdict + `writtenWord`
      transcription, not per-letter geometric criteria; the word باب touches baa·alif·baa.
    - What's unclear: exactly which per-letter criteria a word attempt can honestly populate.
@@ -512,6 +516,9 @@ if (from < 6) {
      reserve the 5 geometric criteria for isolated-letter attempts. Confirm with owner in discuss/plan.
 
 2. **Which uid keys the model — anonymous vs permanent account.**
+   - **RESOLVED:** evidence/profile keyed on the current account uid throughout (18-05, D-13 path);
+     D-09c anon→permanent linking (same uid) covers the common path; the fresh-device-signup edge is
+     documented out-of-scope (no parent-account surface changes this phase).
    - What we know: children never log in; the account uid is the parent's (or the anonymous boot
      identity); sign-up links anon→permanent keeping the SAME uid (D-09c); Drift DB is already
      account-scoped per uid.
@@ -522,6 +529,8 @@ if (from < 6) {
      surface changes are deferred).
 
 3. **Nightly job scaling model (single-task vs parallel).**
+   - **RESOLVED:** 18-09 — single-task sequential compile for this phase; parallel-task sharding
+     noted as a later scale lever.
    - What we know: Cloud Run Jobs support parallel task instances over sharded input.
    - What's unclear: child count at Technion-demo scale (likely tens) — parallelism is almost
      certainly unnecessary now.
@@ -529,6 +538,9 @@ if (from < 6) {
      later scale lever.
 
 4. **Exact measured cost/latency numbers (the open research question this phase must CLOSE).**
+   - **RESOLVED (task scheduled):** 18-11 Task 2 — device+server measurement writes
+     `docs/architecture/COST-LATENCY-CLOSURE.md` with measured calls/session, cached-token %, and
+     stroke→feedback→pick wall-clock.
    - What we know: the *expected* shape (implicit caching, TTFT ≈ 0.59s Vertex, 8s timeout budget,
      pick rides the existing round-trip).
    - What's unclear: the real per-session call count, cached-token %, and stroke→feedback→pick
