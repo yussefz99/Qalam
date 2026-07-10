@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sketch 002 — Just This Part (the dot desk)</title>
+<link rel="stylesheet" href="../themes/default.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: var(--fz-18); padding: 56px 0 96px; min-height: 100vh; }
+
+  #variant-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 9998; background: var(--surface-raised); border-bottom: 1px solid var(--border); padding: 8px 16px; display: flex; gap: 8px; align-items: center; font-family: var(--font-display); }
+  #variant-nav .title { font-size: var(--fz-14); color: var(--fg-muted); margin-right: 12px; font-family: var(--font-body); }
+  .variant-tab { border: 1px solid var(--border); background: var(--bg); color: var(--fg); padding: 8px 16px; border-radius: var(--radius-pill); cursor: pointer; font-family: var(--font-display); font-size: var(--fz-16); transition: all var(--dur-fast); }
+  .variant-tab:hover { border-color: var(--primary); color: var(--primary); }
+  .variant-tab.active { background: var(--primary); color: var(--fg-on-primary); border-color: var(--primary); }
+
+  .variant { display: none; max-width: 900px; margin: 0 auto; padding: 20px 24px 0; }
+  .variant.active { display: block; }
+
+  .unit-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .exercise-chip { display: inline-flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--border); padding: 8px 18px; border-radius: var(--radius-pill); font-family: var(--font-display); font-size: var(--fz-16); color: var(--fg-muted); }
+  .exercise-chip .ar { font-family: var(--font-arabic); font-size: 22px; color: var(--deep-ink); }
+
+  .desk { background: var(--surface-raised); border: 1px solid var(--border-soft); border-radius: var(--radius-xl); box-shadow: var(--shadow-md); position: relative; overflow: hidden; }
+  .desk svg.main { display: block; width: 100%; height: auto; transition: transform 750ms var(--ease-out-quart); }
+  .desk-mode { position: absolute; top: 14px; right: 16px; font-family: var(--font-display); font-size: var(--fz-16); color: var(--fg-muted); background: var(--bg); padding: 6px 16px; border-radius: var(--radius-pill); border: 1px solid var(--border-soft); z-index: 5; transition: all var(--dur-slow); }
+  [data-beat="2"] .desk-mode { background: var(--primary-tint); color: var(--deep-ink); border-color: var(--teal-wash); }
+
+  /* ink states */
+  .bowl-ink { transition: opacity var(--dur-slow); }
+  [data-beat="2"] .bowl-ink { opacity: .22; }
+  [data-beat="3"] .bowl-ink { opacity: 1; }
+  .bad-dot { transition: opacity var(--dur-slow); }
+  [data-beat="1"] .bad-dot { animation: coralBlink 1.6s var(--ease-in-out) infinite; }
+  [data-beat="2"] .bad-dot, [data-beat="3"] .bad-dot { opacity: 0; }
+  @keyframes coralBlink { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+  .bad-dot-ring { opacity: 0; }
+  [data-beat="1"] .bad-dot-ring { opacity: 1; animation: ringPulse 1.6s var(--ease-in-out) infinite; }
+  @keyframes ringPulse { 0%,100% { r: 12; stroke-opacity: .9; } 50% { r: 17; stroke-opacity: .3; } }
+
+  .dot-zone { opacity: 0; transition: opacity var(--dur-slow) 300ms; }
+  [data-beat="1"] .dot-zone { opacity: .55; }
+  [data-beat="2"] .dot-zone { opacity: 1; animation: zoneGlow 1.8s var(--ease-in-out) infinite; }
+  [data-beat="3"] .dot-zone { opacity: 0; }
+  @keyframes zoneGlow { 0%,100% { stroke-opacity: .9; } 50% { stroke-opacity: .35; } }
+  .placed-dot { opacity: 0; }
+  .placed-dot.on { opacity: 1; }
+  .hit-ring { opacity: 0; transform-origin: center; }
+  .hit-ring.on { animation: hitRing 900ms var(--ease-out-quart) forwards; }
+  @keyframes hitRing { 0% { opacity: .9; r: 8; } 100% { opacity: 0; r: 30; } }
+
+  /* A: camera zoom — transform-origin pinned to the dot zone so it stays put */
+  #variant-a .desk svg.main { transform-origin: 49.4% 84.2%; }
+  #variant-a [data-beat="2"] .desk svg.main { transform: scale(2.1); }
+
+  /* B: spotlight */
+  .spot { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 700ms var(--ease-out-quart); z-index: 4;
+    background: radial-gradient(circle 150px at 49.4% 84.2%, transparent 62px, rgba(34,42,46,0.42) 150px); }
+  #variant-b [data-beat="2"] .spot { opacity: 1; }
+
+  /* C: three-pearl drill card */
+  .drill-card { position: absolute; left: 50%; bottom: -100%; transform: translateX(-50%); width: min(560px, 92%);
+    background: var(--bg); border: 1px solid var(--border-soft); border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    box-shadow: var(--shadow-lg); padding: 18px 22px 22px; z-index: 6; transition: bottom 700ms var(--ease-out-quart); }
+  #variant-c [data-beat="2"] .drill-card { bottom: 0; }
+  .drill-title { font-family: var(--font-display); font-size: var(--fz-16); color: var(--fg-muted); text-align: center; margin-bottom: 10px; }
+  .drill-row { display: flex; gap: 14px; justify-content: center; direction: rtl; }
+  .drill-cell { background: var(--surface-raised); border: 1px solid var(--border); border-radius: var(--radius-lg); cursor: pointer; position: relative; }
+  .drill-cell svg { display: block; width: 150px; height: 130px; }
+  .pearls { display: flex; gap: 8px; justify-content: center; margin-top: 12px; }
+  .pearl { width: 14px; height: 14px; border-radius: 50%; background: var(--bg-deep); border: 2px solid var(--border-soft); transition: all var(--dur-base) var(--ease-soft-back); }
+  .pearl.full { background: var(--success); border-color: var(--success); transform: scale(1.15); }
+
+  /* tutor caption */
+  .caption-bar { display: flex; align-items: center; gap: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 12px 20px; margin-top: 14px; min-height: 72px; }
+  .mascot svg { width: 44px; height: 62px; }
+  .tutor-line { font-weight: 600; font-size: var(--fz-20); opacity: 0; transform: translateY(6px); transition: all var(--dur-slow) var(--ease-out-quart); line-height: 1.45; }
+  .tutor-line.show { opacity: 1; transform: translateY(0); }
+  .tutor-line .ar-sprinkle { font-family: var(--font-arabic); color: var(--primary); font-size: 24px; }
+  .mascot .pose { display: none; } .mascot .pose.on { display: block; }
+
+  #controls { position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998; background: var(--surface-raised); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 18px; padding: 12px 16px; flex-wrap: wrap; }
+  .btn { font-family: var(--font-display); font-size: var(--fz-16); border: none; border-radius: var(--radius-pill); cursor: pointer; padding: 10px 22px; transition: all var(--dur-fast); }
+  .btn-primary { background: var(--primary); color: #fff; box-shadow: var(--shadow-button); }
+  .btn-primary:active { transform: translateY(3px); box-shadow: 0 1px 0 0 var(--deep-ink); }
+  .btn-ghost { background: var(--bg); color: var(--fg-muted); border: 1px solid var(--border); }
+  .beat-dot { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg); color: var(--fg-muted); cursor: pointer; font-family: var(--font-display); font-size: 14px; }
+  .beat-dot.on { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .beat-name { font-size: var(--fz-14); color: var(--fg-muted); min-width: 160px; font-family: var(--font-body); }
+  .hint { font-size: 13px; color: var(--fg-muted); }
+
+  @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration:.01ms!important; transition-duration:.01ms!important; } }
+</style>
+</head>
+<body>
+
+<div id="variant-nav">
+  <span class="title">002 · Just This Part — isolating the dot (defect: dot_above)</span>
+  <button class="variant-tab active" onclick="showVariant('a', event)">A: Camera Zoom</button>
+  <button class="variant-tab" onclick="showVariant('b', event)">B: Spotlight</button>
+  <button class="variant-tab" onclick="showVariant('c', event)">C: Three-Pearl Drill</button>
+</div>
+
+<section id="variant-a" class="variant active"><div class="v-root" data-beat="0">
+  <div class="unit-header"><div class="exercise-chip">Letter unit · <span class="ar">باء</span> · Write from the sound</div></div>
+  <div class="desk">
+    <div class="desk-mount"></div>
+    <div class="desk-mode">Write the letter you hear · <span style="font-family:var(--font-arabic)">بَ</span></div>
+  </div>
+  <div class="caption-bar"><div class="mascot"></div><div class="tutor-line"></div></div>
+</div></section>
+
+<section id="variant-b" class="variant"><div class="v-root" data-beat="0">
+  <div class="unit-header"><div class="exercise-chip">Letter unit · <span class="ar">باء</span> · Write from the sound</div></div>
+  <div class="desk">
+    <div class="desk-mount"></div>
+    <div class="spot"></div>
+    <div class="desk-mode">Write the letter you hear · <span style="font-family:var(--font-arabic)">بَ</span></div>
+  </div>
+  <div class="caption-bar"><div class="mascot"></div><div class="tutor-line"></div></div>
+</div></section>
+
+<section id="variant-c" class="variant"><div class="v-root" data-beat="0">
+  <div class="unit-header"><div class="exercise-chip">Letter unit · <span class="ar">باء</span> · Write from the sound</div></div>
+  <div class="desk">
+    <div class="desk-mount"></div>
+    <div class="desk-mode">Write the letter you hear · <span style="font-family:var(--font-arabic)">بَ</span></div>
+    <div class="drill-card">
+      <div class="drill-title">Where does baa's dot live? Tap it — three times.</div>
+      <div class="drill-row">
+        <div class="drill-cell" data-idx="0"></div>
+        <div class="drill-cell" data-idx="1"></div>
+        <div class="drill-cell" data-idx="2"></div>
+      </div>
+      <div class="pearls"><div class="pearl"></div><div class="pearl"></div><div class="pearl"></div></div>
+    </div>
+  </div>
+  <div class="caption-bar"><div class="mascot"></div><div class="tutor-line"></div></div>
+</div></section>
+
+<div id="controls">
+  <button class="btn btn-primary" onclick="playAll()">▶ Play</button>
+  <div style="display:flex;gap:8px;">
+    <button class="beat-dot on" onclick="goBeat(0)">1</button>
+    <button class="beat-dot" onclick="goBeat(1)">2</button>
+    <button class="beat-dot" onclick="goBeat(2)">3</button>
+    <button class="beat-dot" onclick="goBeat(3)">4</button>
+  </div>
+  <span class="beat-name" id="beat-name">The attempt</span>
+  <span class="hint">beat 3 is interactive — tap/click where the dot lives</span>
+  <button class="btn btn-ghost" onclick="goBeat(0)">↺ Replay</button>
+</div>
+
+<script>
+/* real curriculum geometry (letters.json → baa.isolated), child wrote a GOOD bowl but the dot ABOVE */
+const GOOD_BOWL = "M 243.8,179.6 L 247.0,194.0 L 248.4,209.0 L 238.2,221.4 L 220.0,226.6 L 204.0,227.2 L 190.2,228.5 L 174.0,226.0 L 163.2,224.1 L 154.0,212.6 L 152.9,199.6 L 153.4,184.6";
+const BAD_DOT  = { x: 197.0, y: 150.0 };   /* floated above — the taa habit */
+const REF_DOT  = { x: 199.2, y: 257.6 };   /* where baa's dot lives */
+const T = "translate(200,170) scale(2.3) translate(-200.2,-207)";
+
+const DESK_SVG = `
+<svg class="main" viewBox="0 0 400 340">
+  <line x1="24" y1="76" x2="376" y2="76" stroke="#E8DFC9" stroke-width="1.5" opacity=".6"/>
+  <g transform="${T}">
+    <path class="bowl-ink" d="${GOOD_BOWL}" fill="none" stroke="#222A2E" stroke-width="9"
+          stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+    <circle class="bad-dot" cx="${BAD_DOT.x}" cy="${BAD_DOT.y}" r="5.5" fill="#222A2E"/>
+    <circle class="bad-dot-ring" cx="${BAD_DOT.x}" cy="${BAD_DOT.y}" r="12" fill="none" stroke="#FF8A6B" stroke-width="3"/>
+    <circle class="dot-zone" cx="${REF_DOT.x}" cy="${REF_DOT.y}" r="11" fill="#FCEBC6" fill-opacity=".55"
+            stroke="#F2A60C" stroke-width="2.5" stroke-dasharray="4 4"/>
+    <circle class="placed-dot" cx="${REF_DOT.x}" cy="${REF_DOT.y}" r="5.5" fill="#168A8F"/>
+    <circle class="hit-ring" cx="${REF_DOT.x}" cy="${REF_DOT.y}" r="8" fill="none" stroke="#3FB984" stroke-width="3"/>
+  </g>
+</svg>`;
+
+const CELL_SVG = `
+<svg viewBox="120 150 165 130">
+  <path d="${GOOD_BOWL}" fill="none" stroke="#B7DEDF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle class="cell-zone" cx="${REF_DOT.x}" cy="${REF_DOT.y}" r="13" fill="#FCEBC6" fill-opacity=".55" stroke="#F2A60C" stroke-width="2.5" stroke-dasharray="4 4"/>
+  <circle class="cell-dot" cx="${REF_DOT.x}" cy="${REF_DOT.y}" r="6" fill="#168A8F" opacity="0"/>
+</svg>`;
+
+const POSES = {
+  think: `<svg class="pose pose-think" viewBox="0 0 200 280"><path d="M60 60 Q60 40 100 40 Q140 40 140 60 L140 210 Q140 230 100 230 Q60 230 60 210 Z" fill="#0E5B5F"/><path d="M60 210 L100 270 L140 210 Z" fill="#168A8F"/><rect x="70" y="80" width="60" height="60" rx="14" fill="#FAF6EE"/><circle cx="86" cy="106" r="5" fill="#222A2E"/><circle cx="114" cy="106" r="5" fill="#222A2E"/><path d="M92 124 Q100 122 102 126" fill="none" stroke="#222A2E" stroke-width="2.5" stroke-linecap="round"/><circle cx="172" cy="46" r="5" fill="#168A8F" opacity="0.8"/><circle cx="186" cy="28" r="7" fill="#168A8F"/></svg>`,
+  write: `<svg class="pose pose-write" viewBox="0 0 200 280"><path d="M60 60 Q60 40 100 40 Q140 40 140 60 L140 210 Q140 230 100 230 Q60 230 60 210 Z" fill="#0E5B5F"/><path d="M60 210 L100 270 L140 210 Z" fill="#168A8F"/><path d="M100 230 L100 270" stroke="#F2A60C" stroke-width="2"/><rect x="70" y="80" width="60" height="60" rx="14" fill="#FAF6EE"/><ellipse cx="86" cy="108" rx="4" ry="6" fill="#222A2E"/><ellipse cx="114" cy="108" rx="4" ry="6" fill="#222A2E"/><path d="M92 126 Q100 124 108 126" fill="none" stroke="#222A2E" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+  cheer: `<svg class="pose pose-cheer" viewBox="0 0 200 280"><g transform="rotate(-6 100 140)"><path d="M60 60 Q60 40 100 40 Q140 40 140 60 L140 210 Q140 230 100 230 Q60 230 60 210 Z" fill="#0E5B5F"/><path d="M60 210 L100 270 L140 210 Z" fill="#168A8F"/><rect x="70" y="80" width="60" height="60" rx="14" fill="#FAF6EE"/><path d="M80 108 Q86 100 92 108" fill="none" stroke="#222A2E" stroke-width="3" stroke-linecap="round"/><path d="M108 108 Q114 100 120 108" fill="none" stroke="#222A2E" stroke-width="3" stroke-linecap="round"/><path d="M84 120 Q100 138 116 120" fill="none" stroke="#222A2E" stroke-width="3" stroke-linecap="round"/></g><path d="M58 100 Q42 70 48 50" stroke="#0E5B5F" stroke-width="10" stroke-linecap="round" fill="none"/><path d="M142 100 Q158 70 152 50" stroke="#0E5B5F" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="48" cy="50" r="8" fill="#0E5B5F"/><circle cx="152" cy="50" r="8" fill="#0E5B5F"/></svg>`,
+};
+
+const LINES = [
+  "",
+  "Your boat is lovely! But your dot floated up high — baa's dot lives <b>under</b> the boat.",
+  "Let's practice just the dot. Tap where it lives.",
+  "Now your baa is complete — boat, and dot underneath. <span class='ar-sprinkle'>أحسنت</span>",
+];
+const MISS_LINE = "Almost — a little lower, right under the boat.";
+const HIT_LINE  = "Right under the boat! <span class='ar-sprinkle'>أحسنت</span>";
+const BEAT_NAMES = ["The attempt", "Point at the ink", "Just the dot (tap!)", "The whole baa again"];
+const POSE_BY_BEAT = ['write', 'think', 'write', 'cheer'];
+
+let currentBeat = 0, playTimer = null, drillHits = 0;
+function activeRoot() { return document.querySelector('.variant.active .v-root'); }
+function setLine(root, html) {
+  const el = root.querySelector('.tutor-line');
+  el.classList.remove('show');
+  if (html) setTimeout(() => { el.innerHTML = html; el.classList.add('show'); }, 300);
+  else el.innerHTML = '';
+}
+function setPose(root, name) {
+  root.querySelectorAll('.mascot .pose').forEach(p => p.classList.remove('on'));
+  root.querySelectorAll('.mascot .pose-' + name).forEach(p => p.classList.add('on'));
+}
+
+function goBeat(n) {
+  clearTimeout(playTimer);
+  currentBeat = n; drillHits = 0;
+  const root = activeRoot();
+  root.dataset.beat = n;
+  document.querySelectorAll('.beat-dot').forEach((d, i) => d.classList.toggle('on', i === n));
+  document.getElementById('beat-name').textContent = BEAT_NAMES[n];
+  setPose(root, POSE_BY_BEAT[n]);
+  setLine(root, LINES[n]);
+  /* reset placement state */
+  root.querySelectorAll('.placed-dot').forEach(d => d.classList.toggle('on', n >= 3));
+  root.querySelectorAll('.hit-ring').forEach(r => r.classList.remove('on'));
+  root.querySelectorAll('.pearl').forEach(p => p.classList.remove('full'));
+  root.querySelectorAll('.cell-dot').forEach(d => d.style.opacity = 0);
+}
+
+const BEAT_DUR = [2600, 4600, 999999, 5000];  /* beat 2 waits for the child */
+function playAll(from = 0) {
+  goBeat(from);
+  if (from < 3 && BEAT_DUR[from] < 999999) playTimer = setTimeout(() => playAll(from + 1), BEAT_DUR[from]);
+}
+
+/* ---- interactive dot placement (variants A & B: tap the main canvas) ---- */
+function wireDesk(root) {
+  const svg = root.querySelector('svg.main');
+  svg.addEventListener('pointerdown', (ev) => {
+    if (currentBeat !== 2 || root.closest('#variant-c')) return;
+    const zone = svg.querySelector('.dot-zone');
+    const zr = zone.getBoundingClientRect();
+    const cx = zr.left + zr.width / 2, cy = zr.top + zr.height / 2;
+    const dist = Math.hypot(ev.clientX - cx, ev.clientY - cy);
+    if (dist < Math.max(46, zr.width)) {
+      svg.querySelector('.placed-dot').classList.add('on');
+      const ring = svg.querySelector('.hit-ring'); ring.classList.remove('on'); void ring.getBoundingClientRect(); ring.classList.add('on');
+      setLine(root, HIT_LINE); setPose(root, 'cheer');
+      playTimer = setTimeout(() => goBeat(3), 1900);
+    } else {
+      setLine(root, MISS_LINE);  /* gentle nudge — never a red X, guide stays lit */
+    }
+  });
+}
+
+/* ---- variant C: the three-pearl drill ---- */
+function wireDrill(root) {
+  root.querySelectorAll('.drill-cell').forEach(cell => {
+    cell.innerHTML = CELL_SVG;
+    cell.addEventListener('pointerdown', (ev) => {
+      if (currentBeat !== 2) return;
+      const zone = cell.querySelector('.cell-zone');
+      const zr = zone.getBoundingClientRect();
+      const dist = Math.hypot(ev.clientX - (zr.left + zr.width/2), ev.clientY - (zr.top + zr.height/2));
+      if (dist < Math.max(40, zr.width)) {
+        const dot = cell.querySelector('.cell-dot');
+        if (dot.style.opacity === '1') return;
+        dot.style.opacity = 1;
+        drillHits++;
+        const pearls = root.querySelectorAll('.pearl');
+        if (pearls[drillHits - 1]) pearls[drillHits - 1].classList.add('full');
+        if (drillHits >= 3) { setLine(root, HIT_LINE); setPose(root, 'cheer'); playTimer = setTimeout(() => goBeat(3), 1600); }
+      } else {
+        setLine(root, MISS_LINE);
+      }
+    });
+  });
+}
+
+function showVariant(id, ev) {
+  document.querySelectorAll('.variant').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.variant-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('variant-' + id).classList.add('active');
+  if (ev) ev.target.classList.add('active');
+  goBeat(0);
+}
+
+document.querySelectorAll('.desk-mount').forEach(m => m.innerHTML = DESK_SVG);
+document.querySelectorAll('.mascot').forEach(m => m.innerHTML = POSES.think + POSES.write + POSES.cheer);
+document.querySelectorAll('.v-root').forEach(r => wireDesk(r));
+wireDrill(document.querySelector('#variant-c .v-root'));
+goBeat(0);
+</script>
+</body>
+</html>

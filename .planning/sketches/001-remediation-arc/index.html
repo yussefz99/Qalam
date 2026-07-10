@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sketch 001 — The Remediation Arc</title>
+<link rel="stylesheet" href="../themes/default.css">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--fg);
+    font-family: var(--font-body); font-size: var(--fz-18);
+    padding-top: 56px; padding-bottom: 96px;
+    min-height: 100vh;
+  }
+
+  /* ---------- variant nav ---------- */
+  #variant-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 9998;
+    background: var(--surface-raised); border-bottom: 1px solid var(--border);
+    padding: 8px 16px; display: flex; gap: 8px; align-items: center;
+    font-family: var(--font-display);
+  }
+  #variant-nav .title { font-size: var(--fz-14); color: var(--fg-muted); margin-right: 12px; font-family: var(--font-body); }
+  .variant-tab {
+    border: 1px solid var(--border); background: var(--bg); color: var(--fg);
+    padding: 8px 16px; border-radius: var(--radius-pill); cursor: pointer;
+    font-family: var(--font-display); font-size: var(--fz-16);
+    transition: all var(--dur-fast) var(--ease-in-out);
+  }
+  .variant-tab:hover { border-color: var(--primary); color: var(--primary); }
+  .variant-tab.active { background: var(--primary); color: var(--fg-on-primary); border-color: var(--primary); }
+
+  /* ---------- stage ---------- */
+  .variant { display: none; max-width: 1160px; margin: 0 auto; padding: 20px 24px 0; }
+  .variant.active { display: block; }
+
+  .unit-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; gap: 16px; flex-wrap: wrap; }
+  .exercise-chip {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 8px 18px; border-radius: var(--radius-pill);
+    font-family: var(--font-display); font-size: var(--fz-16); color: var(--fg-muted);
+  }
+  .exercise-chip .ar { font-family: var(--font-arabic); font-size: 22px; color: var(--deep-ink); }
+
+  /* ---------- progress ribbon (R→L like the unit) ---------- */
+  .ribbon { display: flex; direction: rtl; align-items: center; gap: 10px; }
+  .bead {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--bg-deep); border: 2px solid var(--border-soft);
+    display: grid; place-items: center; font-size: 13px; color: #fff;
+    transition: all var(--dur-slow) var(--ease-out-quart);
+    position: relative; flex-shrink: 0;
+  }
+  .bead.done { background: var(--primary); border-color: var(--primary); }
+  .bead.done::after { content: "✓"; font-size: 13px; }
+  .bead.current { border-color: var(--primary); background: var(--surface-raised); box-shadow: 0 0 0 0 rgba(22,138,143,.35); animation: beadPulse 2.4s infinite; }
+  .bead.current::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); }
+  .bead .bead-label {
+    position: absolute; top: 30px; right: 50%; transform: translateX(50%);
+    font-size: 11px; color: var(--fg-muted); white-space: nowrap; font-family: var(--font-body); direction: ltr;
+  }
+  @keyframes beadPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(22,138,143,.30);} 50% { box-shadow: 0 0 0 9px rgba(22,138,143,0);} }
+
+  /* the detour bead — inserted, never a step back */
+  .bead.detour {
+    width: 0; height: 0; border-width: 0; margin: 0 -5px; opacity: 0;
+    background: var(--warn-soft-tint); border-color: var(--warn-soft);
+  }
+  [data-beat="2"] .bead.detour, [data-beat="3"] .bead.detour, [data-beat="4"] .bead.detour {
+    width: 26px; height: 26px; border-width: 2px; margin: 0; opacity: 1;
+  }
+  .bead.detour::after { content: "◡"; color: var(--warn-soft); font-size: 14px; font-weight: 700; transition: all var(--dur-base); }
+  [data-beat="3"] .bead.detour, [data-beat="4"] .bead.detour { background: var(--success-tint); border-color: var(--success); }
+  [data-beat="3"] .bead.detour::after, [data-beat="4"] .bead.detour::after { content: "✓"; color: var(--success); }
+
+  /* ---------- desk / canvas ---------- */
+  .desk {
+    background: var(--surface-raised); border: 1px solid var(--border-soft);
+    border-radius: var(--radius-xl); box-shadow: var(--shadow-md);
+    position: relative; overflow: hidden;
+  }
+  .desk svg { display: block; width: 100%; height: auto; }
+  .desk-mode {
+    position: absolute; top: 14px; right: 16px;
+    font-family: var(--font-display); font-size: var(--fz-16); color: var(--fg-muted);
+    background: var(--bg); padding: 6px 16px; border-radius: var(--radius-pill);
+    border: 1px solid var(--border-soft);
+    transition: all var(--dur-slow) var(--ease-out-quart);
+  }
+  [data-beat="2"] .desk-mode, [data-beat="3"] .desk-mode { background: var(--primary-tint); color: var(--deep-ink); border-color: var(--teal-wash); }
+
+  /* ink layers inside the injected SVG — driven by beat state */
+  .child-bowl, .child-dot { transition: opacity var(--dur-slow) var(--ease-in-out); }
+  [data-beat="2"] .child-ink, [data-beat="3"] .child-ink { opacity: 0.14; }
+  [data-beat="4"] .child-ink { opacity: 0; }
+
+  .flat-seg { opacity: 0; }
+  [data-beat="1"] .flat-seg, [data-beat="2"] .flat-seg { opacity: 1; animation: coralPulse 1.8s var(--ease-in-out) infinite; }
+  @keyframes coralPulse { 0%,100% { stroke-opacity: .9; } 50% { stroke-opacity: .45; } }
+
+  .ghost-ink { opacity: 0; transition: opacity var(--dur-slow); }
+  [data-beat="1"] .ghost-ink, [data-beat="2"] .ghost-ink { opacity: 1; }
+
+  .guide { opacity: 0; transition: opacity 600ms var(--ease-out-quart); }
+  [data-beat="2"] .guide, [data-beat="3"] .guide { opacity: 1; }
+  [data-beat="3"] .guide-dots { opacity: .35; transition: opacity 2.4s linear; }
+  .start-dot { opacity: 0; transform-origin: center; }
+  [data-beat="2"] .start-dot { opacity: 1; animation: startPulse 1.6s var(--ease-in-out) infinite; }
+  @keyframes startPulse { 0%,100% { r: 9; } 50% { r: 12; } }
+
+  .trace-ink { opacity: 0; }
+  [data-beat="3"] .trace-ink { opacity: 1; }
+  [data-beat="4"] .trace-ink { opacity: 0; transition: opacity var(--dur-slow); }
+  .good-ink { opacity: 0; }
+  [data-beat="4"] .good-ink { opacity: 1; }
+
+  /* growth inset (beat 4) */
+  .growth-inset {
+    position: absolute; left: 16px; top: 14px;
+    background: var(--bg); border: 1px solid var(--border-soft); border-radius: var(--radius-lg);
+    padding: 10px 14px; display: flex; align-items: center; gap: 10px;
+    opacity: 0; transform: translateY(-8px);
+    transition: all var(--dur-cheer) var(--ease-out-quart) 1.9s;
+    box-shadow: var(--shadow-sm);
+  }
+  [data-beat="4"] .growth-inset { opacity: 1; transform: translateY(0); }
+  .growth-inset .mini-label { font-size: 11px; color: var(--fg-muted); text-align: center; font-family: var(--font-body); }
+  .growth-inset .arrow { color: var(--success); font-size: 18px; }
+
+  /* ---------- tutor line ---------- */
+  .tutor-line-wrap { min-height: 64px; display: flex; align-items: center; }
+  .tutor-line {
+    font-family: var(--font-body); font-weight: 600; font-size: var(--fz-20);
+    color: var(--fg); opacity: 0; transform: translateY(6px);
+    transition: all var(--dur-slow) var(--ease-out-quart);
+    line-height: 1.45;
+  }
+  .tutor-line.show { opacity: 1; transform: translateY(0); }
+  .tutor-line .ar-sprinkle { font-family: var(--font-arabic); color: var(--primary); font-size: 24px; }
+
+  /* ---------- mascot ---------- */
+  .mascot { position: relative; }
+  .mascot .pose { display: none; }
+  .mascot .pose.on { display: block; animation: poseIn var(--dur-slow) var(--ease-soft-back); }
+  @keyframes poseIn { from { transform: translateY(6px) scale(.96); opacity: .4; } to { transform: none; opacity: 1; } }
+
+  /* ============ VARIANT A — The Lean-In ============ */
+  #variant-a .stage { display: grid; grid-template-columns: 1fr 0px; gap: 0; transition: grid-template-columns 700ms var(--ease-out-quart); align-items: start; }
+  #variant-a .stage.leaned { grid-template-columns: 1fr 320px; gap: 24px; }
+  #variant-a .tutor-panel {
+    opacity: 0; transform: translateX(40px);
+    transition: all 700ms var(--ease-out-quart) 150ms;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    padding-top: 8px; overflow: visible; width: 320px;
+  }
+  #variant-a .stage.leaned .tutor-panel { opacity: 1; transform: translateX(0); }
+  #variant-a .bubble {
+    background: var(--surface-raised); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); border-bottom-right-radius: 4px;
+    padding: 16px 18px; box-shadow: var(--shadow-sm); width: 100%;
+  }
+  #variant-a .mascot svg { width: 120px; height: 168px; }
+
+  /* ============ VARIANT B — Ink-First ============ */
+  #variant-b .desk-wrap { max-width: 860px; margin: 0 auto; position: relative; }
+  #variant-b .caption-bar {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 12px 20px; margin-top: 14px;
+    min-height: 72px;
+  }
+  #variant-b .mascot svg { width: 44px; height: 62px; }
+  #variant-b .mascot { flex-shrink: 0; }
+
+  /* ============ VARIANT C — The Teacher's Margin ============ */
+  #variant-c .stage { display: grid; grid-template-columns: 250px 1fr; gap: 0; align-items: stretch; }
+  #variant-c .margin-col {
+    border-right: 2px solid var(--coral-tint);
+    padding: 12px 20px 12px 4px; margin-right: 22px;
+    display: flex; flex-direction: column; gap: 10px; align-items: center;
+  }
+  #variant-c .mascot svg { width: 84px; height: 118px; }
+  #variant-c .margin-demo {
+    width: 100%; background: var(--bg-deep); border-radius: var(--radius-md);
+    border: 1px dashed var(--parchment-edge);
+    opacity: .45; transition: opacity var(--dur-slow);
+  }
+  #variant-c [data-beat="1"] .margin-demo, #variant-c .v-root[data-beat="1"] .margin-demo { opacity: 1; }
+  #variant-c .margin-title { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--fg-muted); font-family: var(--font-body); font-weight: 700; }
+
+  /* ---------- controls ---------- */
+  #controls {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998;
+    background: var(--surface-raised); border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center; gap: 18px;
+    padding: 12px 16px; flex-wrap: wrap;
+  }
+  .btn {
+    font-family: var(--font-display); font-size: var(--fz-16);
+    border: none; border-radius: var(--radius-pill); cursor: pointer;
+    padding: 10px 22px; transition: all var(--dur-fast) var(--ease-in-out);
+  }
+  .btn-primary { background: var(--primary); color: var(--fg-on-primary); box-shadow: var(--shadow-button); }
+  .btn-primary:active { transform: translateY(3px); box-shadow: 0 1px 0 0 var(--deep-ink); }
+  .btn-ghost { background: var(--bg); color: var(--fg-muted); border: 1px solid var(--border); }
+  .beat-dots { display: flex; gap: 8px; align-items: center; }
+  .beat-dot {
+    width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--border);
+    background: var(--bg); color: var(--fg-muted); cursor: pointer;
+    font-family: var(--font-display); font-size: 14px;
+    transition: all var(--dur-fast);
+  }
+  .beat-dot.on { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .beat-name { font-size: var(--fz-14); color: var(--fg-muted); min-width: 150px; text-align: left; font-family: var(--font-body); }
+
+  /* sketch toolbar */
+  #sketch-tools {
+    position: fixed; bottom: 72px; right: 12px; z-index: 9999;
+    font-family: system-ui; font-size: 12px; background: rgba(0,0,0,0.72); color: #fff;
+    padding: 8px 12px; border-radius: 8px; opacity: .35; transition: opacity .2s;
+  }
+  #sketch-tools:hover { opacity: 1; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="variant-nav">
+  <span class="title">001 · The Remediation Arc — “never leaves the desk”</span>
+  <button class="variant-tab active" onclick="showVariant('a', event)">A: The Lean-In</button>
+  <button class="variant-tab" onclick="showVariant('b', event)">B: Ink-First</button>
+  <button class="variant-tab" onclick="showVariant('c', event)">C: The Teacher's Margin</button>
+</div>
+
+<!-- ================= VARIANT A ================= -->
+<section id="variant-a" class="variant active">
+  <div class="v-root" data-beat="0">
+    <div class="unit-header">
+      <div class="exercise-chip">Letter unit · <span class="ar">باء</span> · Write the form</div>
+      <div class="ribbon">
+        <div class="bead done" title="Meet baa"></div>
+        <div class="bead done" title="Trace — on its own"></div>
+        <div class="bead done" title="Trace — at the start"></div>
+        <div class="bead done" title="Write from the sound"></div>
+        <div class="bead current" title="Write the form"><span class="bead-label">Write the form</span></div>
+        <div class="bead detour" title="Quick practice — the curve"><span class="bead-label">quick practice</span></div>
+        <div class="bead" title="Connect a word"></div>
+        <div class="bead" title="Write a word"></div>
+      </div>
+    </div>
+    <div class="stage">
+      <div>
+        <div class="desk">
+          <div class="desk-mount"></div>
+          <div class="desk-mode">Write baa on its own</div>
+          <div class="growth-inset">
+            <div><div class="mini-svg mini-flat"></div><div class="mini-label">first try</div></div>
+            <div class="arrow">→</div>
+            <div><div class="mini-svg mini-good"></div><div class="mini-label">now</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="tutor-panel">
+        <div class="mascot"></div>
+        <div class="bubble tutor-line-wrap"><div class="tutor-line"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= VARIANT B ================= -->
+<section id="variant-b" class="variant">
+  <div class="v-root" data-beat="0">
+    <div class="unit-header">
+      <div class="exercise-chip">Letter unit · <span class="ar">باء</span> · Write the form</div>
+      <div class="ribbon">
+        <div class="bead done"></div><div class="bead done"></div><div class="bead done"></div><div class="bead done"></div>
+        <div class="bead current"><span class="bead-label">Write the form</span></div>
+        <div class="bead detour"><span class="bead-label">quick practice</span></div>
+        <div class="bead"></div><div class="bead"></div>
+      </div>
+    </div>
+    <div class="desk-wrap">
+      <div class="desk">
+        <div class="desk-mount"></div>
+        <div class="desk-mode">Write baa on its own</div>
+        <div class="growth-inset">
+          <div><div class="mini-svg mini-flat"></div><div class="mini-label">first try</div></div>
+          <div class="arrow">→</div>
+          <div><div class="mini-svg mini-good"></div><div class="mini-label">now</div></div>
+        </div>
+      </div>
+      <div class="caption-bar">
+        <div class="mascot"></div>
+        <div class="tutor-line-wrap"><div class="tutor-line"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= VARIANT C ================= -->
+<section id="variant-c" class="variant">
+  <div class="v-root" data-beat="0">
+    <div class="unit-header">
+      <div class="exercise-chip">Letter unit · <span class="ar">باء</span> · Write the form</div>
+      <div class="ribbon">
+        <div class="bead done"></div><div class="bead done"></div><div class="bead done"></div><div class="bead done"></div>
+        <div class="bead current"><span class="bead-label">Write the form</span></div>
+        <div class="bead detour"><span class="bead-label">quick practice</span></div>
+        <div class="bead"></div><div class="bead"></div>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="margin-col">
+        <div class="margin-title">Teacher's margin</div>
+        <div class="mascot"></div>
+        <svg class="margin-demo" viewBox="130 155 145 125">
+          <path class="margin-ref" d="M 243.2,178.8 L 247.6,194.4 L 248.0,209.6 L 237.6,220.8 L 220.4,226.0 L 204.4,227.6 L 189.6,228.0 L 174.4,226.4 L 162.8,223.6 L 154.4,212.0 L 152.4,199.2 L 152.8,184.0"
+                fill="none" stroke="#0E5B5F" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle class="margin-ref-dot" cx="199.2" cy="257.6" r="5" fill="#0E5B5F" opacity="0"/>
+        </svg>
+        <div class="tutor-line-wrap" style="align-items:flex-start;"><div class="tutor-line" style="font-size:16px;"></div></div>
+      </div>
+      <div>
+        <div class="desk">
+          <div class="desk-mount"></div>
+          <div class="desk-mode">Write baa on its own</div>
+          <div class="growth-inset">
+            <div><div class="mini-svg mini-flat"></div><div class="mini-label">first try</div></div>
+            <div class="arrow">→</div>
+            <div><div class="mini-svg mini-good"></div><div class="mini-label">now</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTROLS ================= -->
+<div id="controls">
+  <button class="btn btn-primary" onclick="playAll()">▶ Play the lesson</button>
+  <div class="beat-dots">
+    <button class="beat-dot on" onclick="goBeat(0)">1</button>
+    <button class="beat-dot" onclick="goBeat(1)">2</button>
+    <button class="beat-dot" onclick="goBeat(2)">3</button>
+    <button class="beat-dot" onclick="goBeat(3)">4</button>
+    <button class="beat-dot" onclick="goBeat(4)">5</button>
+  </div>
+  <span class="beat-name" id="beat-name">The attempt</span>
+  <button class="btn btn-ghost" onclick="goBeat(0)">↺ Replay</button>
+  <button class="btn btn-ghost" id="snd" onclick="toggleSound()">🔇 voice off</button>
+</div>
+
+<div id="sketch-tools">
+  qalam sketch · theme:
+  <select onchange="document.querySelector('link[href*=themes]').href='../themes/'+this.value+'.css'">
+    <option value="default">default</option>
+  </select>
+</div>
+
+<script>
+/* ============ REAL curriculum geometry (assets/curriculum/letters.json → baa.isolated) ============ */
+const REF_BOWL  = "M 243.2,178.8 L 247.6,194.4 L 248.0,209.6 L 237.6,220.8 L 220.4,226.0 L 204.4,227.6 L 189.6,228.0 L 174.4,226.4 L 162.8,223.6 L 154.4,212.0 L 152.4,199.2 L 152.8,184.0";
+const REF_DOT   = { x: 199.2, y: 257.6 };
+/* the child's flawed attempt — same stroke, bowl flattened (defectTag: shallow_bowl) */
+const CHILD_BOWL = "M 243.2,180.5 L 247.6,186.8 L 248.0,193.7 L 237.6,198.7 L 220.4,201.0 L 204.4,202.6 L 189.6,202.0 L 174.4,201.2 L 162.8,199.5 L 154.4,194.7 L 152.4,188.5 L 152.8,182.1";
+const CHILD_DOT  = { x: 197.0, y: 232.0 };
+/* the flat middle segment the Diagnosis points at (stroke 1, findings:[flat]) */
+const FLAT_SEG   = "M 220.4,201.0 L 204.4,202.6 L 189.6,202.0 L 174.4,201.2 L 162.8,199.5";
+/* the child's second, better attempt (beat 5) — reference shape + child jitter */
+const GOOD_BOWL  = "M 243.8,179.6 L 247.0,194.0 L 248.4,209.0 L 238.2,221.4 L 220.0,226.6 L 204.0,227.2 L 190.2,228.5 L 174.0,226.0 L 163.2,224.1 L 154.0,212.6 L 152.9,199.6 L 153.4,184.6";
+const GOOD_DOT   = { x: 200.5, y: 255.0 };
+
+const GLYPH_TRANSFORM = "translate(200,170) scale(2.6) translate(-200.2,-218)";
+
+const DESK_SVG = `
+<svg viewBox="0 0 400 340" role="img" aria-label="baa tracing canvas">
+  <line x1="24" y1="68" x2="376" y2="68" stroke="#E8DFC9" stroke-width="1.5" opacity=".6"/>
+  <g transform="${GLYPH_TRANSFORM}">
+    <g class="child-ink">
+      <path class="child-bowl" d="${CHILD_BOWL}" fill="none" stroke="#222A2E" stroke-width="9"
+            stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+      <circle class="child-dot" cx="${CHILD_DOT.x}" cy="${CHILD_DOT.y}" r="5.5" fill="#222A2E" opacity="0"/>
+    </g>
+    <path class="flat-seg" d="${FLAT_SEG}" fill="none" stroke="#FF8A6B" stroke-width="14" stroke-opacity=".8"
+          stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+    <g class="ghost-ink">
+      <path class="ghost-ref" d="${REF_BOWL}" fill="none" stroke="#0E5B5F" stroke-width="9" stroke-opacity=".32"
+            stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+      <circle class="ghost-dot" cx="${REF_DOT.x}" cy="${REF_DOT.y}" r="5.5" fill="#0E5B5F" opacity="0"/>
+    </g>
+    <g class="guide">
+      <path class="guide-dots" d="${REF_BOWL}" fill="none" stroke="#B7DEDF" stroke-width="7"
+            stroke-linecap="round" stroke-dasharray="0.5 11" vector-effect="non-scaling-stroke"/>
+      <circle class="start-dot" cx="243.2" cy="178.8" r="9" fill="#F2A60C"/>
+      <circle class="guide-dot-target" cx="${REF_DOT.x}" cy="${REF_DOT.y}" r="7" fill="none" stroke="#B7DEDF"
+              stroke-width="2" stroke-dasharray="3 3"/>
+    </g>
+    <g class="trace-layer">
+      <path class="trace-ink" d="${REF_BOWL}" fill="none" stroke="#168A8F" stroke-width="9"
+            stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+      <circle class="trace-dot" cx="${REF_DOT.x}" cy="${REF_DOT.y}" r="5.5" fill="#168A8F" opacity="0"/>
+    </g>
+    <g class="good-ink">
+      <path class="good-bowl" d="${GOOD_BOWL}" fill="none" stroke="#222A2E" stroke-width="9"
+            stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+      <circle class="good-dot" cx="${GOOD_DOT.x}" cy="${GOOD_DOT.y}" r="5.5" fill="#222A2E" opacity="0"/>
+    </g>
+  </g>
+</svg>`;
+
+const MINI = (path, dot, color) => `
+<svg viewBox="138 168 122 100" style="width:84px;height:64px;display:block;">
+  <path d="${path}" fill="none" stroke="${color}" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="${dot.x}" cy="${dot.y}" r="5" fill="${color}"/>
+</svg>`;
+
+/* ============ mascot poses (assets/mascot/*.svg, inlined) ============ */
+const POSES = {
+  idle: `<svg class="pose pose-idle" viewBox="0 0 200 280"><ellipse cx="100" cy="265" rx="60" ry="8" fill="#0E5B5F" opacity="0.10"/><path d="M60 60 Q60 40 100 40 Q140 40 140 60 L140 210 Q140 230 100 230 Q60 230 60 210 Z" fill="#0E5B5F"/><path d="M60 110 Q100 116 140 110" fill="none" stroke="#0a4448" stroke-width="2" opacity="0.5"/><path d="M60 160 Q100 166 140 160" fill="none" stroke="#0a4448" stroke-width="2" opacity="0.5"/><path d="M72 60 Q70 130 76 200" stroke="#1a797d" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.7"/><path d="M60 210 L100 270 L140 210 Z" fill="#168A8F"/><path d="M100 230 L100 270" stroke="#F2A60C" stroke-width="2" stroke-linecap="round"/><rect x="70" y="80" width="60" height="60" rx="14" fill="#FAF6EE"/><circle cx="86" cy="108" r="5" fill="#222A2E"/><circle cx="114" cy="108" r="5" fill="#222A2E"/><circle cx="84.5" cy="106" r="1.6" fill="#fff"/><circle cx="112.5" cy="106" r="1.6" fill="#fff"/><path d="M88 124 Q100 132 112 124" fill="none" stroke="#222A2E" stroke-width="2.5" stroke-linecap="round"/><circle cx="80" cy="120" r="2.5" fill="#FF8A6B" opacity="0.6"/><circle cx="120" cy="120" r="2.5" fill="#FF8A6B" opacity="0.6"/><path d="M58 150 Q42 160 44 178" stroke="#0E5B5F" stroke-width="10" stroke-linecap="round" fill="none"/><path d="M142 150 Q158 160 156 178" stroke="#0E5B5F" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="44" cy="178" r="8" fill="#0E5B5F"/><circle cx="156" cy="178" r="8" fill="#0E5B5F"/></svg>`,
+  think: `<svg class="pose pose-think" viewBox="0 0 200 280"><ellipse cx="100" cy="265" rx="60" ry="8" fill="#0E5B5F" opacity="0.10"/><path d="M60 60 Q60 40 100 40 Q140 40 140 60 L140 210 Q140 230 100 230 Q60 230 60 210 Z" fill="#0E5B5F"/><path d="M72 60 Q70 130 76 200" stroke="#1a797d" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.7"/><path d="M60 210 L100 270 L140 210 Z" fill="#168A8F"/><rect x="70" y="80" width="60" height="60" rx="14" fill="#FAF6EE"/><circle cx="86" cy="106" r="5" fill="#222A2E"/><circle cx="114" cy="106" r="5" fill="#222A2E"/><circle cx="86" cy="104" r="1.6" fill="#fff"/><circle cx="114" cy="104" r="1.6" fill="#fff"/><path d="M92 124 Q100 122 102 126" fill="none" stroke="#222A2E" stroke-width="2.5" stroke-linecap="round"/><path d="M142 150 Q160 145 135 138" stroke="#0E5B5F" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="135" cy="138" r="8" fill="#0E5B5F"/><path d="M58 150 Q42 160 44 178" stroke="#0E5B5F" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="44" cy="178" r="8" fill="#0E5B5F"/><circle cx="160" cy="60" r="3" fill="#168A8F" opacity="0.6"/><circle cx="172" cy="46" r="5" fill="#168A8F" opacity="0.8"/><circle cx="186" cy="28" r="7" fill="#168A8F"/></svg>`,
+  write: `<svg class="pose pose-write" viewBox="0 0 200 280"><ellipse cx="100" cy="265" rx="60" ry="8" fill="#0E5B5F" opacity="0.10"/><path d="M60 60 Q60 40 100 40 Q140 40 140 60 L140 210 Q140 230 100 230 Q60 230 60 210 Z" fill="#0E5B5F"/><path d="M72 60 Q70 130 76 200" stroke="#1a797d" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.7"/><path d="M60 210 L100 270 L140 210 Z" fill="#168A8F"/><path d="M100 230 L100 270" stroke="#F2A60C" stroke-width="2" stroke-linecap="round"/><rect x="70" y="80" width="60" height="60" rx="14" fill="#FAF6EE"/><ellipse cx="86" cy="108" rx="4" ry="6" fill="#222A2E"/><ellipse cx="114" cy="108" rx="4" ry="6" fill="#222A2E"/><circle cx="84.5" cy="105" r="1.6" fill="#fff"/><circle cx="112.5" cy="105" r="1.6" fill="#fff"/><path d="M92 126 Q100 124 108 126" fill="none" stroke="#222A2E" stroke-width="2.5" stroke-linecap="round"/><path d="M58 160 Q44 200 70 215" stroke="#0E5B5F" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="70" cy="215" r="8" fill="#0E5B5F"/><path d="M142 160 Q170 200 168 235" stroke="#0E5B5F" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="168" cy="235" r="8" fill="#0E5B5F"/><path d="M100 270 Q120 275 140 268" stroke="#F2A60C" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.7"/></svg>`,
+  cheer: `<svg class="pose pose-cheer" viewBox="0 0 200 280"><ellipse cx="100" cy="265" rx="60" ry="8" fill="#0E5B5F" opacity="0.10"/><g transform="rotate(-6 100 140)"><path d="M60 60 Q60 40 100 40 Q140 40 140 60 L140 210 Q140 230 100 230 Q60 230 60 210 Z" fill="#0E5B5F"/><path d="M60 210 L100 270 L140 210 Z" fill="#168A8F"/><path d="M100 230 L100 270" stroke="#F2A60C" stroke-width="2" stroke-linecap="round"/><rect x="70" y="80" width="60" height="60" rx="14" fill="#FAF6EE"/><path d="M80 108 Q86 100 92 108" fill="none" stroke="#222A2E" stroke-width="3" stroke-linecap="round"/><path d="M108 108 Q114 100 120 108" fill="none" stroke="#222A2E" stroke-width="3" stroke-linecap="round"/><path d="M84 120 Q100 138 116 120" fill="none" stroke="#222A2E" stroke-width="3" stroke-linecap="round"/><circle cx="80" cy="124" r="3" fill="#FF8A6B" opacity="0.7"/><circle cx="120" cy="124" r="3" fill="#FF8A6B" opacity="0.7"/></g><path d="M58 100 Q42 70 48 50" stroke="#0E5B5F" stroke-width="10" stroke-linecap="round" fill="none"/><path d="M142 100 Q158 70 152 50" stroke="#0E5B5F" stroke-width="10" stroke-linecap="round" fill="none"/><circle cx="48" cy="50" r="8" fill="#0E5B5F"/><circle cx="152" cy="50" r="8" fill="#0E5B5F"/><circle cx="32" cy="40" r="4" fill="#F2A60C"/><circle cx="170" cy="34" r="5" fill="#F2A60C"/></svg>`,
+};
+const BEAT_POSE = ['idle', 'think', 'write', 'write', 'cheer'];
+
+/* ============ tutor lines — the mother's voice ============ */
+const LINES = [
+  "",  /* beat 0: the attempt — the tutor watches */
+  "Look here — this part of your boat came out flat. Baa dips down low, like a little boat.",
+  "Let's trace it together — nice and slow.",
+  "That's it… feel how the boat dips down?",
+  "There's your curve — so much deeper than your first try! <span class='ar-sprinkle'>أحسنت</span>",
+];
+const BEAT_NAMES = ["The attempt", "Point at the ink", "The dial turns", "Trace together", "Back to your baa"];
+const MODE_LABEL = ["Write baa on its own", "Write baa on its own", "Trace with me", "Trace with me", "Write baa on its own"];
+
+/* ============ engine ============ */
+let soundOn = false, playTimer = null, currentBeat = 0;
+
+function activeRoot() { return document.querySelector('.variant.active .v-root'); }
+
+function drawPath(p, dur, delay = 0) {
+  if (!p) return;
+  const L = p.getTotalLength();
+  p.style.transition = 'none';
+  p.style.strokeDasharray = L; p.style.strokeDashoffset = L;
+  p.getBoundingClientRect();
+  p.style.transition = `stroke-dashoffset ${dur}ms cubic-bezier(0.65,0,0.35,1) ${delay}ms`;
+  p.style.strokeDashoffset = '0';
+}
+function setDrawn(p) { if (!p) return; p.style.transition = 'none'; p.style.strokeDasharray = 'none'; p.style.strokeDashoffset = '0'; }
+function setUndrawn(p) { if (!p) return; const L = p.getTotalLength(); p.style.transition = 'none'; p.style.strokeDasharray = L; p.style.strokeDashoffset = L; }
+function pop(el, delay = 0) { if (!el) return; setTimeout(() => { el.style.transition = 'opacity 300ms'; el.style.opacity = '1'; }, delay); }
+function unpop(el) { if (!el) return; el.style.transition = 'none'; el.style.opacity = '0'; }
+
+function q(root, sel) { return root.querySelector(sel); }
+
+function setLine(root, i) {
+  root.querySelectorAll('.tutor-line').forEach(el => {
+    el.classList.remove('show');
+    if (LINES[i]) { setTimeout(() => { el.innerHTML = LINES[i]; el.classList.add('show'); }, 350); }
+    else el.innerHTML = '';
+  });
+  if (soundOn && LINES[i] && 'speechSynthesis' in window) {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(LINES[i].replace(/<[^>]+>/g, '').replace('أحسنت', 'ahsant'));
+    u.rate = 0.95; u.pitch = 1.05;
+    speechSynthesis.speak(u);
+  }
+}
+function setPose(root, name) {
+  root.querySelectorAll('.mascot .pose').forEach(p => p.classList.remove('on'));
+  root.querySelectorAll('.mascot .pose-' + name).forEach(p => p.classList.add('on'));
+}
+
+function goBeat(n, opts = {}) {
+  clearTimeout(playTimer);
+  currentBeat = n;
+  const root = activeRoot();
+  root.dataset.beat = n;
+
+  /* controls reflect state */
+  document.querySelectorAll('.beat-dot').forEach((d, i) => d.classList.toggle('on', i === n));
+  document.getElementById('beat-name').textContent = BEAT_NAMES[n];
+  q(root, '.desk-mode').textContent = MODE_LABEL[n];
+
+  /* variant A panel lean-in */
+  const stageA = document.querySelector('#variant-a .stage');
+  if (stageA) stageA.classList.toggle('leaned', n >= 1 && root.closest('#variant-a') !== null);
+
+  setPose(root, BEAT_POSE[n]);
+  setLine(root, n);
+
+  /* ---- reset ink layers, then fast-forward to n ---- */
+  const el = s => q(root, s);
+  const childBowl = el('.child-bowl'), childDot = el('.child-dot'),
+        ghostRef = el('.ghost-ref'), ghostDot = el('.ghost-dot'),
+        traceInk = el('.trace-ink'), traceDot = el('.trace-dot'),
+        goodBowl = el('.good-bowl'), goodDot = el('.good-dot'),
+        marginRef = el('.margin-ref'), marginDot = el('.margin-ref-dot');
+
+  setUndrawn(childBowl); unpop(childDot);
+  setUndrawn(ghostRef); unpop(ghostDot);
+  setUndrawn(traceInk); unpop(traceDot);
+  setUndrawn(goodBowl); unpop(goodDot);
+  if (marginRef) { setUndrawn(marginRef); unpop(marginDot); }
+
+  if (n >= 1) { setDrawn(childBowl); pop(childDot); }
+  if (n >= 2) { setDrawn(ghostRef); pop(ghostDot); if (marginRef) { setDrawn(marginRef); pop(marginDot); } }
+  if (n >= 4) { setDrawn(traceInk); }
+
+  /* ---- animate THIS beat ---- */
+  if (n === 0) {
+    drawPath(childBowl, 1500, 500);
+    pop(childDot, 2100);
+  }
+  if (n === 1) {
+    /* coral pulse is CSS; ghost draws through after the point-at moment */
+    drawPath(ghostRef, 1700, 1400);
+    pop(ghostDot, 3100);
+    if (marginRef) { drawPath(marginRef, 1500, 300); pop(marginDot, 1800); }
+  }
+  if (n === 3) {
+    drawPath(traceInk, 2600, 500);
+    pop(traceDot, 3200);
+  }
+  if (n === 4) {
+    drawPath(goodBowl, 1700, 400);
+    pop(goodDot, 2200);
+  }
+}
+
+const BEAT_DUR = [2900, 5400, 4000, 4600, 6000];
+function playAll(from = 0) {
+  goBeat(from);
+  if (from < 4) playTimer = setTimeout(() => playAll(from + 1), BEAT_DUR[from]);
+}
+
+function showVariant(id, ev) {
+  document.querySelectorAll('.variant').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.variant-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('variant-' + id).classList.add('active');
+  if (ev) ev.target.classList.add('active');
+  goBeat(0);
+}
+
+function toggleSound() {
+  soundOn = !soundOn;
+  document.getElementById('snd').textContent = soundOn ? '🔊 voice on' : '🔇 voice off';
+}
+
+/* ============ boot: inject shared desk + mascots + minis ============ */
+document.querySelectorAll('.desk-mount').forEach(m => m.innerHTML = DESK_SVG);
+document.querySelectorAll('.mascot').forEach(m => m.innerHTML = POSES.idle + POSES.think + POSES.write + POSES.cheer);
+document.querySelectorAll('.mini-flat').forEach(m => m.innerHTML = MINI(CHILD_BOWL, CHILD_DOT, '#9AA7AB'));
+document.querySelectorAll('.mini-good').forEach(m => m.innerHTML = MINI(GOOD_BOWL, GOOD_DOT, '#168A8F'));
+goBeat(0);
+</script>
+</body>
+</html>

@@ -819,6 +819,47 @@ Plans:
 **UI hint**: no — server + client-contract + on-device diff; no new screens.
 **Research hint**: no — the spike already validated representation, grounding, latency, and privacy; this phase implements the spike's verdict.
 
+#### Phase 18: BUILD — the living tutor: per-child dynamic exercise selection (two-timescale child model, remediation arcs, just-this-part micro-drills, railed to the curriculum graph)
+
+**Goal:** Every "next exercise" pick is a deliberate, explainable teaching move informed by a persistent per-child model — targeting the weakest criterion, building remediation arcs back to confidence, injecting just-this-part micro-drills — while staying railed to the signed curriculum graph, preserving the offline walker floor, and closing the cost/latency research question with measured numbers.
+**Requirements**: SPEC-18-R1..R9 (the 9 locked requirements in 18-SPEC.md)
+**Depends on:** Phase 17 (LetterScore criteria + weakest; ADR-017); Phase 17.2 (graph-legal candidates over the wire, coach proposes+announces, Teacher's Eye strip — merge to main before branching)
+**Plans:** 11 plans (7 waves)
+
+Plans:
+
+**Wave 1**
+
+- [ ] 18-01-PLAN.md — Wave 0 RED contract: one failing test per R1..R9 + EMA Dart↔Python parity + non-PII/422 guards + signed:false selection gold-set stub
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [ ] 18-02-PLAN.md — Cross-letter labels (letters+criteria on every exercise) + baa micro-drill set (dot/bowl/start, signedOff:false) + generate.py server re-derive (R3/R7, the early pedagogy ask)
+- [ ] 18-03-PLAN.md — Per-criterion EMA (pure Dart + Python mirror, D-15) + Drift schemaVersion 5→6 (evidence/arc-state/profile-mirror tables) (R8)
+
+**Wave 3** *(blocked on Wave 2)*
+
+- [ ] 18-04-PLAN.md — Pure-Dart SelectionPolicy in lib/curriculum/ (arc state machine + anti-boredom filter + micro-drill injection, D-09/D-11) + ArcState/ChildModelSnapshot pure types (R1/R3/R4)
+- [ ] 18-05-PLAN.md — Server FIRST (422 lockstep): TutorFactsIn +profile +evidenceDigest + Admin-SDK evidence append at /coach (D-13) + firestore.rules child_models owner-read (R2/R7)
+
+**Wave 4** *(blocked on Wave 3)*
+
+- [ ] 18-06-PLAN.md — Client mirror (422 second): TutorFacts +profile +evidenceDigest + non-PII guard extend + ChildModelRepository Firestore-first/Drift-mirror (D-16) + arc/evidence repos (R2/R6)
+- [ ] 18-08-PLAN.md — Server coach picks among policy candidates + grounds the WHY line (D-10) + selection_policy eval dimension + signed:false gold set (R1/R9)
+- [ ] 18-09-PLAN.md — Nightly compiler (Cloud Run Job entrypoint, letter-agnostic EMA compile → child_models/{uid}) + second-letter + PII guard (R2/R8)
+
+**Wave 5** *(blocked on Wave 4)*
+
+- [ ] 18-07-PLAN.md — Wire the policy into the live path: candidate-aware selector + walker + D-08 drill scoring + offline WHY template + controller orchestration + arc persistence (R1/R4/R5/R6)
+
+**Wave 6** *(blocked on Wave 5)*
+
+- [ ] 18-10-PLAN.md — Child-facing Teacher's Margin panel (arc narration + WHY, D-01) + Spotlight overlay (light the criterion zone, D-05); anti-gamification (R1/R3/R4)
+
+**Wave 7** *(blocked on Wave 6 — human/infra gates, autonomous:false)*
+
+- [ ] 18-11-PLAN.md — Ordered deploy (server FIRST, rules, Cloud Run Job + Scheduler) + CLOSE cost/latency with measured numbers + mother sign-off flips signed:false→true + make eval (R2/R3/R4/R7/R8/R9)
+
 ### Progress (v2.0)
 
 **Execution Order:**
@@ -833,5 +874,6 @@ Plans:
 | 15. BUILD — dynamic grounded exercise selection on baa | 8/7 | Complete    | 2026-06-28 |
 | 16. BUILD — presence + voice + eval gate + demo-harden | 3/6 | In Progress|  |
 | 17. BUILD — stroke-aware coaching (on-device geo-diff → coach) | 10/10 | Complete   | 2026-07-06 |
+| 18. BUILD — the living tutor (per-child dynamic exercise selection) | 0/11 | Planned | - |
 
 **Coverage:** the 14 original v2.0 requirements map across Phases 14–16; Phase 17 (added 2026-06-30 from the stroke-aware spike) adds STRK-01 / GROUND-04 / EVAL-03. The three spikes (11–13) own no requirements by design. See REQUIREMENTS.md → v2.0 Traceability.
