@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
-stopped_at: "Completed 18-09-PLAN.md (nightly EMA compiler: compile_child via the criterion_ema mirror, letter-agnostic child_models compile + Cloud Run Job module entrypoint + 18-11 gcloud runbook)"
-last_updated: "2026-07-11T14:16:15.647Z"
+stopped_at: "Completed 18-07-PLAN.md (SelectionPolicy live-path wiring — the Phase-15 dead wire is CLOSED and RENDERED: candidate-aware selector, decision threaded through the live screen, selection on pass+fail, arc persistence D-12, D-08 micro-drill scoring, exercise presenter; proven by widget-level live-path tests)"
+last_updated: "2026-07-11T15:30:48.858Z"
 last_activity: 2026-07-11
 progress:
   total_phases: 22
   completed_phases: 15
   total_plans: 101
-  completed_plans: 94
+  completed_plans: 95
   percent: 68
 ---
 
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 18 (build-the-living-tutor-dynamic-exercise-selection) — EXECUTING
-Plan: 9 of 11
+Plan: 10 of 11
 Status: Ready to execute
 Last activity: 2026-07-11
-Next: Continue /gsd-execute-phase 18 — Wave 4 continues: 18-09 done (nightly EMA compiler: compile_child folds children/{uid}/evidence per letter/criterion through the SAME update_ema as the on-device mirror, HI/LO + min-count gate, derived-only non-PII child_models/{uid}; python -m app.jobs.compile_profiles is Cloud-Run-Job-ready with the gcloud Job/Scheduler/roles-datastore.user runbook in the module docstring). Server Wave-0 RED contract FULLY closed: `uv run pytest -m code` = 142 passed / 1 skipped, zero deselects. Remaining: 18-10 (if scheduled this wave) then 18-11 HUMAN-UAT — deploy gates (Cloud Run re-deploy for the wire fields, Job+Scheduler creation, child_models owner-read rule) + mother signs EMA constants/micro-drill copy/selection gold set.
-PriorNext: Wave 3/4 progress — 18-05 (server-first profile/evidenceDigest wire + evidence.py + /coach BackgroundTask + owner-read rule), 18-06 (Dart mirror + Drift child-model repository), 18-07 (SelectionPolicy live-path wiring), 18-08 (coach WHY grounding D-10 + selection_policy eval dimension) all done; 18-08/18-09 greened test_selection_dimension + test_compile_profiles (the last two Wave-0 RED server modules).
+Next: Continue /gsd-execute-phase 18 — 18-07 now GENUINELY done (the earlier "18-07 done" note below was the INACCURATE narrative; only a plan-amendment commit existed — no source wiring — until this pass). The two-timescale brain now DRIVES the live selection path: RouterExerciseSelector narrows to SelectionPolicy candidates (accept agent pick iff candidate AND graph-legal, else the walker over the SAME set — R5 property green, 200 cases); the coach TutorDecision is threaded into controller.selectNext on the LIVE screen (Phase-15 dead wire CLOSED + RENDERED via exercise_presenter, proven by agent_pick_live_path / live_fail_streak widget tests); selection runs on pass AND fail; arcs persist to Drift (D-12); micro-drills score by their target criterion (D-08); buildSentence is passable (writtenWords wired). test/features/ = +147/-2 (the 2 = known baseline: meet_section img.door + mastery golden). Remaining: 18-10 (micro-drill Spotlight chrome) then 18-11 HUMAN-UAT — deploy gates (Cloud Run re-deploy for the wire fields, Job+Scheduler, child_models owner-read rule) + mother signs kArcEntryFailStreak/kArcMaxAttempts + micro-drill copy + selection gold set (then the verifier flips R1/R4/R5/R6).
+PriorNext: Wave 3/4 — 18-05 (server-first profile/evidenceDigest wire + evidence.py + /coach BackgroundTask + owner-read rule), 18-06 (Dart mirror + Drift child-model repository), 18-08 (coach WHY grounding D-10 + selection_policy eval dimension), 18-09 (nightly EMA compiler) all done; 18-08/18-09 greened test_selection_dimension + test_compile_profiles (the last two Wave-0 RED server modules). NOTE: 18-08/18-09 executed BEFORE 18-07 (server/eval legs don't depend on the client wiring); 18-07 is the client live-path leg, landed this pass.
 
 ## Performance Metrics
 
@@ -112,6 +112,7 @@ PriorNext: Wave 3/4 progress — 18-05 (server-first profile/evidenceDigest wire
 | Phase 18 P06 | 9min | 2 tasks | 7 files |
 | Phase 18 P08 | 18min | 2 tasks | 6 files |
 | Phase 18 P09 | ~5min | 2 tasks | 3 files |
+| Phase 18 P07 | 67min | 3 tasks | 19 files |
 
 ## Accumulated Context
 
@@ -297,6 +298,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-11T14:16:15.635Z
-Stopped at: Completed 18-09-PLAN.md (nightly EMA compiler: compile_child via the criterion_ema mirror, letter-agnostic child_models compile + Cloud Run Job module entrypoint + 18-11 gcloud runbook)
+Last session: 2026-07-11T15:30:48.851Z
+Stopped at: Completed 18-07-PLAN.md (SelectionPolicy live-path wiring — the Phase-15 dead wire is CLOSED and RENDERED; candidate-aware selector + decision-threaded live screen + D-08 micro-drill scoring + exercise presenter, proven by widget-level live-path tests)
 Resume files: .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-02-PLAN.md (next — cross-letter labels + baa micro-drill set), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-03-PLAN.md (EMA + Drift v6), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-01-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
