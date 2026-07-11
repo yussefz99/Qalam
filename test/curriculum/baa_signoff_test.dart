@@ -134,19 +134,36 @@ void main() {
               'gate is required.');
     });
 
-    test('every baa exercise is signed off', () {
+    test('every baa exercise is signed off (except the 18-11-pending microDrills)',
+        () {
       final baaExercises = _loadExercisesRaw()
           .where((e) => (e['id'] as String).startsWith('baa.'))
           .toList();
       expect(baaExercises, isNotEmpty);
-      final unsigned = baaExercises
+      // Plan 18-02 adds baa's micro-drill enrichment exercises (dot/bowl/start)
+      // as signedOff:false CONTENT — enrichment that never gates the star (its
+      // graph nodes are essential:false). The drill copy's sign-off is the
+      // batched HUMAN-UAT gate at 18-11 (the owner's mother signs the copy +
+      // gold set). Carve them out so the CORE-curriculum sign-off invariant
+      // still holds — no executor ever sets signedOff:true.
+      final coreBaa =
+          baaExercises.where((e) => e['type'] != 'microDrill').toList();
+      final unsigned = coreBaa
           .where((e) => e['signedOff'] != true)
           .map((e) => e['id'])
           .toList();
       expect(unsigned, isEmpty,
-          reason: 'These baa exercises are not signed off yet: $unsigned. '
-              'They flip to signedOff:true ONLY at the owner\'s-mother gate '
-              '(Task 2) — RED at Task 1 by design.');
+          reason: 'These core baa exercises are not signed off yet: $unsigned. '
+              'Non-microDrill baa exercises flip to signedOff:true ONLY at the '
+              'owner\'s-mother gate.');
+      // The microDrills ARE the tracked pending-18-11 unsigned enrichment set.
+      final microDrills =
+          baaExercises.where((e) => e['type'] == 'microDrill').toList();
+      expect(microDrills, isNotEmpty,
+          reason: 'Plan 18-02 authors baa micro-drills (dot/bowl/start).');
+      expect(microDrills.every((e) => e['signedOff'] != true), isTrue,
+          reason: 'micro-drill content stays signedOff:false until the mother '
+              'signs it at the 18-11 HUMAN-UAT gate.');
     });
   });
 }

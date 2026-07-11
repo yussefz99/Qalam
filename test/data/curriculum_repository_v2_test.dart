@@ -99,11 +99,17 @@ void main() {
 
       final exercises = await repo.getExercises();
 
-      // Phase 8 demo: baa (19) + taa (19) + alif (10).
-      expect(exercises, hasLength(48));
+      // Phase 8 demo: baa (19) + taa (19) + alif (10) + baa micro-drills (3, Plan 18-02).
+      expect(exercises, hasLength(51));
       expect(exercises, everyElement(isA<Exercise>()));
-      // All three demo letters' configs are signed off.
-      expect(exercises.every((e) => e.signedOff == true), isTrue);
+      // All three demo letters' CORE configs are signed off. The baa micro-drill
+      // enrichment (dot/bowl/start, Plan 18-02) is signedOff:false until the mother
+      // signs it at the 18-11 HUMAN-UAT gate — carved out here.
+      expect(
+          exercises
+              .where((e) => e.type != 'microDrill')
+              .every((e) => e.signedOff == true),
+          isTrue);
       expect(exercises.map((e) => e.id),
           containsAll(['baa.teachCard.meet', 'taa.teachCard.meet', 'alif.teachCard.meet']));
       // The teachCard config parses with null assessed fields.

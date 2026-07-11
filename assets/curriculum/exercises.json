@@ -38,7 +38,17 @@
         "shallowBowl": "A little shallow — give the bowl a deeper curve. Try again, slower.",
         "noDot": "The bowl is good — now place the dot just below it."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "baa"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
     },
     {
       "id": "baa.traceLetter.initial",
@@ -70,7 +80,17 @@
         "pass": "That's the initial shape — ready to join.",
         "hasTail": "No tail at the start — keep it small and flat. Try once more."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "baa"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
     },
     {
       "id": "baa.traceLetter.medial",
@@ -102,7 +122,17 @@
         "pass": "Perfect little tooth — the medial baa.",
         "tooBig": "Smaller — a little tooth, no tail. Try again."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "baa"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
     },
     {
       "id": "baa.writeLetter.fromSound",
@@ -133,7 +163,17 @@
         "pass": "Yes — “baṭṭa” starts with baa, and there it is.",
         "wrongLetter": "That's taa — listen again: بطة… b, b. Which letter makes that sound?"
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "baa"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
     },
     {
       "id": "baa.writeLetter.fromPicture",
@@ -165,7 +205,17 @@
         "pass": "That's it — “baṭṭa” (duck) starts with baa.",
         "shallowBowl": "Make the bowl deeper with the dot below — that's baa."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "baa"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
     },
     {
       "id": "baa.writeLetter.writeForm",
@@ -196,7 +246,17 @@
         "pass": "That's the initial baa — from memory.",
         "wrongForm": "At the start, baa has no tail and reaches forward. Try again."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "baa"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
     },
     {
       "id": "baa.writeWord.dictation",
@@ -226,7 +286,16 @@
         "pass": "باب — from memory, no guide. Real writing! أحسنت!",
         "missingDot": "Close — your first baa needs its dot. Listen again: باب."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "baa",
+        "alif"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "baa.writeWord.copy",
@@ -257,7 +326,16 @@
         "pass": "You remembered it — باب. أحسنت!",
         "missingDot": "Almost — check the second baa's dot. Try once more."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "baa",
+        "alif"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "baa.writeWord.picture",
@@ -287,7 +365,16 @@
         "pass": "باب — “door.” Beautiful.",
         "incomplete": "That's the right start — finish the whole word, باب."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "baa",
+        "alif"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "baa.connectWord.baab",
@@ -318,7 +405,16 @@
         "pass": "Joined in one go — باب, “door.” أحسنت!",
         "lifted": "Don't lift between the letters — let baa reach across to join. Try again."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "baa",
+        "alif"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "baa.connectWord.kitaab",
@@ -349,7 +445,18 @@
         "pass": "كتاب — “book,” joined. أحسنت!",
         "lifted": "Keep the run connected — let baa's tail return at the end."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "kaaf",
+        "taa",
+        "alif",
+        "baa"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "baa.completeWord.middle",
@@ -390,7 +497,17 @@
         "pass": "باب — you completed the word!",
         "wrongLetter": "The missing letter is baa — deep bowl, dot below. Try again."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "baa"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
     },
     {
       "id": "baa.transformWord.dual",
@@ -424,7 +541,17 @@
         "pass": "بابان — two doors. أحسنت!",
         "missingEnding": "Add the dual ending ـان: بابان."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "baa",
+        "alif",
+        "noon"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "baa.transformWord.plural",
@@ -458,7 +585,17 @@
         "pass": "أبواب — many doors. أحسنت!",
         "wrongForm": "The plural of باب is أبواب. Listen and write it."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "alif",
+        "baa",
+        "waaw"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "baa.transformWord.opposite",
@@ -492,7 +629,18 @@
         "pass": "صغير — “small.” أحسنت!",
         "wrongAntonym": "The opposite of big is small — صغير."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "saad",
+        "ghayn",
+        "yaa",
+        "raa"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "baa.fillBlank.adjective",
@@ -528,7 +676,18 @@
         "pass": "البابُ كبير — you filled it in. أحسنت!",
         "wrongWord": "A describing word fits here — try كبير (“big”)."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "kaaf",
+        "baa",
+        "yaa",
+        "raa"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "baa.buildSentence.hear",
@@ -559,7 +718,20 @@
         "pass": "البابُ كبير — “the door is big.” A whole sentence! أحسنت!",
         "wrongOrder": "Good start — keep the words in order: البابُ كبير."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "alif",
+        "laam",
+        "baa",
+        "kaaf",
+        "yaa",
+        "raa"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "baa.buildSentence.picture",
@@ -590,7 +762,20 @@
         "pass": "البابُ كبير — you wrote a sentence. أحسنت!",
         "incomplete": "Name it, then describe it: البابُ كبير."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "alif",
+        "laam",
+        "baa",
+        "kaaf",
+        "yaa",
+        "raa"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "baa.teachCard.meet",
@@ -626,7 +811,11 @@
       "expected": null,
       "check": null,
       "feedback": null,
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "baa"
+      ],
+      "criteria": []
     },
     {
       "id": "taa.teachCard.meet",
@@ -662,7 +851,11 @@
       "expected": null,
       "check": null,
       "feedback": null,
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "taa"
+      ],
+      "criteria": []
     },
     {
       "id": "taa.traceLetter.isolated",
@@ -696,7 +889,17 @@
         "shallowBowl": "A little more curve — try again, slower.",
         "noDot": "Good shape — now the dots."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "taa"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
     },
     {
       "id": "taa.traceLetter.initial",
@@ -730,7 +933,17 @@
         "shallowBowl": "A little more curve — try again, slower.",
         "noDot": "Good shape — now the dots."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "taa"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
     },
     {
       "id": "taa.traceLetter.medial",
@@ -764,7 +977,17 @@
         "shallowBowl": "A little more curve — try again, slower.",
         "noDot": "Good shape — now the dots."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "taa"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
     },
     {
       "id": "taa.writeLetter.fromSound",
@@ -795,7 +1018,17 @@
         "pass": "Yes — that's it. أحسنت!",
         "wrongLetter": "Listen again — which letter makes that sound?"
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "taa"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
     },
     {
       "id": "taa.writeLetter.fromPicture",
@@ -827,7 +1060,17 @@
         "pass": "Yes — that's it. أحسنت!",
         "wrongLetter": "Listen again — which letter makes that sound?"
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "taa"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
     },
     {
       "id": "taa.writeLetter.writeForm",
@@ -854,7 +1097,17 @@
         "pass": "Yes — that's it. أحسنت!",
         "wrongLetter": "Listen again — which letter makes that sound?"
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "taa"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
     },
     {
       "id": "taa.writeWord.dictation",
@@ -885,7 +1138,17 @@
         "incomplete": "Look again and write all of its letters.",
         "wrongWord": "That's a different word — look at the picture and try again."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "taa",
+        "alif",
+        "jeem"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "taa.writeWord.copy",
@@ -916,7 +1179,16 @@
         "incomplete": "Look again and write all of its letters.",
         "wrongWord": "That's a different word — look at the picture and try again."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "taa",
+        "waaw"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "taa.writeWord.picture",
@@ -948,7 +1220,17 @@
         "incomplete": "Look again and write all of its letters.",
         "wrongWord": "That's a different word — look at the picture and try again."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "baa",
+        "yaa",
+        "taa"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "taa.connectWord.taaj",
@@ -978,7 +1260,17 @@
         "pass": "تاج — joined beautifully. أحسنت!",
         "lifted": "Keep the letters joined — one flowing word, no lifts."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "taa",
+        "alif",
+        "jeem"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "taa.connectWord.bayt",
@@ -1008,7 +1300,17 @@
         "pass": "بيت — joined beautifully. أحسنت!",
         "lifted": "Keep the letters joined — one flowing word, no lifts."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "baa",
+        "yaa",
+        "taa"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "taa.completeWord.middle",
@@ -1038,7 +1340,17 @@
         "pass": "Complete! أحسنت!",
         "incomplete": "Fill in the missing letter to finish the word."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "taa"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
     },
     {
       "id": "taa.transformWord.dual",
@@ -1072,7 +1384,18 @@
         "pass": "تاجان — أحسنت!",
         "missingEnding": "Add the ending: تاجان."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "taa",
+        "alif",
+        "jeem",
+        "noon"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "taa.transformWord.plural",
@@ -1106,7 +1429,18 @@
         "pass": "بيوت — أحسنت!",
         "missingEnding": "Add the ending: بيوت."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "baa",
+        "yaa",
+        "waaw",
+        "taa"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "taa.transformWord.opposite",
@@ -1140,7 +1474,17 @@
         "pass": "فوق — أحسنت!",
         "missingEnding": "Add the ending: فوق."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "faa",
+        "waaw",
+        "qaaf"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "taa.fillBlank.adjective",
@@ -1170,7 +1514,17 @@
         "pass": "Yes! أحسنت!",
         "wrongWord": "Read the sentence again and pick the word that fits."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "taa",
+        "alif",
+        "jeem"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "taa.buildSentence.hear",
@@ -1201,7 +1555,20 @@
         "pass": "التاجُ جميل — a whole sentence! أحسنت!",
         "wrongOrder": "Keep the words in order: التاجُ جميل."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "alif",
+        "laam",
+        "taa",
+        "jeem",
+        "meem",
+        "yaa"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "taa.buildSentence.picture",
@@ -1233,7 +1600,21 @@
         "pass": "البيتُ كبير — a whole sentence! أحسنت!",
         "wrongOrder": "Keep the words in order: البيتُ كبير."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "alif",
+        "laam",
+        "baa",
+        "yaa",
+        "taa",
+        "kaaf",
+        "raa"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "alif.teachCard.meet",
@@ -1269,7 +1650,11 @@
       "expected": null,
       "check": null,
       "feedback": null,
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "alif"
+      ],
+      "criteria": []
     },
     {
       "id": "alif.traceLetter.isolated",
@@ -1304,7 +1689,16 @@
         "wrongDirection": "Start at the top and pull straight down — not from the bottom up.",
         "tooCurved": "Keep your alif straight — one tall straight line, no curve."
       },
-      "signedOff": false
+      "signedOff": false,
+      "letters": [
+        "alif"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction"
+      ]
     },
     {
       "id": "alif.writeLetter.fromSound",
@@ -1338,7 +1732,16 @@
         "wrongDirection": "Start at the very top and pull straight down.",
         "tooCurved": "Keep it straight — alif is one straight line, no curve."
       },
-      "signedOff": false
+      "signedOff": false,
+      "letters": [
+        "alif"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction"
+      ]
     },
     {
       "id": "alif.writeLetter.writeForm",
@@ -1367,7 +1770,16 @@
         "wrongDirection": "Start at the very top and pull straight down.",
         "tooCurved": "Keep it straight — alif is one straight line, no curve."
       },
-      "signedOff": false
+      "signedOff": false,
+      "letters": [
+        "alif"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction"
+      ]
     },
     {
       "id": "alif.writeWord.dictation",
@@ -1398,7 +1810,17 @@
         "incomplete": "Look again and write all of its letters.",
         "wrongWord": "That's a different word — look at the picture and try again."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "alif",
+        "seen",
+        "daal"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "alif.writeWord.copy",
@@ -1429,7 +1851,16 @@
         "incomplete": "Look again and write all of its letters.",
         "wrongWord": "That's a different word — look at the picture and try again."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "alif",
+        "meem"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "alif.writeWord.picture",
@@ -1461,7 +1892,16 @@
         "incomplete": "Look again and write all of its letters.",
         "wrongWord": "That's a different word — look at the picture and try again."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "baa",
+        "alif"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "alif.connectWord.baab",
@@ -1491,7 +1931,16 @@
         "pass": "باب — joined beautifully. أحسنت!",
         "lifted": "Keep the letters joined — one flowing word, no lifts."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "baa",
+        "alif"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "alif.transformWord.dual",
@@ -1525,7 +1974,18 @@
         "pass": "أسدان — أحسنت!",
         "missingEnding": "Add the ending: أسدان."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "alif",
+        "seen",
+        "daal",
+        "noon"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     },
     {
       "id": "alif.buildSentence.hear",
@@ -1556,7 +2016,143 @@
         "pass": "الأسدُ كبير — a whole sentence! أحسنت!",
         "wrongOrder": "Keep the words in order: الأسدُ كبير."
       },
-      "signedOff": true
+      "signedOff": true,
+      "letters": [
+        "alif",
+        "laam",
+        "seen",
+        "daal",
+        "kaaf",
+        "baa",
+        "yaa",
+        "raa"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
+    },
+    {
+      "id": "baa.microDrill.dot",
+      "type": "microDrill",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Just the dot this time. Place one small dot right below the bowl."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.baa"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph",
+        "guideForm": "isolated"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ب",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "There it is — the dot sits just under the bowl. أحسنت!",
+        "noDot": "The bowl is good — now place one small dot just below it.",
+        "dotOffCenter": "Almost — bring the dot right under the middle of the bowl. Try once more.",
+        "dotAbove": "baa's dot goes below the bowl, not above — a little lower."
+      },
+      "signedOff": false,
+      "letters": [
+        "baa"
+      ],
+      "criteria": [
+        "dot"
+      ],
+      "spotlightZone": "dot"
+    },
+    {
+      "id": "baa.microDrill.bowl",
+      "type": "microDrill",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Just the bowl this time. Sweep one deep, smooth curve — no dot yet."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.baa"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph",
+        "guideForm": "isolated"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ب",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "A deep, smooth bowl — beautiful.",
+        "shallowBowl": "Give the bowl a deeper curve — scoop lower before you lift. Try again, slower.",
+        "tooFlat": "Less flat — let the middle dip down into a real bowl."
+      },
+      "signedOff": false,
+      "letters": [
+        "baa"
+      ],
+      "criteria": [
+        "shape"
+      ],
+      "spotlightZone": "bowl"
+    },
+    {
+      "id": "baa.microDrill.start",
+      "type": "microDrill",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Just the start this time. Begin at the gold dot on the right, then sweep across."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.baa"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph",
+        "guideForm": "isolated"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ب",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "You started in the right place — right first, then sweep. أحسنت!",
+        "wrongStart": "Start on the right side, not the left — begin at the gold dot.",
+        "wrongDirection": "Sweep from the start point across, not backwards. Try once more."
+      },
+      "signedOff": false,
+      "letters": [
+        "baa"
+      ],
+      "criteria": [
+        "strokeOrder"
+      ],
+      "spotlightZone": "start"
     }
   ]
 }
