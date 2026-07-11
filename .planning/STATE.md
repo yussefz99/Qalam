@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
 stopped_at: Completed 18-04-PLAN.md (SelectionPolicy — anti-boredom + remediation arc + micro-drill injection)
-last_updated: "2026-07-11T11:18:10.064Z"
+last_updated: "2026-07-11T11:34:56.055Z"
 last_activity: 2026-07-11
 progress:
   total_phases: 8
   completed_phases: 4
   total_plans: 41
-  completed_plans: 32
+  completed_plans: 34
   percent: 50
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 18 (build-the-living-tutor-dynamic-exercise-selection) — EXECUTING
-Plan: 6 of 11
+Plan: 7 of 11
 Status: Ready to execute
 Last activity: 2026-07-11
 Next: Continue /gsd-execute-phase 18 — Wave 3 continues: 18-05 done (SERVER-first profile/evidenceDigest wire on TutorFactsIn, extra=forbid; evidence.py per-letter×criterion deriver + Admin-SDK batch append; /coach BackgroundTask off the critical path; firestore.rules owner-read child_models/{uid}). Next 18-06 lands the Dart mirror (TutorFacts.profile/evidenceDigest byte-for-byte — greens across_session_memory + re-greens payload_nonpii) + the Drift child-model repository/refresh; 18-04/18-07 write SelectionPolicy (greens the client selection tests); 18-08/18-09 green test_selection_dimension + test_compile_profiles (the two remaining Wave-0 RED server modules); 18-11 signs the micro-drill copy + gold set. A single Cloud Run re-deploy goes AFTER both wire sides land (18-06).
@@ -109,6 +109,7 @@ PriorNext: Wave 2 complete — 18-03 (per-criterion EMA pure Dart+Python + Drift
 | Phase 18 P03 | 16min | 2 tasks | 4 files |
 | Phase 18 P04 | 18min | 2 tasks | 5 files |
 | Phase 18 P05 | 15min | 3 tasks | 4 files |
+| Phase 18 P06 | 9min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -247,6 +248,10 @@ Recent decisions affecting current work:
 - [Phase ?]: [18-05]: Server ships FIRST (422 lockstep) — TutorFactsIn gains profile (ChildProfileIn) + evidenceDigest (list[EvidenceDigestRowIn]), both additive/defaulted, nested extra=forbid; Dart mirror follows in 18-06 byte-for-byte. EvidenceDigestRowIn.pass_ uses alias='pass' (Python keyword).
 - [Phase ?]: [18-05]: evidence.py derives per-letter×criterion rows letter-agnostically — isolated→5 geometric (source=letter), word→coarse present/correct per touched letter via an Arabic-char→curriculum-id DATA map (باب→baa+alif, source=word, Pitfall 3), offline evidenceDigest→source=digest count rows; append_evidence batch-writes children/{uid}/evidence/{autoId} via the reused firebase_admin default app (no re-init).
 - [Phase ?]: [18-05]: /coach appends evidence OFF the critical path (BackgroundTasks after CoachOut sent), uid from verify_caller claims not the body (T-18-05-01); _safe_append_evidence swallows errors (T-18-05-05). firestore.rules owner-read child_models/{uid} before the deny-all catch-all; writes Admin-only; evidence subcollection has no client match.
+- [Phase ?]: [18-06]: TutorFacts +profile +evidenceDigest emitted omit-when-null, byte-for-byte mirroring server/app/schema.py (client SECOND, 422 lockstep); greens payload_nonpii + across_session_memory with zero test edits
+- [Phase ?]: [18-06]: ChildModelRepository is Firestore-first with a Drift-mirror fallback that reads synchronously at boot and NEVER blocks the practice path (D-16/Req6) — refresh is a one-shot child_models/{uid}.get() write-through, fire-and-forget, keeps last-known mirror on permission-denied/offline (never throws); .withFirestore seam
+- [Phase ?]: [18-06]: ALL child-model providers hand-written in child_model_providers.dart (keepAlive Providers + a FutureProvider reading the mirror then unawaited-refresh) — NO @riverpod on a Drift-adjacent read (Pitfall 6), never StreamProvider.future; repo files plain classes, no .g.dart
+- [Phase ?]: [18-06]: SPEC-18-R2/R6 NOT checkbox-marked — CLIENT wire+repo half only; R2 needs the 18-09 compiler + 18-11 deploy, R6 needs the 18-07 selector; phase verifier flips them (18-01/03/04/05 precedent)
 
 ### Pending Todos
 
@@ -287,6 +292,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-11T11:17:36.853Z
+Last session: 2026-07-11T11:34:21.257Z
 Stopped at: Completed 18-04-PLAN.md (SelectionPolicy — anti-boredom + remediation arc + micro-drill injection)
 Resume files: .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-02-PLAN.md (next — cross-letter labels + baa micro-drill set), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-03-PLAN.md (EMA + Drift v6), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-01-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
