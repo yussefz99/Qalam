@@ -43,6 +43,7 @@ import '../letter_unit_controller.dart';
 import 'feedback_panel_v2.dart';
 import 'progress_ribbon.dart';
 import 'prompt_header.dart';
+import 'teacher_margin_panel.dart';
 import 'write_surface.dart';
 
 /// Static copy for the scaffold chrome (call site passes the l10n strings;
@@ -572,6 +573,12 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
                     strings: s,
                     isAgentPath: _isAgentPath,
                   ),
+                  // 18-10 (D-01): the CHILD-FACING Teacher's Margin — the warm WHY
+                  // line + remediation-arc step-down narration, beside the canvas.
+                  // Reads the SAME TutorInsight the verdict/coach publish (no second
+                  // insight source); silent until the first verdict. Agent path only
+                  // (the living tutor is baa-scoped).
+                  if (_isAgentPath) TeacherMarginPanel(letter: widget.letter),
                   // DEMO "Teacher's Eye" — what the tutor saw (agent path only).
                   if (_isAgentPath) _teacherEye(),
                 ],
