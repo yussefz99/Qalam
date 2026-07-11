@@ -70,6 +70,7 @@ class GraphNode {
     required this.tier,
     required this.minCleanReps,
     required this.essential,
+    this.criterion,
   });
 
   /// The signed baa.* exercise id this node maps (byte-identical to the
@@ -88,6 +89,13 @@ class GraphNode {
 
   /// True iff this node's competency is essential — only these gate the star.
   final bool essential;
+
+  /// The scorer criterion this node drills, for `type:microDrill` enrichment
+  /// nodes only (`dot`/`shape`/`strokeOrder`, authored in 18-02). Null for every
+  /// core node. The selection policy (18-04) maps a dominant failing criterion to
+  /// its drill via [CurriculumGraph.drillForCriterion]. Enrichment metadata only —
+  /// it changes nothing about `essentialNodes` / `isLegalSelection` semantics.
+  final String? criterion;
 }
 
 /// The parsed, immutable curriculum graph. Pure data + pure queries.
@@ -158,6 +166,7 @@ class CurriculumGraph {
       tier: json['tier'] as String?,
       minCleanReps: (json['minCleanReps'] as num?)?.toInt() ?? 0,
       essential: essentialByCompetency[competency] ?? false,
+      criterion: json['criterion'] as String?,
     );
   }
 
@@ -181,6 +190,20 @@ class CurriculumGraph {
 
   /// The competency id of [exerciseId], or null if unknown.
   String? competencyOf(String exerciseId) => _nodeFor(exerciseId)?.competency;
+
+  /// The `microDrill.<criterion>` node id that drills [criterion] (a scorer
+  /// criterion name — `dot`/`shape`/`strokeOrder`) for [letterId], or null when
+  /// no such drill exists. The criterion→drill lookup the selection policy (18-04)
+  /// uses to inject a just-this-part micro-drill (R3). Reads the enrichment-only
+  /// [GraphNode.criterion] tag — never touches the essential rail.
+  String? drillForCriterion(String letterId, String criterion) {
+    for (final n in nodes) {
+      if (n.criterion == criterion && n.exerciseId.startsWith('$letterId.')) {
+        return n.exerciseId;
+      }
+    }
+    return null;
+  }
 
   /// The next node id along the canonical forward walk (declaration order),
   /// starting from [exerciseId]. Null at the very end of the graph or for an
