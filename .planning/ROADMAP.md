@@ -830,7 +830,7 @@ Plans:
 
 **Wave 1**
 
-- [ ] 18-01-PLAN.md — Wave 0 RED contract: one failing test per R1..R9 + EMA Dart↔Python parity + non-PII/422 guards + signed:false selection gold-set stub
+- [x] 18-01-PLAN.md — Wave 0 RED contract: one failing test per R1..R9 + EMA Dart↔Python parity + non-PII/422 guards + signed:false selection gold-set stub (completed 2026-07-11)
 
 **Wave 2** *(blocked on Wave 1)*
 
@@ -874,6 +874,6 @@ Plans:
 | 15. BUILD — dynamic grounded exercise selection on baa | 8/7 | Complete    | 2026-06-28 |
 | 16. BUILD — presence + voice + eval gate + demo-harden | 3/6 | In Progress|  |
 | 17. BUILD — stroke-aware coaching (on-device geo-diff → coach) | 10/10 | Complete   | 2026-07-06 |
-| 18. BUILD — the living tutor (per-child dynamic exercise selection) | 0/11 | Planned | - |
+| 18. BUILD — the living tutor (per-child dynamic exercise selection) | 1/11 | In Progress | - |
 
 **Coverage:** the 14 original v2.0 requirements map across Phases 14–16; Phase 17 (added 2026-06-30 from the stroke-aware spike) adds STRK-01 / GROUND-04 / EVAL-03. The three spikes (11–13) own no requirements by design. See REQUIREMENTS.md → v2.0 Traceability.
