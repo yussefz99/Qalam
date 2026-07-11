@@ -1879,6 +1879,1221 @@ class LetterExerciseRepsCompanion extends UpdateCompanion<LetterExerciseRep> {
   }
 }
 
+class $LetterCriterionEvidenceTable extends LetterCriterionEvidence
+    with TableInfo<$LetterCriterionEvidenceTable, LetterCriterionEvidenceData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $LetterCriterionEvidenceTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _letterIdMeta = const VerificationMeta(
+    'letterId',
+  );
+  @override
+  late final GeneratedColumn<String> letterId = GeneratedColumn<String>(
+    'letter_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _criterionMeta = const VerificationMeta(
+    'criterion',
+  );
+  @override
+  late final GeneratedColumn<String> criterion = GeneratedColumn<String>(
+    'criterion',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _passedMeta = const VerificationMeta('passed');
+  @override
+  late final GeneratedColumn<bool> passed = GeneratedColumn<bool>(
+    'passed',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("passed" IN (0, 1))',
+    ),
+  );
+  static const VerificationMeta _sourceMeta = const VerificationMeta('source');
+  @override
+  late final GeneratedColumn<String> source = GeneratedColumn<String>(
+    'source',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    letterId,
+    criterion,
+    passed,
+    source,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'letter_criterion_evidence';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<LetterCriterionEvidenceData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('letter_id')) {
+      context.handle(
+        _letterIdMeta,
+        letterId.isAcceptableOrUnknown(data['letter_id']!, _letterIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_letterIdMeta);
+    }
+    if (data.containsKey('criterion')) {
+      context.handle(
+        _criterionMeta,
+        criterion.isAcceptableOrUnknown(data['criterion']!, _criterionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_criterionMeta);
+    }
+    if (data.containsKey('passed')) {
+      context.handle(
+        _passedMeta,
+        passed.isAcceptableOrUnknown(data['passed']!, _passedMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_passedMeta);
+    }
+    if (data.containsKey('source')) {
+      context.handle(
+        _sourceMeta,
+        source.isAcceptableOrUnknown(data['source']!, _sourceMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sourceMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  LetterCriterionEvidenceData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return LetterCriterionEvidenceData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      letterId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}letter_id'],
+      )!,
+      criterion: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}criterion'],
+      )!,
+      passed: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}passed'],
+      )!,
+      source: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $LetterCriterionEvidenceTable createAlias(String alias) {
+    return $LetterCriterionEvidenceTable(attachedDatabase, alias);
+  }
+}
+
+class LetterCriterionEvidenceData extends DataClass
+    implements Insertable<LetterCriterionEvidenceData> {
+  final int id;
+  final String letterId;
+  final String criterion;
+  final bool passed;
+  final String source;
+  final DateTime createdAt;
+  const LetterCriterionEvidenceData({
+    required this.id,
+    required this.letterId,
+    required this.criterion,
+    required this.passed,
+    required this.source,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['letter_id'] = Variable<String>(letterId);
+    map['criterion'] = Variable<String>(criterion);
+    map['passed'] = Variable<bool>(passed);
+    map['source'] = Variable<String>(source);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  LetterCriterionEvidenceCompanion toCompanion(bool nullToAbsent) {
+    return LetterCriterionEvidenceCompanion(
+      id: Value(id),
+      letterId: Value(letterId),
+      criterion: Value(criterion),
+      passed: Value(passed),
+      source: Value(source),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory LetterCriterionEvidenceData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return LetterCriterionEvidenceData(
+      id: serializer.fromJson<int>(json['id']),
+      letterId: serializer.fromJson<String>(json['letterId']),
+      criterion: serializer.fromJson<String>(json['criterion']),
+      passed: serializer.fromJson<bool>(json['passed']),
+      source: serializer.fromJson<String>(json['source']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'letterId': serializer.toJson<String>(letterId),
+      'criterion': serializer.toJson<String>(criterion),
+      'passed': serializer.toJson<bool>(passed),
+      'source': serializer.toJson<String>(source),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  LetterCriterionEvidenceData copyWith({
+    int? id,
+    String? letterId,
+    String? criterion,
+    bool? passed,
+    String? source,
+    DateTime? createdAt,
+  }) => LetterCriterionEvidenceData(
+    id: id ?? this.id,
+    letterId: letterId ?? this.letterId,
+    criterion: criterion ?? this.criterion,
+    passed: passed ?? this.passed,
+    source: source ?? this.source,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  LetterCriterionEvidenceData copyWithCompanion(
+    LetterCriterionEvidenceCompanion data,
+  ) {
+    return LetterCriterionEvidenceData(
+      id: data.id.present ? data.id.value : this.id,
+      letterId: data.letterId.present ? data.letterId.value : this.letterId,
+      criterion: data.criterion.present ? data.criterion.value : this.criterion,
+      passed: data.passed.present ? data.passed.value : this.passed,
+      source: data.source.present ? data.source.value : this.source,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LetterCriterionEvidenceData(')
+          ..write('id: $id, ')
+          ..write('letterId: $letterId, ')
+          ..write('criterion: $criterion, ')
+          ..write('passed: $passed, ')
+          ..write('source: $source, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, letterId, criterion, passed, source, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is LetterCriterionEvidenceData &&
+          other.id == this.id &&
+          other.letterId == this.letterId &&
+          other.criterion == this.criterion &&
+          other.passed == this.passed &&
+          other.source == this.source &&
+          other.createdAt == this.createdAt);
+}
+
+class LetterCriterionEvidenceCompanion
+    extends UpdateCompanion<LetterCriterionEvidenceData> {
+  final Value<int> id;
+  final Value<String> letterId;
+  final Value<String> criterion;
+  final Value<bool> passed;
+  final Value<String> source;
+  final Value<DateTime> createdAt;
+  const LetterCriterionEvidenceCompanion({
+    this.id = const Value.absent(),
+    this.letterId = const Value.absent(),
+    this.criterion = const Value.absent(),
+    this.passed = const Value.absent(),
+    this.source = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  });
+  LetterCriterionEvidenceCompanion.insert({
+    this.id = const Value.absent(),
+    required String letterId,
+    required String criterion,
+    required bool passed,
+    required String source,
+    required DateTime createdAt,
+  }) : letterId = Value(letterId),
+       criterion = Value(criterion),
+       passed = Value(passed),
+       source = Value(source),
+       createdAt = Value(createdAt);
+  static Insertable<LetterCriterionEvidenceData> custom({
+    Expression<int>? id,
+    Expression<String>? letterId,
+    Expression<String>? criterion,
+    Expression<bool>? passed,
+    Expression<String>? source,
+    Expression<DateTime>? createdAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (letterId != null) 'letter_id': letterId,
+      if (criterion != null) 'criterion': criterion,
+      if (passed != null) 'passed': passed,
+      if (source != null) 'source': source,
+      if (createdAt != null) 'created_at': createdAt,
+    });
+  }
+
+  LetterCriterionEvidenceCompanion copyWith({
+    Value<int>? id,
+    Value<String>? letterId,
+    Value<String>? criterion,
+    Value<bool>? passed,
+    Value<String>? source,
+    Value<DateTime>? createdAt,
+  }) {
+    return LetterCriterionEvidenceCompanion(
+      id: id ?? this.id,
+      letterId: letterId ?? this.letterId,
+      criterion: criterion ?? this.criterion,
+      passed: passed ?? this.passed,
+      source: source ?? this.source,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (letterId.present) {
+      map['letter_id'] = Variable<String>(letterId.value);
+    }
+    if (criterion.present) {
+      map['criterion'] = Variable<String>(criterion.value);
+    }
+    if (passed.present) {
+      map['passed'] = Variable<bool>(passed.value);
+    }
+    if (source.present) {
+      map['source'] = Variable<String>(source.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('LetterCriterionEvidenceCompanion(')
+          ..write('id: $id, ')
+          ..write('letterId: $letterId, ')
+          ..write('criterion: $criterion, ')
+          ..write('passed: $passed, ')
+          ..write('source: $source, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ArcStateRowsTable extends ArcStateRows
+    with TableInfo<$ArcStateRowsTable, ArcStateRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ArcStateRowsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _letterIdMeta = const VerificationMeta(
+    'letterId',
+  );
+  @override
+  late final GeneratedColumn<String> letterId = GeneratedColumn<String>(
+    'letter_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _activeMeta = const VerificationMeta('active');
+  @override
+  late final GeneratedColumn<bool> active = GeneratedColumn<bool>(
+    'active',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("active" IN (0, 1))',
+    ),
+  );
+  static const VerificationMeta _stepMeta = const VerificationMeta('step');
+  @override
+  late final GeneratedColumn<String> step = GeneratedColumn<String>(
+    'step',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _targetCriterionMeta = const VerificationMeta(
+    'targetCriterion',
+  );
+  @override
+  late final GeneratedColumn<String> targetCriterion = GeneratedColumn<String>(
+    'target_criterion',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _exerciseToRetryMeta = const VerificationMeta(
+    'exerciseToRetry',
+  );
+  @override
+  late final GeneratedColumn<String> exerciseToRetry = GeneratedColumn<String>(
+    'exercise_to_retry',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    letterId,
+    active,
+    step,
+    targetCriterion,
+    exerciseToRetry,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'arc_state_rows';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ArcStateRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('letter_id')) {
+      context.handle(
+        _letterIdMeta,
+        letterId.isAcceptableOrUnknown(data['letter_id']!, _letterIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_letterIdMeta);
+    }
+    if (data.containsKey('active')) {
+      context.handle(
+        _activeMeta,
+        active.isAcceptableOrUnknown(data['active']!, _activeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_activeMeta);
+    }
+    if (data.containsKey('step')) {
+      context.handle(
+        _stepMeta,
+        step.isAcceptableOrUnknown(data['step']!, _stepMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_stepMeta);
+    }
+    if (data.containsKey('target_criterion')) {
+      context.handle(
+        _targetCriterionMeta,
+        targetCriterion.isAcceptableOrUnknown(
+          data['target_criterion']!,
+          _targetCriterionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('exercise_to_retry')) {
+      context.handle(
+        _exerciseToRetryMeta,
+        exerciseToRetry.isAcceptableOrUnknown(
+          data['exercise_to_retry']!,
+          _exerciseToRetryMeta,
+        ),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {letterId};
+  @override
+  ArcStateRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ArcStateRow(
+      letterId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}letter_id'],
+      )!,
+      active: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}active'],
+      )!,
+      step: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}step'],
+      )!,
+      targetCriterion: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}target_criterion'],
+      ),
+      exerciseToRetry: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}exercise_to_retry'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ArcStateRowsTable createAlias(String alias) {
+    return $ArcStateRowsTable(attachedDatabase, alias);
+  }
+}
+
+class ArcStateRow extends DataClass implements Insertable<ArcStateRow> {
+  final String letterId;
+  final bool active;
+  final String step;
+  final String? targetCriterion;
+  final String? exerciseToRetry;
+  final DateTime updatedAt;
+  const ArcStateRow({
+    required this.letterId,
+    required this.active,
+    required this.step,
+    this.targetCriterion,
+    this.exerciseToRetry,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['letter_id'] = Variable<String>(letterId);
+    map['active'] = Variable<bool>(active);
+    map['step'] = Variable<String>(step);
+    if (!nullToAbsent || targetCriterion != null) {
+      map['target_criterion'] = Variable<String>(targetCriterion);
+    }
+    if (!nullToAbsent || exerciseToRetry != null) {
+      map['exercise_to_retry'] = Variable<String>(exerciseToRetry);
+    }
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  ArcStateRowsCompanion toCompanion(bool nullToAbsent) {
+    return ArcStateRowsCompanion(
+      letterId: Value(letterId),
+      active: Value(active),
+      step: Value(step),
+      targetCriterion: targetCriterion == null && nullToAbsent
+          ? const Value.absent()
+          : Value(targetCriterion),
+      exerciseToRetry: exerciseToRetry == null && nullToAbsent
+          ? const Value.absent()
+          : Value(exerciseToRetry),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory ArcStateRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ArcStateRow(
+      letterId: serializer.fromJson<String>(json['letterId']),
+      active: serializer.fromJson<bool>(json['active']),
+      step: serializer.fromJson<String>(json['step']),
+      targetCriterion: serializer.fromJson<String?>(json['targetCriterion']),
+      exerciseToRetry: serializer.fromJson<String?>(json['exerciseToRetry']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'letterId': serializer.toJson<String>(letterId),
+      'active': serializer.toJson<bool>(active),
+      'step': serializer.toJson<String>(step),
+      'targetCriterion': serializer.toJson<String?>(targetCriterion),
+      'exerciseToRetry': serializer.toJson<String?>(exerciseToRetry),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  ArcStateRow copyWith({
+    String? letterId,
+    bool? active,
+    String? step,
+    Value<String?> targetCriterion = const Value.absent(),
+    Value<String?> exerciseToRetry = const Value.absent(),
+    DateTime? updatedAt,
+  }) => ArcStateRow(
+    letterId: letterId ?? this.letterId,
+    active: active ?? this.active,
+    step: step ?? this.step,
+    targetCriterion: targetCriterion.present
+        ? targetCriterion.value
+        : this.targetCriterion,
+    exerciseToRetry: exerciseToRetry.present
+        ? exerciseToRetry.value
+        : this.exerciseToRetry,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  ArcStateRow copyWithCompanion(ArcStateRowsCompanion data) {
+    return ArcStateRow(
+      letterId: data.letterId.present ? data.letterId.value : this.letterId,
+      active: data.active.present ? data.active.value : this.active,
+      step: data.step.present ? data.step.value : this.step,
+      targetCriterion: data.targetCriterion.present
+          ? data.targetCriterion.value
+          : this.targetCriterion,
+      exerciseToRetry: data.exerciseToRetry.present
+          ? data.exerciseToRetry.value
+          : this.exerciseToRetry,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ArcStateRow(')
+          ..write('letterId: $letterId, ')
+          ..write('active: $active, ')
+          ..write('step: $step, ')
+          ..write('targetCriterion: $targetCriterion, ')
+          ..write('exerciseToRetry: $exerciseToRetry, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    letterId,
+    active,
+    step,
+    targetCriterion,
+    exerciseToRetry,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ArcStateRow &&
+          other.letterId == this.letterId &&
+          other.active == this.active &&
+          other.step == this.step &&
+          other.targetCriterion == this.targetCriterion &&
+          other.exerciseToRetry == this.exerciseToRetry &&
+          other.updatedAt == this.updatedAt);
+}
+
+class ArcStateRowsCompanion extends UpdateCompanion<ArcStateRow> {
+  final Value<String> letterId;
+  final Value<bool> active;
+  final Value<String> step;
+  final Value<String?> targetCriterion;
+  final Value<String?> exerciseToRetry;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const ArcStateRowsCompanion({
+    this.letterId = const Value.absent(),
+    this.active = const Value.absent(),
+    this.step = const Value.absent(),
+    this.targetCriterion = const Value.absent(),
+    this.exerciseToRetry = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ArcStateRowsCompanion.insert({
+    required String letterId,
+    required bool active,
+    required String step,
+    this.targetCriterion = const Value.absent(),
+    this.exerciseToRetry = const Value.absent(),
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : letterId = Value(letterId),
+       active = Value(active),
+       step = Value(step),
+       updatedAt = Value(updatedAt);
+  static Insertable<ArcStateRow> custom({
+    Expression<String>? letterId,
+    Expression<bool>? active,
+    Expression<String>? step,
+    Expression<String>? targetCriterion,
+    Expression<String>? exerciseToRetry,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (letterId != null) 'letter_id': letterId,
+      if (active != null) 'active': active,
+      if (step != null) 'step': step,
+      if (targetCriterion != null) 'target_criterion': targetCriterion,
+      if (exerciseToRetry != null) 'exercise_to_retry': exerciseToRetry,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ArcStateRowsCompanion copyWith({
+    Value<String>? letterId,
+    Value<bool>? active,
+    Value<String>? step,
+    Value<String?>? targetCriterion,
+    Value<String?>? exerciseToRetry,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return ArcStateRowsCompanion(
+      letterId: letterId ?? this.letterId,
+      active: active ?? this.active,
+      step: step ?? this.step,
+      targetCriterion: targetCriterion ?? this.targetCriterion,
+      exerciseToRetry: exerciseToRetry ?? this.exerciseToRetry,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (letterId.present) {
+      map['letter_id'] = Variable<String>(letterId.value);
+    }
+    if (active.present) {
+      map['active'] = Variable<bool>(active.value);
+    }
+    if (step.present) {
+      map['step'] = Variable<String>(step.value);
+    }
+    if (targetCriterion.present) {
+      map['target_criterion'] = Variable<String>(targetCriterion.value);
+    }
+    if (exerciseToRetry.present) {
+      map['exercise_to_retry'] = Variable<String>(exerciseToRetry.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ArcStateRowsCompanion(')
+          ..write('letterId: $letterId, ')
+          ..write('active: $active, ')
+          ..write('step: $step, ')
+          ..write('targetCriterion: $targetCriterion, ')
+          ..write('exerciseToRetry: $exerciseToRetry, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ChildProfileMirrorTable extends ChildProfileMirror
+    with TableInfo<$ChildProfileMirrorTable, ChildProfileMirrorData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ChildProfileMirrorTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _uidMeta = const VerificationMeta('uid');
+  @override
+  late final GeneratedColumn<String> uid = GeneratedColumn<String>(
+    'uid',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _strengthsMeta = const VerificationMeta(
+    'strengths',
+  );
+  @override
+  late final GeneratedColumn<String> strengths = GeneratedColumn<String>(
+    'strengths',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _strugglesMeta = const VerificationMeta(
+    'struggles',
+  );
+  @override
+  late final GeneratedColumn<String> struggles = GeneratedColumn<String>(
+    'struggles',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _perCriterionMeta = const VerificationMeta(
+    'perCriterion',
+  );
+  @override
+  late final GeneratedColumn<String> perCriterion = GeneratedColumn<String>(
+    'per_criterion',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    uid,
+    strengths,
+    struggles,
+    perCriterion,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'child_profile_mirror';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ChildProfileMirrorData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('uid')) {
+      context.handle(
+        _uidMeta,
+        uid.isAcceptableOrUnknown(data['uid']!, _uidMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_uidMeta);
+    }
+    if (data.containsKey('strengths')) {
+      context.handle(
+        _strengthsMeta,
+        strengths.isAcceptableOrUnknown(data['strengths']!, _strengthsMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_strengthsMeta);
+    }
+    if (data.containsKey('struggles')) {
+      context.handle(
+        _strugglesMeta,
+        struggles.isAcceptableOrUnknown(data['struggles']!, _strugglesMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_strugglesMeta);
+    }
+    if (data.containsKey('per_criterion')) {
+      context.handle(
+        _perCriterionMeta,
+        perCriterion.isAcceptableOrUnknown(
+          data['per_criterion']!,
+          _perCriterionMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_perCriterionMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {uid};
+  @override
+  ChildProfileMirrorData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ChildProfileMirrorData(
+      uid: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}uid'],
+      )!,
+      strengths: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}strengths'],
+      )!,
+      struggles: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}struggles'],
+      )!,
+      perCriterion: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}per_criterion'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ChildProfileMirrorTable createAlias(String alias) {
+    return $ChildProfileMirrorTable(attachedDatabase, alias);
+  }
+}
+
+class ChildProfileMirrorData extends DataClass
+    implements Insertable<ChildProfileMirrorData> {
+  final String uid;
+  final String strengths;
+  final String struggles;
+  final String perCriterion;
+  final DateTime updatedAt;
+  const ChildProfileMirrorData({
+    required this.uid,
+    required this.strengths,
+    required this.struggles,
+    required this.perCriterion,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['uid'] = Variable<String>(uid);
+    map['strengths'] = Variable<String>(strengths);
+    map['struggles'] = Variable<String>(struggles);
+    map['per_criterion'] = Variable<String>(perCriterion);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  ChildProfileMirrorCompanion toCompanion(bool nullToAbsent) {
+    return ChildProfileMirrorCompanion(
+      uid: Value(uid),
+      strengths: Value(strengths),
+      struggles: Value(struggles),
+      perCriterion: Value(perCriterion),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory ChildProfileMirrorData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ChildProfileMirrorData(
+      uid: serializer.fromJson<String>(json['uid']),
+      strengths: serializer.fromJson<String>(json['strengths']),
+      struggles: serializer.fromJson<String>(json['struggles']),
+      perCriterion: serializer.fromJson<String>(json['perCriterion']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'uid': serializer.toJson<String>(uid),
+      'strengths': serializer.toJson<String>(strengths),
+      'struggles': serializer.toJson<String>(struggles),
+      'perCriterion': serializer.toJson<String>(perCriterion),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  ChildProfileMirrorData copyWith({
+    String? uid,
+    String? strengths,
+    String? struggles,
+    String? perCriterion,
+    DateTime? updatedAt,
+  }) => ChildProfileMirrorData(
+    uid: uid ?? this.uid,
+    strengths: strengths ?? this.strengths,
+    struggles: struggles ?? this.struggles,
+    perCriterion: perCriterion ?? this.perCriterion,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  ChildProfileMirrorData copyWithCompanion(ChildProfileMirrorCompanion data) {
+    return ChildProfileMirrorData(
+      uid: data.uid.present ? data.uid.value : this.uid,
+      strengths: data.strengths.present ? data.strengths.value : this.strengths,
+      struggles: data.struggles.present ? data.struggles.value : this.struggles,
+      perCriterion: data.perCriterion.present
+          ? data.perCriterion.value
+          : this.perCriterion,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ChildProfileMirrorData(')
+          ..write('uid: $uid, ')
+          ..write('strengths: $strengths, ')
+          ..write('struggles: $struggles, ')
+          ..write('perCriterion: $perCriterion, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(uid, strengths, struggles, perCriterion, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ChildProfileMirrorData &&
+          other.uid == this.uid &&
+          other.strengths == this.strengths &&
+          other.struggles == this.struggles &&
+          other.perCriterion == this.perCriterion &&
+          other.updatedAt == this.updatedAt);
+}
+
+class ChildProfileMirrorCompanion
+    extends UpdateCompanion<ChildProfileMirrorData> {
+  final Value<String> uid;
+  final Value<String> strengths;
+  final Value<String> struggles;
+  final Value<String> perCriterion;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const ChildProfileMirrorCompanion({
+    this.uid = const Value.absent(),
+    this.strengths = const Value.absent(),
+    this.struggles = const Value.absent(),
+    this.perCriterion = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ChildProfileMirrorCompanion.insert({
+    required String uid,
+    required String strengths,
+    required String struggles,
+    required String perCriterion,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : uid = Value(uid),
+       strengths = Value(strengths),
+       struggles = Value(struggles),
+       perCriterion = Value(perCriterion),
+       updatedAt = Value(updatedAt);
+  static Insertable<ChildProfileMirrorData> custom({
+    Expression<String>? uid,
+    Expression<String>? strengths,
+    Expression<String>? struggles,
+    Expression<String>? perCriterion,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (uid != null) 'uid': uid,
+      if (strengths != null) 'strengths': strengths,
+      if (struggles != null) 'struggles': struggles,
+      if (perCriterion != null) 'per_criterion': perCriterion,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ChildProfileMirrorCompanion copyWith({
+    Value<String>? uid,
+    Value<String>? strengths,
+    Value<String>? struggles,
+    Value<String>? perCriterion,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return ChildProfileMirrorCompanion(
+      uid: uid ?? this.uid,
+      strengths: strengths ?? this.strengths,
+      struggles: struggles ?? this.struggles,
+      perCriterion: perCriterion ?? this.perCriterion,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (uid.present) {
+      map['uid'] = Variable<String>(uid.value);
+    }
+    if (strengths.present) {
+      map['strengths'] = Variable<String>(strengths.value);
+    }
+    if (struggles.present) {
+      map['struggles'] = Variable<String>(struggles.value);
+    }
+    if (perCriterion.present) {
+      map['per_criterion'] = Variable<String>(perCriterion.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ChildProfileMirrorCompanion(')
+          ..write('uid: $uid, ')
+          ..write('strengths: $strengths, ')
+          ..write('struggles: $struggles, ')
+          ..write('perCriterion: $perCriterion, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1890,6 +3105,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $LetterGraphPositionTable(this);
   late final $LetterExerciseRepsTable letterExerciseReps =
       $LetterExerciseRepsTable(this);
+  late final $LetterCriterionEvidenceTable letterCriterionEvidence =
+      $LetterCriterionEvidenceTable(this);
+  late final $ArcStateRowsTable arcStateRows = $ArcStateRowsTable(this);
+  late final $ChildProfileMirrorTable childProfileMirror =
+      $ChildProfileMirrorTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1901,6 +3121,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     letterReps,
     letterGraphPosition,
     letterExerciseReps,
+    letterCriterionEvidence,
+    arcStateRows,
+    childProfileMirror,
   ];
 }
 
@@ -3005,6 +4228,676 @@ typedef $$LetterExerciseRepsTableProcessedTableManager =
       LetterExerciseRep,
       PrefetchHooks Function()
     >;
+typedef $$LetterCriterionEvidenceTableCreateCompanionBuilder =
+    LetterCriterionEvidenceCompanion Function({
+      Value<int> id,
+      required String letterId,
+      required String criterion,
+      required bool passed,
+      required String source,
+      required DateTime createdAt,
+    });
+typedef $$LetterCriterionEvidenceTableUpdateCompanionBuilder =
+    LetterCriterionEvidenceCompanion Function({
+      Value<int> id,
+      Value<String> letterId,
+      Value<String> criterion,
+      Value<bool> passed,
+      Value<String> source,
+      Value<DateTime> createdAt,
+    });
+
+class $$LetterCriterionEvidenceTableFilterComposer
+    extends Composer<_$AppDatabase, $LetterCriterionEvidenceTable> {
+  $$LetterCriterionEvidenceTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get letterId => $composableBuilder(
+    column: $table.letterId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get criterion => $composableBuilder(
+    column: $table.criterion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get passed => $composableBuilder(
+    column: $table.passed,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$LetterCriterionEvidenceTableOrderingComposer
+    extends Composer<_$AppDatabase, $LetterCriterionEvidenceTable> {
+  $$LetterCriterionEvidenceTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get letterId => $composableBuilder(
+    column: $table.letterId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get criterion => $composableBuilder(
+    column: $table.criterion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get passed => $composableBuilder(
+    column: $table.passed,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$LetterCriterionEvidenceTableAnnotationComposer
+    extends Composer<_$AppDatabase, $LetterCriterionEvidenceTable> {
+  $$LetterCriterionEvidenceTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get letterId =>
+      $composableBuilder(column: $table.letterId, builder: (column) => column);
+
+  GeneratedColumn<String> get criterion =>
+      $composableBuilder(column: $table.criterion, builder: (column) => column);
+
+  GeneratedColumn<bool> get passed =>
+      $composableBuilder(column: $table.passed, builder: (column) => column);
+
+  GeneratedColumn<String> get source =>
+      $composableBuilder(column: $table.source, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+}
+
+class $$LetterCriterionEvidenceTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $LetterCriterionEvidenceTable,
+          LetterCriterionEvidenceData,
+          $$LetterCriterionEvidenceTableFilterComposer,
+          $$LetterCriterionEvidenceTableOrderingComposer,
+          $$LetterCriterionEvidenceTableAnnotationComposer,
+          $$LetterCriterionEvidenceTableCreateCompanionBuilder,
+          $$LetterCriterionEvidenceTableUpdateCompanionBuilder,
+          (
+            LetterCriterionEvidenceData,
+            BaseReferences<
+              _$AppDatabase,
+              $LetterCriterionEvidenceTable,
+              LetterCriterionEvidenceData
+            >,
+          ),
+          LetterCriterionEvidenceData,
+          PrefetchHooks Function()
+        > {
+  $$LetterCriterionEvidenceTableTableManager(
+    _$AppDatabase db,
+    $LetterCriterionEvidenceTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$LetterCriterionEvidenceTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$LetterCriterionEvidenceTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$LetterCriterionEvidenceTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> letterId = const Value.absent(),
+                Value<String> criterion = const Value.absent(),
+                Value<bool> passed = const Value.absent(),
+                Value<String> source = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+              }) => LetterCriterionEvidenceCompanion(
+                id: id,
+                letterId: letterId,
+                criterion: criterion,
+                passed: passed,
+                source: source,
+                createdAt: createdAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String letterId,
+                required String criterion,
+                required bool passed,
+                required String source,
+                required DateTime createdAt,
+              }) => LetterCriterionEvidenceCompanion.insert(
+                id: id,
+                letterId: letterId,
+                criterion: criterion,
+                passed: passed,
+                source: source,
+                createdAt: createdAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$LetterCriterionEvidenceTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $LetterCriterionEvidenceTable,
+      LetterCriterionEvidenceData,
+      $$LetterCriterionEvidenceTableFilterComposer,
+      $$LetterCriterionEvidenceTableOrderingComposer,
+      $$LetterCriterionEvidenceTableAnnotationComposer,
+      $$LetterCriterionEvidenceTableCreateCompanionBuilder,
+      $$LetterCriterionEvidenceTableUpdateCompanionBuilder,
+      (
+        LetterCriterionEvidenceData,
+        BaseReferences<
+          _$AppDatabase,
+          $LetterCriterionEvidenceTable,
+          LetterCriterionEvidenceData
+        >,
+      ),
+      LetterCriterionEvidenceData,
+      PrefetchHooks Function()
+    >;
+typedef $$ArcStateRowsTableCreateCompanionBuilder =
+    ArcStateRowsCompanion Function({
+      required String letterId,
+      required bool active,
+      required String step,
+      Value<String?> targetCriterion,
+      Value<String?> exerciseToRetry,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$ArcStateRowsTableUpdateCompanionBuilder =
+    ArcStateRowsCompanion Function({
+      Value<String> letterId,
+      Value<bool> active,
+      Value<String> step,
+      Value<String?> targetCriterion,
+      Value<String?> exerciseToRetry,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$ArcStateRowsTableFilterComposer
+    extends Composer<_$AppDatabase, $ArcStateRowsTable> {
+  $$ArcStateRowsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get letterId => $composableBuilder(
+    column: $table.letterId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get active => $composableBuilder(
+    column: $table.active,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get step => $composableBuilder(
+    column: $table.step,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get targetCriterion => $composableBuilder(
+    column: $table.targetCriterion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get exerciseToRetry => $composableBuilder(
+    column: $table.exerciseToRetry,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ArcStateRowsTableOrderingComposer
+    extends Composer<_$AppDatabase, $ArcStateRowsTable> {
+  $$ArcStateRowsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get letterId => $composableBuilder(
+    column: $table.letterId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get active => $composableBuilder(
+    column: $table.active,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get step => $composableBuilder(
+    column: $table.step,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get targetCriterion => $composableBuilder(
+    column: $table.targetCriterion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get exerciseToRetry => $composableBuilder(
+    column: $table.exerciseToRetry,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ArcStateRowsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ArcStateRowsTable> {
+  $$ArcStateRowsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get letterId =>
+      $composableBuilder(column: $table.letterId, builder: (column) => column);
+
+  GeneratedColumn<bool> get active =>
+      $composableBuilder(column: $table.active, builder: (column) => column);
+
+  GeneratedColumn<String> get step =>
+      $composableBuilder(column: $table.step, builder: (column) => column);
+
+  GeneratedColumn<String> get targetCriterion => $composableBuilder(
+    column: $table.targetCriterion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get exerciseToRetry => $composableBuilder(
+    column: $table.exerciseToRetry,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$ArcStateRowsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ArcStateRowsTable,
+          ArcStateRow,
+          $$ArcStateRowsTableFilterComposer,
+          $$ArcStateRowsTableOrderingComposer,
+          $$ArcStateRowsTableAnnotationComposer,
+          $$ArcStateRowsTableCreateCompanionBuilder,
+          $$ArcStateRowsTableUpdateCompanionBuilder,
+          (
+            ArcStateRow,
+            BaseReferences<_$AppDatabase, $ArcStateRowsTable, ArcStateRow>,
+          ),
+          ArcStateRow,
+          PrefetchHooks Function()
+        > {
+  $$ArcStateRowsTableTableManager(_$AppDatabase db, $ArcStateRowsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ArcStateRowsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ArcStateRowsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ArcStateRowsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> letterId = const Value.absent(),
+                Value<bool> active = const Value.absent(),
+                Value<String> step = const Value.absent(),
+                Value<String?> targetCriterion = const Value.absent(),
+                Value<String?> exerciseToRetry = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ArcStateRowsCompanion(
+                letterId: letterId,
+                active: active,
+                step: step,
+                targetCriterion: targetCriterion,
+                exerciseToRetry: exerciseToRetry,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String letterId,
+                required bool active,
+                required String step,
+                Value<String?> targetCriterion = const Value.absent(),
+                Value<String?> exerciseToRetry = const Value.absent(),
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => ArcStateRowsCompanion.insert(
+                letterId: letterId,
+                active: active,
+                step: step,
+                targetCriterion: targetCriterion,
+                exerciseToRetry: exerciseToRetry,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ArcStateRowsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ArcStateRowsTable,
+      ArcStateRow,
+      $$ArcStateRowsTableFilterComposer,
+      $$ArcStateRowsTableOrderingComposer,
+      $$ArcStateRowsTableAnnotationComposer,
+      $$ArcStateRowsTableCreateCompanionBuilder,
+      $$ArcStateRowsTableUpdateCompanionBuilder,
+      (
+        ArcStateRow,
+        BaseReferences<_$AppDatabase, $ArcStateRowsTable, ArcStateRow>,
+      ),
+      ArcStateRow,
+      PrefetchHooks Function()
+    >;
+typedef $$ChildProfileMirrorTableCreateCompanionBuilder =
+    ChildProfileMirrorCompanion Function({
+      required String uid,
+      required String strengths,
+      required String struggles,
+      required String perCriterion,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$ChildProfileMirrorTableUpdateCompanionBuilder =
+    ChildProfileMirrorCompanion Function({
+      Value<String> uid,
+      Value<String> strengths,
+      Value<String> struggles,
+      Value<String> perCriterion,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$ChildProfileMirrorTableFilterComposer
+    extends Composer<_$AppDatabase, $ChildProfileMirrorTable> {
+  $$ChildProfileMirrorTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get uid => $composableBuilder(
+    column: $table.uid,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get strengths => $composableBuilder(
+    column: $table.strengths,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get struggles => $composableBuilder(
+    column: $table.struggles,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get perCriterion => $composableBuilder(
+    column: $table.perCriterion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ChildProfileMirrorTableOrderingComposer
+    extends Composer<_$AppDatabase, $ChildProfileMirrorTable> {
+  $$ChildProfileMirrorTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get uid => $composableBuilder(
+    column: $table.uid,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get strengths => $composableBuilder(
+    column: $table.strengths,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get struggles => $composableBuilder(
+    column: $table.struggles,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get perCriterion => $composableBuilder(
+    column: $table.perCriterion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ChildProfileMirrorTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ChildProfileMirrorTable> {
+  $$ChildProfileMirrorTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get uid =>
+      $composableBuilder(column: $table.uid, builder: (column) => column);
+
+  GeneratedColumn<String> get strengths =>
+      $composableBuilder(column: $table.strengths, builder: (column) => column);
+
+  GeneratedColumn<String> get struggles =>
+      $composableBuilder(column: $table.struggles, builder: (column) => column);
+
+  GeneratedColumn<String> get perCriterion => $composableBuilder(
+    column: $table.perCriterion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$ChildProfileMirrorTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ChildProfileMirrorTable,
+          ChildProfileMirrorData,
+          $$ChildProfileMirrorTableFilterComposer,
+          $$ChildProfileMirrorTableOrderingComposer,
+          $$ChildProfileMirrorTableAnnotationComposer,
+          $$ChildProfileMirrorTableCreateCompanionBuilder,
+          $$ChildProfileMirrorTableUpdateCompanionBuilder,
+          (
+            ChildProfileMirrorData,
+            BaseReferences<
+              _$AppDatabase,
+              $ChildProfileMirrorTable,
+              ChildProfileMirrorData
+            >,
+          ),
+          ChildProfileMirrorData,
+          PrefetchHooks Function()
+        > {
+  $$ChildProfileMirrorTableTableManager(
+    _$AppDatabase db,
+    $ChildProfileMirrorTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ChildProfileMirrorTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ChildProfileMirrorTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ChildProfileMirrorTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> uid = const Value.absent(),
+                Value<String> strengths = const Value.absent(),
+                Value<String> struggles = const Value.absent(),
+                Value<String> perCriterion = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ChildProfileMirrorCompanion(
+                uid: uid,
+                strengths: strengths,
+                struggles: struggles,
+                perCriterion: perCriterion,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String uid,
+                required String strengths,
+                required String struggles,
+                required String perCriterion,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => ChildProfileMirrorCompanion.insert(
+                uid: uid,
+                strengths: strengths,
+                struggles: struggles,
+                perCriterion: perCriterion,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ChildProfileMirrorTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ChildProfileMirrorTable,
+      ChildProfileMirrorData,
+      $$ChildProfileMirrorTableFilterComposer,
+      $$ChildProfileMirrorTableOrderingComposer,
+      $$ChildProfileMirrorTableAnnotationComposer,
+      $$ChildProfileMirrorTableCreateCompanionBuilder,
+      $$ChildProfileMirrorTableUpdateCompanionBuilder,
+      (
+        ChildProfileMirrorData,
+        BaseReferences<
+          _$AppDatabase,
+          $ChildProfileMirrorTable,
+          ChildProfileMirrorData
+        >,
+      ),
+      ChildProfileMirrorData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3021,6 +4914,15 @@ class $AppDatabaseManager {
       $$LetterGraphPositionTableTableManager(_db, _db.letterGraphPosition);
   $$LetterExerciseRepsTableTableManager get letterExerciseReps =>
       $$LetterExerciseRepsTableTableManager(_db, _db.letterExerciseReps);
+  $$LetterCriterionEvidenceTableTableManager get letterCriterionEvidence =>
+      $$LetterCriterionEvidenceTableTableManager(
+        _db,
+        _db.letterCriterionEvidence,
+      );
+  $$ArcStateRowsTableTableManager get arcStateRows =>
+      $$ArcStateRowsTableTableManager(_db, _db.arcStateRows);
+  $$ChildProfileMirrorTableTableManager get childProfileMirror =>
+      $$ChildProfileMirrorTableTableManager(_db, _db.childProfileMirror);
 }
 
 // **************************************************************************

@@ -129,6 +129,74 @@ class LetterExerciseReps extends Table {
   Set<Column> get primaryKey => {letterId, exerciseId};
 }
 
+/// Offline per-criterion evidence accrual — Phase 18 (D-14 digest, Plan 18-03).
+///
+/// Every graded attempt appends ONE row: which letter, which geometric criterion,
+/// pass/fail, and whether it came from an isolated-letter exercise (`"letter"`) or a
+/// word attempt (`"word"`). The nightly digest (D-14) reads the accrued rows, folds
+/// them into per-criterion EMAs server-side, then the client calls [clearEvidence]
+/// to cap on-device growth (threat T-18-03-03).
+///
+/// SECURITY (T-18-03-01): only ids / a bool / a fixed `source` enum / a timestamp —
+/// NEVER a stroke point, an Offset, a child name, or any PII. Values are never
+/// logged (mirrors the LetterReps / LetterMastery no-PII convention).
+class LetterCriterionEvidence extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get letterId => text()(); // "baa"
+  TextColumn get criterion => text()(); // "dot" | "shape" | "strokeOrder" | ...
+  BoolColumn get passed => boolean()(); // the already-derived attempt outcome
+  TextColumn get source => text()(); // "letter" | "word"
+  DateTimeColumn get createdAt => dateTime()();
+}
+
+/// The child's remediation-arc resume state per letter — Phase 18 (D-12, Plan
+/// 18-03). One row per letter that has an active (or last-known) arc.
+///
+/// Mirrors the [LetterGraphPosition] resume-cursor pattern: re-entering the unit
+/// after an app restart restores the arc mid-flight (entry → stepDown → rebuild →
+/// retryOriginal) instead of dropping the child back to the top.
+///
+/// SECURITY (T-18-03-01): only ids / a bool / fixed-vocabulary step & criterion ids
+/// / a timestamp — never a stroke point or PII. Values are never logged.
+class ArcStateRows extends Table {
+  TextColumn get letterId => text()(); // PK — "baa"
+  BoolColumn get active => boolean()(); // is an arc in flight?
+  TextColumn get step =>
+      text()(); // entry | stepDown | rebuild | retryOriginal
+  TextColumn get targetCriterion =>
+      text().nullable()(); // the criterion under repair
+  TextColumn get exerciseToRetry =>
+      text().nullable()(); // the original exercise id to return to
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {letterId};
+}
+
+/// The on-device mirror of the child's compiled cross-session profile — Phase 18
+/// (D-16 boot mirror, Plan 18-03). One row per Firebase account (uid PK).
+///
+/// The nightly Python compile (18-09) writes the child's strengths / struggles /
+/// per-criterion EMAs; this table mirrors that snapshot on-device so the FIRST
+/// session after a cold boot already knows the child (no round-trip). The list/map
+/// columns are JSON-encoded text (Drift has no native list/map column) — the same
+/// idiom as [LetterGraphPosition.clearedCompetencies].
+///
+/// SECURITY (T-18-03-01): only the account uid + derived id-lists / an id→double
+/// EMA map / a timestamp — never a stroke point, a nickname, or any PII. The
+/// `perCriterion` keys are `<letter>/<criterion>` ids (non-PII by construction).
+/// Values are never logged.
+class ChildProfileMirror extends Table {
+  TextColumn get uid => text()(); // PK — Firebase account uid
+  TextColumn get strengths => text()(); // JSON-encoded List<String>
+  TextColumn get struggles => text()(); // JSON-encoded List<String>
+  TextColumn get perCriterion => text()(); // JSON-encoded Map<String, double>
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {uid};
+}
+
 @DriftDatabase(tables: [
   AppSettings,
   LetterMastery,
@@ -136,6 +204,9 @@ class LetterExerciseReps extends Table {
   LetterReps,
   LetterGraphPosition,
   LetterExerciseReps,
+  LetterCriterionEvidence,
+  ArcStateRows,
+  ChildProfileMirror,
 ])
 class AppDatabase extends _$AppDatabase {
   /// Pass a [QueryExecutor] (e.g. `NativeDatabase.memory()`) in tests; defaults
@@ -162,7 +233,7 @@ class AppDatabase extends _$AppDatabase {
   final bool _ownsExecutor;
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -190,6 +261,17 @@ class AppDatabase extends _$AppDatabase {
             // returns null — no crash). Version-guarded for idempotency.
             await m.createTable(letterGraphPosition);
             await m.createTable(letterExerciseReps);
+          }
+          if (from < 6) {
+            // Phase 18 (D-14 / D-12 / D-16): the offline per-criterion evidence
+            // queue, the remediation-arc resume cursor, and the compiled-profile
+            // boot mirror. Pure createTable adds — no data rewrite, no touch to
+            // existing rows. A child with no row in any of the three defaults to
+            // empty (no evidence / no active arc / no mirror — clean start, the
+            // accessors return null or []). Version-guarded for idempotency.
+            await m.createTable(letterCriterionEvidence);
+            await m.createTable(arcStateRows);
+            await m.createTable(childProfileMirror);
           }
         },
       );
@@ -438,6 +520,111 @@ class AppDatabase extends _$AppDatabase {
         .get();
     return {for (final r in rows) r.exerciseId: r.cleanReps};
   }
+
+  // ---------------------------------------------------------------------------
+  // LetterCriterionEvidence accessors — Phase 18 (D-14 digest, Plan 18-03). The
+  // offline per-criterion evidence queue the nightly digest drains, then caps.
+  // Primitive layer: appends primitives, returns raw Drift rows (no lib/curriculum
+  // type crosses the DB boundary — 15-04 precedent).
+  // SECURITY: only ids/bool/source/timestamp — never stroke points / PII.
+  // ---------------------------------------------------------------------------
+
+  /// Append ONE evidence row for a graded attempt (auto-increment id, createdAt
+  /// stamped now). Returns the new row id.
+  Future<int> appendEvidence({
+    required String letterId,
+    required String criterion,
+    required bool passed,
+    required String source,
+  }) =>
+      into(letterCriterionEvidence).insert(
+        LetterCriterionEvidenceCompanion.insert(
+          letterId: letterId,
+          criterion: criterion,
+          passed: passed,
+          source: source,
+          createdAt: DateTime.now(),
+        ),
+      );
+
+  /// Every accrued evidence row not yet cleared, oldest → newest — the batch the
+  /// nightly digest reads before syncing. Returns raw Drift rows (primitive layer).
+  Future<List<LetterCriterionEvidenceData>> unsyncedEvidence() =>
+      (select(letterCriterionEvidence)
+            ..orderBy([(t) => OrderingTerm(expression: t.createdAt)]))
+          .get();
+
+  /// Delete the evidence rows with these [ids] after the digest has synced them —
+  /// the rollup cap that bounds on-device growth (threat T-18-03-03). No-op on an
+  /// empty list.
+  Future<void> clearEvidence(List<int> ids) async {
+    if (ids.isEmpty) return;
+    await (delete(letterCriterionEvidence)..where((t) => t.id.isIn(ids))).go();
+  }
+
+  // ---------------------------------------------------------------------------
+  // ArcStateRows accessors — Phase 18 (D-12 resume, Plan 18-03). One row per
+  // letter's remediation arc; mirrors the getPosition/setPosition resume idiom.
+  // SECURITY: only ids/bool/fixed-vocab step/timestamp — never PII.
+  // ---------------------------------------------------------------------------
+
+  /// Read the persisted arc state for a letter, or null if none (clean default —
+  /// no active arc, never throws). Returns the raw Drift row.
+  Future<ArcStateRow?> getArcStateRow(String letterId) =>
+      (select(arcStateRows)..where((t) => t.letterId.equals(letterId)))
+          .getSingleOrNull();
+
+  /// Write (or overwrite) the arc state for a letter.
+  Future<void> setArcStateRow({
+    required String letterId,
+    required bool active,
+    required String step,
+    String? targetCriterion,
+    String? exerciseToRetry,
+  }) =>
+      into(arcStateRows).insertOnConflictUpdate(
+        ArcStateRowsCompanion.insert(
+          letterId: letterId,
+          active: active,
+          step: step,
+          targetCriterion: Value(targetCriterion),
+          exerciseToRetry: Value(exerciseToRetry),
+          updatedAt: DateTime.now(),
+        ),
+      );
+
+  // ---------------------------------------------------------------------------
+  // ChildProfileMirror accessors — Phase 18 (D-16 boot mirror, Plan 18-03). The
+  // compiled cross-session profile mirrored on-device per account. The list/map
+  // columns are JSON-encoded (Drift has no native list/map column) — same idiom
+  // as getPosition/setPosition. The repository (18-06) JSON-decodes.
+  // SECURITY: only the uid + derived id-lists / an id→double map / timestamp.
+  // ---------------------------------------------------------------------------
+
+  /// Read the mirrored compiled profile for an account, or null if none yet
+  /// (clean cold-boot default — never throws). Returns the raw Drift row.
+  Future<ChildProfileMirrorData?> getProfileMirror(String uid) =>
+      (select(childProfileMirror)..where((t) => t.uid.equals(uid)))
+          .getSingleOrNull();
+
+  /// Write (or overwrite) the mirrored compiled profile for an account. The
+  /// strengths/struggles lists and the perCriterion EMA map are JSON-encoded into
+  /// their text columns.
+  Future<void> setProfileMirror({
+    required String uid,
+    required List<String> strengths,
+    required List<String> struggles,
+    required Map<String, double> perCriterion,
+  }) =>
+      into(childProfileMirror).insertOnConflictUpdate(
+        ChildProfileMirrorCompanion.insert(
+          uid: uid,
+          strengths: jsonEncode(strengths),
+          struggles: jsonEncode(struggles),
+          perCriterion: jsonEncode(perCriterion),
+          updatedAt: DateTime.now(),
+        ),
+      );
 
   // ---------------------------------------------------------------------------
   // Read-only aggregate accessors for the Parent Dashboard — Phase 9 (S1-11,
