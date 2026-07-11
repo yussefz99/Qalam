@@ -4,14 +4,14 @@ milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
 stopped_at: Completed 18-04-PLAN.md (SelectionPolicy — anti-boredom + remediation arc + micro-drill injection)
-last_updated: "2026-07-11T11:05:56.290Z"
+last_updated: "2026-07-11T11:18:10.064Z"
 last_activity: 2026-07-11
 progress:
-  total_phases: 22
-  completed_phases: 15
-  total_plans: 101
-  completed_plans: 90
-  percent: 68
+  total_phases: 8
+  completed_phases: 4
+  total_plans: 41
+  completed_plans: 32
+  percent: 50
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 18 (build-the-living-tutor-dynamic-exercise-selection) — EXECUTING
-Plan: 5 of 11
+Plan: 6 of 11
 Status: Ready to execute
 Last activity: 2026-07-11
-Next: Continue /gsd-execute-phase 18 — Wave 2 continues: 18-03 (per-criterion EMA pure Dart+Python + Drift v5→6 evidence/arc/profile-mirror tables). Then policy (18-04/18-07) greens microdrill_selection_test using 18-02's criterion-tagged nodes; deriver (18-05) greens test_evidence using 18-02's letters/criteria labels. 18-11 signs the micro-drill copy (exercise signedOff:false→true) → drills auto-join AUTHORED_BAA_IDS.
-PriorNext: Phase 17 waves 1–5 complete (17-01 RED contract, 17-02 soft per-stroke verdict, 17-03 per-form multi-criteria scoreLetter + LetterScore, 17-04 server eval gate, 17-05 server criteria/word contract, 17-06 CLIENT criteria/word mirror, 17-09 per-form calibration harness). The criteria/word lockstep is now closed BOTH wire sides (server 17-05 + client 17-06) with zero 422 window — the scorer's structured verdict reaches the coach FACTS. Continue /gsd-execute-phase 17: 17-07 geo-diff cutover (owns the aiJudge/strokeImage seams), 17-08 harden, 17-10 ADR-017 + single Cloud Run re-deploy + HUMAN-UAT mom sign-off (flips STRK-01/GROUND-04).
+Next: Continue /gsd-execute-phase 18 — Wave 3 continues: 18-05 done (SERVER-first profile/evidenceDigest wire on TutorFactsIn, extra=forbid; evidence.py per-letter×criterion deriver + Admin-SDK batch append; /coach BackgroundTask off the critical path; firestore.rules owner-read child_models/{uid}). Next 18-06 lands the Dart mirror (TutorFacts.profile/evidenceDigest byte-for-byte — greens across_session_memory + re-greens payload_nonpii) + the Drift child-model repository/refresh; 18-04/18-07 write SelectionPolicy (greens the client selection tests); 18-08/18-09 green test_selection_dimension + test_compile_profiles (the two remaining Wave-0 RED server modules); 18-11 signs the micro-drill copy + gold set. A single Cloud Run re-deploy goes AFTER both wire sides land (18-06).
+PriorNext: Wave 2 complete — 18-03 (per-criterion EMA pure Dart+Python + Drift v5→6 evidence/arc/profile-mirror tables) greened the EMA parity fixtures; 18-04 (SelectionPolicy anti-boredom + remediation arc + micro-drill injection). 18-05 greened test_schema_forbid + test_evidence (server half of R7/R2); the two remaining `-m code` collection errors (test_compile_profiles→18-09, test_selection_dimension→18-08) are unrelated Wave-0 RED, not a regression.
 
 ## Performance Metrics
 
@@ -108,6 +108,7 @@ PriorNext: Phase 17 waves 1–5 complete (17-01 RED contract, 17-02 soft per-str
 | Phase 18 P02 | ~40min | 3 tasks | 9 files |
 | Phase 18 P03 | 16min | 2 tasks | 4 files |
 | Phase 18 P04 | 18min | 2 tasks | 5 files |
+| Phase 18 P05 | 15min | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -243,6 +244,9 @@ Recent decisions affecting current work:
 - [Phase 18]: [18-03]: Drift schemaVersion 5→6 — three additive version-guarded tables under if(from<6): LetterCriterionEvidence (D-14 digest queue, auto-inc PK), ArcStateRows (D-12 resume, letterId PK), ChildProfileMirror (D-16 boot mirror, uid PK, JSON strengths/struggles/perCriterion). Existing from<2..from<5 blocks untouched, no data rewrite. Accessors return RAW Drift rows not lib/curriculum types (repo 18-06 decodes, 15-04 type-cycle precedent); clearEvidence(ids) is the storage-DoS rollup cap (T-18-03-03). Every column is an id/count/bool/timestamp/JSON-id-list — no point/Offset/name (T-18-03-01). app_database.g.dart regenerated + tracked. SPEC-18-R8 NOT checkbox-marked (foundation leg only, 18-01/18-02 precedent).
 - [Phase ?]: [18-04]: SelectionPolicy landed pure in lib/curriculum — ONE fail-streak counter (kArcEntryFailStreak same-criterion fails, signed:false) drives BOTH anti-boredom exclusion (R1) AND remediation-arc entry (R4/D-02); arc SM entry->stepDown->rebuild->retryOriginal with clean-win exit + kArcMaxAttempts floor-guard trace (D-04); dominant criterion injects graph.drillForCriterion (R3); every candidate re-checked vs isLegalSelection. SessionAttempt (criterion-tagged, client-only) is the streak source NOT facts.trajectory; zero 422 exposure. narrow(facts,position,{arc,profile,sessionHistory}) all-optional-named to match RED calls; ArcState.step is a String getter over ArcStep. 13/13 RED tests green zero edits; durable-ban green zero guard change.
 - [Phase ?]: [18-04]: SPEC-18-R1/R3/R4 NOT checkbox-marked (18-01/02/03 Wave precedent) — pure policy exists but not on the LIVE path until 18-07 wires RouterExerciseSelector to it (phase15 dead-wire lesson). offline_floor_test greened EARLY (bonus); across_session_memory + selection_rails_property stay RED for their 18-05/06/07 legs.
+- [Phase ?]: [18-05]: Server ships FIRST (422 lockstep) — TutorFactsIn gains profile (ChildProfileIn) + evidenceDigest (list[EvidenceDigestRowIn]), both additive/defaulted, nested extra=forbid; Dart mirror follows in 18-06 byte-for-byte. EvidenceDigestRowIn.pass_ uses alias='pass' (Python keyword).
+- [Phase ?]: [18-05]: evidence.py derives per-letter×criterion rows letter-agnostically — isolated→5 geometric (source=letter), word→coarse present/correct per touched letter via an Arabic-char→curriculum-id DATA map (باب→baa+alif, source=word, Pitfall 3), offline evidenceDigest→source=digest count rows; append_evidence batch-writes children/{uid}/evidence/{autoId} via the reused firebase_admin default app (no re-init).
+- [Phase ?]: [18-05]: /coach appends evidence OFF the critical path (BackgroundTasks after CoachOut sent), uid from verify_caller claims not the body (T-18-05-01); _safe_append_evidence swallows errors (T-18-05-05). firestore.rules owner-read child_models/{uid} before the deny-all catch-all; writes Admin-only; evidence subcollection has no client match.
 
 ### Pending Todos
 
@@ -283,6 +287,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-11T11:05:56.284Z
+Last session: 2026-07-11T11:17:36.853Z
 Stopped at: Completed 18-04-PLAN.md (SelectionPolicy — anti-boredom + remediation arc + micro-drill injection)
 Resume files: .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-02-PLAN.md (next — cross-letter labels + baa micro-drill set), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-03-PLAN.md (EMA + Drift v6), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-01-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
