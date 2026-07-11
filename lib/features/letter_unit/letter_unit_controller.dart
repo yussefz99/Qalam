@@ -23,15 +23,20 @@
 // ribbon still render; the graph position is the durable resume + mastery source
 // layered beside it.
 
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/exercise_engine/check_result.dart';
 import '../../curriculum/curriculum_graph.dart';
 import '../../curriculum/curriculum_graph_walker.dart' show GraphPosition;
 import '../../curriculum/mastery_condition.dart'
     show isMasteryMet, isMasteryMetForPresented;
+import '../../curriculum/selection_policy.dart';
 import '../../data/app_database.dart';
 import '../../data/drift_progress_repository.dart';
 import '../../data/graph_position_repository.dart' as repo;
+import '../../tutor/child_model_providers.dart';
 import '../../tutor/exercise_selector_provider.dart';
 import '../../tutor/tutor_decision.dart';
 import '../../tutor/tutor_facts.dart';
@@ -113,6 +118,54 @@ class LetterUnitController extends Notifier<LetterUnitState> {
 
   late String _letterId = _argLetterId;
 
+  // ── 18-07: the two-timescale selection context (survives scaffold key swaps) ──
+
+  /// The criterion-tagged, session-scoped attempt store (0b) — the
+  /// `SelectionPolicy` fail-streak source. Lives on the CONTROLLER so it SURVIVES
+  /// scaffold key changes + section swaps (today's per-scaffold `_trajectory`
+  /// dies on every FormsSection/ListenWriteSection key swap — audit finding 1.4).
+  final List<SessionAttempt> _sessionHistory = [];
+
+  /// The durable remediation-arc cursor (D-12) — loaded from Drift on [start],
+  /// advanced + re-persisted each feedback moment. Null when no arc is in progress.
+  ArcState? _sessionArc;
+
+  /// The compiled across-session profile mirror (R2 / 18-06) — read NON-BLOCKING
+  /// at [start] (a fast local Drift read; the Firestore refresh is fire-and-forget
+  /// inside childModelProvider). NEVER awaited on the selection path (Req 6).
+  ChildModelSnapshot? _profileSnapshot;
+
+  /// The current feedback moment's narrow outcome (18-07). `SelectionPolicy.narrow`
+  /// is invoked ONCE per moment ([beginSelection]) and cached here so [selectNext]
+  /// reuses its nextArc — never a second narrow inside the controller.
+  PolicyOutcome? _pendingNarrow;
+
+  /// The in-flight selection Future for the current moment (18-07) — the pass-CTA
+  /// AWAITS this so the content swap reads a FRESH cursor, never a stale one (the
+  /// fire-and-forget race, audit finding §5). Null before the first scored attempt.
+  Future<String?>? _nextReady;
+
+  /// The pass/continue CTA awaits this to read the freshly-selected cursor (18-07,
+  /// consumed by the presenter in Task 3). Null before the first scored attempt.
+  /// A METHOD (not a getter) so it stays clear of the notifier-property lint.
+  Future<String?>? nextReady() => _nextReady;
+
+  /// The read-only, criterion-tagged session attempt store (18-07) — exposed for
+  /// the fail-path live proof (a FAILED attempt appends here).
+  List<SessionAttempt> sessionHistory() =>
+      List<SessionAttempt>.unmodifiable(_sessionHistory);
+
+  /// The across-session profile as the non-PII wire map (R2), or null when there
+  /// is no across-session signal yet (cold boot / empty) so the payload omits it.
+  Map<String, Object?>? profileFacts() {
+    final p = _profileSnapshot;
+    if (p == null) return null;
+    if (p.strengths.isEmpty && p.struggles.isEmpty && p.perCriterion.isEmpty) {
+      return null;
+    }
+    return p.toMap();
+  }
+
   @override
   LetterUnitState build() => LetterUnitState.empty;
 
@@ -148,6 +201,31 @@ class LetterUnitController extends Notifier<LetterUnitState> {
     );
     // 3) Persist the (re)entered position so a relaunch resumes here.
     await _persist();
+    // 4) 18-07: load the two-timescale selection context — the durable arc
+    // (D-12 resume) + the across-session profile mirror (R2) — NON-BLOCKING
+    // (fire-and-forget). The selection path NEVER waits on these (Req 6); each
+    // moment reads whatever has resolved (null = no signal, never a false one).
+    unawaited(_loadSelectionContext(letterId));
+  }
+
+  /// 18-07: load the durable remediation arc (D-12) + the across-session profile
+  /// mirror (R2), both best-effort and NON-BLOCKING. A read failure (e.g. no
+  /// Firebase in a widget test, or a cold-boot empty mirror) degrades to null —
+  /// never a crash, never a false struggle. Fire-and-forget from [start].
+  Future<void> _loadSelectionContext(String letterId) async {
+    try {
+      _sessionArc = await ref.read(arcStateRepositoryProvider).getArc(letterId);
+    } catch (_) {
+      _sessionArc = null;
+    }
+    try {
+      // The mirror read is a fast LOCAL Drift read (offline-safe); the Firestore
+      // refresh is fired fire-and-forget INSIDE childModelProvider — never awaited
+      // here (Req 6 / D-16), so the selection path is never blocked on a round-trip.
+      _profileSnapshot = await ref.read(childModelProvider.future);
+    } catch (_) {
+      _profileSnapshot = null;
+    }
   }
 
   /// Jump to section [n] (clamped). Marks it visited + persists the resume cursor.
@@ -167,24 +245,137 @@ class LetterUnitController extends Notifier<LetterUnitState> {
   /// Step back one section (the app bar back button). Never below 0.
   void back() => goTo(state.index - 1);
 
-  /// Pick the NEXT graph exercise via the selection router (DYN-02). On a pass it
-  /// advances forward; on a fail it re-surfaces a remediation (one tier down) —
-  /// NEVER the next linear section (Pitfall 5). Updates + persists the cursor.
-  /// Returns the selected exercise id (or null when the graph is exhausted).
-  String? selectNext(TutorFacts facts, {TutorDecision? decision}) {
-    final selector = ref.read(exerciseSelectorProvider);
-    final position = GraphPosition(
+  /// BEGIN a feedback moment (18-07). Records the scored attempt in the
+  /// session-scoped, criterion-tagged store (0b — survives scaffold key swaps),
+  /// then invokes `SelectionPolicy.narrow` ONCE (pure, microseconds — no network)
+  /// with the durable arc + the profile mirror + the session history, caching the
+  /// outcome for [selectNext]. Returns the policy-narrowed graph-legal candidates
+  /// so the coach proposes FROM the policy-legal set (facts.legalNextExerciseIds —
+  /// the wire narrows to what the policy allows, not a raw isLegalSelection sweep).
+  ///
+  /// Best-effort + synchronous: a bare scaffold (never [start]ed, `total == 0`) or
+  /// an unloaded graph returns `const []` so the practice path degrades cleanly.
+  List<String> beginSelection(
+    CheckResult result,
+    String section, {
+    List<String> recentMistakes = const [],
+  }) {
+    if (state.total == 0) return const []; // not started (bare scaffold) — no-op.
+    // 0b: the criterion-tagged attempt store — the fail-streak source.
+    _sessionHistory.add(SessionAttempt(
+      exerciseId: section,
+      passed: result.passed,
+      weakestCriterion: result.weakestCriterion,
+    ));
+    final graph = ref.read(curriculumGraphProvider).asData?.value;
+    if (graph == null) {
+      _pendingNarrow = null;
+      return const [];
+    }
+    // Keep the durable cursor in sync with the node the child is ACTUALLY on, so
+    // the forward walk starts from HERE and the policy's remediation/anti-boredom
+    // read the SAME node the forward reach does (facts.section == the cursor).
+    if (graph.isAuthored(section) && state.currentExerciseId != section) {
+      state = state.copyWith(currentExerciseId: section);
+    }
+    final current = state.currentExerciseId ?? section;
+    final facts = TutorFacts(
       letterId: _letterId,
-      currentExerciseId: state.currentExerciseId ?? facts.section,
-      clearedCompetencies: state.clearedCompetencies,
-      clearedTiers: state.clearedTiers,
+      section: current,
+      passed: result.passed,
+      mistakeId: result.mistakeId,
+      weakestCriterion: result.weakestCriterion,
+      criteria: result.criteria,
+      recentMistakes: List<String>.unmodifiable(recentMistakes),
     );
-    final next = selector.selectNext(facts, position, decision: decision);
+    final out = SelectionPolicy(graph).narrow(
+      facts,
+      _positionFor(current),
+      arc: _sessionArc,
+      profile: _profileSnapshot,
+      sessionHistory: _sessionHistory,
+    );
+    _pendingNarrow = out;
+    return out.candidates;
+  }
+
+  /// Pick the NEXT graph exercise for a scored feedback moment (18-07 — CLOSES the
+  /// Phase-15 dead wire). It routes the coach's [decision] through the
+  /// candidate-aware [RouterExerciseSelector] over the SAME policy-narrowed
+  /// candidate set this moment produced: the agent's pick is honored ONLY when it
+  /// is a policy candidate AND graph-legal, else it degrades to the walker (R5).
+  /// Runs on pass AND fail (a fail enters the arc / remediation). Persists the
+  /// arc this moment produced (D-12 resume) + the resume cursor. Exposed as
+  /// [nextReady] so the pass-CTA can AWAIT the fresh cursor (audit finding §5).
+  /// Never blocks on the profile refresh (fire-and-forget, 18-06 / Req 6).
+  Future<String?> selectNext(TutorFacts facts, {TutorDecision? decision}) {
+    final future = _selectNext(facts, decision: decision);
+    _nextReady = future;
+    return future;
+  }
+
+  Future<String?> _selectNext(TutorFacts facts, {TutorDecision? decision}) async {
+    if (state.total == 0) return null; // not started (bare scaffold) — no-op.
+    final CurriculumGraph graph;
+    try {
+      graph = await ref.read(curriculumGraphProvider.future);
+    } catch (_) {
+      return null; // graph not loaded — never crash the practice path.
+    }
+    // Select FROM the current graph-node cursor (kept in sync by beginSelection),
+    // not the coach's exercise-type label — so this narrow matches beginSelection's
+    // candidate set exactly (the agent pick was validated against it).
+    final current = state.currentExerciseId ?? facts.section;
+    final selFacts = TutorFacts(
+      letterId: facts.letterId,
+      section: current,
+      passed: facts.passed,
+      mistakeId: facts.mistakeId,
+      weakestCriterion: facts.weakestCriterion,
+      criteria: facts.criteria,
+      recentMistakes: facts.recentMistakes,
+    );
+    final position = _positionFor(current);
+    // Route the pick through the candidate-aware selector (Task 1) with THIS
+    // moment's arc / profile / session context — the router narrows to the SAME
+    // candidate set beginSelection produced (online↔offline parity, D-11).
+    final selector = RouterExerciseSelector(
+      graph,
+      arc: _sessionArc,
+      profile: _profileSnapshot,
+      sessionHistory: _sessionHistory,
+    );
+    final next = selector.selectNext(selFacts, position, decision: decision);
+    // Persist + advance the arc this moment produced (D-12). Fire-and-forget: the
+    // pick is what the child feels; the arc write must never add latency.
+    final nextArc = _pendingNarrow?.nextArc;
+    _sessionArc = nextArc;
+    _pendingNarrow = null;
+    if (nextArc != null) unawaited(_persistArc(nextArc));
     if (next != null) {
       state = state.copyWith(currentExerciseId: next);
-      _persist();
+      await _persist();
     }
     return next;
+  }
+
+  /// The child's current durable [GraphPosition] for [section] (the cursor + the
+  /// cleared competency/tier state) — the rail the policy + walker narrow within.
+  GraphPosition _positionFor(String section) => GraphPosition(
+        letterId: _letterId,
+        currentExerciseId: state.currentExerciseId ?? section,
+        clearedCompetencies: state.clearedCompetencies,
+        clearedTiers: state.clearedTiers,
+      );
+
+  /// Persist the remediation arc to Drift (D-12 resume). Never throws — a failed
+  /// local write just means the arc restarts warm on the next entry.
+  Future<void> _persistArc(ArcState arc) async {
+    try {
+      await ref.read(arcStateRepositoryProvider).setArc(_letterId, arc);
+    } catch (_) {
+      // A failed local persist must never crash selection (resume degrades warm).
+    }
   }
 
   /// Mark a graph node as cleared (its competency + tier added to cleared state)

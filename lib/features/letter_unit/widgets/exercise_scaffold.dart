@@ -273,6 +273,22 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
     }
     _recordAttempt(section, result.passed, result.mistakeId);
 
+    // 18-07: BEGIN the feedback moment. On the baa/agent path, when this exercise
+    // maps to a real graph node, the controller records the attempt in the
+    // session-scoped store (0b), invokes SelectionPolicy.narrow ONCE, and returns
+    // the policy-legal candidates — threaded into the coach FACTS below so the
+    // coach proposes FROM the policy-legal set (not a raw isLegalSelection sweep).
+    // The controller owns the arc/profile/session context that survives scaffold
+    // key swaps (audit finding 1.4).
+    final controller =
+        ref.read(letterUnitControllerProvider(widget.letter.id).notifier);
+    final unitState = ref.read(letterUnitControllerProvider(widget.letter.id));
+    final graphId = widget.graphExerciseId;
+    final candidates = (_isAgentPath && graphId != null)
+        ? controller.beginSelection(result, graphId,
+            recentMistakes: List<String>.of(_recentMistakes))
+        : const <String>[];
+
     final facts = buildTutorFacts(
       letterId: widget.letter.id,
       section: section,
@@ -280,14 +296,21 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
       recentMistakes: List<String>.unmodifiable(_recentMistakes),
       trajectory: List<AttemptFact>.unmodifiable(_trajectory),
       strokeDiff: strokeDiff,
-      // Phase 17.2 (demo): on the baa agent path, thread the graph-legal
-      // next-exercise candidates so the cloud coach proposes the NEXT exercise
-      // FROM the graph (the client re-checks legality before accepting —
-      // exercise_selector_provider). Baa-only (the graph + the coach prompt are
-      // baa-scoped), matching the brain gate below. Off the agent path it stays
-      // empty (→ omitted from the wire).
-      legalNextExerciseIds:
-          _isAgentPath ? _legalNextExerciseIds() : const <String>[],
+      // 18-07 / audit finding 1.3: carry the child's cleared graph-position state
+      // (dead `const []` on the wire before this) so the coach's rail reasons over
+      // real progress. Read from the durable controller state.
+      clearedTiers: unitState.clearedTiers,
+      clearedCompetencies: unitState.clearedCompetencies,
+      // 18-07: the coach proposes the NEXT exercise FROM the POLICY-narrowed set
+      // (anti-boredom + arc + micro-drill already applied), not a raw legal sweep.
+      // Falls back to the raw legal sweep only while the graph is still loading.
+      legalNextExerciseIds: candidates.isNotEmpty
+          ? candidates
+          : (_isAgentPath ? _legalNextExerciseIds() : const <String>[]),
+      // Req 2: a RETURNING child's coach facts carry the compiled across-session
+      // profile (struggles/strengths) so the first turn already reflects the last
+      // session. Null on a cold boot / empty mirror (omit-when-null).
+      profile: _isAgentPath ? controller.profileFacts() : null,
     );
     // The cloud agent's coaching prompt is baa-specific (Phase 14-17 was scoped to
     // baa), so it must run ONLY for baa — for any other letter it speaks baa
@@ -307,6 +330,17 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
       // are NOT touched here — the brain only enriches the WORDS (D-A).
       ref.read(tutorLineProvider.notifier).set(line.isNotEmpty ? line : null);
       markLatency(LatencySegment.lineRendered);
+
+      // 18-07: CLOSE THE PHASE-15 DEAD WIRE. The coach's TutorDecision is handed to
+      // the controller and threaded into the selection so the agent's (policy-legal)
+      // pick is what the child ACTUALLY gets next — not merely displayed in the demo
+      // strip. Runs on pass AND fail (a fail enters the arc / remediation); the pick
+      // + arc persist ride THIS same /coach round-trip (no new network call). The
+      // controller re-checks legality (accept iff candidate AND graph-legal, else
+      // the walker) so an illegal proposal never reaches the child (R5).
+      if (_isAgentPath && graphId != null) {
+        unawaited(controller.selectNext(facts, decision: decision));
+      }
 
       // DEMO "Teacher's Eye": merge the agent's next-exercise pick + rationale
       // into the insight (keeps the criteria/diff already published at verdict).

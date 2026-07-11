@@ -34,7 +34,6 @@ import '../../models/word.dart';
 import '../../theme/qalam_tokens.dart';
 import '../../theme/text_styles.dart';
 import '../../tutor/coach_warmup.dart';
-import '../../tutor/tutor_facts.dart';
 import '../../tutor/tutor_providers.dart';
 import '../../widgets/arabic_text.dart';
 import 'letter_unit_controller.dart';
@@ -210,18 +209,20 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
     ref.read(letterUnitControllerProvider(_letterId).notifier).recordMasteryIfMet();
   }
 
-  /// T2 + T1 + T3 scoring chokepoint — called by a section when it reports a
-  /// clean pass on [graphExerciseId] (a canonical graph node id, not a synthetic
-  /// per-word id). In order:
+  /// T2 + T1 scoring chokepoint — called by a section when it reports a clean pass
+  /// on [graphExerciseId] (a canonical graph node id, not a synthetic per-word id):
   ///   1. Increments the Drift clean-rep count for the node (T2).
   ///   2. Calls [markNodeCleared] so cleared state grows when the threshold is met
   ///      (T1 — makes reachableTiers/prerequisitesMet and resume advance with real
   ///      progress).
-  ///   3. Calls [selectNext] so the durable cursor reflects the graph's decision
-  ///      (T3 — a pass advances forward reachably; keeps the 6-section shell + the
-  ///      ribbon intact; the section still calls its own [onAdvance]/[onFinish]
-  ///      for section-level navigation).
-  /// All three are fire-and-forget async: they must never block the UI or crash.
+  /// Both are fire-and-forget async: they must never block the UI or crash.
+  ///
+  /// SELECTION (T3) is NO LONGER driven here (18-07). The Phase-15 dead wire was
+  /// exactly this: a decision-LESS `selectNext(facts)` on the PASS-only path, so
+  /// the coach's `plan.nextExerciseId` never reached the selector. Selection now
+  /// runs on EVERY feedback moment (pass AND fail) INSIDE the exercise scaffold,
+  /// where the coach's `TutorDecision` is threaded into
+  /// `controller.selectNext(facts, decision: decision)` — see ExerciseScaffold.
   void _onNodePassed(String graphExerciseId) {
     final db = ref.read(appDatabaseProvider);
     final controller =
@@ -236,15 +237,6 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
         .then((_) {
       // 2) T1: update cleared competencies/tiers once threshold is met.
       return controller.markNodeCleared(graphExerciseId);
-    }).then((_) {
-      // 3) T3: advance the graph cursor forward (reachability-aware; Pitfall 5).
-      // Build a minimal TutorFacts to tell the selector this was a PASS.
-      final facts = TutorFacts(
-        letterId: _letterId,
-        section: graphExerciseId,
-        passed: true,
-      );
-      controller.selectNext(facts);
     }).catchError((_) {
       // Any failure in the async chain must never crash the UI (Pitfall 2 /
       // the "a failed LOCAL write must never crash" convention from the controller).

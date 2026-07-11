@@ -388,4 +388,37 @@ void main() {
       expect(TutorTool.all.length, 4);
     });
   });
+
+  group('18-07 — the wire carries the durable graph-position state (audit 1.3)', () {
+    test('buildTutorFacts passes non-empty clearedTiers/clearedCompetencies '
+        'straight through to the serialized payload', () {
+      final facts = buildTutorFacts(
+        letterId: 'baa',
+        section: 'baa.writeWord.dictation',
+        result: const CheckResult.pass(),
+        clearedTiers: const ['manqul', 'manzur'],
+        clearedCompetencies: const ['recognize', 'positionalForms'],
+      );
+      // The cleared graph-position state reaches the FACTS object …
+      expect(facts.clearedTiers, ['manqul', 'manzur']);
+      expect(facts.clearedCompetencies, ['recognize', 'positionalForms']);
+      // … and rides the wire payload (before 18-07 these were dead `const []`).
+      final wire = facts.toMap();
+      expect(wire['clearedTiers'], ['manqul', 'manzur']);
+      expect(wire['clearedCompetencies'], ['recognize', 'positionalForms']);
+    });
+
+    test('buildTutorFacts sets legalNextExerciseIds from the SUPPLIED candidates '
+        '(the policy-narrowed set), not a recomputed sweep', () {
+      const candidates = ['baa.traceLetter.initial', 'baa.microDrill.bowl'];
+      final facts = buildTutorFacts(
+        letterId: 'baa',
+        section: 'baa.traceLetter.isolated',
+        result: const CheckResult.fail('shallowBowl'),
+        legalNextExerciseIds: candidates,
+      );
+      expect(facts.legalNextExerciseIds, candidates);
+      expect(facts.toMap()['legalNextExerciseIds'], candidates);
+    });
+  });
 }
