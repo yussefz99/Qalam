@@ -29,10 +29,14 @@ import 'package:qalam/curriculum/curriculum_graph.dart';
 import 'package:qalam/data/app_database.dart';
 import 'package:qalam/data/graph_position_repository.dart';
 import 'package:qalam/features/letter_unit/letter_unit_controller.dart';
+import 'package:qalam/features/letter_unit/letter_unit_screen.dart';
 import 'package:qalam/features/letter_unit/widgets/exercise_scaffold.dart';
 import 'package:qalam/features/letter_unit/widgets/write_surface.dart';
 import 'package:qalam/models/exercise.dart';
 import 'package:qalam/models/letter.dart';
+import 'package:qalam/models/letter_unit.dart';
+import 'package:qalam/models/word.dart';
+import 'package:qalam/providers/audio_providers.dart';
 import 'package:qalam/providers/tts_providers.dart';
 import 'package:qalam/tutor/child_model_providers.dart';
 import 'package:qalam/tutor/exercise_selector_provider.dart';
@@ -224,4 +228,117 @@ void main() {
         reason: 'an out-of-rail agent pick never reaches the child (R5)');
     expect(controller.state.currentExerciseId, isNot(_agentIllegalPick));
   });
+
+  // ── The FULL-SCREEN RENDER proof (Task 3): what LOADS next is the pick ────────
+
+  group('the shell RENDERS the selection (not only the cursor)', () {
+    testWidgets('the agent\'s legal pick is the exercise the child sees next',
+        (tester) async {
+      await _pumpScreen(tester, brain: _PickBrain(_agentLegalPick));
+      await _traceAndAdvance(tester);
+
+      // The presenter now renders the AGENT's pick — a fresh graph:<id> scaffold.
+      expect(find.byKey(const ValueKey('graph:$_agentLegalPick')), findsOneWidget,
+          reason: 'the selection is RENDERED — the Phase-15 dead wire is closed '
+              'end-to-end, not just at the cursor');
+      expect(find.byKey(const ValueKey('graph:$_walkerForward')), findsNothing);
+    });
+
+    testWidgets('an illegal pick renders the walker\'s choice instead',
+        (tester) async {
+      await _pumpScreen(tester, brain: _PickBrain(_agentIllegalPick));
+      await _traceAndAdvance(tester);
+
+      expect(find.byKey(const ValueKey('graph:$_walkerForward')), findsOneWidget,
+          reason: 'an out-of-rail pick never renders — the rail holds on screen');
+    });
+  });
+}
+
+// ── full-screen harness ────────────────────────────────────────────────────────
+
+class _CapturingAudioPlayer implements LetterAudioPlayer {
+  @override
+  Future<void> playLetter(String assetPath) async {}
+}
+
+/// The baa unit's 6 sections + the isolated-trace exercise (mirrors
+/// letter_unit_screen_test._baaData).
+LetterUnitData _baaData() => LetterUnitData(
+      unit: const LetterUnit(
+        letterId: 'baa',
+        sections: [
+          UnitSection(id: 'meet', exercises: ['baa.teachCard.meet']),
+          UnitSection(id: 'watchTrace', exercises: ['baa.traceLetter.isolated']),
+          UnitSection(id: 'forms', exercises: ['baa.traceLetter.initial']),
+          UnitSection(id: 'words', exercises: ['baa.connectWord.baab']),
+          UnitSection(id: 'listenWrite', exercises: ['baa.writeWord.dictation']),
+          UnitSection(id: 'mastery', exercises: []),
+        ],
+      ),
+      letter: _baa(),
+      exercises: {
+        for (final e in [
+          Exercise(
+            id: 'baa.traceLetter.isolated',
+            type: 'traceLetter',
+            skill: 'formation',
+            prompt: const [SayPart('Trace baa.')],
+            surface: const Surface(
+                mode: 'trace', unit: 'glyph', guideForm: 'isolated', demo: true),
+            expected: const Answer(glyph: GlyphAnswer(char: 'ب', form: 'isolated')),
+            check: const Check(base: 'glyph'),
+            feedback: const {'pass': 'Beautiful.', 'shallowBowl': 'Deeper curve.'},
+            signedOff: false,
+          ),
+        ])
+          e.id: e,
+      },
+      words: const [],
+    );
+
+/// Pump the FULL LetterUnitScreen seeded so the child resumes on Watch&Trace with
+/// `recognize` cleared (positionalForms alternatives legal), with [brain] stubbed.
+Future<void> _pumpScreen(
+  WidgetTester tester, {
+  required TutorBrain brain,
+}) async {
+  final db = AppDatabase(DatabaseConnection(NativeDatabase.memory()).executor);
+  addTearDown(db.close);
+  tester.view.physicalSize = const Size(1280, 800);
+  tester.view.devicePixelRatio = 1.0;
+  addTearDown(tester.view.resetPhysicalSize);
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [
+        appDatabaseProvider.overrideWithValue(db),
+        graphPositionRepositoryProvider.overrideWithValue(_SeededPositionRepo()),
+        curriculumGraphProvider.overrideWith((ref) async => _loadGraph()),
+        childModelProvider.overrideWith((ref) async => ChildModelSnapshot.empty()),
+        letterUnitDataProvider('baa').overrideWith((ref) async => _baaData()),
+        audioPlayerProvider.overrideWithValue(_CapturingAudioPlayer()),
+        tutorBrainFactoryProvider
+            .overrideWithValue((Map<String, String> feedback) => brain),
+        ttsCoachSpeakerProvider.overrideWithValue(const NoopTtsCoachSpeaker()),
+      ],
+      child: const MaterialApp(home: LetterUnitScreen(letterId: 'baa')),
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+/// Enter the trace phase, drive a scored PASS, then tap Next — the pass/continue
+/// CTA that swaps the shell to the selected node.
+Future<void> _traceAndAdvance(WidgetTester tester) async {
+  // Watch&Trace opens on the Watch phase — tap "I'll try" to reveal the surface.
+  await tester.tap(find.text("I'll try"));
+  await tester.pumpAndSettle();
+
+  final ws = tester.widget<WriteSurface>(find.byType(WriteSurface));
+  ws.onResult!(const CheckResult.pass());
+  await tester.pumpAndSettle(); // brain resolves → selectNext threads the decision
+
+  // The pass CTA — swaps the shell to the presenter (awaits nextReady).
+  await tester.tap(find.text('Next exercise'));
+  await tester.pumpAndSettle();
 }

@@ -196,7 +196,9 @@ class _WriteSurfaceState extends ConsumerState<WriteSurface> {
     // miss; not-ready → null so it degrades to the geometric/pass path (the model
     // keeps downloading in the background) rather than hard-blocking the child.
     String? writtenWord;
-    if (spec.check?.base == 'sequence' &&
+    List<String>? writtenWords;
+    final base = spec.check?.base;
+    if ((base == 'sequence' || base == 'order') &&
         ref.read(modelDownloadServiceProvider).isReady) {
       _recognizer ??= MlKitRecognizer();
       RecognitionResult res = const RecognitionResult();
@@ -212,7 +214,18 @@ class _WriteSurfaceState extends ConsumerState<WriteSurface> {
       }
       // Model ready but unreadable/timed-out → '' so the validator records a
       // miss rather than a blind pass.
-      writtenWord = (res.topCandidate ?? '').trim();
+      final transcript = (res.topCandidate ?? '').trim();
+      if (base == 'sequence') {
+        writtenWord = transcript;
+      } else {
+        // base 'order' (baa.buildSentence.*): the child wrote a whole sentence —
+        // split the recogniser transcription on whitespace into the ORDERED word
+        // list the validator's `_validateOrder` compares. Before this, `order`
+        // exercises received writtenWords==null and FAILED unconditionally — a dead
+        // end a child could never pass, which the selector could route them into.
+        writtenWords =
+            transcript.isEmpty ? const <String>[] : transcript.split(RegExp(r'\s+'));
+      }
     }
 
     final result = await validateExercise(
@@ -220,6 +233,7 @@ class _WriteSurfaceState extends ConsumerState<WriteSurface> {
       pixelStrokes,
       letter: widget.letter,
       writtenWord: writtenWord,
+      writtenWords: writtenWords,
       guideForm: _askedForm, // WR-01: the SAME asked form the guide + diff use.
     );
     if (!mounted) return;

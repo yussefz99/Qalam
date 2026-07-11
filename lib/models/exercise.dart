@@ -47,6 +47,13 @@ class Exercise {
   /// false until the owner's mother signs off the authored content.
   final bool signedOff;
 
+  /// The scorer criteria this exercise spotlights (18-02, `criteria` in the
+  /// config — e.g. `['shape']` for the bowl drill). For a `type=='microDrill'`
+  /// exercise the FIRST entry is the criterion that OWNS the pass/fail verdict
+  /// (D-08); empty for a normal exercise. Carried through to the validator's
+  /// `ExerciseSpec` so a live micro-drill scores by its target criterion only.
+  final List<String> criteria;
+
   const Exercise({
     required this.id,
     this.type,
@@ -58,6 +65,7 @@ class Exercise {
     this.feedback,
     this.policy,
     required this.signedOff,
+    this.criteria = const [],
   });
 
   factory Exercise.fromJson(Map<String, dynamic> json) {
@@ -86,6 +94,10 @@ class Exercise {
           : null,
       policy: policyJson != null ? Policy.fromJson(policyJson) : null,
       signedOff: json['signedOff'] as bool? ?? false,
+      criteria: [
+        for (final c in (json['criteria'] as List<dynamic>? ?? const []))
+          if (c is String) c,
+      ],
     );
   }
 }

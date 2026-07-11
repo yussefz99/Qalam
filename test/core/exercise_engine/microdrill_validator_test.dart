@@ -144,4 +144,37 @@ void main() {
     expect(bowlDrill().spotlightCriterion, 'shape');
     expect(startDrill().spotlightCriterion, 'strokeOrder');
   });
+
+  // 18-07 Task 3: a base=='order' (buildSentence) exercise is now PASSABLE — the
+  // recogniser's whitespace-split transcription flows in as writtenWords (wired in
+  // write_surface.dart). Before this the order check received writtenWords==null
+  // and FAILED unconditionally — a dead end the selector could route a child into.
+  group('base: order (buildSentence) is passable with recogniser output', () {
+    const buildSentence = ExerciseSpec(
+      id: 'baa.buildSentence.hear',
+      check: CheckSpec(base: 'order'),
+      expected: AnswerSpec(words: ['البابُ', 'كبير']),
+      feedback: {'pass': 'Nice sentence.', 'wrongOrder': 'Check the order.'},
+    );
+
+    test('a correct word order → passed=true', () async {
+      final r = await validateExercise(
+        buildSentence,
+        const [],
+        writtenWords: const ['البابُ', 'كبير'],
+      );
+      expect(r.passed, isTrue,
+          reason: 'the ordered words match expected.words → the sentence passes');
+    });
+
+    test('a re-ordered sentence → a "wrongOrder" miss (not a blind pass)', () async {
+      final r = await validateExercise(
+        buildSentence,
+        const [],
+        writtenWords: const ['كبير', 'البابُ'],
+      );
+      expect(r.passed, isFalse);
+      expect(r.mistakeId, 'wrongOrder');
+    });
+  });
 }

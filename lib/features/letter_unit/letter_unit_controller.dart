@@ -54,6 +54,7 @@ class LetterUnitState {
     this.clearedCompetencies = const [],
     this.clearedTiers = const [],
     this.masteryRecorded = false,
+    this.selectionActive = false,
   });
 
   /// The current section index (0-based; 0 = Meet … total-1 = Mastery).
@@ -79,6 +80,12 @@ class LetterUnitState {
   /// guard — the star is information, recorded at most once; CLAUDE.md Decided).
   final bool masteryRecorded;
 
+  /// True once the SELECTION drives what the child sees next (18-07): it flips on
+  /// the first scored feedback moment of the session. While true the shell renders
+  /// the selected graph node via the exercise presenter (instead of the fixed
+  /// `_section(index)` walk), and the section ribbon FOLLOWS the presented node.
+  final bool selectionActive;
+
   /// True when the child is on the final (Mastery) section.
   bool get atMastery => total > 0 && index == total - 1;
 
@@ -90,6 +97,7 @@ class LetterUnitState {
     List<String>? clearedCompetencies,
     List<String>? clearedTiers,
     bool? masteryRecorded,
+    bool? selectionActive,
   }) {
     return LetterUnitState(
       index: index ?? this.index,
@@ -99,6 +107,7 @@ class LetterUnitState {
       clearedCompetencies: clearedCompetencies ?? this.clearedCompetencies,
       clearedTiers: clearedTiers ?? this.clearedTiers,
       masteryRecorded: masteryRecorded ?? this.masteryRecorded,
+      selectionActive: selectionActive ?? this.selectionActive,
     );
   }
 
@@ -353,8 +362,15 @@ class LetterUnitController extends Notifier<LetterUnitState> {
     _pendingNarrow = null;
     if (nextArc != null) unawaited(_persistArc(nextArc));
     if (next != null) {
-      state = state.copyWith(currentExerciseId: next);
+      // Flip into selection mode (the shell renders the selected node next) and
+      // advance the durable cursor to it. selectionActive is sticky for the
+      // session — the first scored moment hands control to the selector.
+      state = state.copyWith(currentExerciseId: next, selectionActive: true);
       await _persist();
+    } else {
+      // Graph exhausted for this cleared state — mark selection active so the
+      // shell routes to Mastery (never a null dead-end / a silent stall).
+      state = state.copyWith(selectionActive: true);
     }
     return next;
   }

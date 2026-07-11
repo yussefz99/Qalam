@@ -120,6 +120,7 @@ class ExerciseScaffold extends ConsumerStatefulWidget {
     this.customSurface,
     this.graphExerciseId,
     this.onGraphNodePassed,
+    this.advanceOnFix = false,
   });
 
   /// The config that drives the whole page.
@@ -163,6 +164,13 @@ class ExerciseScaffold extends ConsumerStatefulWidget {
   /// is non-null and the result is a pass. Never called for teach-cards or on a
   /// fail (T2: the rep counter only grows on genuine clean passes).
   final void Function(String graphExerciseId)? onGraphNodePassed;
+
+  /// 18-07 Task 3: in SELECTION mode the fix-state primary CTA ADVANCES to the
+  /// SELECTED next node (`onNext`) instead of clearing for an in-place retry — so
+  /// the anti-boredom / remediation arc actually CHANGES what the child sees after
+  /// repeated same-criterion fails (the arc's whole point). The quiet "Clear" CTA
+  /// still retries in place. Default false (legacy sections retry in place).
+  final bool advanceOnFix;
 
   @override
   ConsumerState<ExerciseScaffold> createState() => _ExerciseScaffoldState();
@@ -694,7 +702,14 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
         return [
           _QuietCta(label: s.clear, onTap: _clear),
           const SizedBox(width: 12),
-          _PrimaryCta(label: s.tryAgain, onTap: _clear),
+          // In selection mode (advanceOnFix) the primary CTA advances to the
+          // SELECTED next node (which is the same exercise on an early fail, and
+          // the confidence-rebuilding drill once the same-criterion streak trips
+          // the arc); Clear still retries in place. Legacy sections retry in place.
+          _PrimaryCta(
+            label: s.tryAgain,
+            onTap: widget.advanceOnFix ? widget.onNext : _clear,
+          ),
         ];
       default:
         return [

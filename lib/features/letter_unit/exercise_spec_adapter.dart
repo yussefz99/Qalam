@@ -24,11 +24,15 @@ import '../../models/exercise.dart' as model;
 spec.ExerciseSpec exerciseSpecFromExercise(model.Exercise e) {
   return spec.ExerciseSpec(
     id: e.id,
+    // 18-07: carry the template `type` + spotlight `criteria` so a live
+    // `type=='microDrill'` exercise scores by its target criterion only (D-08).
+    type: e.type,
     check: e.check == null
         ? null
         : spec.CheckSpec(base: e.check!.base, modifiers: e.check!.modifiers),
     expected: e.expected == null ? null : _answer(e.expected!),
     feedback: e.feedback ?? const {},
+    criteria: e.criteria,
   );
 }
 

@@ -28,14 +28,17 @@ import '../../data/app_database.dart';
 import '../../data/curriculum_repository.dart';
 import '../../models/exercise.dart';
 import '../../models/letter.dart';
+import '../../providers/audio_providers.dart';
 import '../../services/model_download_service.dart';
 import '../../models/letter_unit.dart';
 import '../../models/word.dart';
 import '../../theme/qalam_tokens.dart';
 import '../../theme/text_styles.dart';
 import '../../tutor/coach_warmup.dart';
+import '../../tutor/exercise_selector_provider.dart';
 import '../../tutor/tutor_providers.dart';
 import '../../widgets/arabic_text.dart';
+import 'exercise_presenter.dart';
 import 'letter_unit_controller.dart';
 import 'sections/forms_section.dart';
 import 'sections/listen_write_section.dart';
@@ -175,6 +178,12 @@ class _UnitShell extends ConsumerStatefulWidget {
 class _UnitShellState extends ConsumerState<_UnitShell> {
   late final String _letterId = widget.data.unit.letterId;
 
+  /// The graph node the exercise PRESENTER is currently rendering (18-07 Task 3).
+  /// Null → the shell renders the legacy `_section(index)` walk. Non-null → the
+  /// shell renders `presentGraphExercise(_presentedId)`. It changes ONLY on the
+  /// pass/continue CTA (never at verdict time), so the feedback moment survives.
+  String? _presentedId;
+
   @override
   void initState() {
     super.initState();
@@ -243,8 +252,71 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
     });
   }
 
-  void _advance() =>
+  /// A section's onAdvance / onFinish (the Next / Got-it CTA). Before selection
+  /// activates (teach card, the first legacy section) this is the plain linear
+  /// advance. Once the first scored moment hands control to the selector
+  /// (`selectionActive`), the SAME CTA ENTERS the presenter — the content swap
+  /// happens HERE (on Next), never at verdict time, so the feedback moment lives.
+  void _advance() {
+    final state = ref.read(letterUnitControllerProvider(_letterId));
+    if (state.selectionActive && _presentedId == null) {
+      _advanceSelection();
+    } else {
       ref.read(letterUnitControllerProvider(_letterId).notifier).advance();
+    }
+  }
+
+  /// The pass/continue CTA while the presenter drives (18-07 Task 3). It AWAITS the
+  /// controller's in-flight selection (`nextReady`) — so a fast Next tap reads the
+  /// FRESH cursor, never a stale one (audit finding §5) — then swaps the presented
+  /// node (a fresh `graph:<id>` scaffold). Graph exhausted (null) → route to the
+  /// Mastery section, where the quiet star stays reachable (`_recordMasteryIfMet`).
+  Future<void> _advanceSelection() async {
+    final ctrl = ref.read(letterUnitControllerProvider(_letterId).notifier);
+    final pending = ctrl.nextReady();
+    final next = pending == null
+        ? ref.read(letterUnitControllerProvider(_letterId)).currentExerciseId
+        : await pending;
+    if (!mounted) return;
+    final total = widget.data.unit.sections.length;
+    if (next == null) {
+      // Graph exhausted → the Mastery section (index total-1), which fires
+      // _recordMasteryIfMet post-frame. Leave presenter mode so the star renders.
+      setState(() => _presentedId = null);
+      ctrl.goTo(total > 0 ? total - 1 : 0);
+      return;
+    }
+    _followRibbon(next);
+    setState(() => _presentedId = next);
+  }
+
+  /// The section ribbon FOLLOWS the presented node: map its competency → a section
+  /// index so the dots track where the child is, even though the content is now
+  /// selection-driven. Enrichment / drill nodes leave the ribbon where it is.
+  void _followRibbon(String exerciseId) {
+    final graph = ref.read(curriculumGraphProvider).asData?.value;
+    if (graph == null) return;
+    final section = _sectionForCompetency(graph.competencyOf(exerciseId));
+    if (section != null) {
+      ref.read(letterUnitControllerProvider(_letterId).notifier).goTo(section);
+    }
+  }
+
+  /// The section index a graph competency maps onto for the ribbon (recognize→Meet,
+  /// positionalForms→Watch&Trace, copyWrite→Words, fluentReading→Listen&Write).
+  /// Enrichment competencies (wordBuilding/grammarTransform/microDrill) return null
+  /// (the ribbon holds its place — those are asides, not ribbon steps).
+  int? _sectionForCompetency(String? competency) => switch (competency) {
+        'recognize' => 0,
+        'positionalForms' => 1,
+        'copyWrite' => 3,
+        'fluentReading' => 4,
+        _ => null,
+      };
+
+  /// Play a prompt clip (the presenter's audio tap) via the offline letter player.
+  void _onAudioTap(String audioId) =>
+      ref.read(audioPlayerProvider).playLetter(audioId);
 
   void _exit() {
     if (widget.onExit != null) {
@@ -289,12 +361,27 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
             closeLabel: widget.strings.close,
             onBack: _back,
             onClose: _exit,
-            onRibbonTap: (i) => ref
-                .read(letterUnitControllerProvider(_letterId).notifier)
-                .goTo(i),
+            // In selection mode the ribbon is DISPLAY-ONLY: a tap must not jump
+            // sections (goTo would fight the presenter override). It resumes being
+            // tappable in the legacy pre-selection walk.
+            onRibbonTap: (i) {
+              if (state.selectionActive) return;
+              ref.read(letterUnitControllerProvider(_letterId).notifier).goTo(i);
+            },
           ),
-          // ── BODY: the current section ────────────────────────────────────
-          Expanded(child: _section(data, index)),
+          // ── BODY: the selected graph node (selection mode) or the legacy
+          //         section walk (before the first scored moment) ─────────────
+          Expanded(
+            child: (state.selectionActive && _presentedId != null)
+                ? presentGraphExercise(
+                    data: data,
+                    exerciseId: _presentedId!,
+                    onNodeResult: _onNodePassed,
+                    onNext: _advanceSelection,
+                    onAudioTap: _onAudioTap,
+                  )
+                : _section(data, index),
+          ),
         ],
       ),
     );
