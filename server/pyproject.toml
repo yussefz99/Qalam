@@ -40,5 +40,12 @@ markers = [
 # This is a deployed application, not a distributed library: do not build/install the
 # project itself into the venv (uv installs only the dependencies). The Dockerfile copies
 # the `app/` package directly. Avoids a build-backend step entirely.
+#
+# NIGHTLY JOB ENTRYPOINT (Phase 18-09): because `package = false`, a `[project.scripts]`
+# console script would NEVER install into the venv. The nightly across-session compiler is
+# therefore run via the MODULE pattern — `python -m app.jobs.compile_profiles` — which works
+# with `package = false` and reuses the existing server image unchanged. The Cloud Run Job +
+# Cloud Scheduler + runtime-SA (roles/datastore.user) deploy commands live in that module's
+# docstring; the 18-11 human gate runs them. No console script is defined by design.
 [tool.uv]
 package = false
