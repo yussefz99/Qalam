@@ -61,6 +61,15 @@ const _whitelist = <String>{
   // omit-when-empty string-list of curriculum-id constants (non-PII: no geometry,
   // no child data). Mirrors server/app/schema.py TutorFactsIn.legalNextExerciseIds.
   'legalNextExerciseIds',
+  // Phase 18 (D-14 / Req 2 / Req 8): the compiled across-session child model
+  // (`profile`) + the offline-accrued unsynced evidence counts (`evidenceDigest`).
+  // Both are DERIVED, fixed-vocabulary, non-PII nested objects whose own keys are
+  // listed in [_profileKeys] / [_evidenceDigestKeys]. They mirror the server
+  // `TutorFactsIn.profile` / `TutorFactsIn.evidenceDigest` byte-for-byte (Pitfall 1
+  // — the 422 lockstep; server ships first, 18-05). RED now: TutorFacts does not
+  // emit them yet.
+  'profile',
+  'evidenceDigest',
   // AttemptFactIn (nested trajectory record keys) — passed/mistakeId/section
   // overlap the base set above, all already whitelisted.
 };
@@ -71,6 +80,18 @@ const _whitelist = <String>{
 /// stray coordinate key nested in a criterion, and the token guard below
 /// independently catches one. `criterion` (never `name`) keeps the guard green.
 const _criteriaKeys = <String>{'criterion', 'zone', 'score'};
+
+/// The keys allowed INSIDE the [profile] object (Phase 18 / D-14 / Req 2). All are
+/// derived, fixed-vocabulary, non-PII. `perCriterion` is a derived EMA table keyed
+/// by `<letter>/<criterion>` curriculum ids (proven non-PII by the token scan +
+/// format check below). Mirrors the server profile doc schema (child_models/{uid}:
+/// strengths/struggles/perCriterion/schemaVersion).
+const _profileKeys = <String>{'strengths', 'struggles', 'perCriterion', 'schemaVersion'};
+
+/// The keys allowed INSIDE each [evidenceDigest] row (Phase 18 / D-14). All are
+/// derived, fixed-vocabulary, non-PII — a letter×criterion pass/fail count. Mirrors
+/// the server `EvidenceDigestIn` row shape.
+const _evidenceDigestKeys = <String>{'letter', 'criterion', 'pass', 'fail'};
 
 /// The keys allowed INSIDE the derived [strokeDiff] object (Phase 17). All are
 /// derived scalars/strings/booleans — NO coordinate keys. Mirrors the server
@@ -183,6 +204,21 @@ TutorFacts _fullyPopulatedFacts() => const TutorFacts(
         'baa.traceLetter.isolated',
         'baa.writeWord.dictation',
       ],
+      // Phase 18 (D-14 / Req 2): the compiled across-session profile — derived,
+      // fixed-vocabulary, non-PII. `perCriterion` is an EMA table keyed by
+      // `<letter>/<criterion>` curriculum ids (never a coordinate/PII key).
+      profile: <String, Object?>{
+        'strengths': ['baa/shape'],
+        'struggles': ['baa/dot'],
+        'perCriterion': {'baa/dot': 0.18, 'baa/shape': 0.92},
+        'schemaVersion': 1,
+      },
+      // Phase 18 (D-14): the offline-accrued unsynced evidence digest — rows of
+      // letter×criterion pass/fail counts (fixed-vocabulary, non-PII).
+      evidenceDigest: <Map<String, Object?>>[
+        {'letter': 'baa', 'criterion': 'dot', 'pass': 3, 'fail': 1},
+        {'letter': 'baa', 'criterion': 'shape', 'pass': 5, 'fail': 0},
+      ],
     );
 
 void main() {
@@ -193,13 +229,35 @@ void main() {
       final keys = _allKeys(json);
 
       // Sanity: the scan actually descended into the trajectory records AND the
-      // nested strokeDiff object AND the nested criteria records (17-06).
+      // nested strokeDiff object AND the nested criteria records (17-06) AND the
+      // Phase-18 profile + evidenceDigest objects.
       expect(keys, containsAll(<String>{'trajectory', 'passed', 'mistakeId', 'section'}));
       expect(keys, containsAll(<String>{'strokeDiff', 'bowlDepthVerdict', 'dotHorizontal'}));
       expect(keys, containsAll(<String>{'criteria', 'criterion', 'zone', 'score', 'weakestCriterion'}));
+      expect(keys, containsAll(<String>{'profile', 'strengths', 'struggles', 'perCriterion', 'schemaVersion'}));
+      expect(keys, containsAll(<String>{'evidenceDigest', 'letter', 'pass', 'fail'}));
+
+      // `perCriterion` is a derived EMA table keyed by `<letter>/<criterion>`
+      // curriculum ids — those id KEYS are fixed-vocabulary, non-PII (the token scan
+      // below independently proves none is a coordinate/PII key). Allow exactly them.
+      final profile = json['profile'] as Map<String, Object?>;
+      final perCriterionKeys =
+          (profile['perCriterion'] as Map).keys.map((k) => k.toString()).toSet();
+      for (final k in perCriterionKeys) {
+        expect(
+          RegExp(r'^[a-z]+/[a-zA-Z]+$').hasMatch(k),
+          isTrue,
+          reason: 'perCriterion is keyed by "<letter>/<criterion>" ids only, got "$k"',
+        );
+      }
 
       expect(
-        keys.difference(_whitelist.union(_strokeDiffKeys).union(_criteriaKeys)),
+        keys.difference(_whitelist
+            .union(_strokeDiffKeys)
+            .union(_criteriaKeys)
+            .union(_profileKeys)
+            .union(_evidenceDigestKeys)
+            .union(perCriterionKeys)),
         isEmpty,
         reason: 'TutorFacts leaked a non-whitelisted key (incl. nested): $keys',
       );
@@ -269,6 +327,17 @@ void main() {
         // Phase 17.2 (demo) candidate field — must PASS the guard (non-PII;
         // "next"/"Exercise" contain no word-boundary x/y, no PII token).
         'legalNextExerciseIds',
+        // Phase 18 (D-14) profile + digest keys — must PASS the guard (derived,
+        // fixed-vocabulary; no coordinate/PII token in any of them).
+        'profile',
+        'evidenceDigest',
+        'strengths',
+        'struggles',
+        'perCriterion',
+        'schemaVersion',
+        'letter',
+        'pass',
+        'fail',
       ]) {
         expect(
           _forbiddenKey.hasMatch(ok),
