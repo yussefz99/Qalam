@@ -95,12 +95,53 @@ class CurriculumGraphWalker implements ExerciseSelector {
       // node that passes the legality gate; null at the end of the graph.
       return _nextReachableForward(current, position);
     }
-    // A fail remediates ONE tier down within the same competency; at the manqul
-    // floor (no easier tier) it re-presents in place — NEVER the linear walk.
-    // Backward remediation always passes the legality gate (a lower tier of an
-    // already-reached competency is, by definition, reachable — Pitfall 3).
-    return graph.remediateOneTier(current) ?? current;
+    // A fail remediates ONE tier down within the same competency — but only to a
+    // LEGAL node (18-07/T-18-07-01): an unreachable lower tier or an unmet-prereq
+    // remediation must NEVER be presented (the earlier `remediateOneTier ?? current`
+    // could hand back an illegal node when the cleared state did not yet reach it).
+    // At the manqul floor (no legal easier tier) it re-presents in place when that
+    // is itself legal; otherwise it advances to the nearest legal forward node —
+    // NEVER a dead-end illegal id, NEVER the old linear walk (Pitfall 5). This is
+    // the offline mirror of the online rail: the walker narrows to legal ids only.
+    final rem = graph.remediateOneTier(current);
+    if (rem != null && _isLegal(rem, position)) return rem;
+    if (_isLegal(current, position)) return current; // floor: drill in place
+    return _nextReachableForward(current, position);
   }
+
+  /// Pick deterministically FROM a policy-narrowed [candidates] set (18-07). Used
+  /// online↔offline whenever the `SelectionPolicy` supplied candidates: on a fail
+  /// prefer the one-tier-down remediation, else the drill-in-place; on a pass (or
+  /// when no remediation candidate survived) take the nearest legal forward
+  /// candidate. Every returned id is a MEMBER of [candidates] (already rail-legal
+  /// by construction — the policy re-checked `isLegalSelection`), or null when the
+  /// set is empty. This is the offline-parity twin of the online accept-if-legal
+  /// branch: both the router and the walker choose from the SAME candidate set
+  /// (D-11), so the offline floor is identical to the online degrade by design.
+  String? selectFrom(
+    List<String> candidates,
+    TutorFacts facts,
+    GraphPosition position,
+  ) {
+    if (candidates.isEmpty) return null;
+    final current = position.currentExerciseId;
+    if (!facts.passed) {
+      final rem = graph.remediateOneTier(current);
+      if (rem != null && candidates.contains(rem)) return rem;
+      if (candidates.contains(current)) return current; // floor: drill in place
+    }
+    // The candidates arrive in declaration order (nearest-forward first), so the
+    // first is the nearest legal forward node — matching `selectNext`'s pass walk.
+    return candidates.first;
+  }
+
+  /// The single legality gate — the graph rail is the authority (mirrors the
+  /// online router's `isLegalSelection` re-check, T-15-05-T / Pitfall 3).
+  bool _isLegal(String id, GraphPosition position) => graph.isLegalSelection(
+        id,
+        clearedTiers: position.clearedTiers,
+        clearedCompetencies: position.clearedCompetencies,
+      );
 
   /// Scan forward from [currentId] in declaration order for the next node that
   /// is tier-reachable and has its prerequisites met given [position]'s cleared

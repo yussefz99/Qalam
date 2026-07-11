@@ -100,6 +100,13 @@ class GlyphAnswer {
 /// Plan 07-03's GREEN suite build it from EXERCISE-CONFIGS.json via [fromJson].
 class ExerciseSpec {
   final String id;
+
+  /// The optional template label (`type` in the config). `'microDrill'` marks a
+  /// just-this-part enrichment drill (18-02) whose verdict the validator scores by
+  /// the spotlighted criterion ONLY (D-08 — "a dot drill never fails for a shaky
+  /// bowl"). Null / any other value scores normally.
+  final String? type;
+
   final CheckSpec? check;
   final AnswerSpec? expected;
 
@@ -107,12 +114,25 @@ class ExerciseSpec {
   /// mistakeId must come from (`'pass'` reserved for the praise line, #1).
   final Map<String, String> feedback;
 
+  /// The scorer criteria this exercise spotlights (18-02, `criteria` in the
+  /// config — e.g. `['shape']` for the bowl drill). For a `type=='microDrill'`
+  /// exercise the FIRST entry is the criterion that OWNS the pass/fail verdict
+  /// (D-08); empty for a normal exercise (all criteria count).
+  final List<String> criteria;
+
   const ExerciseSpec({
     required this.id,
+    this.type,
     this.check,
     this.expected,
     this.feedback = const {},
+    this.criteria = const [],
   });
+
+  /// The single scorer criterion a `microDrill` scores by (D-08), or null when
+  /// this is not a spotlighted drill / no criterion is authored.
+  String? get spotlightCriterion =>
+      type == 'microDrill' && criteria.isNotEmpty ? criteria.first : null;
 
   /// Builds the view straight from a decoded EXERCISE-CONFIGS.json entry.
   factory ExerciseSpec.fromJson(Map<String, dynamic> json) {
@@ -121,10 +141,15 @@ class ExerciseSpec {
     final feedbackRaw = json['feedback'] as Map<String, dynamic>?;
     return ExerciseSpec(
       id: json['id'] as String,
+      type: json['type'] as String?,
       check: checkRaw != null ? CheckSpec.parse(checkRaw) : null,
       expected: expectedRaw != null ? AnswerSpec.fromJson(expectedRaw) : null,
       feedback:
           feedbackRaw?.map((k, v) => MapEntry(k, v as String)) ?? const {},
+      criteria: [
+        for (final c in (json['criteria'] as List<dynamic>? ?? const []))
+          if (c is String) c,
+      ],
     );
   }
 }

@@ -33,6 +33,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../curriculum/curriculum_graph.dart';
 import '../curriculum/curriculum_graph_walker.dart';
+import '../curriculum/selection_policy.dart';
 import 'tutor_decision.dart';
 import 'tutor_facts.dart';
 
@@ -63,40 +64,115 @@ final curriculumGraphProvider = FutureProvider<CurriculumGraph>((ref) async {
 /// delegates to the offline [CurriculumGraphWalker] (Pitfall 5: selection
 /// degrades independently of coaching; it never reverts to the linear walk).
 class RouterExerciseSelector implements ExerciseSelector {
-  RouterExerciseSelector(this.graph) : _walker = CurriculumGraphWalker(graph);
+  RouterExerciseSelector(
+    this.graph, {
+    this.arc,
+    this.profile,
+    this.sessionHistory,
+  })  : _walker = CurriculumGraphWalker(graph),
+        _policy = SelectionPolicy(graph);
 
   /// The single-source graph both paths rail on.
   final CurriculumGraph graph;
 
-  final CurriculumGraphWalker _walker;
+  /// The durable remediation-arc cursor for the current moment (18-07 threads it
+  /// from Drift via [ArcStateRepository]); null when no arc is in progress.
+  final ArcState? arc;
 
-  /// Pick the next exercise. With no [decision] (offline / no server reply) this
-  /// is exactly the offline walker. With a [decision] whose `plan.nextExerciseId`
-  /// is graph-legal it accepts the agent's choice (online); an illegal/absent
-  /// proposal falls to the walker.
-  ///
-  /// Graph-legality re-check (T-15-05-T) uses the child's cleared state from
-  /// [position]: authored membership + tier reachability + prerequisites — the
-  /// SAME rules the server's G5/G6 rail applies (so client and server agree).
+  /// The compiled across-session profile mirror (18-06); null when unavailable
+  /// (cold boot / offline). Only narrows the WHY, never widens the rail.
+  final ChildModelSnapshot? profile;
+
+  /// The criterion-tagged in-session attempt store (18-07) — the fail-streak
+  /// source that drives anti-boredom + arc entry. Null for a single-shot call.
+  final List<SessionAttempt>? sessionHistory;
+
+  final CurriculumGraphWalker _walker;
+  final SelectionPolicy _policy;
+
+  /// Pick the next exercise. It first NARROWS to the pure [SelectionPolicy]'s
+  /// graph-legal candidate set (anti-boredom + arc + micro-drill, all re-checked
+  /// against `isLegalSelection`), then:
+  ///   • ONLINE — accepts the agent's `plan.nextExerciseId` ONLY when it is BOTH
+  ///     a policy candidate AND graph-legal (the trust boundary is unchanged: the
+  ///     policy narrows, the rail decides legality — T-18-07-01). Any illegal /
+  ///     off-set / absent proposal is rejected.
+  ///   • OFFLINE / rejected — degrades to the walker's deterministic pick over the
+  ///     SAME narrowed candidate set (`selectFrom`), so the offline floor is
+  ///     identical to the online degrade by construction (D-11, offline parity).
+  /// Never the old fixed linear sequence (Pitfall 5); never an out-of-rail id.
   @override
   String? selectNext(
     TutorFacts facts,
     GraphPosition position, {
     TutorDecision? decision,
   }) {
+    final out = _policy.narrow(
+      facts,
+      position,
+      arc: arc,
+      profile: profile,
+      sessionHistory: sessionHistory,
+    );
+    final candidates = out.candidates;
+
     final proposed = decision?.plan?.nextExerciseId;
     if (proposed != null &&
+        candidates.contains(proposed) &&
         graph.isLegalSelection(
           proposed,
           clearedTiers: position.clearedTiers,
           clearedCompetencies: position.clearedCompetencies,
         )) {
-      // ONLINE: the agent proposed a graph-legal next exercise — accept it.
+      // ONLINE: the agent proposed a policy-legal candidate — accept it.
       return proposed;
     }
-    // OFFLINE / illegal / absent: the deterministic walker (advance on pass,
-    // remediate one tier down on fail; never the linear walk — Pitfall 5).
-    return _walker.selectNext(facts, position);
+    // OFFLINE / illegal / off-set / absent: the deterministic walker over the
+    // SAME narrowed candidate set (never the linear walk — Pitfall 5).
+    return _walker.selectFrom(candidates, facts, position);
+  }
+}
+
+/// The OFFLINE authored WHY template (D-10). Turns the pure policy's non-PII
+/// [whyFacts] (`criterion:<name>`, `arcStep:<step>`, `struggle:<letter/criterion>`)
+/// into one short, warm, child-facing sentence NAMING the criterion + arc step —
+/// the offline floor's answer to "why this next?" when no coach line is available.
+///
+/// It is the selection-side twin of `AuthoredFallbackBrain`: deterministic, fully
+/// offline, zero model. Online the coach LLM phrases the same facts (18-08); this
+/// is the guaranteed-degrade line. Empty only when there is nothing to justify.
+String authoredWhyLine(List<String> whyFacts) {
+  String? valueFor(String key) {
+    for (final f in whyFacts) {
+      if (f.startsWith('$key:')) return f.substring(key.length + 1);
+    }
+    return null;
+  }
+
+  final criterion = valueFor('criterion');
+  final arcStep = valueFor('arcStep');
+  if (criterion == null && arcStep == null) return '';
+
+  // A friendly label per scorer criterion (the tutor's voice — specific, calm).
+  const label = <String, String>{
+    'shape': 'the bowl',
+    'dot': 'the dot',
+    'direction': 'the direction',
+    'strokeOrder': 'the stroke order',
+    'strokeCount': 'the strokes',
+  };
+  final what = criterion == null ? 'this' : (label[criterion] ?? criterion);
+
+  switch (arcStep) {
+    case 'entry':
+    case 'stepDown':
+      return "Let's work on $what — one small step at a time.";
+    case 'rebuild':
+      return "You're getting $what — let's build it back up.";
+    case 'retryOriginal':
+      return "Now let's try $what again — slower this time.";
+    default:
+      return "Let's practice $what next.";
   }
 }
 

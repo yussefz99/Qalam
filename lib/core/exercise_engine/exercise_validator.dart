@@ -29,6 +29,7 @@ library;
 
 import '../scoring/letter_scorer.dart';
 import '../scoring/scoring_models.dart';
+import '../scoring/shape_match.dart' show ShapeZone;
 import '../../models/letter.dart';
 import 'check_result.dart';
 import 'exercise_check.dart';
@@ -68,6 +69,15 @@ Future<CheckResult> validateExercise(
   final check = exercise.check;
   // A teachCard (no check) is never assessed — it always "passes".
   if (check == null) return const CheckResult.pass();
+
+  // D-08: a micro-drill scores by its SPOTLIGHTED criterion ONLY — the geometry
+  // is judged with the normal glyph scorer, but the other four criteria are
+  // RECORDED as evidence and cannot fail the drill ("a dot drill never fails for
+  // a shaky bowl"). The scorer still owns pass/fail (ADR-017) — this is a purely
+  // scorer-side re-weighting of an existing verdict, never an agent call.
+  if (exercise.spotlightCriterion != null) {
+    return _validateMicroDrill(exercise, strokes, letter, guideForm: guideForm);
+  }
 
   switch (check.base) {
     case 'glyph':
@@ -144,6 +154,61 @@ Future<CheckResult> _validateGlyph(
     criteria: criteria,
     weakestCriterion: weakest,
   );
+}
+
+// ── type: microDrill (D-08 — target criterion owns the verdict) ──────────────
+
+/// The micro-drill base (D-08): score the glyph geometry as usual, but let the
+/// SPOTLIGHTED criterion ALONE decide pass/fail. The drill passes unless that one
+/// criterion is `certainlyWrong`; a miss on any of the other four is recorded in
+/// [CheckResult.criteria] but never fails the drill (sketch 002 "Spotlight" —
+/// "a dot drill never fails for a shaky bowl"). The scorer owns the criterion
+/// zones (ADR-017); this only chooses WHICH criterion is authoritative.
+///
+/// Falls back to the normal glyph verdict when there is no reference geometry or
+/// no spotlight criterion (so a malformed drill config degrades safely).
+Future<CheckResult> _validateMicroDrill(
+  ExerciseSpec exercise,
+  List<List<List<double>>> strokes,
+  Letter? letter, {
+  String? guideForm,
+}) async {
+  final spotlight = exercise.spotlightCriterion;
+  if (letter == null || spotlight == null) {
+    return _validateGlyph(exercise, strokes, letter, guideForm: guideForm);
+  }
+
+  final form = exercise.expected?.glyph?.form ?? guideForm;
+  final score = await scoreLetter(strokes, letter, form: form);
+  final criteria = _serializeCriteria(score);
+
+  // The drill's verdict reads the spotlighted criterion's zone only. When that
+  // criterion never ran (a short-circuit on a DIFFERENT firm criterion, e.g. a
+  // wrong stroke count on a bowl drill) it did not itself fail — the drill passes,
+  // honoring D-08 (the unrelated miss cannot fail this drill).
+  final spot = _spotlightZone(score, spotlight);
+  final drillPassed = spot != ShapeZone.certainlyWrong;
+
+  if (drillPassed) {
+    return CheckResult.pass(
+      criteria: criteria,
+      weakestCriterion: score.weakest?.criterion,
+    );
+  }
+  return CheckResult.fail(
+    _mapMistake(score.mistakeId, exercise),
+    criteria: criteria,
+    weakestCriterion: score.weakest?.criterion,
+  );
+}
+
+/// The soft zone the scorer assigned to the [criterion] named by a drill's
+/// spotlight, or null when that criterion did not run (short-circuited earlier).
+ShapeZone? _spotlightZone(LetterScore score, String criterion) {
+  for (final c in score.criteria) {
+    if (c.criterion == criterion) return c.zone;
+  }
+  return null;
 }
 
 // ── base: sequence ───────────────────────────────────────────────────────────
