@@ -26,14 +26,21 @@ void main() {
     return json.decode(file.readAsStringSync()) as Map<String, Object?>;
   }
 
-  test('CurriculumGraph parses the signed baa asset (19 baa.* nodes, signedOff true)',
+  test('CurriculumGraph parses the signed baa asset (22 baa.* nodes = 19 core + 3 microDrill, signedOff true)',
       () {
     final graph = CurriculumGraph.fromJson(rawGraph());
 
     expect(graph.letterId, 'baa');
     expect(graph.signedOff, isTrue,
-        reason: 'owner-mother signed the graph at the tier level (D-05); Plan 15-07 flipped it');
-    expect(graph.nodes.length, 19, reason: 'all 19 signed baa.* exercises are nodes');
+        reason: 'owner-mother signed the graph at the tier level (D-05); Plan 15-07 flipped it. '
+            'Plan 18-02 adds micro-drill enrichment nodes but does NOT touch her sign-off — the '
+            'drill CONTENT is signedOff:false at the exercise level, not the graph structure.');
+    // 19 signed core nodes + 3 baa.microDrill.{dot,bowl,start} enrichment nodes (Plan 18-02).
+    expect(graph.nodes.length, 22, reason: 'all 19 core baa.* nodes + 3 microDrill enrichment nodes');
+    final microDrills =
+        graph.nodes.where((n) => n.competency == 'microDrill').toList();
+    expect(microDrills, hasLength(3),
+        reason: 'baa.microDrill.{dot,bowl,start} are additive enrichment nodes');
     expect(
       graph.nodes.every((n) => n.exerciseId.startsWith('baa.')),
       isTrue,
