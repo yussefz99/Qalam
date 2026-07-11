@@ -20,6 +20,12 @@ per-dimension score dict over the `DIMENSIONS` registry:
             THIS attempt, not a generic instruction (STRK-01).
   *       variety         (MODEL-FREE, THRESHOLD) — duplicate/verbatim-exemplar detector over LIVE
             coaching lines: distinct lines for distinct attempts, zero GOLD-EXEMPLAR echoes.
+  *       selection_policy (Vertex LLM-JUDGE, THRESHOLD) — Phase 18 / Req 9: "would a TEACHER make
+            THIS next-exercise pick given the child's history, and does the WHY line name the right
+            criterion?" Scored over the mother-signed `selection_gold_set.jsonl` scenarios
+            (fail-streak / returning-child / boredom-trap) against `SELECTION_THRESHOLD` (PROVISIONAL,
+            signed:false until 18-11). The judged complement to the deterministic rails property tests
+            (Req 5, 18-07). Judge leg DEFERRED to `make eval` at the 18-11 gate (17-04 judge-defer pattern).
 
 TWO LEGS, ONE HARNESS (D-10):
   * The MODEL-FREE legs (D1 / D2-advisory / variety) run offline under `uv run pytest -m code`
@@ -62,10 +68,18 @@ DIMENSIONS: tuple[str, ...] = (
     "no_false_geometry",      # Vertex LLM-judge — every geometric claim supported by the facts
     "specificity",            # Vertex LLM-judge — localized, THIS-attempt geometric fact (STRK-01)
     "variety",                # model-free — duplicate/verbatim-exemplar detector (gates every PR)
+    # --- Phase 18 (18-08 / Req 9) ---
+    "selection_policy",       # Vertex LLM-judge — "would a TEACHER make THIS pick?" (gold-scenario set)
 )
 
 # Judge calibration / gate threshold for the LLM-judge legs (NOT zero-tolerance, unlike D1).
 JUDGE_THRESHOLD = 0.7
+
+# The selection-policy judge leg's gate bar (Phase 18 / Req 9). PROVISIONAL / signed:false: the
+# owner's mother agrees the "would a teacher make this pick?" threshold AND the gold scenarios at
+# 18-11 (HUMAN-UAT, the 15-07 / 17-10 sign-off pattern). NAMED — never a literal — so the sign-off
+# flips exactly ONE constant. Ships at 0.7 (the established judge bar) until she signs the real value.
+SELECTION_THRESHOLD = 0.7  # signed:false — provisional until 18-11
 
 # The five judge legs `gate_passes` checks when they RAN (score is not None). Skipped legs
 # (the offline `-m code` context) never fail the gate.
@@ -75,6 +89,7 @@ JUDGE_GATED_DIMENSIONS: tuple[str, ...] = (
     "semantic_faithfulness",
     "no_false_geometry",
     "specificity",
+    "selection_policy",  # Phase 18 / Req 9 — gated against SELECTION_THRESHOLD when the judge leg runs
 )
 
 # The model-free variety leg's gate bar: the distinct-lines ratio over DISTINCT attempts must
@@ -155,24 +170,26 @@ def _score_judge_dimension(
     cases: list[dict[str, Any]],
     dimension: str,
     judge_scores: Optional[list[float]],
+    threshold: float = JUDGE_THRESHOLD,
 ) -> dict[str, Any]:
     """The Vertex LLM-judge legs (threshold, NOT zero-tolerance).
 
     When `judge_scores` is None (the offline `code` leg) the dimension is reported SKIPPED with a
     None score so `score_eval_set` always returns every dimension without a model dependency.
     Under `make eval` the judge runner supplies real [0,1] scores and this returns the mean +
-    a `meets_threshold` flag against `JUDGE_THRESHOLD` (0.7, the ≥0.7 calibration bar)."""
+    a `meets_threshold` flag against `threshold` (default `JUDGE_THRESHOLD` = 0.7; the Phase-18
+    selection_policy leg passes its own `SELECTION_THRESHOLD` — signed:false until 18-11)."""
     if judge_scores is None:
         return {
             "score": None,
             "skipped": "Vertex LLM-judge leg — runs under `make eval`, not the `-m code` gate",
-            "threshold": JUDGE_THRESHOLD,
+            "threshold": threshold,
         }
     mean = sum(judge_scores) / len(judge_scores) if judge_scores else 0.0
     return {
         "score": mean,
-        "threshold": JUDGE_THRESHOLD,
-        "meets_threshold": mean >= JUDGE_THRESHOLD,
+        "threshold": threshold,
+        "meets_threshold": mean >= threshold,
         "n": len(judge_scores),
     }
 
@@ -257,13 +274,16 @@ def score_eval_set(
     semantic_scores: Optional[list[float]] = None,
     geometry_scores: Optional[list[float]] = None,
     specificity_scores: Optional[list[float]] = None,
+    selection_scores: Optional[list[float]] = None,
 ) -> dict[str, dict[str, Any]]:
     """Score a labeled set on every registry dimension and return a per-dimension score dict.
 
     D1 (faithfulness, praise floor), D2 (names_fix, advisory) and variety are computed MODEL-FREE
-    here (offline). The five judge legs are the Vertex LLM-judge side — pass their score lists
-    (each a list of [0,1] judge scores, supplied by `run_judge.py` under `make eval`) to compute
-    them; leave them None for the offline `code` leg, where they are reported SKIPPED.
+    here (offline). The judge legs are the Vertex LLM-judge side — pass their score lists (each a
+    list of [0,1] judge scores, supplied by `run_judge.py` under `make eval`) to compute them; leave
+    them None for the offline `code` leg, where they are reported SKIPPED. The Phase-18
+    `selection_policy` leg (Req 9) is gated against `SELECTION_THRESHOLD` (signed:false until 18-11);
+    its judge scores ride the `selection_gold_set.jsonl` scenarios and are supplied at the 18-11 gate.
 
     Returns: `{<dimension>: {<metrics>}}` for every dimension in `DIMENSIONS`."""
     cases = _load_cases(path)
@@ -276,6 +296,9 @@ def score_eval_set(
         "no_false_geometry": _score_judge_dimension(cases, "no_false_geometry", geometry_scores),
         "specificity": _score_judge_dimension(cases, "specificity", specificity_scores),
         "variety": _score_variety(cases),
+        "selection_policy": _score_judge_dimension(
+            cases, "selection_policy", selection_scores, threshold=SELECTION_THRESHOLD
+        ),
     }
 
 
