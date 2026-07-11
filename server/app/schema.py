@@ -104,6 +104,55 @@ class CriterionIn(BaseModel):
     score: float = Field(description="Continuous 1.0 (perfect) -> 0.0 (certainly wrong).")
 
 
+class ChildProfileIn(BaseModel):
+    """The DERIVED, fixed-vocabulary across-session child model (Phase 18 / Req 2 / D-14 / D-16).
+
+    Compiled server-side (the nightly `compile_child`, 18-09) and mirrored to the device, then sent
+    BACK on the next /coach turn so the tutor reasons over the child's persistent strengths/struggles,
+    not just this-session facts. Every field is fixed-vocabulary + non-PII: `strengths`/`struggles`
+    are `<letter>/<criterion>` competency ids, `perCriterion` maps those same ids to an EMA in [0,1],
+    `schemaVersion` is an int. `extra="forbid"` + only scalar/list/dict-of-scalar fields means a
+    stray coordinate/point key (`x`, `points`) NESTED inside the profile is a 422 (GROUND-04: raw
+    geometry can never ride in on the child model).
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    strengths: list[str] = Field(
+        default_factory=list,
+        description="Derived competency ids the child does consistently well, e.g. 'baa/shape'.",
+    )
+    struggles: list[str] = Field(
+        default_factory=list,
+        description="Derived competency ids the child struggles with, e.g. 'baa/dot'.",
+    )
+    perCriterion: dict[str, float] = Field(
+        default_factory=dict,
+        description="EMA in [0,1] keyed by '<letter>/<criterion>' id — the across-session estimate.",
+    )
+    schemaVersion: int = Field(
+        default=1, description="Provisional child-model schema version (bumped when the shape changes)."
+    )
+
+
+class EvidenceDigestRowIn(BaseModel):
+    """One offline-accrued evidence-digest row (Phase 18 / Req 8 / D-14 offline backfill).
+
+    While the device is offline it accrues per-letter×criterion pass/fail COUNTS locally; on the next
+    online /coach turn it ships the aggregated digest so the server can fold the offline attempts into
+    the persistent model. Fixed-vocabulary, non-PII: `letter`/`criterion` are curriculum ids, `pass`/
+    `fail` are counts. `extra="forbid"` — a stray coordinate key (`x`) nested in a digest row is a 422.
+    The wire key is `pass` (a Python keyword) so the field is `pass_` with `alias="pass"`.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    letter: str = Field(description="The letter family id the counts belong to, e.g. 'baa'.")
+    criterion: str = Field(description="The criterion id the counts belong to, e.g. 'dot'.")
+    pass_: int = Field(default=0, alias="pass", description="Offline count of passing attempts.")
+    fail: int = Field(default=0, description="Offline count of failing attempts.")
+
+
 class TutorFactsIn(BaseModel):
     """The FINAL, enlarged, non-PII request contract for POST /coach.
 
@@ -196,6 +245,25 @@ class TutorFactsIn(BaseModel):
         default=None,
         description="Graph-legal next-exercise candidate ids the coach must pick FROM (non-PII curriculum "
         "constants); null/omitted when the client sends none.",
+    )
+
+    # --- Phase 18 (18-05, D-14 / D-16 / Req 2): the across-session child model + offline backfill ---
+    # The DERIVED persistent child model (`profile`) + the offline-accrued evidence digest
+    # (`evidenceDigest`). BOTH optional/defaulted => ADDITIVE (strict-superset): an OLD client that
+    # sends neither still validates — no 422 window. Deploy direction: the SERVER ships FIRST (this
+    # plan), the Dart mirror (lib/tutor/tutor_facts.dart) follows in 18-06 and copies these field
+    # NAMES + the nested keys byte-for-byte (Pitfall 1 — the 422 lockstep). GROUND-04: both nested
+    # models are extra="forbid", fixed-vocabulary scalars/ids — a nested coordinate/point key 422s,
+    # so raw geometry / PII can never ride in on the child model or the digest.
+    profile: ChildProfileIn | None = Field(
+        default=None,
+        description="The DERIVED across-session child model (strengths/struggles/perCriterion EMA); "
+        "null when the client has no compiled profile yet.",
+    )
+    evidenceDigest: list[EvidenceDigestRowIn] = Field(
+        default_factory=list,
+        description="Offline-accrued per-letter×criterion pass/fail counts (D-14 backfill); "
+        "empty when the client has nothing queued.",
     )
 
     # --- RETIRED by Plan 17-08 under D-A (scorer owns pass/fail; ADR-017 at 17-10) ---
