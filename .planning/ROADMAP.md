@@ -824,7 +824,7 @@ Plans:
 **Goal:** Every "next exercise" pick is a deliberate, explainable teaching move informed by a persistent per-child model — targeting the weakest criterion, building remediation arcs back to confidence, injecting just-this-part micro-drills — while staying railed to the signed curriculum graph, preserving the offline walker floor, and closing the cost/latency research question with measured numbers.
 **Requirements**: SPEC-18-R1..R9 (the 9 locked requirements in 18-SPEC.md)
 **Depends on:** Phase 17 (LetterScore criteria + weakest; ADR-017); Phase 17.2 (graph-legal candidates over the wire, coach proposes+announces, Teacher's Eye strip — merge to main before branching)
-**Plans:** 3/11 plans executed
+**Plans:** 4/11 plans executed
 
 Plans:
 
@@ -839,7 +839,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2)*
 
-- [ ] 18-04-PLAN.md — Pure-Dart SelectionPolicy in lib/curriculum/ (arc state machine + anti-boredom filter + micro-drill injection, D-09/D-11) + ArcState/ChildModelSnapshot pure types (R1/R3/R4)
+- [x] 18-04-PLAN.md — Pure-Dart SelectionPolicy in lib/curriculum/ (arc state machine + anti-boredom filter + micro-drill injection, D-09/D-11) + ArcState/ChildModelSnapshot pure types (R1/R3/R4)
 - [ ] 18-05-PLAN.md — Server FIRST (422 lockstep): TutorFactsIn +profile +evidenceDigest + Admin-SDK evidence append at /coach (D-13) + firestore.rules child_models owner-read (R2/R7)
 
 **Wave 4** *(blocked on Wave 3)*
@@ -874,6 +874,6 @@ Plans:
 | 15. BUILD — dynamic grounded exercise selection on baa | 8/7 | Complete    | 2026-06-28 |
 | 16. BUILD — presence + voice + eval gate + demo-harden | 3/6 | In Progress|  |
 | 17. BUILD — stroke-aware coaching (on-device geo-diff → coach) | 10/10 | Complete   | 2026-07-06 |
-| 18. BUILD — the living tutor (per-child dynamic exercise selection) | 3/11 | In Progress|  |
+| 18. BUILD — the living tutor (per-child dynamic exercise selection) | 4/11 | In Progress|  |
 
 **Coverage:** the 14 original v2.0 requirements map across Phases 14–16; Phase 17 (added 2026-06-30 from the stroke-aware spike) adds STRK-01 / GROUND-04 / EVAL-03. The three spikes (11–13) own no requirements by design. See REQUIREMENTS.md → v2.0 Traceability.
