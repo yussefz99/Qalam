@@ -47,6 +47,8 @@ TutorFacts buildTutorFacts({
   List<String> clearedCompetencies = const [],
   Map<String, Object?>? strokeDiff,
   List<String> legalNextExerciseIds = const [],
+  Map<String, Object?>? profile,
+  List<Map<String, Object?>>? evidenceDigest,
 }) {
   return TutorFacts(
     letterId: letterId,
@@ -73,6 +75,14 @@ TutorFacts buildTutorFacts({
     // straight through (non-PII curriculum-id strings), so the coach can propose
     // the next exercise FROM the graph. Omit-when-empty is handled in TutorFacts.
     legalNextExerciseIds: List<String>.unmodifiable(legalNextExerciseIds),
+    // Phase 18 (18-06, D-14 / D-16 / Req 2): the compiled across-session profile
+    // (from the ChildModelSnapshot mirror) + the offline evidence digest (from the
+    // Drift evidence queue) are PURE, already-derived, fixed-vocabulary non-PII
+    // values passed straight through — NOT a stroke/Offset/PII parameter. The
+    // signature stays the guard: no geometry or nickname can reach the model. Both
+    // are omit-when-null in TutorFacts.
+    profile: profile,
+    evidenceDigest: evidenceDigest,
   );
 }
 

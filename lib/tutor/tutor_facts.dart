@@ -84,6 +84,8 @@ class TutorFacts {
     this.expectedWord,
     this.writtenWord,
     this.legalNextExerciseIds = const [],
+    this.profile,
+    this.evidenceDigest,
   });
 
   /// The letter family this moment belongs to (e.g. `baa`).
@@ -176,10 +178,36 @@ class TutorFacts {
   /// mirrors `TutorFactsIn.legalNextExerciseIds` (`server/app/schema.py`).
   final List<String> legalNextExerciseIds;
 
+  /// Phase 18 (18-06, D-14 / D-16 / Req 2): the compiled ACROSS-SESSION child
+  /// model — a DERIVED, fixed-vocabulary, non-PII map
+  /// `{strengths, struggles, perCriterion, schemaVersion}` (exactly
+  /// `ChildModelSnapshot.toMap()`, decoded on boot from the Drift
+  /// `ChildProfileMirror`). `perCriterion` is an EMA table keyed by
+  /// `<letter>/<criterion>` curriculum ids — never a coordinate/PII key. Sent so a
+  /// RETURNING child's first turn already reflects the previous session (Req 2).
+  /// Emitted ONLY when non-null (omit-when-null so an unchanged payload byte-matches
+  /// the prior shape — the 422 lockstep, Pitfall 1); the key + nested keys mirror
+  /// `TutorFactsIn.profile` / `ChildProfileIn` (`server/app/schema.py`) byte-for-byte
+  /// (server ships FIRST, 18-05; the client mirror is SECOND).
+  final Map<String, Object?>? profile;
+
+  /// Phase 18 (18-06, D-14 / Req 8): the offline-accrued unsynced evidence digest —
+  /// a list of DERIVED, fixed-vocabulary, non-PII rows
+  /// `{letter, criterion, pass, fail}` (per-letter×criterion pass/fail COUNTS the
+  /// device accrued while offline). Sent on the next online turn so the server can
+  /// fold the offline attempts into the persistent model (D-14 backfill). Emitted
+  /// ONLY when non-null (omit-when-null); the key + nested keys mirror
+  /// `TutorFactsIn.evidenceDigest` / `EvidenceDigestRowIn` (`server/app/schema.py`)
+  /// byte-for-byte — the wire key is `pass` (the server aliases its `pass_` field to
+  /// it). Fixed-vocabulary scalars only: a stray coordinate key would 422 under the
+  /// server's nested `extra="forbid"` (GROUND-04).
+  final List<Map<String, Object?>>? evidenceDigest;
+
   /// The whitelisted serialized form. Emits ONLY the derived fields (the eight
   /// base + `clearedTiers`/`clearedCompetencies`, plus the Phase-17 derived
-  /// `strokeDiff`/`criteria`/`weakestCriterion`/`expectedWord`/`writtenWord` when
-  /// present) — no raw strokes, no PII. This is the exact
+  /// `strokeDiff`/`criteria`/`weakestCriterion`/`expectedWord`/`writtenWord` and
+  /// the Phase-18 `profile`/`evidenceDigest` when present) — no raw strokes, no
+  /// PII. This is the exact
   /// shape that crosses the network as the `/coach` request body; its keys +
   /// casing mirror the deployed server `TutorFactsIn` (`server/app/schema.py`)
   /// so `extra="forbid"` returns 200, not 422 (GROUND-02 / the 422 lockstep).
@@ -210,6 +238,14 @@ class TutorFacts {
         // shape; the key string byte-matches the server `TutorFactsIn` field name.
         if (legalNextExerciseIds.isNotEmpty)
           'legalNextExerciseIds': legalNextExerciseIds,
+        // Phase 18 (18-06, D-14 / D-16 / Req 2): the compiled across-session
+        // profile + the offline evidence digest. Emitted ONLY when present so an
+        // unchanged payload byte-matches the prior shape (the 422 lockstep,
+        // Pitfall 1). The key strings + the nested keys byte-match the server
+        // `TutorFactsIn.profile` / `TutorFactsIn.evidenceDigest`
+        // (`server/app/schema.py`); the client ships SECOND (server-first, 18-05).
+        if (profile != null) 'profile': profile,
+        if (evidenceDigest != null) 'evidenceDigest': evidenceDigest,
       };
 
   /// Alias of [toMap] — same whitelisted shape.
