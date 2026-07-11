@@ -1,0 +1,13 @@
+# selection_gold_set.jsonl — (learner facts, child model) → the exercise a good TEACHER would pick
+# next, plus the justification ("why this pick") they would voice. The Vertex LLM-judge scores the
+# selection_policy dimension over these scenarios (Req 9); the deterministic rails property tests
+# (Req 5) complement the judged dimension.
+#
+# PROVENANCE: Claude-DRAFTED for the Phase-18 living-tutor selection brain. Every line is
+# "signed": false — PROVISIONAL pending the owner's mother's sign-off on BOTH the scenarios and the
+# selection threshold (18-11 HUMAN-UAT, the 15-07 / 17-10 sign-off pattern). Content is non-PII,
+# fixed-vocabulary (curriculum ids + criterion names). Scenarios cover the three SPEC cases:
+# fail-streak, returning-child, boredom-trap.
+{"scenario": "fail_streak", "letterId": "baa", "section": "baa.writeLetter.fromSound", "passed": false, "weakestCriterion": "dot", "trajectory": [{"passed": false, "mistakeId": "noDot", "section": "baa.writeLetter.fromSound"}, {"passed": false, "mistakeId": "noDot", "section": "baa.writeLetter.fromSound"}], "expected_pick": {"targets_criterion": "dot", "not_exercise": "baa.writeLetter.fromSound", "is_microdrill": "baa.microDrill.dot"}, "idealWhy": "You've missed the dot twice — let's practice just the dot for a moment, then we'll come back.", "label": "gold_selection", "signed": false, "drafted_by": "claude"}
+{"scenario": "returning_child", "letterId": "baa", "section": "baa.traceLetter.isolated", "passed": true, "weakestCriterion": null, "profile": {"strengths": ["baa/shape"], "struggles": ["baa/dot"], "perCriterion": {"baa/dot": 0.18, "baa/shape": 0.92}, "schemaVersion": 1}, "trajectory": [], "expected_pick": {"references_struggle": "baa/dot", "targets_criterion": "dot"}, "idealWhy": "Welcome back! Last time the dot was tricky — let's warm up with it first.", "label": "gold_selection", "signed": false, "drafted_by": "claude"}
+{"scenario": "boredom_trap", "letterId": "baa", "section": "baa.writeLetter.fromSound", "passed": false, "weakestCriterion": "shape", "trajectory": [{"passed": false, "mistakeId": "shallowBowl", "section": "baa.writeLetter.fromSound"}, {"passed": false, "mistakeId": "shallowBowl", "section": "baa.writeLetter.fromSound"}], "expected_pick": {"not_exercise": "baa.writeLetter.fromSound", "changes_exercise": true, "targets_criterion": "shape"}, "idealWhy": "Let's try a different way to shape that bowl — same idea, a fresh exercise.", "label": "gold_selection", "signed": false, "drafted_by": "claude"}
