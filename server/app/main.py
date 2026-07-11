@@ -20,10 +20,11 @@ import logging
 import os
 from functools import lru_cache
 
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, status
 from fastapi.responses import JSONResponse
 
 from app.auth import verify_caller
+from app.evidence import append_evidence, evidence_rows_from_facts
 from app.graph import build_graph
 from app.nodes import StructuredOutputError
 from app.schema import CoachOut, TutorFactsIn
@@ -49,6 +50,26 @@ def _to_wire_args(args: dict) -> dict:
     """Rename known snake_case decision-arg keys to their camelCase wire form."""
     return {_WIRE_ARG_KEYS.get(k, k): v for k, v in (args or {}).items()}
 
+
+def _safe_append_evidence(claims: dict, facts_in: TutorFactsIn) -> None:
+    """Derive + append per-letter×criterion evidence for THIS attempt (D-13, Req 7).
+
+    Runs OFF the /coach critical path (a BackgroundTask) so the child never waits on Firestore. The
+    uid is the TRUSTED verify_caller ID-token claim, NEVER the request body (T-18-05-01). Fully wrapped
+    so a Firestore/derivation failure is display-only degradation and can never break /coach
+    (T-18-05-05). A label-only attempt derives no rows and writes nothing.
+    """
+    try:
+        uid = (claims or {}).get("uid")
+        if not uid:
+            return
+        rows = evidence_rows_from_facts(facts_in)
+        if not rows:
+            return
+        append_evidence(uid, rows)
+    except Exception as exc:  # never let an evidence write break the response
+        logger.warning("evidence append failed (display-only degradation): %s", type(exc).__name__)
+
 app = FastAPI(title="Qalam Tutor Server", version="0.1.0")
 
 
@@ -71,12 +92,14 @@ async def health() -> dict:
 @app.post("/coach", response_model=CoachOut)
 async def coach(
     facts_in: TutorFactsIn,
-    _claims: dict = Depends(verify_caller),
+    background_tasks: BackgroundTasks,
+    claims: dict = Depends(verify_caller),
 ) -> CoachOut:
     """Run the minimal grounding graph and return one grounded ACTION.
 
     `facts_in` is the FINAL enlarged, extra=forbid DTO — an extra/PII key 422s before we get
-    here. Auth (Depends(verify_caller)) has already rejected unauthenticated callers with 401.
+    here. Auth (Depends(verify_caller)) has already rejected unauthenticated callers with 401;
+    `claims` carries the verified ID-token uid used to key the evidence write (never the body).
     """
     facts = facts_in.model_dump()
     config = {"configurable": {"thread_id": "stateless"}}
@@ -141,6 +164,11 @@ async def coach(
         out.grounded,
         _line[:200],
     )
+    # Persist per-letter×criterion evidence OFF the critical path (D-13, Req 7). The CoachOut is
+    # already built; the write runs AFTER the response is sent (BackgroundTask), keyed by the TRUSTED
+    # uid claim (never facts_in) — the practice path never blocks on Firestore and a write failure
+    # degrades display-only. Client Firestore writes stay deny-all; only this server path writes.
+    background_tasks.add_task(_safe_append_evidence, claims, facts_in)
     return out
 
 

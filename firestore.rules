@@ -78,9 +78,25 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Phase 18 — the DERIVED across-session child model (D-13 / D-16, 18-05).
+    // child_models/{uid} is the nightly-compiled, derived-only, fixed-vocabulary,
+    // non-PII profile doc (strengths/struggles/perCriterion EMA). The device does a
+    // background one-shot .get() to refresh its local Drift mirror (D-16), so it needs
+    // an OWNER-scoped READ. Writes stay DENY-ALL — the doc is written ONLY by the
+    // Cloud Run Admin SDK (which bypasses these rules), never by a client (D-13). The
+    // owner-only read (request.auth.uid == uid) is the elevation-of-privilege guard:
+    // account A can never read account B's model. The evidence subcollection
+    // (children/{uid}/evidence/**) has DELIBERATELY no client match — the deny-all
+    // catch-all below blocks it (Admin-only, append-only, server-written).
+    match /child_models/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
     // Deny-by-default catch-all. Any path not explicitly matched above —
-    // including any future/accidental child-data path (D-11) — is denied for
-    // both read and write to every client. MUST stay LAST.
+    // including any future/accidental child-data path (D-11) and the Admin-only
+    // children/{uid}/evidence/** subcollection — is denied for both read and write
+    // to every client. MUST stay LAST.
     match /{document=**} {
       allow read, write: if false;
     }
