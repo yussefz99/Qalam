@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
-stopped_at: "Completed 18-08-PLAN.md (server selection intelligence: coach WHY grounding D-10 + casing-safe rail + selection_policy eval dimension)"
-last_updated: "2026-07-11T11:52:58.770Z"
+stopped_at: "Completed 18-09-PLAN.md (nightly EMA compiler: compile_child via the criterion_ema mirror, letter-agnostic child_models compile + Cloud Run Job module entrypoint + 18-11 gcloud runbook)"
+last_updated: "2026-07-11T14:16:15.647Z"
 last_activity: 2026-07-11
 progress:
   total_phases: 22
   completed_phases: 15
   total_plans: 101
-  completed_plans: 93
+  completed_plans: 94
   percent: 68
 ---
 
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 18 (build-the-living-tutor-dynamic-exercise-selection) — EXECUTING
-Plan: 8 of 11
+Plan: 9 of 11
 Status: Ready to execute
 Last activity: 2026-07-11
-Next: Continue /gsd-execute-phase 18 — Wave 3 continues: 18-05 done (SERVER-first profile/evidenceDigest wire on TutorFactsIn, extra=forbid; evidence.py per-letter×criterion deriver + Admin-SDK batch append; /coach BackgroundTask off the critical path; firestore.rules owner-read child_models/{uid}). Next 18-06 lands the Dart mirror (TutorFacts.profile/evidenceDigest byte-for-byte — greens across_session_memory + re-greens payload_nonpii) + the Drift child-model repository/refresh; 18-04/18-07 write SelectionPolicy (greens the client selection tests); 18-08/18-09 green test_selection_dimension + test_compile_profiles (the two remaining Wave-0 RED server modules); 18-11 signs the micro-drill copy + gold set. A single Cloud Run re-deploy goes AFTER both wire sides land (18-06).
-PriorNext: Wave 2 complete — 18-03 (per-criterion EMA pure Dart+Python + Drift v5→6 evidence/arc/profile-mirror tables) greened the EMA parity fixtures; 18-04 (SelectionPolicy anti-boredom + remediation arc + micro-drill injection). 18-05 greened test_schema_forbid + test_evidence (server half of R7/R2); the two remaining `-m code` collection errors (test_compile_profiles→18-09, test_selection_dimension→18-08) are unrelated Wave-0 RED, not a regression.
+Next: Continue /gsd-execute-phase 18 — Wave 4 continues: 18-09 done (nightly EMA compiler: compile_child folds children/{uid}/evidence per letter/criterion through the SAME update_ema as the on-device mirror, HI/LO + min-count gate, derived-only non-PII child_models/{uid}; python -m app.jobs.compile_profiles is Cloud-Run-Job-ready with the gcloud Job/Scheduler/roles-datastore.user runbook in the module docstring). Server Wave-0 RED contract FULLY closed: `uv run pytest -m code` = 142 passed / 1 skipped, zero deselects. Remaining: 18-10 (if scheduled this wave) then 18-11 HUMAN-UAT — deploy gates (Cloud Run re-deploy for the wire fields, Job+Scheduler creation, child_models owner-read rule) + mother signs EMA constants/micro-drill copy/selection gold set.
+PriorNext: Wave 3/4 progress — 18-05 (server-first profile/evidenceDigest wire + evidence.py + /coach BackgroundTask + owner-read rule), 18-06 (Dart mirror + Drift child-model repository), 18-07 (SelectionPolicy live-path wiring), 18-08 (coach WHY grounding D-10 + selection_policy eval dimension) all done; 18-08/18-09 greened test_selection_dimension + test_compile_profiles (the last two Wave-0 RED server modules).
 
 ## Performance Metrics
 
@@ -111,6 +111,7 @@ PriorNext: Wave 2 complete — 18-03 (per-criterion EMA pure Dart+Python + Drift
 | Phase 18 P05 | 15min | 3 tasks | 4 files |
 | Phase 18 P06 | 9min | 2 tasks | 7 files |
 | Phase 18 P08 | 18min | 2 tasks | 6 files |
+| Phase 18 P09 | ~5min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -296,6 +297,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-11T11:51:24.719Z
-Stopped at: Completed 18-08-PLAN.md (server selection intelligence: coach WHY grounding D-10 + casing-safe rail + selection_policy eval dimension)
+Last session: 2026-07-11T14:16:15.635Z
+Stopped at: Completed 18-09-PLAN.md (nightly EMA compiler: compile_child via the criterion_ema mirror, letter-agnostic child_models compile + Cloud Run Job module entrypoint + 18-11 gcloud runbook)
 Resume files: .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-02-PLAN.md (next — cross-letter labels + baa micro-drill set), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-03-PLAN.md (EMA + Drift v6), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-01-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
