@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
-stopped_at: Completed 18-01-PLAN.md (Wave-0 RED contract)
-last_updated: "2026-07-11T11:40:00.000Z"
-last_activity: 2026-07-11 -- 18-01 Wave-0 RED contract landed (13 tests + gold set, all RED)
+stopped_at: Completed 18-02-PLAN.md (cross-letter labels + baa micro-drill set)
+last_updated: "2026-07-11T10:25:43.143Z"
+last_activity: 2026-07-11 -- 18-02 landed the cross-letter DATA model (letters+criteria on all 48 exercises) + baa micro-drill set (dot/bowl/start, signedOff:false enrichment) + re-derived server copy
 progress:
   total_phases: 22
   completed_phases: 15
   total_plans: 101
-  completed_plans: 87
+  completed_plans: 88
   percent: 68
 ---
 
@@ -26,10 +26,10 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 18 (build-the-living-tutor-dynamic-exercise-selection) — EXECUTING
-Plan: 2 of 11
-Status: Executing Phase 18 (18-01 Wave-0 RED contract complete)
-Last activity: 2026-07-11 -- 18-01 Wave-0 RED contract landed (13 tests + gold set, all RED by missing symbol)
-Next: Continue /gsd-execute-phase 18 — Wave 2: 18-02 (cross-letter labels + baa micro-drill set dot/bowl/start signedOff:false + generate.py re-derive) and 18-03 (per-criterion EMA pure Dart+Python + Drift v5→6 evidence/arc/profile-mirror tables). Wave 2 turns the 18-01 RED tests toward GREEN.
+Plan: 3 of 11
+Status: Executing Phase 18 (18-01 RED contract + 18-02 DATA model complete)
+Last activity: 2026-07-11 -- 18-02 landed cross-letter labels (all 48 exercises) + baa micro-drill set (dot/bowl/start, criterion-tagged enrichment, signedOff:false) + re-derived server curriculum copy. R3/R7 NOT checkbox-marked (DATA leg only). 1 pre-existing unsigned-alif red logged in deferred-items.md.
+Next: Continue /gsd-execute-phase 18 — Wave 2 continues: 18-03 (per-criterion EMA pure Dart+Python + Drift v5→6 evidence/arc/profile-mirror tables). Then policy (18-04/18-07) greens microdrill_selection_test using 18-02's criterion-tagged nodes; deriver (18-05) greens test_evidence using 18-02's letters/criteria labels. 18-11 signs the micro-drill copy (exercise signedOff:false→true) → drills auto-join AUTHORED_BAA_IDS.
 PriorNext: Phase 17 waves 1–5 complete (17-01 RED contract, 17-02 soft per-stroke verdict, 17-03 per-form multi-criteria scoreLetter + LetterScore, 17-04 server eval gate, 17-05 server criteria/word contract, 17-06 CLIENT criteria/word mirror, 17-09 per-form calibration harness). The criteria/word lockstep is now closed BOTH wire sides (server 17-05 + client 17-06) with zero 422 window — the scorer's structured verdict reaches the coach FACTS. Continue /gsd-execute-phase 17: 17-07 geo-diff cutover (owns the aiJudge/strokeImage seams), 17-08 harden, 17-10 ADR-017 + single Cloud Run re-deploy + HUMAN-UAT mom sign-off (flips STRK-01/GROUND-04).
 
 ## Performance Metrics
@@ -105,6 +105,7 @@ PriorNext: Phase 17 waves 1–5 complete (17-01 RED contract, 17-02 soft per-str
 | Phase 17 P07 | 32 | 2 tasks | 9 files |
 | Phase 17 P08 | 9min | 2 tasks | 7 files |
 | Phase 17 P10 | 30min | 2 tasks | 2 files |
+| Phase 18 P02 | ~40min | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -233,6 +234,9 @@ Recent decisions affecting current work:
 - [Phase ?]: 17-10: STRK-01/GROUND-04/EVAL-03 NOT checkbox-marked (phase precedent + genuine pending gates: deploy / two-arm baseline / mother gold re-sign); /gsd-verify-work 17 flips them once the HUMAN-UAT gates close. Phase 17 autonomous-complete; verification baseline flutter 748/8-known, server -m code 109/1-skip
 - [Phase 18]: [18-01]: Wave-0 RED contract authored (Nyquist) — every R1..R9 requirement + EMA Dart↔Python parity + D-14 non-PII/422 guards has a FAILING automated test naming its exact behavior, all RED by MISSING SYMBOL. 13 new test files (7 Dart, 6 Python) + 1 signed:false selection gold set (fail-streak/returning-child/boredom-trap). The executable API contract downstream implements with ZERO test edits: `SelectionPolicy.narrow(facts, position, {profile, arc}) -> PolicyOutcome{candidates, arcStep, targetCriterion, whyFacts, nextArc}` (lives in lib/curriculum/selection_policy.dart — pure durable-layer citizen), `ChildModelSnapshot`, `ArcState`, `kArcEntryFailStreak`/`kArcMaxAttempts` (provisional signed:false constants, never literals), `updateEma`/`update_ema` (byte-identical fixtures both langs), `evidence_rows_from_facts`/`append_evidence` (word→source:"word" coarse present/correct/dot; isolated-letter→source:"letter" 5 geometric criteria), `compile_child` (letter-agnostic, second-letter zero-schema-change), `SELECTION_THRESHOLD`. micro-drill ids = baa.microDrill.{dot,bowl,start} (D-07). Property test is plain flutter_test Random(0xB0A7) — NO glados (analyzer-9 conflict).
 - [Phase 18]: [18-01]: TWO shipped guards INTENTIONALLY flipped GREEN→RED as part of the Wave-0 contract (18-05/18-06 re-green by SHIPPING the fields, no test edits): payload_nonpii_test.dart (missing TutorFacts.profile/evidenceDigest params) + test_schema_forbid.py accept-leg (missing TutorFactsIn.profile/evidenceDigest fields; reject legs already pass under extra=forbid). TutorFacts.profile is a Map keyed by <letter>/<criterion> EMA ids (perCriterion) — the payload guard allows those dynamic id keys + format-checks them; the token scan proves them non-PII. R1..R9 requirements NOT checkbox-marked (15-01/17-01 Wave-0 precedent). Verify baseline: the 4 missing-module server tests interrupt a bare `uv run pytest -m code` at collection (established Wave-0 behavior); pre-existing suite 116/1-skip with the RED modules deselected.
+- [Phase ?]: [18-02]: cross-letter DATA model landed — letters+criteria on all 48 exercises (isolated→geometric per letter, alif drops dot; word/sentence→coarse present/correct/dot per Pitfall 3; teachCard→[]); باب→[baa,alif] matches the R7 evidence contract. All-letters schema — a newly signed letter needs zero schema change.
+- [Phase ?]: [18-02]: baa micro-drill set (dot/bowl/start) ships as type:microDrill exercises + criterion-tagged enrichment nodes (new competency microDrill, essential:false, no prereqs), signedOff:false. criterion→drill: dot→dot, shape→bowl, strokeOrder→start (matches 18-01 RED microdrill_selection + gold set). Never gates the star (D-06); WriteSurface reuse (D-05).
+- [Phase ?]: [18-02]: graph file-level signedOff kept TRUE (15-07 mother tier sign-off; CLAUDE.md domain — executors don't revert). MicroDrills' unsigned status is granular (exercise signedOff:false + node essential:false), which is what T-18-02-02 requires. AUTHORED_BAA_IDS filtered to signedOff:True → drills auto-join at 18-11 sign-off, keeps test_graph.py 19-baa green. R3/R7 NOT checkbox-marked (DATA leg only; policy 18-04/07 + deriver 18-05 green their RED tests).
 
 ### Pending Todos
 
@@ -273,6 +277,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-11T11:40:00.000Z
-Stopped at: Completed 18-01-PLAN.md (Wave-0 RED contract)
+Last session: 2026-07-11T10:25:43.137Z
+Stopped at: Completed 18-02-PLAN.md (cross-letter labels + baa micro-drill set)
 Resume files: .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-02-PLAN.md (next — cross-letter labels + baa micro-drill set), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-03-PLAN.md (EMA + Drift v6), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-01-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
