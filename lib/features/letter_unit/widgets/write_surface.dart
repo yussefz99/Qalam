@@ -43,6 +43,7 @@ import '../../../widgets/arabic_text.dart';
 import '../../practice/widgets/stroke_canvas.dart';
 import '../../practice/widgets/stroke_order_animation.dart';
 import '../exercise_spec_adapter.dart';
+import 'spotlight_overlay.dart';
 
 /// The config-driven write/trace surface. Composes the existing [StrokeCanvas];
 /// on letter-complete it runs [validateExercise] and forwards the [CheckResult]
@@ -319,6 +320,19 @@ class _WriteSurfaceState extends ConsumerState<WriteSurface> {
                   controller: widget.canvasController,
                 ),
               ),
+
+              // 18-10 (D-05): the micro-drill Spotlight — lights the drilled
+              // criterion's zone and dims the rest. Layered ABOVE the ink but
+              // BELOW the chrome (tag / Watch-me) so those stay bright. Only for a
+              // `type=='microDrill'` exercise; IgnorePointer inside means it NEVER
+              // touches stroke capture (the child still writes on the StrokeCanvas
+              // above's pointer path unchanged).
+              if (widget.exercise.type == 'microDrill')
+                Positioned.fill(
+                  child: SpotlightOverlay(
+                    spotlightZone: widget.exercise.spotlightZone,
+                  ),
+                ),
 
               // the .surface-tag mode chip (top-start, RTL-aware via Positioned).
               Positioned(
