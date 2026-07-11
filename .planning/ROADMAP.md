@@ -824,7 +824,7 @@ Plans:
 **Goal:** Every "next exercise" pick is a deliberate, explainable teaching move informed by a persistent per-child model — targeting the weakest criterion, building remediation arcs back to confidence, injecting just-this-part micro-drills — while staying railed to the signed curriculum graph, preserving the offline walker floor, and closing the cost/latency research question with measured numbers.
 **Requirements**: SPEC-18-R1..R9 (the 9 locked requirements in 18-SPEC.md)
 **Depends on:** Phase 17 (LetterScore criteria + weakest; ADR-017); Phase 17.2 (graph-legal candidates over the wire, coach proposes+announces, Teacher's Eye strip — merge to main before branching)
-**Plans:** 9/11 plans executed
+**Plans:** 10/11 plans executed
 
 Plans:
 
@@ -854,7 +854,7 @@ Plans:
 
 **Wave 6** *(blocked on Wave 5)*
 
-- [ ] 18-10-PLAN.md — Child-facing Teacher's Margin panel (arc narration + WHY, D-01) + Spotlight overlay (light the criterion zone, D-05); anti-gamification (R1/R3/R4)
+- [x] 18-10-PLAN.md — Child-facing Teacher's Margin panel (arc narration + WHY, D-01) + Spotlight overlay (light the criterion zone, D-05); anti-gamification (R1/R3/R4)
 
 **Wave 7** *(blocked on Wave 6 — human/infra gates, autonomous:false)*
 
@@ -874,6 +874,6 @@ Plans:
 | 15. BUILD — dynamic grounded exercise selection on baa | 8/7 | Complete    | 2026-06-28 |
 | 16. BUILD — presence + voice + eval gate + demo-harden | 3/6 | In Progress|  |
 | 17. BUILD — stroke-aware coaching (on-device geo-diff → coach) | 10/10 | Complete   | 2026-07-06 |
-| 18. BUILD — the living tutor (per-child dynamic exercise selection) | 9/11 | In Progress|  |
+| 18. BUILD — the living tutor (per-child dynamic exercise selection) | 10/11 | In Progress|  |
 
 **Coverage:** the 14 original v2.0 requirements map across Phases 14–16; Phase 17 (added 2026-06-30 from the stroke-aware spike) adds STRK-01 / GROUND-04 / EVAL-03. The three spikes (11–13) own no requirements by design. See REQUIREMENTS.md → v2.0 Traceability.

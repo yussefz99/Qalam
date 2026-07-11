@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
-stopped_at: "Completed 18-07-PLAN.md (SelectionPolicy live-path wiring — the Phase-15 dead wire is CLOSED and RENDERED: candidate-aware selector, decision threaded through the live screen, selection on pass+fail, arc persistence D-12, D-08 micro-drill scoring, exercise presenter; proven by widget-level live-path tests)"
-last_updated: "2026-07-11T15:30:48.858Z"
+stopped_at: Completed 18-10-PLAN.md (Teacher's Margin panel D-01 + Spotlight overlay D-05 — the arc + micro-drill are now VISIBLE and warm on the live path, reading the SAME TutorInsight, IgnorePointer capture-safe, zero reward surface)
+last_updated: "2026-07-11T15:50:21.362Z"
 last_activity: 2026-07-11
 progress:
   total_phases: 22
   completed_phases: 15
   total_plans: 101
-  completed_plans: 95
+  completed_plans: 96
   percent: 68
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 18 (build-the-living-tutor-dynamic-exercise-selection) — EXECUTING
-Plan: 10 of 11
+Plan: 11 of 11
 Status: Ready to execute
 Last activity: 2026-07-11
 Next: Continue /gsd-execute-phase 18 — 18-07 now GENUINELY done (the earlier "18-07 done" note below was the INACCURATE narrative; only a plan-amendment commit existed — no source wiring — until this pass). The two-timescale brain now DRIVES the live selection path: RouterExerciseSelector narrows to SelectionPolicy candidates (accept agent pick iff candidate AND graph-legal, else the walker over the SAME set — R5 property green, 200 cases); the coach TutorDecision is threaded into controller.selectNext on the LIVE screen (Phase-15 dead wire CLOSED + RENDERED via exercise_presenter, proven by agent_pick_live_path / live_fail_streak widget tests); selection runs on pass AND fail; arcs persist to Drift (D-12); micro-drills score by their target criterion (D-08); buildSentence is passable (writtenWords wired). test/features/ = +147/-2 (the 2 = known baseline: meet_section img.door + mastery golden). Remaining: 18-10 (micro-drill Spotlight chrome) then 18-11 HUMAN-UAT — deploy gates (Cloud Run re-deploy for the wire fields, Job+Scheduler, child_models owner-read rule) + mother signs kArcEntryFailStreak/kArcMaxAttempts + micro-drill copy + selection gold set (then the verifier flips R1/R4/R5/R6).
@@ -113,6 +113,7 @@ PriorNext: Wave 3/4 — 18-05 (server-first profile/evidenceDigest wire + eviden
 | Phase 18 P08 | 18min | 2 tasks | 6 files |
 | Phase 18 P09 | ~5min | 2 tasks | 3 files |
 | Phase 18 P07 | 67min | 3 tasks | 19 files |
+| Phase 18 P10 | 8min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -258,6 +259,9 @@ Recent decisions affecting current work:
 - [Phase ?]: [18-08]: Coach WHY grounding (D-10) lives on the COACH path (COACH_NEXT_EXERCISE_ADDENDUM names weakestCriterion + frames a microDrill pick as a warm NAMED step-down) — the ONLY place it fires on the clean-pass branch since graph.py needs_plan SKIPS the plan node on a confident pass. plan.py's rationale grounds the struggle-branch WHY; G4/G5/G6 byte-unchanged; no verdict/mastery claim (ADR-014).
 - [Phase ?]: [18-08]: Closed the snake_case rail casing hole — the coach next-exercise rail now strips an out-of-candidates id under EITHER nextExerciseId OR next_exercise_id (main.py renamed snake→camel AFTER the rail, so a snake_case emission used to bypass candidate validation). selection_policy is now a judge-gated eval dimension over a 6-scenario signed:false gold set (2 variants/family) gated by a NAMED provisional SELECTION_THRESHOLD=0.7; judge leg deferred to make eval @ 18-11.
 - [Phase ?]: [18-08]: requirements-completed stays [] — R1 (explainable pick server half landed; client WHY line + anti-boredom is 18-04/18-07) and R9 (selection dimension ships signed:false, judge leg + threshold sign-off gated to 18-11) are not end-to-end complete. Follows the 18-01/18-02/18-05 Wave/foundation precedent: the plan landing the final leg (or the phase verifier) flips the boxes.
+- [Phase ?]: [18-10]: TeacherMarginPanel (D-01) reads the SAME tutorInsightProvider the verdict/coach publish (no second insight source), degrading coach rationale online -> authored template keyed by the targeted criterion offline (D-10); the arc step-down is derived from insight.pick naming a microDrill node. Anti-gamification token guard green.
+- [Phase ?]: [18-10]: SpotlightOverlay (D-05) is IgnorePointer+CustomPaint radial scrim, layered by WriteSurface only for type=='microDrill' (above ink, below chrome); a capture-still-fires test locks the score path untouched. Exercise.spotlightZone added presentational-only (Rule-3, never the scorer) so the lit-region string reaches the overlay.
+- [Phase ?]: [18-10]: requirements-completed left [] (18-01..18-09 precedent) — SPEC-18-R1/R3/R4 now VISIBLE on the client but the arc/step-down framing copy is signed:false (mother signs at 18-11) + deploy gates remain; verifier/18-11 flips them.
 
 ### Pending Todos
 
@@ -298,6 +302,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-11T15:30:48.851Z
-Stopped at: Completed 18-07-PLAN.md (SelectionPolicy live-path wiring — the Phase-15 dead wire is CLOSED and RENDERED; candidate-aware selector + decision-threaded live screen + D-08 micro-drill scoring + exercise presenter, proven by widget-level live-path tests)
+Last session: 2026-07-11T15:50:21.356Z
+Stopped at: Completed 18-10-PLAN.md (Teacher's Margin panel D-01 + Spotlight overlay D-05 — the arc + micro-drill are now VISIBLE and warm on the live path, reading the SAME TutorInsight, IgnorePointer capture-safe, zero reward surface)
 Resume files: .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-02-PLAN.md (next — cross-letter labels + baa micro-drill set), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-03-PLAN.md (EMA + Drift v6), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-01-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
