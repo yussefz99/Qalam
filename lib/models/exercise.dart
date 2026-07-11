@@ -54,6 +54,13 @@ class Exercise {
   /// `ExerciseSpec` so a live micro-drill scores by its target criterion only.
   final List<String> criteria;
 
+  /// The micro-drill's authored lit-region label (18-02: `dot` / `bowl` /
+  /// `start`) — which zone of the letter the 18-10 Spotlight overlay lights while
+  /// the child writes just-this-part (D-05). Null for a non-drill exercise.
+  /// PRESENTATIONAL ONLY: it drives the overlay's lit zone, never the scorer (the
+  /// verdict is owned by [criteria].first via the validator's D-08 path).
+  final String? spotlightZone;
+
   const Exercise({
     required this.id,
     this.type,
@@ -66,6 +73,7 @@ class Exercise {
     this.policy,
     required this.signedOff,
     this.criteria = const [],
+    this.spotlightZone,
   });
 
   factory Exercise.fromJson(Map<String, dynamic> json) {
@@ -98,6 +106,7 @@ class Exercise {
         for (final c in (json['criteria'] as List<dynamic>? ?? const []))
           if (c is String) c,
       ],
+      spotlightZone: json['spotlightZone'] as String?,
     );
   }
 }
