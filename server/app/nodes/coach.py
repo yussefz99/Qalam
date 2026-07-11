@@ -64,6 +64,10 @@ def coach(state: TutorState) -> dict:
     # propose the next exercise FROM that list (Option B: announce it in the line). Purely additive — no
     # candidates → the addendum is not appended and the prior behavior is byte-identical. The rail below
     # strips any proposed id that is not in this list, so an illegal/hallucinated id is never forwarded.
+    # Phase 18 (18-08, D-10): the addendum also GROUNDS the pick's WHY in the policy facts already on the
+    # wire — `weakestCriterion` (the targeted criterion the WHY names) and the micro-drill-ness of the pick
+    # (a `microDrill` id → a warm NAMED step-down). This lives on the COACH path because the plan node is
+    # SKIPPED on a clean pass (graph.py `needs_plan`) — the pass→move-forward WHY would never fire otherwise.
     legal_next = facts.get("legalNextExerciseIds") or []
     system_prompt = (
         COACH_PROMPT
@@ -126,21 +130,27 @@ def coach(state: TutorState) -> dict:
         name = "say"
         args = {**args, "text": _text}
 
-    # Phase 17.2 next-exercise RAIL: the coach MAY add a `nextExerciseId` arg proposing the child's next
-    # exercise — accept it ONLY when it is in the client-provided candidate list; otherwise STRIP it (and
-    # the now-orphaned `rationale`) so an ILLEGAL / hallucinated / off-graph id is NEVER forwarded to the
-    # client. The id is the only thing the client acts on (it re-checks legality too, D-04 defence-in-depth);
-    # the spoken line is advisory, so it is left as-is. A guard rewrite to `say` above carries no
-    # nextExerciseId, so this is a no-op there. Empty candidate list → any proposed id is stripped (fail
-    # closed). Logged at info for the demo trace.
-    proposed_next = args.get("nextExerciseId")
-    if proposed_next is not None and proposed_next not in legal_next:
-        logger.info(
-            "17.2 next-exercise rail: stripped proposed nextExerciseId=%r (not in candidates %r).",
-            proposed_next,
-            legal_next,
-        )
-        args.pop("nextExerciseId", None)
+    # Phase 17.2 next-exercise RAIL (18-08: CASING-SAFE): the coach MAY add the pick under EITHER the
+    # camelCase wire key (`nextExerciseId`) OR the tool's own snake_case arg name (`next_exercise_id`) —
+    # accept it ONLY when it is in the client-provided candidate list; otherwise STRIP it so an ILLEGAL /
+    # hallucinated / off-graph id is NEVER forwarded to the client. BOTH keys MUST be checked here: main.py
+    # renames snake→camel AFTER this node runs, so a snake_case emission that skipped validation would be
+    # renamed to `nextExerciseId` and forwarded — the exact casing bypass 18-08 closes. The id is the only
+    # thing the client acts on (it re-checks legality too, D-04 defence-in-depth); the spoken line is
+    # advisory, so it is left as-is. A guard rewrite to `say` above carries no id, so this is a no-op there.
+    # Empty candidate list → any proposed id is stripped (fail closed). Logged at info for the demo trace.
+    for _id_key in ("nextExerciseId", "next_exercise_id"):
+        proposed_next = args.get(_id_key)
+        if proposed_next is not None and proposed_next not in legal_next:
+            logger.info(
+                "17.2 next-exercise rail: stripped proposed %s=%r (not in candidates %r).",
+                _id_key,
+                proposed_next,
+                legal_next,
+            )
+            args.pop(_id_key, None)
+    # Drop the now-orphaned `rationale` only when NO legal next-exercise id (under either casing) survives.
+    if not any(args.get(k) is not None for k in ("nextExerciseId", "next_exercise_id")):
         args.pop("rationale", None)
 
     return {"decision": {"name": name, "args": args}, "grounded": grounded, "log": ["coach"]}

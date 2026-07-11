@@ -100,17 +100,23 @@ COACH the fix — never to re-judge pass/fail.
 - Describe ONLY what the evidence shows. Never invent a detail (a dot, a tail, a criterion) that is not there.
 """
 
-# Phase 17.2 (demo, owner directive 2026-07-07): appended to the coach system prompt when the FACTS
-# carry `legalNextExerciseIds` — the graph-legal candidate set the client computed (the SAME set its
-# selection router would accept). It makes the coach ALSO propose the single best NEXT exercise, chosen
-# FROM EXACTLY that list, returned as a `nextExerciseId` arg (+ a one-phrase `rationale`) on whichever
-# tool it calls (the client's TutorPlan parser reads both). OPTION B (owner-chosen demo behavior): when a
-# next exercise is picked, the coach's spoken line ENDS with ONE short, natural transition phrase in the
-# tutor's voice — but only AFTER it has NAMED THIS attempt's geometry first. The coach node rails the id:
-# any nextExerciseId NOT in the candidate list is stripped server-side and never forwarded (the id is the
+# Phase 17.2 (demo, owner directive 2026-07-07) + Phase 18 (18-08, D-10 online justification):
+# appended to the coach system prompt when the FACTS carry `legalNextExerciseIds` — the graph-legal
+# candidate set the client computed (the SAME set its selection router would accept). It makes the coach
+# ALSO propose the single best NEXT exercise, chosen FROM EXACTLY that list, returned as a `nextExerciseId`
+# arg (+ a one-phrase `rationale`) on whichever tool it calls (the client's TutorPlan parser reads both),
+# and — Phase 18 — GROUNDS the announced pick in the policy facts already on the wire: the WHY NAMES the
+# targeted criterion (`weakestCriterion`) and, when the pick is a `microDrill`, frames a warm NAMED
+# step-down (D-03 register — "let's practice just the dot for a moment"). This is the ONLY place the WHY
+# can cover the CLEAN-PASS branch: the plan node is SKIPPED on a clean pass (graph.py `needs_plan`), so a
+# pass→move-forward justification must live here or it never fires on the most common case.
+# OPTION B (owner-chosen demo behavior): when a next exercise is picked, the coach's spoken line ENDS with
+# ONE short, natural transition phrase in the tutor's voice — but only AFTER it has NAMED THIS attempt's
+# geometry first. The coach node rails the id: any nextExerciseId (camelCase OR the snake_case
+# `next_exercise_id`) NOT in the candidate list is stripped server-side and never forwarded (the id is the
 # only thing the client acts on; the line is advisory and left as-is). Additive: no candidates -> this is
 # not appended, so the prior behavior is byte-identical. GROUNDING is UNCHANGED — the scorer still owns
-# pass/fail; the pick DESCRIBES what comes next, it never re-judges the attempt.
+# pass/fail; the WHY carries NO verdict / mastery / star claim, it only DESCRIBES what comes next.
 COACH_NEXT_EXERCISE_ADDENDUM = """
 
 NEXT EXERCISE (the FACTS now include `legalNextExerciseIds` — the ONLY exercises the child may go to next):
@@ -120,13 +126,23 @@ criterion and the recent trajectory: a repeated struggle -> re-drill the same sk
 form of it; a clean, confident pass -> move forward.
 - Return your pick as an extra `nextExerciseId` argument on whichever tool you call, together with a \
 one-phrase `rationale` argument — a few words tying the pick to what you saw (e.g. "shallow bowl again").
+- WHY THIS PICK (always justify it, grounded in the facts): read `weakestCriterion` from the FACTS and \
+NAME what it means for THIS letter and form — the dot, the depth of the bowl, a missing tooth — never in \
+the scorer's jargon. The child must hear WHY this next step follows from what you just saw. A returning \
+child's stored struggle (in `profile.struggles`) is a fair reason too ("last time the dot was tricky").
+- MICRO-DRILL step-down (when the picked id contains `microDrill`): frame it as a warm, NAMED narrowing to \
+just ONE part — "let's practice just the dot for a moment," "let's warm up the bowl on its own" — then a \
+gentle promise to come back. NEVER frame it as failure, NEVER say it is "too hard for you," and NEVER fake \
+cheer; it is a calm, specific focus on the one thing (the weakest criterion) that needs work.
 - OPTION B — ANNOUNCE the pick in your spoken line: AFTER you have NAMED THIS attempt's own geometry \
 (the dot, the bowl, the failed criterion — that always comes FIRST), END the SAME line with ONE short, \
 natural transition phrase in your warm teacher's voice, consistent with the exercise you picked \
 (e.g. "…let's practice that dot once more." / "…ready for the next form?"). Keep it INSIDE the existing \
 line — one or two short sentences total, no new bubble, never a wall of text.
-- GROUNDING is unchanged: the scorer owns pass/fail. On a FAIL never pick something that skips past this \
-attempt and never `advance`; drill or step down instead. The pick only DESCRIBES what comes next.
+- GROUNDING is unchanged: the scorer owns pass/fail. The WHY line NEVER claims the letter is passed, \
+mastered, or a star earned — it only ties the NEXT step to the weakest criterion. On a FAIL never pick \
+something that skips past this attempt and never `advance`; drill or step down instead. The pick only \
+DESCRIBES what comes next.
 """
 
 # --- Plan 02: the analyze + plan system prompts (cache-stable; FACTS go in the HumanMessage). ---
@@ -165,7 +181,10 @@ baa.connectWord.baab, baa.completeWord.middle. If you are unsure, prefer re-trac
 form (baa.traceLetter.isolated). Never output an id outside the authored set.
   * intent: one of drill_isolated (isolate and drill the failed stroke), retest_whole (re-test the \
 whole letter/word), hint (offer the next authored hint), advance (move forward).
-  * rationale: one short line tying the step to the Insight.
+  * rationale: one short line tying the step to the child's WEAKEST criterion (the FACTS carry \
+weakestCriterion) and the Insight — this is the struggle-branch WHY the coach voices (D-10). NAME the \
+targeted criterion in plain words (the dot, the bowl's depth, a missing tooth), NEVER a verdict or a \
+mastery/star claim (the scorer owns pass/fail).
 
 CURRICULUM GRAPH (you choose WITHIN this rail — the FACTS tell you where the child stands):
   * The child progresses along a forward prerequisite chain of competencies: \

@@ -470,3 +470,80 @@ def test_next_exercise_rail_strips_any_id_when_no_candidates_provided(monkeypatc
     )
     out = coach({"facts": FAIL_FACTS})  # no candidate list at all
     assert "nextExerciseId" not in out["decision"]["args"]
+
+
+# --- Phase 18 (18-08): the pick's WHY is grounded on the COACH path (fires on BOTH branches) + the
+# next-exercise rail is CASING-SAFE (a snake_case `next_exercise_id` bypass is closed) ---------------
+
+_PASS_WITH_CANDIDATES = {**PASS_FACTS, "legalNextExerciseIds": _CANDIDATES, "weakestCriterion": "dot"}
+
+
+def test_next_exercise_addendum_grounds_why_in_weakest_criterion():
+    """18-08 (D-10): the WHY grounding lives on the COACH path — the addendum names the targeted
+    `weakestCriterion` and frames a `microDrill` pick as a warm named step-down. This is the ONLY
+    place the WHY can cover the clean-pass branch (the plan node is skipped there)."""
+    from app.prompts import COACH_NEXT_EXERCISE_ADDENDUM
+
+    assert "weakestCriterion" in COACH_NEXT_EXERCISE_ADDENDUM
+    assert "microDrill" in COACH_NEXT_EXERCISE_ADDENDUM
+    # ADR-014: the WHY never claims a pass / mastery / star — the addendum explicitly forbids it.
+    lowered = COACH_NEXT_EXERCISE_ADDENDUM.lower()
+    assert "mastered" in lowered and "star" in lowered
+
+
+def test_clean_pass_branch_gets_why_grounded_addendum(monkeypatch):
+    """On a CLEAN pass (passed=true, no struggleTags) the plan node is SKIPPED (see
+    test_clean_pass_skips_plan), so the WHY must ride on the coach path: with candidates present the
+    coach system prompt carries the WHY-grounded next-exercise addendum even on the pass branch."""
+    from app.prompts import COACH_NEXT_EXERCISE_ADDENDUM
+
+    system_prompt = _capture_system_prompt(
+        monkeypatch, _PASS_WITH_CANDIDATES, [{"name": "say", "args": {"text": "beautiful bowl"}}]
+    )
+    assert COACH_NEXT_EXERCISE_ADDENDUM in system_prompt
+
+
+def test_next_exercise_rail_strips_illegal_snake_case_id(monkeypatch):
+    """18-08 CASING HOLE CLOSED: a snake_case `next_exercise_id` proposal OUTSIDE the candidates is
+    stripped exactly like the camelCase key. main.py renames snake→camel AFTER this rail, so an
+    unrailed snake_case emission would bypass candidate validation and reach the client."""
+    _patch_coach_only(
+        monkeypatch,
+        [
+            {
+                "name": "say",
+                "args": {
+                    "text": "Deeper curve — try that dot once more.",
+                    "next_exercise_id": "baa.fake.notInGraph",  # snake_case, NOT in _CANDIDATES
+                    "rationale": "hallucinated pick",
+                },
+            }
+        ],
+    )
+    out = coach({"facts": _FAIL_WITH_CANDIDATES})
+    assert out["decision"]["name"] == "say"
+    assert "next_exercise_id" not in out["decision"]["args"]  # stripped — the bypass is closed
+    assert "nextExerciseId" not in out["decision"]["args"]
+    assert "rationale" not in out["decision"]["args"]  # the orphaned rationale goes too
+    assert out["decision"]["args"]["text"]  # the advisory line survives unchanged
+
+
+def test_next_exercise_rail_keeps_a_legal_snake_case_id(monkeypatch):
+    """A snake_case `next_exercise_id` that IS in the candidates survives the casing-safe rail (it must
+    not over-strip a legal pick); main.py renames it to `nextExerciseId` on the wire."""
+    _patch_coach_only(
+        monkeypatch,
+        [
+            {
+                "name": "say",
+                "args": {
+                    "text": "Lovely — ready for the next form?",
+                    "next_exercise_id": "baa.writeWord.dictation",  # snake_case, IN _CANDIDATES
+                    "rationale": "clean pass, move forward",
+                },
+            }
+        ],
+    )
+    out = coach({"facts": _FAIL_WITH_CANDIDATES})
+    assert out["decision"]["args"]["next_exercise_id"] == "baa.writeWord.dictation"
+    assert out["decision"]["args"]["rationale"] == "clean pass, move forward"

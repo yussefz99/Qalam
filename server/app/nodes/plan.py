@@ -61,7 +61,9 @@ class Plan(BaseModel):
     )
     rationale: str = Field(
         default="",
-        description="Why this step, grounded in the Insight (for the coach + logs).",
+        description="Why this step — the struggle-branch WHY (D-10), grounded in the child's weakest "
+        "criterion (facts.weakestCriterion) + the Insight; it feeds the coach prompt and the logs. "
+        "Names the targeted criterion in plain words; carries NO verdict / mastery / star claim (ADR-014).",
     )
 
 
