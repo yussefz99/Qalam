@@ -32,6 +32,12 @@ presentation quality:
    later letters.
 5. Micro-drills return (parked 2026-07-12) once presentation + copy are reworked;
    selection logic already pinned by fixture in microdrill_selection_test.dart.
+6. **Per-child position keying (found 2026-07-12):** `LetterGraphPosition`,
+   arc-state, and profile-mirror rows are keyed by letterId ONLY — the resume
+   cursor is shared across child profiles on one device (a new profile resumes
+   at the old child's cursor; owner hit this expecting a fresh opening). Key all
+   three by (childProfileId, letterId) + migrate. Workaround until then: delete
+   + reinstall the app for a clean demo start.
 
 **Related decisions today (owner):** trace all four forms first (baa.traceLetter.final
 added, unsigned); micro-drills parked out of the live graph; write trio stays as
