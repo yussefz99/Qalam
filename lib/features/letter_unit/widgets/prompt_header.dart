@@ -197,8 +197,10 @@ class _ImagePart extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
-          width: 128, // .pp-img width:128px
-          height: 84, // .pp-img height:84px
+          // Owner UAT 2026-07-12: the stimulus picture must be BIG — the child
+          // reads the question from it (was 128x84, unreadably small on tablet).
+          width: 260,
+          height: 176,
           decoration: BoxDecoration(
             color: QalamTokens.softAqua,
             borderRadius: BorderRadius.circular(14), // .pp-img radius 14
@@ -214,8 +216,8 @@ class _ImagePart extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14),
                   child: Image.asset(
                     assetPath,
-                    width: 128,
-                    height: 84,
+                    width: 260,
+                    height: 176,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stack) => _hatchedStub(),
                   ),
@@ -227,7 +229,7 @@ class _ImagePart extends StatelessWidget {
             caption!,
             textAlign: TextAlign.center,
             style: QalamTextStyles.label
-                .copyWith(fontSize: 11, color: QalamTokens.fgMuted),
+                .copyWith(fontSize: 15, color: QalamTokens.fgMuted),
           ),
         ],
       ],

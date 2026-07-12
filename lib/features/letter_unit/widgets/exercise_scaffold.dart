@@ -196,6 +196,11 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
   /// Never holds raw strokes (the surface discards those) — only the derived map.
   Map<String, Object?>? _pendingStrokeDiff;
 
+  /// While true the tutor is SAYING what is needed and the canvas is held
+  /// (visible, not writable) — owner directive 2026-07-12: a question must
+  /// never open as a bare canvas; the child listens first, then writes.
+  bool _instructionHold = false;
+
   bool get _isTeachCard => widget.exercise.surface == null;
 
   /// Phase 17.2 (owner directive 2026-07-07): baa is the LIVE-AGENT path. On it
@@ -224,11 +229,51 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
       ref.read(tutorLineProvider.notifier).clear();
       // Clear the stale Teacher's Eye insight too (demo chrome).
       ref.read(tutorInsightProvider.notifier).clear();
-      // Stop any in-flight coach voice from the prior exercise so a fresh idle is
-      // silent (the visual is reset; the voice must not carry over). Fire-and-
-      // forget — never block the build (ADR-014 display-only).
-      unawaited(ref.read(ttsCoachSpeakerProvider).stop());
+      // Stop any in-flight coach voice from the prior exercise, then SPEAK this
+      // exercise's instruction (the prompt's say line) while HOLDING the canvas
+      // (owner directive 2026-07-12: the tutor says what is needed before the
+      // child can write — a question never opens as a bare canvas). Display-only:
+      // the speaker swallows platform errors, an 8s cap releases a stalled hold,
+      // and the tests' NoopTtsCoachSpeaker completes instantly (no hold observed).
+      _speakInstructionThenRelease();
     });
+  }
+
+  void _speakInstructionThenRelease() {
+    final speaker = ref.read(ttsCoachSpeakerProvider);
+    final sayLine = widget.exercise.prompt
+        .whereType<SayPart>()
+        .map((p) => p.line.trim())
+        .firstWhere((l) => l.isNotEmpty, orElse: () => '');
+    if (sayLine.isEmpty || _isTeachCard) {
+      unawaited(speaker.stop());
+      return;
+    }
+    setState(() => _instructionHold = true);
+    unawaited(() async {
+      try {
+        await speaker.stop();
+        await speaker
+            .speak(sayLine)
+            .timeout(const Duration(seconds: 8), onTimeout: () {});
+      } catch (_) {
+        // Display-only voice — a failure must never block the writing loop.
+      } finally {
+        if (mounted) setState(() => _instructionHold = false);
+      }
+    }());
+  }
+
+  /// The canvas while the instruction is being spoken: visible but not writable.
+  Widget _holdWhileInstruction(Widget child) {
+    return IgnorePointer(
+      ignoring: _instructionHold,
+      child: AnimatedOpacity(
+        opacity: _instructionHold ? 0.45 : 1.0,
+        duration: const Duration(milliseconds: 250),
+        child: child,
+      ),
+    );
   }
 
   /// Phase 17: stash the derived stroke-geometry diff for the current attempt. It
@@ -626,8 +671,9 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
           playLabel: s.playLabel,
         ),
         // The center surface: WriteSurface (graded) / custom (teachCard) / none.
+        // Held (not writable) while the tutor speaks the instruction.
         const SizedBox(height: 14), // .ex-surface margin-top:14
-        Expanded(child: _centerSurface()),
+        Expanded(child: _holdWhileInstruction(_centerSurface())),
         // FeedbackPanel + CTA (bottom) — .ex-foot.
         const SizedBox(height: 12),
         _foot(state, s, agentLine),

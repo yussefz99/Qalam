@@ -314,7 +314,13 @@ class SelectionPolicy {
   ) {
     final drill =
         criterion == null ? null : graph.drillForCriterion(letterId, criterion);
-    return _legalize([?drill, ?retry], position);
+    if (drill != null) return _legalize([drill, ?retry], position);
+    // No drill authored for this criterion (the micro-drills are parked —
+    // owner decision 2026-07-12): a step DOWN must still step down, never
+    // re-present the failing card as its own remediation. Land the
+    // guaranteed-doable guided trace first; rebuild → retryOriginal follow.
+    final floor = _floorTrace(letterId, position);
+    return _legalize([?floor, ?retry], position);
   }
 
   /// The guaranteed-doable trace success the floor guard lands on (D-04) — the

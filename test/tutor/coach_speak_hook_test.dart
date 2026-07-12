@@ -239,15 +239,19 @@ void main() {
       // applied (the instant clock) but the brain.next(...).then has NOT yet
       // resolved — so speak has NOT been called. The voice arrives a beat later.
       final surface = tester.widget<WriteSurface>(find.byType(WriteSurface));
+      // The exercise-open INSTRUCTION utterance (owner directive 2026-07-12:
+      // the tutor says what is needed before the child writes) may already be
+      // in the log — snapshot it. GROUND-01 is about the VERDICT line only.
+      final beforeVerdict = List<String>.of(speaker.spoken);
       surface.onResult!(const CheckResult.pass());
 
       // Verdict applied synchronously…
       expect(container.read(exerciseControllerProvider).phase,
           ExercisePhase.pass,
           reason: 'applyResult runs first/synchronously (GROUND-01)');
-      // …but the spoken line has not landed yet (it is fired in the async .then).
-      expect(speaker.spoken, isEmpty,
-          reason: 'speak is fired a BEAT later, never before the verdict');
+      // …but no NEW spoken line has landed yet (it is fired in the async .then).
+      expect(speaker.spoken, beforeVerdict,
+          reason: 'the verdict line is fired a BEAT later, never before the verdict');
 
       // After the microtask drains, the line is spoken.
       await tester.pumpAndSettle();
