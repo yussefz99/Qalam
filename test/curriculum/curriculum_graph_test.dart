@@ -26,21 +26,24 @@ void main() {
     return json.decode(file.readAsStringSync()) as Map<String, Object?>;
   }
 
-  test('CurriculumGraph parses the signed baa asset (22 baa.* nodes = 19 core + 3 microDrill, signedOff true)',
+  test('CurriculumGraph parses the baa asset (20 baa.* nodes: 19 signed core + unsigned final trace, no microDrills)',
       () {
     final graph = CurriculumGraph.fromJson(rawGraph());
 
     expect(graph.letterId, 'baa');
     expect(graph.signedOff, isTrue,
         reason: 'owner-mother signed the graph at the tier level (D-05); Plan 15-07 flipped it. '
-            'Plan 18-02 adds micro-drill enrichment nodes but does NOT touch her sign-off — the '
-            'drill CONTENT is signedOff:false at the exercise level, not the graph structure.');
-    // 19 signed core nodes + 3 baa.microDrill.{dot,bowl,start} enrichment nodes (Plan 18-02).
-    expect(graph.nodes.length, 22, reason: 'all 19 core baa.* nodes + 3 microDrill enrichment nodes');
+            'The 2026-07-12 owner amendment (18-11 UAT) adds/removes nodes but does NOT touch her '
+            'tier-structure sign-off — new CONTENT is signedOff:false at the exercise level.');
+    // 19 signed core nodes + baa.traceLetter.final (owner amendment 2026-07-12, unsigned content).
+    // The 3 baa.microDrill.* nodes were REMOVED the same day — feature parked; the policy's
+    // injection logic stays pinned in microdrill_selection_test.dart via a fixture-augmented graph.
+    expect(graph.nodes.length, 20,
+        reason: '19 core baa.* nodes + traceLetter.final; microDrills parked (owner, 2026-07-12)');
     final microDrills =
         graph.nodes.where((n) => n.competency == 'microDrill').toList();
-    expect(microDrills, hasLength(3),
-        reason: 'baa.microDrill.{dot,bowl,start} are additive enrichment nodes');
+    expect(microDrills, isEmpty,
+        reason: 'micro-drill nodes are parked out of the live graph (owner, 2026-07-12)');
     expect(
       graph.nodes.every((n) => n.exerciseId.startsWith('baa.')),
       isTrue,

@@ -146,8 +146,13 @@ void main() {
       // batched HUMAN-UAT gate at 18-11 (the owner's mother signs the copy +
       // gold set). Carve them out so the CORE-curriculum sign-off invariant
       // still holds — no executor ever sets signedOff:true.
-      final coreBaa =
-          baaExercises.where((e) => e['type'] != 'microDrill').toList();
+      // baa.traceLetter.final is the 2026-07-12 owner amendment (trace ALL FOUR
+      // forms before production tasks) — authored signedOff:false, pending the
+      // same mother gate as the micro-drill copy.
+      final coreBaa = baaExercises
+          .where((e) =>
+              e['type'] != 'microDrill' && e['id'] != 'baa.traceLetter.final')
+          .toList();
       final unsigned = coreBaa
           .where((e) => e['signedOff'] != true)
           .map((e) => e['id'])

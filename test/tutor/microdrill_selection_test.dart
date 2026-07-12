@@ -51,6 +51,34 @@ void main() {
     final raw = json.decode(
       File('assets/curriculum/curriculum_graph.json').readAsStringSync(),
     ) as Map<String, Object?>;
+    // Owner decision 2026-07-12 (18-11 UAT): the micro-drill CONTENT is parked —
+    // its nodes were removed from the live graph until the feature is reworked
+    // after the advisor meeting. The POLICY's injection logic must stay proven
+    // for its return, so this test re-adds the drill nodes as a FIXTURE on top
+    // of the live asset (fixture-augmented graph, not live content).
+    final competencies = (raw['competencies'] as List).cast<Map<String, Object?>>();
+    if (!competencies.any((c) => c['id'] == 'microDrill')) {
+      competencies.add({
+        'id': 'microDrill',
+        'essential': false,
+        'prerequisites': <String>[],
+      });
+    }
+    final nodes = (raw['nodes'] as List).cast<Map<String, Object?>>();
+    const drillCriteria = {'dot': 'dot', 'bowl': 'shape', 'start': 'strokeOrder'};
+    for (final entry in drillCriteria.entries) {
+      final id = 'baa.microDrill.${entry.key}';
+      if (!nodes.any((n) => n['exerciseId'] == id)) {
+        nodes.add({
+          'exerciseId': id,
+          'competency': 'microDrill',
+          'tier': null,
+          'minCleanReps': 1,
+          'criterion': entry.value,
+          'essential': false,
+        });
+      }
+    }
     return CurriculumGraph.fromJson(raw);
   }
 

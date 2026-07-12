@@ -135,6 +135,47 @@
       ]
     },
     {
+      "id": "baa.traceLetter.final",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Trace the final baa — the bowl and its dot, tucked in at the end of the word."
+        },
+        {
+          "kind": "rule",
+          "label": "Final form · آخر"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "final"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ب",
+          "form": "final"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "أحسنت! Now you have traced baa in every shape it takes."
+      },
+      "signedOff": false,
+      "letters": [
+        "baa"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
+    },
+    {
       "id": "baa.writeLetter.fromSound",
       "type": "writeLetter",
       "skill": "recall",
