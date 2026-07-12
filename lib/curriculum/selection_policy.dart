@@ -100,14 +100,24 @@ class SelectionPolicy {
     final criterion = facts.weakestCriterion;
     final failing = !facts.passed;
 
-    // Base legal set: the forward reach the walker would consider, plus (on a
-    // fail) the backward remediation / in-place drill — every id through the rail.
-    final candidates = _legalForward(position);
+    // Base legal set. On a PASS: the forward reach the walker would consider.
+    // On a FAIL the menu NEVER advances (owner bug 2026-07-12: a say-carried
+    // agent pick legally moved a failing child forward — the forward frontier
+    // must not be offered on a fail at all): retry the current card or step one
+    // tier down; every id still through the rail.
+    final candidates = <String>[];
     if (failing) {
-      final rem = graph.remediateOneTier(current) ?? current;
-      if (_isLegal(rem, position) && !candidates.contains(rem)) {
-        candidates.add(rem);
+      final rem = graph.remediateOneTier(current);
+      if (rem != null && _isLegal(rem, position)) candidates.add(rem);
+      if (!candidates.contains(current) && _isLegal(current, position)) {
+        candidates.add(current);
       }
+      // Safety net: a fail moment must still offer SOMETHING (an illegal/unknown
+      // current with no remediation) — degrade to the forward reach rather than
+      // an empty menu that would stall the loop.
+      if (candidates.isEmpty) candidates.addAll(_legalForward(position));
+    } else {
+      candidates.addAll(_legalForward(position));
     }
 
     final why = <String>[];
@@ -121,6 +131,17 @@ class SelectionPolicy {
       // Anti-boredom (R1/D-02): a child who fails the same criterion twice never
       // sees the IDENTICAL exercise a third time.
       candidates.removeWhere((id) => id == current);
+      // The entry moment steps DOWN immediately (owner directive 2026-07-12:
+      // "fail twice → go back" must be the very next card): the criterion's
+      // drill when authored, else the guided floor trace, joins the menu.
+      final down = graph.drillForCriterion(letterId, criterion) ??
+          _floorTrace(letterId, position);
+      if (down != null &&
+          down != current &&
+          _isLegal(down, position) &&
+          !candidates.contains(down)) {
+        candidates.add(down);
+      }
       targetCriterion = criterion;
       // Same counter → ENTER the arc (R4/D-02), remembering the original to retry.
       nextArc = ArcState.enter(
