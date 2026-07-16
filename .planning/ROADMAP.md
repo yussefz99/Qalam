@@ -594,6 +594,14 @@ requirements** by design — investigations that tune the deployed system.
 - [x] **Phase 14: BUILD — TutorBrain spine + grounding invariant** - The server-side **LangGraph** tutoring agent on Cloud Run (analyze→plan→coach, per-node models, 4 ACTION tools, FACTS-as-text) + the Flutter `RemoteAgentBrain` + `AuthoredFallback` floor + the scorer-owns-verdict seam at ExerciseController + the non-PII request-body guard — durable layers stay free of agent/framework imports. (ADR-015 + 14-AI-SPEC.md.) (completed 2026-06-22)
 - [x] **Phase 15: BUILD — dynamic grounded exercise selection on baa** - The server agent's **plan node** drives `present_activity` selection over baa's 19 Schema-v2 configs (reasoning about recent mistakes); the curriculum rails the choices; resume-aware; one quiet star at mastery; first-measure grounding faithfulness. (completed 2026-06-28)
 - [ ] **Phase 16: BUILD — presence + voice + eval gate + demo-harden** - Server-**streamed/TTS** coaching within the Phase-12 budget (reflex stays local), the Phase-13 harness promoted to a regression gate, the baa AI-tutor path (client + Cloud Run server) demo-hardened on the Pixel Tablet, and the per-node model choices finalized.
+- [x] **Phase 17: BUILD — stroke-aware coaching (on-device geo-diff → coach)** - The coach names the specific geometry of the child's actual attempt via an on-device derived diff; raw strokes never leave the device. (completed 2026-07-06)
+- [ ] **Phase 18: BUILD — the living tutor: per-child dynamic exercise selection** - Two-timescale child model, remediation arcs, just-this-part micro-drills, railed to the signed graph. (10/11 — 18-11 human gates remain)
+- [ ] **Phase 19: Question presentation overhaul** - Every question self-explanatory on screen (persistent instruction, big stimulus, per-type affordance); language cards rewritten with the mother; micro-drills return; per-child position keying fixed.
+- [ ] **Phase 20: Curriculum graph + authoring pipeline for all 28 letters** - Generalize the baa-only graph to the full alphabet (mother's intro order) + the model-drafts/mother-signs pipeline, proven on the first batch.
+- [ ] **Phase 21: Letter content at scale** - All remaining letters authored as data in mother-signed batches through the Phase-20 pipeline.
+- [ ] **Phase 22: Cross-letter mistake-aware selection + next-day lesson planner** - Selection and remediation reason across letters; the nightly job emits tomorrow's prepared unit (S2-04/S2-05).
+- [ ] **Phase 23: Parent insight — strengths and struggles dashboard** - The PIN-gated dashboard surfaces the compiled child model per letter/criterion (S2-06; weekly report optional).
+- [ ] **Phase 24: Submission readiness** - Offline + release hardening, verification-debt sweep, and the Technion submission package — the milestone's end state.
 
 ### Phase Details
 
@@ -860,20 +868,155 @@ Plans:
 
 - [ ] 18-11-PLAN.md — Ordered deploy (server FIRST, rules, Cloud Run Job + Scheduler) + CLOSE cost/latency with measured numbers + mother sign-off flips signed:false→true + make eval (R2/R3/R4/R7/R8/R9)
 
+#### Phase 19: Question presentation overhaul — every question self-explanatory on screen
+
+**Goal:** Every non-trace question shows what is being asked without depending on the spoken
+line (the 2026-07-12 owner UAT finding: non-trace questions "need serious work"): a persistent
+child-readable instruction area (icon + short text per question type, never TTS-only), a large
+stimulus zone (image / replayable audio / word-to-copy), and a per-type "what to do" affordance
+(trace ghost, copy model, gap highlight). The language cards (№ 10, 15–20) are rewritten with
+the owner's mother so the first unit demands only learned letters — this rewrite becomes the
+template every later letter follows. Micro-drills return to the live graph once presentation
+supports them (selection logic already pinned by `microdrill_selection_test.dart`). Includes the
+per-child position keying fix: `LetterGraphPosition`, arc-state, and profile-mirror rows re-keyed
+by (childProfileId, letterId) with migration, so a new profile starts fresh.
+**Mode:** build
+**Depends on:** Phase 18 (Teacher's Margin + live selection path). Source findings: `.planning/todos/pending/2026-07-12-question-presentation-overhaul.md`
+**Requirements**: TBD (derive from the owner UAT findings at plan time)
+**Success Criteria** (what must be TRUE):
+
+  1. Any question type read cold from the screen alone tells the child what to do — instruction + stimulus + affordance — with the spoken line as reinforcement, never the only carrier.
+  2. The first unit's language cards use only letters the child has learned; sentences/grammar gate to later letters.
+  3. Micro-drills are back in the live graph behind the reworked presentation.
+  4. Two child profiles on one device keep separate graph cursors/arc state (a fresh profile starts at the opening).
+
+**UI hint**: yes
+**Plans:** TBD
+
+#### Phase 20: Curriculum graph and authoring pipeline for all 28 letters
+
+**Goal:** Generalize the baa-only curriculum machinery to the full alphabet: the curriculum
+graph (server + pure-Dart mirror) covers all 28 letters with tiers, prerequisites, and the
+letter intro order taken from the owner's-mother's materials; and a repeatable authoring
+pipeline exists per the decided drafting strategy (2026-06-11) — the model DRAFTS each letter's
+stroke data / common mistakes / vocab, the mother REVIEWS and signs, nothing ships unsigned.
+Proven end-to-end on the first batch of letters in her intro order, so every later batch is
+content work, not code work.
+**Mode:** build
+**Depends on:** Phase 19 (the presentation template all content renders through); Phases 15/18 (graph rails + cross-letter labels)
+**Requirements**: CUR-01 (full-curriculum carry-over)
+**Success Criteria** (what must be TRUE):
+
+  1. The signed curriculum graph spans all 28 letters in the mother's intro order, and `generate.py` derives the server copy from the single signed asset.
+  2. The pipeline turns "next letter batch" into: model draft → reference strokes → mother review sitting → signedOff flip — documented and exercised on the first batch.
+  3. Unsigned letters/exercises can never be selected on the live path (rails hold per letter).
+
+**Plans:** TBD
+
+#### Phase 21: Letter content at scale — remaining letters in mother-signed batches
+
+**Goal:** Run the Phase-20 pipeline across all remaining letters in mother-signed batches —
+per-form reference strokes, vocab, audio, common mistakes, and graph nodes for each — as data
+through the existing components (no design changes). Pays the alif unsigned-forms debt (the
+known baseline red in `curriculum_repository_v2_test`). The mother's review time is the
+bottleneck: batches are sized to sign-off sittings.
+**Mode:** build
+**Depends on:** Phase 20 (the pipeline + first signed batch)
+**Requirements**: CUR-01
+**Success Criteria** (what must be TRUE):
+
+  1. All 28 letters are authored, signed, and live — reachable via Journey/graph with real per-form scoring.
+  2. No unsigned content in the bundle (the every-signedOff test leg is GREEN).
+  3. Each batch's sign-off is recorded (HUMAN-UAT pattern).
+
+**Plans:** TBD
+
+#### Phase 22: Cross-letter mistake-aware selection and the next-day lesson planner
+
+**Goal:** The living tutor reasons across the whole alphabet, at both timescales.
+Within-session: selection and remediation arcs use criterion struggles ACROSS letters (a bowl
+struggle on taa can pull a baa bowl drill), railed to the signed graph. Across-session: the
+nightly job, after compiling the child model, EMITS tomorrow's prepared unit — the child opens
+the app to "today's lesson, already chosen for you" (S1-01 finally meets S2-05), with the
+offline walker producing the default plan when no fresh compile exists.
+**Mode:** build
+**Depends on:** Phase 18 (two-timescale child model, letter-agnostic compiler, cross-letter labels); Phase 21 (content beyond baa to select from)
+**Requirements**: S2-04, S2-05
+**Success Criteria** (what must be TRUE):
+
+  1. Selection demonstrably responds to cross-letter criterion struggles; unsigned/unreachable nodes are never selectable.
+  2. The nightly job writes a next-day plan per child; Home presents it as today's prepared lesson; airplane mode yields the walker's default plan.
+  3. Grounding + non-PII guards hold over any new wire surface (422 lockstep preserved).
+
+**Plans:** TBD
+
+#### Phase 23: Parent insight — strengths and struggles dashboard
+
+**Goal:** Surface the child model to the parent: the PIN-gated dashboard gains a read-only
+per-letter / per-criterion strengths-and-struggles view (S2-06) sourced from the compiled
+`child_models` profile (Firestore-first, Drift-mirror offline). No new child data is collected —
+this renders what the tutor already knows. Optional second plan: the weekly progress report (S2-10).
+**Mode:** build
+**Depends on:** Phase 18 (compiled child model); Phase 9 (PIN-gated dashboard)
+**Requirements**: S2-06 (S2-10 optional)
+**Success Criteria** (what must be TRUE):
+
+  1. A parent behind the PIN sees which letters/criteria the child is strong or struggling on, matching the compiled profile.
+  2. Read-only; works offline from the Drift mirror; no new child-data collection surface.
+
+**UI hint**: yes
+**Plans:** TBD
+
+#### Phase 24: Submission readiness — offline and release hardening for the Technion submission
+
+**Goal:** Close the milestone with the app ready for the Technion course submission (the
+milestone's end state — owner, 2026-07-16): every flow works airplane-mode on a fresh install
+(walker floor + AuthoredFallback + cached ML Kit model), the release build carries no child-PII
+or stroke logging, the outstanding verification/UAT debt is swept (each item resolved or
+explicitly waived), and the submission package (release build + docs) is assembled. Absorbs old
+v1 Phase 10's intent, pointed at the submission instead of a public release.
+**Mode:** build
+**Depends on:** Phases 19–23
+**Requirements**: PLAT-01 (v1 carry-over)
+**Success Criteria** (what must be TRUE):
+
+  1. A fresh-install airplane-mode walkthrough passes every flow (or explicitly handles the one-time model download at onboarding).
+  2. The release build is audited: no child-PII/stroke logging; child data stays app-private.
+  3. The verification/UAT debt ledger reaches zero — each item resolved or waived with a recorded reason.
+  4. The submission package is built and handed over.
+
+**Plans:** TBD
+
 ### Progress (v2.0)
 
 **Execution Order:**
 11 (GATE, done) → **14 (build the server-side LangGraph spine)** → 12 (measure the deployed round-trip latency) → 13 (eval harness + coach-node model bake-off) → 15 (dynamic selection) → 16 (presence/voice/eval-gate/demo). The latency + eval spikes (12/13) now follow the build because they measure/score the **deployed** server (ADR-015) — the architecture decision moved from a pre-build spike to ADR-014/015 + the AI-SPEC.
 
+**Closing arc (added 2026-07-16, post-demo):** 18 close-out → 19 (presentation overhaul) →
+20 (all-letters graph + pipeline) → 21 (content batches) → 22 (cross-letter selection +
+next-day planner) → 23 (parent insight) → 24 (submission readiness). The Technion demo
+passed on the Phase-18 build; the milestone now ends when the app is **submission-ready**.
+Phase 12 was absorbed by 18-11's measured cost/latency closure and Phase 13 by 16-03's eval
+harness (both retained above for the historical record, never to be executed as written);
+Phase 16's surviving work is the eval-trust legs (gold-set sign-off + judge calibration) —
+re-scope before executing; DEMO-01's demo-harden pressure is moot. Ask-Qalam voice (S2-03)
+is DROPPED from this milestone's scope (owner, 2026-07-16).
+
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 11. SPIKE — GenUI catalog + native stylus canvas | 3/3 | Complete    | 2026-06-22 |
-| 12. SPIKE — full-path latency & presence budget | 0/TBD | Not started | - |
-| 13. SPIKE — 3-way bake-off (grounding + Arabic) | 0/TBD | Not started | - |
+| 12. SPIKE — full-path latency & presence budget | 0/TBD | Absorbed (18-11 closes cost/latency) | - |
+| 13. SPIKE — 3-way bake-off (grounding + Arabic) | 0/TBD | Absorbed (16-03 built the harness) | - |
 | 14. BUILD — TutorBrain spine + grounding invariant | 4/4 | Complete   | 2026-06-22 |
 | 15. BUILD — dynamic grounded exercise selection on baa | 8/7 | Complete    | 2026-06-28 |
-| 16. BUILD — presence + voice + eval gate + demo-harden | 3/6 | In Progress|  |
+| 16. BUILD — presence + voice + eval gate + demo-harden | 3/6 | In Progress (re-scope: eval-trust legs survive; demo-harden moot) |  |
 | 17. BUILD — stroke-aware coaching (on-device geo-diff → coach) | 10/10 | Complete   | 2026-07-06 |
-| 18. BUILD — the living tutor (per-child dynamic exercise selection) | 10/11 | In Progress|  |
+| 18. BUILD — the living tutor (per-child dynamic exercise selection) | 10/11 | In Progress (18-11 human gates) |  |
+| 19. Question presentation overhaul | 0/TBD | Not started | - |
+| 20. Curriculum graph + pipeline for all 28 letters | 0/TBD | Not started | - |
+| 21. Letter content at scale (mother-signed batches) | 0/TBD | Not started | - |
+| 22. Cross-letter selection + next-day planner | 0/TBD | Not started | - |
+| 23. Parent insight — strengths/struggles dashboard | 0/TBD | Not started | - |
+| 24. Submission readiness | 0/TBD | Not started | - |
 
-**Coverage:** the 14 original v2.0 requirements map across Phases 14–16; Phase 17 (added 2026-06-30 from the stroke-aware spike) adds STRK-01 / GROUND-04 / EVAL-03. The three spikes (11–13) own no requirements by design. See REQUIREMENTS.md → v2.0 Traceability.
+**Coverage:** the 14 original v2.0 requirements map across Phases 14–16; Phase 17 (added 2026-06-30 from the stroke-aware spike) adds STRK-01 / GROUND-04 / EVAL-03. The three spikes (11–13) own no requirements by design. The closing arc (19–24, added 2026-07-16) picks up CUR-01 + PLAT-01 (v1 carry-overs) and S2-04 / S2-05 / S2-06 (S2-10 optional); S2-03 (ask-Qalam voice) is out of scope this milestone. See REQUIREMENTS.md → v2.0 Traceability.

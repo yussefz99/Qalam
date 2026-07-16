@@ -4,14 +4,14 @@ milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
 stopped_at: Completed 18-10-PLAN.md (Teacher's Margin panel D-01 + Spotlight overlay D-05 — the arc + micro-drill are now VISIBLE and warm on the live path, reading the SAME TutorInsight, IgnorePointer capture-safe, zero reward surface)
-last_updated: "2026-07-11T15:50:21.362Z"
+last_updated: "2026-07-16T17:46:18.505Z"
 last_activity: 2026-07-11
 progress:
-  total_phases: 22
+  total_phases: 28
   completed_phases: 15
   total_plans: 101
   completed_plans: 96
-  percent: 68
+  percent: 54
 ---
 
 # Project State
@@ -121,6 +121,8 @@ PriorNext: Wave 3/4 — 18-05 (server-first profile/evidenceDigest wire + eviden
 
 - Phase 17 added (2026-06-30): **BUILD — stroke-aware coaching (on-device geo-diff → coach)**, appended to v2.0 from the stroke-aware spike verdict (GATE: BUILD `geo_diff`; image rejected; grounding held). Reqs STRK-01 / GROUND-04 / EVAL-03. Depends on Phase 16 (executes after 16 closes). Agent approach locked: client computes the derived diff on-device (raw strokes stay local), coach node verbalizes it (coach-only v1).
 - Phase 18 added (2026-07-10): **BUILD — the living tutor: per-child dynamic exercise selection** — two-timescale child model, remediation arcs, and just-this-part micro-drills, railed to the curriculum graph. Appended to v2.0; depends on Phase 17. Not planned yet.
+- Phases 19–24 added (2026-07-16): the v2.0 **closing arc**, decided with the owner after the Technion demo PASSED on the Phase-18 build ("worked perfectly"). The milestone end-state is redefined: v2.0 closes when the app is ready for the **Technion submission** (not the demo). 19: question presentation overhaul (the 2026-07-12 owner UAT findings; includes per-child position keying + micro-drill return) → 20: curriculum graph + authoring pipeline for all 28 letters (model drafts, mother signs) → 21: letter content at scale in mother-signed batches → 22: cross-letter mistake-aware selection + the next-day lesson planner (S2-04/S2-05) → 23: parent insight strengths/struggles dashboard (S2-06; S2-10 optional) → 24: submission readiness (absorbs v1 Phase 10's intent). None planned yet.
+- Scope decisions (owner, 2026-07-16): **S2-03 ask-Qalam voice DROPPED** from this milestone; multi-profile is NOT a priority (keying fix folded into Phase 19, no urgent insert); Phases 12/13 marked ABSORBED in the roadmap (18-11 closes cost/latency; 16-03 built the harness); Phase 16's demo-harden leg is MOOT post-demo — its surviving eval-trust work (gold-set sign-off + judge calibration) needs a re-scope before executing; old v1 Phase 8 (three letters) is SUPERSEDED by Phases 20–21.
 
 ### Decisions
 
@@ -262,6 +264,7 @@ Recent decisions affecting current work:
 - [Phase ?]: [18-10]: TeacherMarginPanel (D-01) reads the SAME tutorInsightProvider the verdict/coach publish (no second insight source), degrading coach rationale online -> authored template keyed by the targeted criterion offline (D-10); the arc step-down is derived from insight.pick naming a microDrill node. Anti-gamification token guard green.
 - [Phase ?]: [18-10]: SpotlightOverlay (D-05) is IgnorePointer+CustomPaint radial scrim, layered by WriteSurface only for type=='microDrill' (above ink, below chrome); a capture-still-fires test locks the score path untouched. Exercise.spotlightZone added presentational-only (Rule-3, never the scorer) so the lit-region string reaches the overlay.
 - [Phase ?]: [18-10]: requirements-completed left [] (18-01..18-09 precedent) — SPEC-18-R1/R3/R4 now VISIBLE on the client but the arc/step-down framing copy is signed:false (mother signs at 18-11) + deploy gates remain; verifier/18-11 flips them.
+- [Phase 18]: Owner (2026-07-16): S2-03 ask-Qalam voice dropped from v2.0 scope; milestone closes at Technion submission-readiness via Phases 19-24 (presentation overhaul, all-28-letters pipeline+content, cross-letter selection + next-day planner, parent insight, submission hardening)
 
 ### Pending Todos
 
