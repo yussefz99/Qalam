@@ -194,6 +194,26 @@ class LetterUnitController extends Notifier<LetterUnitState> {
     } catch (_) {
       saved = null; // a read failure degrades to a clean start (never crashes).
     }
+    // 1b) 18-15 (UAT T7): RESTORE selection mode from the durable cursor. The
+    // durable cursor is read back correctly above, but `selectionActive` is
+    // session-scoped (never persisted) and `start()` reset it to false on every
+    // cold relaunch — so the screen fell back to the legacy `_section` walk even
+    // though the child was mid-unit (resume-position-lost-on-relaunch.md). Restore
+    // it iff the saved cursor is a REAL authored graph node: a best-effort, GUARDED
+    // graph read validates it (a load failure → no resume, never a crash — the
+    // never-throw posture). A null / empty / stale / unauthored id degrades to
+    // false so a truly-fresh child keeps the legacy walk (no false resume) and a
+    // corrupt id never forces the presenter into a dead-end (T-18-15-01).
+    final savedCursor = saved?.currentExerciseId;
+    var restoreSelection = false;
+    if (savedCursor != null && savedCursor.trim().isNotEmpty) {
+      try {
+        final graph = await ref.read(curriculumGraphProvider.future);
+        restoreSelection = graph.isAuthored(savedCursor);
+      } catch (_) {
+        restoreSelection = false; // graph unavailable → no resume, never a crash.
+      }
+    }
     // 2) Resolve the resume section. An explicit resumeSection wins; otherwise
     // the count of visited (cleared) competencies/tiers is a coarse position hint.
     final hint = _sectionHintFor(saved, total);
@@ -207,6 +227,9 @@ class LetterUnitController extends Notifier<LetterUnitState> {
       clearedCompetencies: saved?.clearedCompetencies ?? const [],
       clearedTiers: saved?.clearedTiers ?? const [],
       masteryRecorded: false,
+      // Restored from the durable cursor: the screen re-enters presenter mode on
+      // the exact node the child left off (18-15). false for a truly-fresh child.
+      selectionActive: restoreSelection,
     );
     // 3) Persist the (re)entered position so a relaunch resumes here.
     await _persist();
