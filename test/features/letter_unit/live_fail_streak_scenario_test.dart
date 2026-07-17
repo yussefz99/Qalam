@@ -144,6 +144,15 @@ LetterUnitData _baaData() => LetterUnitData(
       words: const [],
     );
 
+/// Find the presented graph node by [id], tolerant of the 18-12 presentation
+/// epoch suffix (`graph:<id>#<epoch>`) so the assertion tracks WHICH node renders,
+/// not its epoch.
+Finder _graphNode(String id) => find.byWidgetPredicate((w) {
+      final k = w.key;
+      return k is ValueKey<String> &&
+          (k.value == 'graph:$id' || k.value.startsWith('graph:$id#'));
+    });
+
 /// A fail on the shape criterion (the bowl geometry) — carries the weakest
 /// criterion so the policy counts a SAME-criterion streak.
 CheckResult _shapeFail() => const CheckResult.fail(
@@ -195,7 +204,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Next exercise'));
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('graph:$_failNode')), findsOneWidget,
+    expect(_graphNode(_failNode), findsOneWidget,
         reason: 'the presenter drives after the first pass');
 
     // FAIL the same criterion (shape) TWICE on the presented node.
@@ -209,7 +218,7 @@ void main() {
 
     // The THIRD render is NOT the identical failed exercise — anti-boredom (R1)
     // manifested end-to-end on the live screen (the compositional proof).
-    expect(find.byKey(const ValueKey('graph:$_failNode')), findsNothing,
+    expect(_graphNode(_failNode), findsNothing,
         reason: 'a child who fails the same criterion twice never sees the '
             'identical exercise a third time — RENDERED, not just selected');
     // …and the child is on SOME other graph node (a live remediation, never a
