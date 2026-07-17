@@ -130,8 +130,8 @@ Future<void> _pump(WidgetTester tester, Widget child) async {
   await tester.pumpAndSettle();
 }
 
-/// A CoachSpeaker that RECORDS calls — so a test can assert the "Hear again"
-/// control re-invoked the instruction speak (18-12). Every method completes
+/// A CoachSpeaker that RECORDS calls — so a test can assert the instruction bar
+/// re-invoked the instruction speak (18-12 → 19-02). Every method completes
 /// instantly (mirrors NoopTtsCoachSpeaker → no instruction hold is observed).
 class _RecordingSpeaker implements CoachSpeaker {
   int speakCount = 0;
@@ -298,8 +298,10 @@ void main() {
   });
 
   testWidgets(
-      'Test 5 (18-12): a "Hear again" control is present in idle/fix/pass and '
-      're-speaks the instruction on demand (the UAT T3 secondary ask)',
+      'Test 5 (18-12 → 19-02): the instruction bar is the single replay '
+      'affordance in idle/fix/pass and re-speaks the instruction on tap '
+      '(the UAT T3 secondary ask; the standalone "Hear again" pill is folded '
+      'into the bar — D-03, one replay control never two)',
       (tester) async {
     final speaker = _RecordingSpeaker();
     await _pumpWith(
@@ -308,15 +310,18 @@ void main() {
       speaker: speaker,
     );
 
-    // IDLE: the control is present, and initState already spoke the instruction
-    // once on mount (the "listen first" hold).
-    expect(find.text('Hear again'), findsOneWidget);
+    // IDLE: the bar is present, and initState already spoke the instruction
+    // once on mount (the "listen first" hold). 19-02: the whole bar is the tap
+    // target; the old standalone "Hear again" text pill no longer exists.
+    expect(find.text('Hear again'), findsNothing,
+        reason: 'the 18-12 pill is gone — one replay affordance (D-03)');
+    expect(find.byKey(const Key('instructionBar')), findsOneWidget);
     final afterMount = speaker.speakCount;
     expect(afterMount, greaterThanOrEqualTo(1),
         reason: 'the instruction is spoken on mount');
 
     // Tapping "Hear again" RE-invokes the instruction speak (does not crash).
-    await tester.tap(find.text('Hear again'));
+    await tester.tap(find.byKey(const Key('instructionBar')));
     await tester.pumpAndSettle();
     expect(speaker.speakCount, greaterThan(afterMount),
         reason: 'the control re-speaks the instruction');
@@ -331,10 +336,10 @@ void main() {
       ..load(_graded())
       ..applyResult(const CheckResult.fail('shallowBowl'));
     await tester.pumpAndSettle();
-    expect(find.text('Hear again'), findsOneWidget,
+    expect(find.byKey(const Key('instructionBar')), findsOneWidget,
         reason: 'reachable in the fix phase');
     final atFix = speaker.speakCount;
-    await tester.tap(find.text('Hear again'));
+    await tester.tap(find.byKey(const Key('instructionBar')));
     await tester.pumpAndSettle();
     expect(speaker.speakCount, greaterThan(atFix),
         reason: 'safe to tap repeatedly — re-arms the speak in the fix phase');
@@ -345,24 +350,26 @@ void main() {
       ..load(_graded())
       ..applyResult(const CheckResult.pass());
     await tester.pumpAndSettle();
-    expect(find.text('Hear again'), findsOneWidget,
+    expect(find.byKey(const Key('instructionBar')), findsOneWidget,
         reason: 'reachable in the pass phase');
     final atPass = speaker.speakCount;
-    await tester.tap(find.text('Hear again'));
+    await tester.tap(find.byKey(const Key('instructionBar')));
     await tester.pumpAndSettle();
     expect(speaker.speakCount, greaterThan(atPass),
         reason: 're-speaks in the pass phase too');
   });
 
   testWidgets(
-      'Test 6 (18-12): a teachCard shows NO "Hear again" (nothing to replay)',
-      (tester) async {
+      'Test 6 (18-12 → 19-02): a teachCard shows NO instruction bar (nothing to '
+      'replay)', (tester) async {
     await _pumpWith(
       tester,
       ExerciseScaffold(exercise: _teachCard(), letter: _baa()),
     );
     // The teachCard is not graded and _speakInstructionThenRelease no-ops for it,
-    // so the replay control is hidden rather than offering a dead tap.
+    // so the instruction bar (the replay control) is hidden rather than offering
+    // a dead tap (_hasInstruction false).
+    expect(find.byKey(const Key('instructionBar')), findsNothing);
     expect(find.text('Hear again'), findsNothing);
   });
 }

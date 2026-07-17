@@ -21,6 +21,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/demo_flag.dart';
 import '../../../core/exercise_engine/check_result.dart';
@@ -876,30 +877,28 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
               ),
           ],
         ),
+        // 19-02 (D-01/D-02/D-03): the persistent instruction bar — a fixed strip
+        // between the ribbon row and PromptHeader that renders the SAME place on
+        // every graded type, telling the child what to do from the screen alone
+        // (readable with sound off). Its text is the PER-TYPE template keyed on
+        // exercise.type (NOT the say line — Pitfall 6). The whole bar is one tap
+        // target that re-speaks the spoken instruction: it ABSORBS the 18-12
+        // "Hear again" pill so there is exactly ONE replay affordance, never two
+        // (the Phase-07 double-Hear-button device bug is the cautionary
+        // precedent). Guarded by [_hasInstruction] (hidden on teachCard + empty
+        // say-line — there is nothing to re-hear). The bar is never dimmed; only
+        // the canvas is held while speaking.
+        if (_hasInstruction) ...[
+          const SizedBox(height: 12),
+          _instructionBar(s),
+          const SizedBox(height: 12),
+        ],
         // PromptHeader (top).
         PromptHeader(
           parts: widget.exercise.prompt,
           onAudioTap: widget.onAudioTap,
           playLabel: s.playLabel,
         ),
-        // 18-12: the always-available "Hear again" control — re-speaks the
-        // current question's spoken instruction on demand (the secondary ask in
-        // the UAT T3 report: "something to make the tutor speak again the
-        // instructions"). It sits ABOVE the phase-driven foot, so it is reachable
-        // in the idle, fix, AND pass phases — not only while writing. It reuses
-        // [_speakInstructionThenRelease] verbatim (stops any in-flight voice, arms
-        // the 8s-capped hold, no-ops on a teachCard / empty say-line), so it is
-        // safe to tap repeatedly. A help control, never a reward surface.
-        if (_hasInstruction) ...[
-          const SizedBox(height: 10),
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: _HearAgainCta(
-              label: s.hearAgain,
-              onTap: _speakInstructionThenRelease,
-            ),
-          ),
-        ],
         // The center surface: WriteSurface (graded) / custom (teachCard) / none.
         // Held (not writable) while the tutor speaks the instruction. On the
         // agent path (baa) with a graded surface the Teacher's Margin sits BESIDE
@@ -954,6 +953,77 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
     }
     // teachCard: a custom non-writing panel, or just empty space.
     return widget.customSurface?.call(context) ?? const SizedBox.shrink();
+  }
+
+  /// 19-02 (D-01/D-02/D-03) — the persistent instruction strip (UI-SPEC §1).
+  /// A light --teal-tint surface with a leading per-type glyph, the short
+  /// child-readable per-type line, and a trailing speaker glyph. The WHOLE bar
+  /// is one tap target whose onTap re-invokes [_speakInstructionThenRelease]
+  /// verbatim (re-hear) — it is the SINGLE replay affordance (the 18-12 pill is
+  /// gone). English content island (LTR), like the Teacher's Eye strip. Every
+  /// value cites [QalamTokens]/[QalamTextStyles]; no gold (anti-gamification).
+  Widget _instructionBar(ExerciseScaffoldStrings s) {
+    final spec = instructionTemplateFor(widget.exercise, strings: s);
+    return Semantics(
+      key: const Key('instructionBar'),
+      button: true,
+      label: s.hearAgain, // UI-SPEC §1: "Hear it again"
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(16), // --radius-md → 16
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: _speakInstructionThenRelease,
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 64), // --target-min
+            padding: const EdgeInsets.symmetric(horizontal: 24), // space-6
+            decoration: BoxDecoration(
+              color: QalamTokens.tealTint, // --teal-tint guidance fill
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: QalamTokens.aquaEdge, width: 1.5),
+            ),
+            // English instruction reads L→R (island), like _teacherEye.
+            child: Directionality(
+              textDirection: TextDirection.ltr,
+              child: Row(
+                children: [
+                  _instructionLeading(spec),
+                  const SizedBox(width: 12), // icon↔text gap (space-3)
+                  Expanded(
+                    child: Text(
+                      spec.text,
+                      style: QalamTextStyles.heading.copyWith(
+                        fontSize: 20, // --fz-20 (UI-SPEC instruction role)
+                        color: QalamTokens.fg,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // Trailing speaker glyph = the replay affordance.
+                  const Icon(Icons.volume_up_rounded,
+                      size: 24, color: QalamTokens.inkTeal),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// The bar's leading glyph — the brand nib SVG for traceLetter, else the
+  /// per-type Material glyph. 24px, ink-teal (never gold).
+  Widget _instructionLeading(InstructionSpec spec) {
+    if (spec.svgAsset != null) {
+      return SvgPicture.asset(
+        spec.svgAsset!,
+        width: 24,
+        height: 24,
+        colorFilter: const ColorFilter.mode(
+            QalamTokens.inkTeal, BlendMode.srcIn),
+      );
+    }
+    return Icon(spec.icon, size: 24, color: QalamTokens.inkTeal);
   }
 
   Widget _foot(
@@ -1236,57 +1306,6 @@ class _QuietCta extends StatelessWidget {
             style: QalamTextStyles.button.copyWith(
               fontSize: 18,
               color: QalamTokens.fgMuted,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// 18-12: the small, calm "Hear again" affordance — a compact ghost pill (the
-/// `_QuietCta` grammar, scaled down) with a quiet volume glyph. It re-speaks the
-/// current question's instruction; it is a HELP control, never a reward surface
-/// (no gold, no counter). Available in every phase because it lives above the
-/// phase-driven foot.
-class _HearAgainCta extends StatelessWidget {
-  const _HearAgainCta({required this.label, this.onTap});
-
-  final String label;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      label: label,
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(14),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(14),
-          onTap: onTap,
-          child: Container(
-            height: 40,
-            padding: const EdgeInsets.symmetric(horizontal: 14),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: QalamTokens.aquaEdge, width: 1.5),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.volume_up_rounded,
-                    size: 18, color: QalamTokens.fgMuted),
-                const SizedBox(width: 7),
-                Text(
-                  label,
-                  style: QalamTextStyles.button.copyWith(
-                    fontSize: 14,
-                    color: QalamTokens.fgMuted,
-                  ),
-                ),
-              ],
             ),
           ),
         ),
