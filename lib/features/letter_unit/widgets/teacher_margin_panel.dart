@@ -28,18 +28,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../models/exercise.dart';
 import '../../../models/letter.dart';
 import '../../../theme/qalam_tokens.dart';
 import '../../../theme/text_styles.dart';
 import 'exercise_scaffold.dart' show TutorInsight, tutorInsightProvider;
 
-/// The child-facing Teacher's Margin panel. Renders nothing until the first
-/// verdict publishes a [TutorInsight]; then it carries the WHY line and, during
-/// an arc (the coach picked a micro-drill), the named step-down narration.
+/// The child-facing Teacher's Margin panel. When an [exercise] is supplied it
+/// has a persistent RESTING presence (a calm note naming the current question's
+/// focus) BEFORE the first verdict, then carries the WHY line and — during a
+/// GENUINE remediation arc — the named step-down narration (18-16 / UAT T6). With
+/// no [exercise] and no insight it is silent (a bare host / test pump).
 class TeacherMarginPanel extends ConsumerWidget {
   const TeacherMarginPanel({
     super.key,
     required this.letter,
+    this.exercise,
     this.title = "Teacher's margin",
   });
 
@@ -48,6 +52,11 @@ class TeacherMarginPanel extends ConsumerWidget {
   /// baa-flavoured (D-03) — a newly signed letter grows its own lines at 18-11.
   final Letter letter;
 
+  /// The current question — drives the RESTING focus shown before the first
+  /// verdict (18-16). Null on a bare host / test pump → the panel stays silent
+  /// until an insight publishes.
+  final Exercise? exercise;
+
   /// The small margin heading (call site passes l10n; default keeps tests
   /// independent of l10n generation).
   final String title;
@@ -55,25 +64,83 @@ class TeacherMarginPanel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final insight = ref.watch(tutorInsightProvider);
-    if (insight == null) return const SizedBox.shrink();
+    if (insight == null) {
+      // 18-16 (UAT T6): a persistent RESTING presence — a calm note naming the
+      // current question's focus BEFORE the first verdict, so the margin is a
+      // recognizable, singular feature (not a verdict-only blast). Silent only
+      // when there is no exercise context (a bare host / test pump).
+      final ex = exercise;
+      if (ex == null) return const SizedBox.shrink();
+      return _restingNote(ex);
+    }
 
     final criterion = _targetedCriterion(insight);
-    // ONLINE → the coach's WHY line; OFFLINE / pre-coach → the authored template
-    // keyed by the targeted criterion (D-10 degradation, same panel).
+    // The WHY resolution (18-16 — vary per attempt; the authored table is a LAST-
+    // RESORT offline FLOOR, not the majority-path output):
+    //   1) ONLINE → the coach's `rationale` verbatim (the per-attempt WHY, now
+    //      populated on the clean-pass path too, 18-14).
+    //   2) CLEAN PASS offline (no failed criterion) → a warm pass-appropriate
+    //      line — NOT the criterion-skewed static 'deeper bowl'.
+    //   3) GENUINE miss offline → the authored floor for THAT failed criterion.
     final rationale = insight.rationale?.trim();
-    final why = (rationale != null && rationale.isNotEmpty)
-        ? rationale
-        : _authoredWhy(criterion);
-    // The arc's named step-down — present only when the coach routed the child to
-    // a micro-drill (the pick), i.e. the arc's stepDown moment (D-02/D-03).
-    final arcLine = _arcStepDownLine(insight.pick);
+    final String why;
+    if (rationale != null && rationale.isNotEmpty) {
+      why = rationale;
+    } else if (criterion == null) {
+      why = _passWhy;
+    } else {
+      why = _authoredWhy(criterion);
+    }
+    // The arc's named step-down — present only during a GENUINE remediation arc
+    // (the policy's real `arcStep`), NOT a micro-drill pick (drills parked, D-03).
+    final arcLine = _arcStepDownLine(insight);
 
+    return _frame([
+      if (criterion != null) ...[
+        const SizedBox(height: 6),
+        // "Working on: the dot" — names the part, not a score.
+        Text(
+          'Working on · ${_friendlyCriterion(criterion)}',
+          style: _workingOnStyle,
+        ),
+      ],
+      const SizedBox(height: 8),
+      // The WHY line — the tutor's warm register (online coach / offline
+      // authored floor).
+      Text(why, style: _whyStyle),
+      if (arcLine != null) ...[
+        const SizedBox(height: 10),
+        // The named step-down — a coral pencil note that we take a detour and
+        // come right back (never a step BACK; the arc "never leaves the desk",
+        // sketch 001).
+        Text(arcLine, style: _arcStyle),
+      ],
+    ]);
+  }
+
+  /// The RESTING note shown before the first verdict (18-16): the heading, the
+  /// current question's focus when derivable, and a calm "take your time" line —
+  /// a persistent, recognizable presence beside the canvas (never a reward).
+  Widget _restingNote(Exercise ex) {
+    final focus = _restingFocus(ex);
+    return _frame([
+      if (focus != null) ...[
+        const SizedBox(height: 6),
+        Text('Working on · $focus', style: _workingOnStyle),
+      ],
+      const SizedBox(height: 8),
+      Text(_restingLine, style: _whyStyle),
+    ]);
+  }
+
+  /// The shared pencil-note frame: parchment ground with a soft coral edge on the
+  /// canvas side (sketch 001 Variant C `border-right: 2px coral-tint`) + the
+  /// heading. [children] follow the heading.
+  Widget _frame(List<Widget> children) {
     return Container(
       margin: const EdgeInsets.only(top: 10),
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
       decoration: const BoxDecoration(
-        // A pencil-note margin: parchment ground, a soft coral edge on the
-        // canvas side (sketch 001 Variant C `border-right: 2px coral-tint`).
         color: QalamTokens.parchmentDeep,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(14),
@@ -93,73 +160,79 @@ class TeacherMarginPanel extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              title.toUpperCase(),
-              style: QalamTextStyles.label.copyWith(
-                fontSize: 10,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 0.05 * 10,
-                color: QalamTokens.fgMuted,
-              ),
-            ),
-            if (criterion != null) ...[
-              const SizedBox(height: 6),
-              // "Working on: the dot" — names the part, not a score.
-              Text(
-                'Working on · ${_friendlyCriterion(criterion)}',
-                style: QalamTextStyles.label.copyWith(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w700,
-                  color: QalamTokens.deepInk,
-                ),
-              ),
-            ],
-            const SizedBox(height: 8),
-            // The WHY line — the tutor's warm register (online coach / offline
-            // authored floor).
-            Text(
-              why,
-              style: QalamTextStyles.button.copyWith(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                color: QalamTokens.fg,
-                height: 1.42,
-              ),
-            ),
-            if (arcLine != null) ...[
-              const SizedBox(height: 10),
-              // The named step-down — a coral pencil note that we take a detour
-              // and come right back (never a step BACK; the arc "never leaves the
-              // desk", sketch 001).
-              Text(
-                arcLine,
-                style: QalamTextStyles.button.copyWith(
-                  fontSize: 13.5,
-                  fontWeight: FontWeight.w500,
-                  color: QalamTokens.coral,
-                  height: 1.4,
-                ),
-              ),
-            ],
+            Text(title.toUpperCase(), style: _headingStyle),
+            ...children,
           ],
         ),
       ),
     );
   }
 
-  /// The criterion the arc/coach is targeting — the first criterion whose zone is
-  /// NOT `certainlyCorrect` (the one the child keeps missing), else the first
-  /// listed, else null (the pass case with all-correct criteria).
+  TextStyle get _headingStyle => QalamTextStyles.label.copyWith(
+        fontSize: 10,
+        fontWeight: FontWeight.w800,
+        letterSpacing: 0.05 * 10,
+        color: QalamTokens.fgMuted,
+      );
+
+  TextStyle get _workingOnStyle => QalamTextStyles.label.copyWith(
+        fontSize: 12.5,
+        fontWeight: FontWeight.w700,
+        color: QalamTokens.deepInk,
+      );
+
+  TextStyle get _whyStyle => QalamTextStyles.button.copyWith(
+        fontSize: 15,
+        fontWeight: FontWeight.w500,
+        color: QalamTokens.fg,
+        height: 1.42,
+      );
+
+  TextStyle get _arcStyle => QalamTextStyles.button.copyWith(
+        fontSize: 13.5,
+        fontWeight: FontWeight.w500,
+        color: QalamTokens.coral,
+        height: 1.4,
+      );
+
+  /// PROVISIONAL (signed:false, D-03). The resting focus for [ex] before the
+  /// first verdict — the drill's targeted criterion / spotlight zone when the
+  /// question declares one, else null (a normal exercise names no single part).
+  String? _restingFocus(Exercise ex) {
+    if (ex.criteria.isNotEmpty) return _friendlyCriterion(ex.criteria.first);
+    final zone = ex.spotlightZone;
+    if (zone != null) return _friendlyZone(zone);
+    return null;
+  }
+
+  /// PROVISIONAL (signed:false, D-03). The calm resting line — a teacher waiting
+  /// beside the child, never a score / streak / prompt to hurry.
+  static const String _restingLine =
+      "I'm watching your strokes. Take your time — I'll show you what to fix.";
+
+  /// A child-friendly name for a micro-drill spotlight zone (18-02 labels).
+  String _friendlyZone(String zone) => switch (zone) {
+        'dot' => 'the dot',
+        'bowl' => 'the bowl',
+        'start' => 'the start',
+        _ => 'this part',
+      };
+
+  /// The criterion the child ACTUALLY missed — the first criterion the scorer
+  /// marked `certainlyWrong`. Returns null when NOTHING is certainly wrong (a
+  /// clean pass, or a merely-`fuzzy` soft-band criterion under the provisional
+  /// uncalibrated bands): the WHY then shows a pass-appropriate line rather than
+  /// skewing to a fixed 'shape' fallback (18-16 — the "feels static, always the
+  /// deeper-bowl line" fix). Only a genuine miss names a "Working on" part.
   String? _targetedCriterion(TutorInsight insight) {
     final criteria = insight.criteria;
     if (criteria == null || criteria.isEmpty) return null;
     for (final c in criteria) {
       final zone = c['zone'];
       final name = c['criterion'];
-      if (name is String && zone != 'certainlyCorrect') return name;
+      if (name is String && zone == 'certainlyWrong') return name;
     }
-    final first = criteria.first['criterion'];
-    return first is String ? first : null;
+    return null; // no genuine miss → a clean pass (no skew to 'shape').
   }
 
   /// A child-friendly name for a scorer criterion (the part being worked on).
@@ -172,10 +245,19 @@ class TeacherMarginPanel extends ConsumerWidget {
         _ => 'this part',
       };
 
+  /// PROVISIONAL (signed:false, mother-signed at 18-11, D-03). The warm
+  /// pass-appropriate WHY line shown on a CLEAN PASS with no coach rationale
+  /// (18-16) — so the WHY is not the criterion-skewed static 'deeper bowl' after
+  /// every correct attempt. Names what the child did well; never over-praises
+  /// (a clean pass earns it) and never a score/streak.
+  static const String _passWhy =
+      "That's a steady baa — smooth and sure. Lovely writing.";
+
   /// PROVISIONAL (signed:false, mother-signed at 18-11, D-03). The authored WHY
-  /// line keyed by the targeted criterion — the OFFLINE floor the panel shows
-  /// when the coach `rationale` is absent (D-10). Warm, names the exact fix,
-  /// never fake cheer.
+  /// line keyed by the criterion the child GENUINELY missed — the last-resort
+  /// OFFLINE floor the panel shows when the coach `rationale` is absent AND a
+  /// criterion is `certainlyWrong` (D-10). Warm, names the exact fix, never fake
+  /// cheer. Not the majority path (a clean pass shows [_passWhy] instead).
   String _authoredWhy(String? criterion) => switch (criterion) {
         'dot' =>
           "baa's dot lives just below the bowl — let's set it right under the middle.",
@@ -191,18 +273,28 @@ class TeacherMarginPanel extends ConsumerWidget {
       };
 
   /// PROVISIONAL (signed:false, D-03). The named step-down narration — present
-  /// only when the coach routed the child to a micro-drill (`pick` names a
-  /// `microDrill` node). "Let's practice just the dot for a moment — then we'll
-  /// come back" (the D-03 register, sketch 001: the arc never leaves the desk).
-  String? _arcStepDownLine(String? pick) {
-    if (pick == null || !pick.contains('microDrill')) return null;
-    final zone = pick.split('.').last;
-    final part = switch (zone) {
-      'dot' => 'the dot',
-      'bowl' => 'the bowl',
-      'start' => 'the start',
-      _ => 'this part',
-    };
+  /// only during a GENUINE remediation arc, driven by the REAL policy
+  /// `insight.arcStep` (`entry`/`stepDown`), NOT a micro-drill pick (the drills
+  /// are parked out of the live graph — the step-down is a floor-trace detour,
+  /// D-03). "Let's practice just the dot for a moment — then we'll come back"
+  /// (the D-03 register, sketch 001: a detour that comes right back, never a step
+  /// BACK, never framed as failure).
+  String? _arcStepDownLine(TutorInsight insight) {
+    final step = insight.arcStep;
+    if (step != 'entry' && step != 'stepDown') return null;
+    final criterion = _arcTargetCriterion(insight);
+    final part = criterion != null ? _friendlyCriterion(criterion) : 'this part';
     return "Let's practice just $part for a moment — then we'll come back.";
+  }
+
+  /// The arc's TARGET criterion — read from the policy `whyFacts`
+  /// (`criterion:<name>`) so the step-down names the part the arc is rebuilding
+  /// even when the current drill's criteria read clean, falling back to the
+  /// verdict-time targeted criterion.
+  String? _arcTargetCriterion(TutorInsight insight) {
+    for (final f in insight.whyFacts ?? const <String>[]) {
+      if (f.startsWith('criterion:')) return f.substring('criterion:'.length);
+    }
+    return _targetedCriterion(insight);
   }
 }

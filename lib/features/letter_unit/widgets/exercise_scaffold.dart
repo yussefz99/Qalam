@@ -22,6 +22,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/demo_flag.dart';
 import '../../../core/exercise_engine/check_result.dart';
 import '../../../models/exercise.dart';
 import '../../../models/letter.dart';
@@ -87,11 +88,30 @@ class ExerciseScaffoldStrings {
 /// by data the client already holds (the scorer's criteria, the point-free
 /// geometry summary, and the agent's next-exercise pick + rationale).
 class TutorInsight {
-  const TutorInsight({this.criteria, this.diffSummary, this.pick, this.rationale});
+  const TutorInsight({
+    this.criteria,
+    this.diffSummary,
+    this.pick,
+    this.rationale,
+    this.arcStep,
+    this.whyFacts,
+  });
   final List<Map<String, Object?>>? criteria;
   final String? diffSummary;
   final String? pick;
   final String? rationale;
+
+  /// 18-16: the CURRENT feedback moment's GENUINE remediation-arc step
+  /// (`entry`/`stepDown`/`rebuild`/`retryOriginal`), or null when no arc is in
+  /// progress. Threaded from the controller's cached policy outcome (NOT parsed
+  /// from `pick` — the micro-drills are parked out of the live graph, D-03). The
+  /// child-facing Teacher's Margin narrates the step-down from THIS signal.
+  final String? arcStep;
+
+  /// 18-16: the non-PII policy WHY facts (`criterion:*` / `arcStep:*` /
+  /// `struggle:*`) for this moment. The margin names the arc's target part from
+  /// these; never carries child data / geometry (ADR-014).
+  final List<String>? whyFacts;
 }
 
 /// A [Notifier] (Riverpod 3 dropped `StateProvider`) mirroring the
@@ -327,15 +347,6 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
     // and bottom bar read the instant authored `state.line`, so this clear is
     // invisible there. The verdict/star are already applied and stand (D-A).
     ref.read(tutorLineProvider.notifier).clear();
-    // DEMO "Teacher's Eye": publish what the scorer just saw (criteria + the
-    // point-free geometry summary). The agent's pick merges in when the brain
-    // resolves. Agent path only — presenter chrome, read-only.
-    if (_isAgentPath) {
-      ref.read(tutorInsightProvider.notifier).set(TutorInsight(
-            criteria: result.criteria,
-            diffSummary: strokeDiff?['summary'] as String?,
-          ));
-    }
     if (result.passed && widget.graphExerciseId != null) {
       widget.onGraphNodePassed?.call(widget.graphExerciseId!);
     }
@@ -352,10 +363,27 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
         ref.read(letterUnitControllerProvider(widget.letter.id).notifier);
     final unitState = ref.read(letterUnitControllerProvider(widget.letter.id));
     final graphId = widget.graphExerciseId;
-    final candidates = (_isAgentPath && graphId != null)
+    final bool selectionBegan = _isAgentPath && graphId != null;
+    final candidates = selectionBegan
         ? controller.beginSelection(result, graphId,
             recentMistakes: List<String>.of(_recentMistakes))
         : const <String>[];
+
+    // DEMO "Teacher's Eye" + 18-16 Teacher's Margin: publish what the scorer just
+    // saw (criteria + the point-free geometry summary) AND — now that
+    // beginSelection above has populated the policy outcome — the REAL arc signal
+    // (arcStep + whyFacts). The child-facing Teacher's Margin narrates the
+    // step-down from THIS arc state, not a micro-drill pick (parked out of the
+    // live graph, D-03). The agent's next-exercise pick merges in when the brain
+    // resolves. Agent path only — read-only presenter chrome + the warm margin.
+    if (_isAgentPath) {
+      ref.read(tutorInsightProvider.notifier).set(TutorInsight(
+            criteria: result.criteria,
+            diffSummary: strokeDiff?['summary'] as String?,
+            arcStep: selectionBegan ? controller.pendingArcStep() : null,
+            whyFacts: selectionBegan ? controller.pendingWhyFacts() : null,
+          ));
+    }
 
     final facts = buildTutorFacts(
       letterId: widget.letter.id,
@@ -420,6 +448,10 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
               diffSummary: cur?.diffSummary,
               pick: plan!.nextExerciseId,
               rationale: plan.rationale,
+              // Carry the verdict-time arc signal through the merge (like
+              // criteria/diff) so the margin keeps narrating the step-down.
+              arcStep: cur?.arcStep,
+              whyFacts: cur?.whyFacts,
             ));
       }
 
@@ -632,14 +664,17 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
                     strings: s,
                     isAgentPath: _isAgentPath,
                   ),
-                  // 18-10 (D-01): the CHILD-FACING Teacher's Margin — the warm WHY
-                  // line + remediation-arc step-down narration, beside the canvas.
-                  // Reads the SAME TutorInsight the verdict/coach publish (no second
-                  // insight source); silent until the first verdict. Agent path only
-                  // (the living tutor is baa-scoped).
-                  if (_isAgentPath) TeacherMarginPanel(letter: widget.letter),
-                  // DEMO "Teacher's Eye" — what the tutor saw (agent path only).
-                  if (_isAgentPath) _teacherEye(),
+                  // 18-16 (UAT T6): the child-facing Teacher's Margin moved OUT of
+                  // this column to BESIDE the writing canvas (see _mainColumn), so
+                  // it reads as "a note near the writing canvas" and is not the
+                  // visual twin of the demo Teacher's Eye strip below.
+                  //
+                  // DEMO "Teacher's Eye" — the 17.2 diagnostic read-out. 18-16
+                  // (UAT T6): gated to DEMO builds only (kDemoMode). Real
+                  // child-facing builds omit --dart-define=DEMO=true, so this
+                  // duplicate strip disappears and the Teacher's Margin is the
+                  // SINGLE margin surface.
+                  if (_isAgentPath && kDemoMode) _teacherEye(),
                 ],
               ),
             ),
@@ -703,9 +738,36 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
           ),
         ],
         // The center surface: WriteSurface (graded) / custom (teachCard) / none.
-        // Held (not writable) while the tutor speaks the instruction.
+        // Held (not writable) while the tutor speaks the instruction. On the
+        // agent path (baa) with a graded surface the Teacher's Margin sits BESIDE
+        // the canvas (18-16 / UAT T6).
         const SizedBox(height: 14), // .ex-surface margin-top:14
-        Expanded(child: _holdWhileInstruction(_centerSurface())),
+        Expanded(
+          child: (_isAgentPath && !_isTeachCard)
+              ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(child: _holdWhileInstruction(_centerSurface())),
+                    const SizedBox(width: 18),
+                    // 18-16 (UAT T6): the child-facing Teacher's Margin — the
+                    // SINGLE, recognizable margin note beside the canvas (the demo
+                    // Teacher's Eye twin is gated out of non-demo builds). It shows
+                    // a calm resting focus BEFORE the first verdict, then the WHY +
+                    // arc step-down at verdict — a persistent presence, not a
+                    // verdict-only blast. Scrolls if the note grows.
+                    SizedBox(
+                      width: 224,
+                      child: SingleChildScrollView(
+                        child: TeacherMarginPanel(
+                          letter: widget.letter,
+                          exercise: widget.exercise,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : _holdWhileInstruction(_centerSurface()),
+        ),
         // FeedbackPanel + CTA (bottom) — .ex-foot.
         const SizedBox(height: 12),
         _foot(state, s, agentLine),
