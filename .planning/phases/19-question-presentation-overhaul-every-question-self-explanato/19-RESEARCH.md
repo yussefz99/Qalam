@@ -389,7 +389,11 @@ The "№ 10, 15–20" numbering is the owner's card-order shorthand; the enforce
 
 **Cross-check:** claims tagged `[VERIFIED: ...]` were confirmed by reading the cited file this session. `[ASSUMED]`/`[CITED]` items above need confirmation (A2, A3, A4, A6 especially) before they become locked plan decisions.
 
-## Open Questions
+## Open Questions (RESOLVED — owner, 2026-07-17; see CONTEXT.md "Planning-time resolutions")
+
+> Resolution index: Q1 → D-15 confirmed (retire now, fold-then-drop). Q2 → D-19 (remove gated
+> nodes from the baa graph; file for Phase 20/21). Q3 → D-20 (leave orphans). Q4 → D-21 (the
+> lint flag set is the enforceable identity; №↔id reconciled in the mother's review packet).
 
 1. **D-14 vs D-15 reconciliation — key `LetterReps` or retire it?**
    - What we know: D-14 lists `LetterReps` among the six to re-key; D-15 says retire it entirely.

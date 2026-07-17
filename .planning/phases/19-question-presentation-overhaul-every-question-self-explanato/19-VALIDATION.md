@@ -28,6 +28,7 @@ created: 2026-07-17
 ## Sampling Rate
 
 - **After every task commit:** Run the quick run command above (letter_unit widgets + app_database + curriculum + microdrill)
+- **Known-skip carve-out:** the v6→v7 migration case in `test/data/app_database_test.dart` is authored skip-marked by 19-01 (`skip: 'v6→v7 lands in 19-06 (QP-09)'`) and un-skipped only by 19-06 — intermediate plans run the file whole and green; never weaken or remove the case to satisfy a verify command (mirrors the pre-existing-golden exclusion below)
 - **After every plan wave:** Run `flutter test` (full client suite) — known pre-existing failures excluded (alif_reference, mastery/glyph goldens per STATE.md; never "fix" via re-bake)
 - **Before `/gsd-verify-work`:** Full client suite green (minus documented pre-existing goldens); device UAT of the new presentation is the human gate
 - **Max feedback latency:** ~120 seconds
