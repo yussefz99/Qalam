@@ -137,6 +137,10 @@ None. The copy strings (`_passWhy`, `_restingLine`, the step-down phrasing, the 
 - The Teacher's Margin closes the UAT-T6 margin half and the UAT-T5 client half at the code level. The remaining halves are the mother's copy sign-off (18-HUMAN-UAT) and — for the coach rationale to actually populate the clean-pass WHY online — the 18-14 server deploy.
 - No blockers introduced. Phase 19 (question-presentation overhaul) can build on the single, recognizable margin surface.
 
+## Self-Check: PASSED
+
+All created/modified files exist on disk; all task commits (704afa9, 4670137, 882d80f) and the summary commit (d141e08) are present in git history.
+
 ---
 *Phase: 18-build-the-living-tutor-dynamic-exercise-selection*
 *Completed: 2026-07-17*
