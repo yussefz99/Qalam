@@ -4,12 +4,12 @@ milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
 stopped_at: Completed 18-10-PLAN.md (Teacher's Margin panel D-01 + Spotlight overlay D-05 — the arc + micro-drill are now VISIBLE and warm on the live path, reading the SAME TutorInsight, IgnorePointer capture-safe, zero reward surface)
-last_updated: "2026-07-16T17:46:18.505Z"
-last_activity: 2026-07-11
+last_updated: "2026-07-17T09:03:31.029Z"
+last_activity: 2026-07-17 -- Phase 18 execution started
 progress:
   total_phases: 28
   completed_phases: 15
-  total_plans: 101
+  total_plans: 106
   completed_plans: 96
   percent: 54
 ---
@@ -26,9 +26,9 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 18 (build-the-living-tutor-dynamic-exercise-selection) — EXECUTING
-Plan: 11 of 11
-Status: Ready to execute
-Last activity: 2026-07-11
+Plan: 1 of 16
+Status: Executing Phase 18
+Last activity: 2026-07-17 -- Phase 18 execution started
 Next: Continue /gsd-execute-phase 18 — 18-07 now GENUINELY done (the earlier "18-07 done" note below was the INACCURATE narrative; only a plan-amendment commit existed — no source wiring — until this pass). The two-timescale brain now DRIVES the live selection path: RouterExerciseSelector narrows to SelectionPolicy candidates (accept agent pick iff candidate AND graph-legal, else the walker over the SAME set — R5 property green, 200 cases); the coach TutorDecision is threaded into controller.selectNext on the LIVE screen (Phase-15 dead wire CLOSED + RENDERED via exercise_presenter, proven by agent_pick_live_path / live_fail_streak widget tests); selection runs on pass AND fail; arcs persist to Drift (D-12); micro-drills score by their target criterion (D-08); buildSentence is passable (writtenWords wired). test/features/ = +147/-2 (the 2 = known baseline: meet_section img.door + mastery golden). Remaining: 18-10 (micro-drill Spotlight chrome) then 18-11 HUMAN-UAT — deploy gates (Cloud Run re-deploy for the wire fields, Job+Scheduler, child_models owner-read rule) + mother signs kArcEntryFailStreak/kArcMaxAttempts + micro-drill copy + selection gold set (then the verifier flips R1/R4/R5/R6).
 PriorNext: Wave 3/4 — 18-05 (server-first profile/evidenceDigest wire + evidence.py + /coach BackgroundTask + owner-read rule), 18-06 (Dart mirror + Drift child-model repository), 18-08 (coach WHY grounding D-10 + selection_policy eval dimension), 18-09 (nightly EMA compiler) all done; 18-08/18-09 greened test_selection_dimension + test_compile_profiles (the last two Wave-0 RED server modules). NOTE: 18-08/18-09 executed BEFORE 18-07 (server/eval legs don't depend on the client wiring); 18-07 is the client live-path leg, landed this pass.
 

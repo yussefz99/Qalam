@@ -832,7 +832,7 @@ Plans:
 **Goal:** Every "next exercise" pick is a deliberate, explainable teaching move informed by a persistent per-child model — targeting the weakest criterion, building remediation arcs back to confidence, injecting just-this-part micro-drills — while staying railed to the signed curriculum graph, preserving the offline walker floor, and closing the cost/latency research question with measured numbers.
 **Requirements**: SPEC-18-R1..R9 (the 9 locked requirements in 18-SPEC.md)
 **Depends on:** Phase 17 (LetterScore criteria + weakest; ADR-017); Phase 17.2 (graph-legal candidates over the wire, coach proposes+announces, Teacher's Eye strip — merge to main before branching)
-**Plans:** 11 planned + 5 gap-closure plans (18-12..18-16, UAT 2026-07-17)
+**Plans:** 13/16 plans executed
 
 Plans:
 
@@ -870,9 +870,9 @@ Plans:
 
 **Gap closure — UAT 2026-07-17** *(5 issues diagnosed; plans 18-12..18-16)*
 
-- [ ] 18-12-PLAN.md — BLOCKER+major: one coordinated same-id re-present remount fix (presentation-epoch key) for the retry no-op (T3) AND the active-arc stuck state (T6) + replay-instruction control (UAT T3/T6)
-- [ ] 18-13-PLAN.md — cosmetic: responsive stimulus image sizing + caption LTR bidi fix (UAT T2)
-- [ ] 18-14-PLAN.md — major: server tool-schema fix so the coach's per-attempt rationale reaches the client on the clean-pass path (structural half of T5) + Cloud Run re-deploy gate (UAT T5)
+- [x] 18-12-PLAN.md — BLOCKER+major: one coordinated same-id re-present remount fix (presentation-epoch key) for the retry no-op (T3) AND the active-arc stuck state (T6) + replay-instruction control (UAT T3/T6)
+- [x] 18-13-PLAN.md — cosmetic: responsive stimulus image sizing + caption LTR bidi fix (UAT T2)
+- [x] 18-14-PLAN.md — major: server tool-schema fix so the coach's per-attempt rationale reaches the client on the clean-pass path (structural half of T5) + Cloud Run re-deploy gate (UAT T5)
 - [ ] 18-15-PLAN.md — major: restore selection/presenter mode from the durable cursor on cold boot so relaunch resumes in place (UAT T7) *(depends on 18-12)*
 - [ ] 18-16-PLAN.md — blocker/major: Teacher's Margin distinct identity beside the canvas + real arc-step narration + per-attempt WHY variance; demo Teacher's Eye gated out of non-demo builds (margin half of T6 + client half of T5) *(depends on 18-12, 18-15)*
 
@@ -1019,7 +1019,7 @@ is DROPPED from this milestone's scope (owner, 2026-07-16).
 | 15. BUILD — dynamic grounded exercise selection on baa | 8/7 | Complete    | 2026-06-28 |
 | 16. BUILD — presence + voice + eval gate + demo-harden | 3/6 | In Progress (re-scope: eval-trust legs survive; demo-harden moot) |  |
 | 17. BUILD — stroke-aware coaching (on-device geo-diff → coach) | 10/10 | Complete   | 2026-07-06 |
-| 18. BUILD — the living tutor (per-child dynamic exercise selection) | 10/11 | In Progress (18-11 human gates) |  |
+| 18. BUILD — the living tutor (per-child dynamic exercise selection) | 13/16 | In Progress|  |
 | 19. Question presentation overhaul | 0/TBD | Not started | - |
 | 20. Curriculum graph + pipeline for all 28 letters | 0/TBD | Not started | - |
 | 21. Letter content at scale (mother-signed batches) | 0/TBD | Not started | - |
