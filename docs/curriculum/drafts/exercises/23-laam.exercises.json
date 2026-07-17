@@ -1,0 +1,594 @@
+{
+  "_meta": {
+    "title": "DRAFT exercises — Laam (laam)",
+    "status": "DRAFT — signedOff:false on every item. Owner's mother signs; owner promotes into exercises.json.",
+    "letterId": "laam",
+    "introOrder": 23,
+    "template": "mirrors the signed taa 19-exercise set",
+    "vocabSource": "owner-mother worksheet (extracted)",
+    "alsoSee": null,
+    "reviewFlags": "transformWord.plural/opposite need the mother; sentence adjectives are placeholders; grammar transforms are best-effort."
+  },
+  "letterId": "laam",
+  "signedOff": false,
+  "exercises": [
+    {
+      "id": "laam.teachCard.meet",
+      "type": "teachCard",
+      "skill": "comprehension",
+      "_note": "SUPPORT section: teaches only, no write surface.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "This card just teaches — the sound and the shapes."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.laam"
+        },
+        {
+          "kind": "image",
+          "imageId": "img.laymuun",
+          "caption": "ليمون · lemon"
+        },
+        {
+          "kind": "forms",
+          "char": "ل",
+          "forms": [
+            "isolated",
+            "initial",
+            "medial",
+            "final"
+          ]
+        }
+      ],
+      "surface": null,
+      "expected": null,
+      "check": null,
+      "feedback": null,
+      "signedOff": false
+    },
+    {
+      "id": "laam.traceLetter.isolated",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Trace Laam — isolated form."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.laam"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "isolated",
+        "demo": true
+      },
+      "expected": {
+        "glyph": {
+          "char": "ل",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "أحسنت — nicely traced."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "laam.traceLetter.initial",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Trace Laam — initial form."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.laam"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "initial",
+        "demo": false
+      },
+      "expected": {
+        "glyph": {
+          "char": "ل",
+          "form": "initial"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "أحسنت — nicely traced."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "laam.traceLetter.medial",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Trace Laam — medial form."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.laam"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "medial",
+        "demo": false
+      },
+      "expected": {
+        "glyph": {
+          "char": "ل",
+          "form": "medial"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "أحسنت — nicely traced."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "laam.writeLetter.fromSound",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen, then write the letter the word starts with."
+        },
+        {
+          "kind": "audio",
+          "audioId": "word.laymuun"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ل",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongLetter": "Listen again — which letter makes that sound?"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "laam.writeLetter.fromPicture",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the letter this picture's word starts with."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.luaba",
+          "caption": "لعبة"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ل",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongLetter": "Listen again — which letter makes that sound?"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "laam.writeLetter.writeForm",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write Laam in its isolated form."
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ل",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "laam.writeWord.dictation",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen and write the whole word."
+        },
+        {
+          "kind": "audio",
+          "audioId": "word.laymuun"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "ليمون"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "ليمون — from memory. Real writing! أحسنت!",
+        "incomplete": "Look again and write all of its letters."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "laam.writeWord.copy",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Copy the word."
+        },
+        {
+          "kind": "text",
+          "text": "لعبة"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "لعبة"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "لعبة — neatly done. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "laam.writeWord.picture",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the word for the picture."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.laymuun",
+          "caption": "ليمون"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "ليمون"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "ليمون — from memory. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "laam.connectWord.laymuun",
+      "type": "connectWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Join the letters into one connected word."
+        },
+        {
+          "kind": "text",
+          "text": "ل  ي  م  و  ن"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "ليمون"
+        }
+      },
+      "check": "sequence+joinContinuity",
+      "feedback": {
+        "pass": "ليمون — joined beautifully. أحسنت!",
+        "lifted": "Keep the letters joined — one flowing word, no lifts."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "laam.connectWord.luaba",
+      "type": "connectWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Join the letters into one connected word."
+        },
+        {
+          "kind": "text",
+          "text": "ل  ع  ب  ة"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "لعبة"
+        }
+      },
+      "check": "sequence+joinContinuity",
+      "feedback": {
+        "pass": "لعبة — joined beautifully. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "laam.completeWord.middle",
+      "type": "completeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Fill in the missing Laam to finish the word."
+        },
+        {
+          "kind": "text",
+          "text": "لبن"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "word": {
+          "text": "لبن"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "Complete! لبن. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "laam.transformWord.dual",
+      "type": "transformWord",
+      "skill": "grammar",
+      "_review": "DUAL — regular sound dual (+ان) is a best-effort DRAFT; confirm with the mother.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "One becomes two. Write the dual of ليمون."
+        },
+        {
+          "kind": "rule",
+          "label": "Dual · مثنى"
+        },
+        {
+          "kind": "text",
+          "text": "ليمون"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "ليمونان"
+        }
+      },
+      "check": "sequence+transformRule",
+      "feedback": {
+        "pass": "ليمونان — أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "laam.transformWord.plural",
+      "type": "transformWord",
+      "skill": "grammar",
+      "_review": "PLURAL — NEEDS THE MOTHER (broken plurals are irregular). Placeholder expected.",
+      "_todo": "owner-mother: correct plural form",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the plural of ليمون."
+        },
+        {
+          "kind": "rule",
+          "label": "Plural · جمع"
+        },
+        {
+          "kind": "text",
+          "text": "ليمون"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": null,
+      "check": "sequence+transformRule",
+      "feedback": null,
+      "signedOff": false
+    },
+    {
+      "id": "laam.transformWord.opposite",
+      "type": "transformWord",
+      "skill": "grammar",
+      "_review": "OPPOSITE — NEEDS THE MOTHER (choose an age-right antonym pair).",
+      "_todo": "owner-mother: choose opposite pair",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the opposite."
+        },
+        {
+          "kind": "rule",
+          "label": "Opposite · ضد"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": null,
+      "check": "sequence+transformRule",
+      "feedback": null,
+      "signedOff": false
+    },
+    {
+      "id": "laam.fillBlank.adjective",
+      "type": "fillBlank",
+      "skill": "vocabulary",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the word that completes the sentence."
+        },
+        {
+          "kind": "text",
+          "text": "ليمون"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "ليمون"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "Yes! أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "laam.buildSentence.hear",
+      "type": "buildSentence",
+      "skill": "syntax",
+      "_review": "SENTENCE — adjective is a DRAFT placeholder (كبير). Confirm sentence + audio with the mother.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen to the sentence, then write it in order."
+        },
+        {
+          "kind": "audio",
+          "audioId": "sentence.laam-draft"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "sentence"
+      },
+      "expected": {
+        "words": [
+          "الْليمون",
+          "كَبير"
+        ]
+      },
+      "check": "order+sequence",
+      "feedback": {
+        "pass": "الْليمون كَبير — a whole sentence! أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "laam.buildSentence.picture",
+      "type": "buildSentence",
+      "skill": "syntax",
+      "_review": "SENTENCE — adjective is a DRAFT placeholder. Confirm with the mother.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the sentence for the picture, word by word."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.laymuun",
+          "caption": "ليمون"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "sentence"
+      },
+      "expected": {
+        "words": [
+          "الْليمون",
+          "جَميل"
+        ]
+      },
+      "check": "order+sequence",
+      "feedback": {
+        "pass": "الْليمون جَميل — أحسنت!"
+      },
+      "signedOff": false
+    }
+  ]
+}

@@ -1,0 +1,594 @@
+{
+  "_meta": {
+    "title": "DRAFT exercises — Haa (haa_f)",
+    "status": "DRAFT — signedOff:false on every item. Owner's mother signs; owner promotes into exercises.json.",
+    "letterId": "haa_f",
+    "introOrder": 26,
+    "template": "mirrors the signed taa 19-exercise set",
+    "vocabSource": "owner-mother worksheet (extracted)",
+    "alsoSee": null,
+    "reviewFlags": "transformWord.plural/opposite need the mother; sentence adjectives are placeholders; grammar transforms are best-effort."
+  },
+  "letterId": "haa_f",
+  "signedOff": false,
+  "exercises": [
+    {
+      "id": "haa_f.teachCard.meet",
+      "type": "teachCard",
+      "skill": "comprehension",
+      "_note": "SUPPORT section: teaches only, no write surface.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "This card just teaches — the sound and the shapes."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.haa_f"
+        },
+        {
+          "kind": "image",
+          "imageId": "img.hilaal",
+          "caption": "هلال · crescent"
+        },
+        {
+          "kind": "forms",
+          "char": "ه",
+          "forms": [
+            "isolated",
+            "initial",
+            "medial",
+            "final"
+          ]
+        }
+      ],
+      "surface": null,
+      "expected": null,
+      "check": null,
+      "feedback": null,
+      "signedOff": false
+    },
+    {
+      "id": "haa_f.traceLetter.isolated",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Trace Haa — isolated form."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.haa_f"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "isolated",
+        "demo": true
+      },
+      "expected": {
+        "glyph": {
+          "char": "ه",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "أحسنت — nicely traced."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "haa_f.traceLetter.initial",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Trace Haa — initial form."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.haa_f"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "initial",
+        "demo": false
+      },
+      "expected": {
+        "glyph": {
+          "char": "ه",
+          "form": "initial"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "أحسنت — nicely traced."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "haa_f.traceLetter.medial",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Trace Haa — medial form."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.haa_f"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "medial",
+        "demo": false
+      },
+      "expected": {
+        "glyph": {
+          "char": "ه",
+          "form": "medial"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "أحسنت — nicely traced."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "haa_f.writeLetter.fromSound",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen, then write the letter the word starts with."
+        },
+        {
+          "kind": "audio",
+          "audioId": "word.hilaal"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ه",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongLetter": "Listen again — which letter makes that sound?"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "haa_f.writeLetter.fromPicture",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the letter this picture's word starts with."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.hudhud",
+          "caption": "هدهد"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ه",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongLetter": "Listen again — which letter makes that sound?"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "haa_f.writeLetter.writeForm",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write Haa in its isolated form."
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ه",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "haa_f.writeWord.dictation",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen and write the whole word."
+        },
+        {
+          "kind": "audio",
+          "audioId": "word.hilaal"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "هلال"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "هلال — from memory. Real writing! أحسنت!",
+        "incomplete": "Look again and write all of its letters."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "haa_f.writeWord.copy",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Copy the word."
+        },
+        {
+          "kind": "text",
+          "text": "هدهد"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "هدهد"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "هدهد — neatly done. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "haa_f.writeWord.picture",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the word for the picture."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.hilaal",
+          "caption": "هلال"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "هلال"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "هلال — from memory. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "haa_f.connectWord.hilaal",
+      "type": "connectWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Join the letters into one connected word."
+        },
+        {
+          "kind": "text",
+          "text": "ه  ل  ا  ل"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "هلال"
+        }
+      },
+      "check": "sequence+joinContinuity",
+      "feedback": {
+        "pass": "هلال — joined beautifully. أحسنت!",
+        "lifted": "Keep the letters joined — one flowing word, no lifts."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "haa_f.connectWord.hudhud",
+      "type": "connectWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Join the letters into one connected word."
+        },
+        {
+          "kind": "text",
+          "text": "ه  د  ه  د"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "هدهد"
+        }
+      },
+      "check": "sequence+joinContinuity",
+      "feedback": {
+        "pass": "هدهد — joined beautifully. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "haa_f.completeWord.middle",
+      "type": "completeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Fill in the missing Haa to finish the word."
+        },
+        {
+          "kind": "text",
+          "text": "هرم"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "word": {
+          "text": "هرم"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "Complete! هرم. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "haa_f.transformWord.dual",
+      "type": "transformWord",
+      "skill": "grammar",
+      "_review": "DUAL — regular sound dual (+ان) is a best-effort DRAFT; confirm with the mother.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "One becomes two. Write the dual of هلال."
+        },
+        {
+          "kind": "rule",
+          "label": "Dual · مثنى"
+        },
+        {
+          "kind": "text",
+          "text": "هلال"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "هلالان"
+        }
+      },
+      "check": "sequence+transformRule",
+      "feedback": {
+        "pass": "هلالان — أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "haa_f.transformWord.plural",
+      "type": "transformWord",
+      "skill": "grammar",
+      "_review": "PLURAL — NEEDS THE MOTHER (broken plurals are irregular). Placeholder expected.",
+      "_todo": "owner-mother: correct plural form",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the plural of هلال."
+        },
+        {
+          "kind": "rule",
+          "label": "Plural · جمع"
+        },
+        {
+          "kind": "text",
+          "text": "هلال"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": null,
+      "check": "sequence+transformRule",
+      "feedback": null,
+      "signedOff": false
+    },
+    {
+      "id": "haa_f.transformWord.opposite",
+      "type": "transformWord",
+      "skill": "grammar",
+      "_review": "OPPOSITE — NEEDS THE MOTHER (choose an age-right antonym pair).",
+      "_todo": "owner-mother: choose opposite pair",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the opposite."
+        },
+        {
+          "kind": "rule",
+          "label": "Opposite · ضد"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": null,
+      "check": "sequence+transformRule",
+      "feedback": null,
+      "signedOff": false
+    },
+    {
+      "id": "haa_f.fillBlank.adjective",
+      "type": "fillBlank",
+      "skill": "vocabulary",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the word that completes the sentence."
+        },
+        {
+          "kind": "text",
+          "text": "هلال"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "هلال"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "Yes! أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "haa_f.buildSentence.hear",
+      "type": "buildSentence",
+      "skill": "syntax",
+      "_review": "SENTENCE — adjective is a DRAFT placeholder (كبير). Confirm sentence + audio with the mother.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen to the sentence, then write it in order."
+        },
+        {
+          "kind": "audio",
+          "audioId": "sentence.haa_f-draft"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "sentence"
+      },
+      "expected": {
+        "words": [
+          "الْهلال",
+          "كَبير"
+        ]
+      },
+      "check": "order+sequence",
+      "feedback": {
+        "pass": "الْهلال كَبير — a whole sentence! أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "haa_f.buildSentence.picture",
+      "type": "buildSentence",
+      "skill": "syntax",
+      "_review": "SENTENCE — adjective is a DRAFT placeholder. Confirm with the mother.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the sentence for the picture, word by word."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.hilaal",
+          "caption": "هلال"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "sentence"
+      },
+      "expected": {
+        "words": [
+          "الْهلال",
+          "جَميل"
+        ]
+      },
+      "check": "order+sequence",
+      "feedback": {
+        "pass": "الْهلال جَميل — أحسنت!"
+      },
+      "signedOff": false
+    }
+  ]
+}

@@ -1,0 +1,594 @@
+{
+  "_meta": {
+    "title": "DRAFT exercises — Sheen (sheen)",
+    "status": "DRAFT — signedOff:false on every item. Owner's mother signs; owner promotes into exercises.json.",
+    "letterId": "sheen",
+    "introOrder": 13,
+    "template": "mirrors the signed taa 19-exercise set",
+    "vocabSource": "draft-bank vocab (source image-only / not found — NEEDS MOTHER)",
+    "alsoSee": null,
+    "reviewFlags": "transformWord.plural/opposite need the mother; sentence adjectives are placeholders; grammar transforms are best-effort."
+  },
+  "letterId": "sheen",
+  "signedOff": false,
+  "exercises": [
+    {
+      "id": "sheen.teachCard.meet",
+      "type": "teachCard",
+      "skill": "comprehension",
+      "_note": "SUPPORT section: teaches only, no write surface.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "This card just teaches — the sound and the shapes."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.sheen"
+        },
+        {
+          "kind": "image",
+          "imageId": "img.shams",
+          "caption": "شمس · sun"
+        },
+        {
+          "kind": "forms",
+          "char": "ش",
+          "forms": [
+            "isolated",
+            "initial",
+            "medial",
+            "final"
+          ]
+        }
+      ],
+      "surface": null,
+      "expected": null,
+      "check": null,
+      "feedback": null,
+      "signedOff": false
+    },
+    {
+      "id": "sheen.traceLetter.isolated",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Trace Sheen — isolated form."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.sheen"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "isolated",
+        "demo": true
+      },
+      "expected": {
+        "glyph": {
+          "char": "ش",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "أحسنت — nicely traced."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "sheen.traceLetter.initial",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Trace Sheen — initial form."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.sheen"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "initial",
+        "demo": false
+      },
+      "expected": {
+        "glyph": {
+          "char": "ش",
+          "form": "initial"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "أحسنت — nicely traced."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "sheen.traceLetter.medial",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Trace Sheen — medial form."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.sheen"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "medial",
+        "demo": false
+      },
+      "expected": {
+        "glyph": {
+          "char": "ش",
+          "form": "medial"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "أحسنت — nicely traced."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "sheen.writeLetter.fromSound",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen, then write the letter the word starts with."
+        },
+        {
+          "kind": "audio",
+          "audioId": "word.shams"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ش",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongLetter": "Listen again — which letter makes that sound?"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "sheen.writeLetter.fromPicture",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the letter this picture's word starts with."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.shajarat",
+          "caption": "شجرة"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ش",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongLetter": "Listen again — which letter makes that sound?"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "sheen.writeLetter.writeForm",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write Sheen in its isolated form."
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ش",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "sheen.writeWord.dictation",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen and write the whole word."
+        },
+        {
+          "kind": "audio",
+          "audioId": "word.shams"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "شمس"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "شمس — from memory. Real writing! أحسنت!",
+        "incomplete": "Look again and write all of its letters."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "sheen.writeWord.copy",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Copy the word."
+        },
+        {
+          "kind": "text",
+          "text": "شجرة"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "شجرة"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "شجرة — neatly done. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "sheen.writeWord.picture",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the word for the picture."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.shams",
+          "caption": "شمس"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "شمس"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "شمس — from memory. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "sheen.connectWord.shams",
+      "type": "connectWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Join the letters into one connected word."
+        },
+        {
+          "kind": "text",
+          "text": "ش  م  س"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "شمس"
+        }
+      },
+      "check": "sequence+joinContinuity",
+      "feedback": {
+        "pass": "شمس — joined beautifully. أحسنت!",
+        "lifted": "Keep the letters joined — one flowing word, no lifts."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "sheen.connectWord.shajarat",
+      "type": "connectWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Join the letters into one connected word."
+        },
+        {
+          "kind": "text",
+          "text": "ش  ج  ر  ة"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "شجرة"
+        }
+      },
+      "check": "sequence+joinContinuity",
+      "feedback": {
+        "pass": "شجرة — joined beautifully. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "sheen.completeWord.middle",
+      "type": "completeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Fill in the missing Sheen to finish the word."
+        },
+        {
+          "kind": "text",
+          "text": "شمعة"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "word": {
+          "text": "شمعة"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "Complete! شمعة. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "sheen.transformWord.dual",
+      "type": "transformWord",
+      "skill": "grammar",
+      "_review": "DUAL — regular sound dual (+ان) is a best-effort DRAFT; confirm with the mother.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "One becomes two. Write the dual of شمس."
+        },
+        {
+          "kind": "rule",
+          "label": "Dual · مثنى"
+        },
+        {
+          "kind": "text",
+          "text": "شمس"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "شمسان"
+        }
+      },
+      "check": "sequence+transformRule",
+      "feedback": {
+        "pass": "شمسان — أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "sheen.transformWord.plural",
+      "type": "transformWord",
+      "skill": "grammar",
+      "_review": "PLURAL — NEEDS THE MOTHER (broken plurals are irregular). Placeholder expected.",
+      "_todo": "owner-mother: correct plural form",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the plural of شمس."
+        },
+        {
+          "kind": "rule",
+          "label": "Plural · جمع"
+        },
+        {
+          "kind": "text",
+          "text": "شمس"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": null,
+      "check": "sequence+transformRule",
+      "feedback": null,
+      "signedOff": false
+    },
+    {
+      "id": "sheen.transformWord.opposite",
+      "type": "transformWord",
+      "skill": "grammar",
+      "_review": "OPPOSITE — NEEDS THE MOTHER (choose an age-right antonym pair).",
+      "_todo": "owner-mother: choose opposite pair",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the opposite."
+        },
+        {
+          "kind": "rule",
+          "label": "Opposite · ضد"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": null,
+      "check": "sequence+transformRule",
+      "feedback": null,
+      "signedOff": false
+    },
+    {
+      "id": "sheen.fillBlank.adjective",
+      "type": "fillBlank",
+      "skill": "vocabulary",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the word that completes the sentence."
+        },
+        {
+          "kind": "text",
+          "text": "شمس"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "شمس"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "Yes! أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "sheen.buildSentence.hear",
+      "type": "buildSentence",
+      "skill": "syntax",
+      "_review": "SENTENCE — adjective is a DRAFT placeholder (كبير). Confirm sentence + audio with the mother.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen to the sentence, then write it in order."
+        },
+        {
+          "kind": "audio",
+          "audioId": "sentence.sheen-draft"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "sentence"
+      },
+      "expected": {
+        "words": [
+          "الْشمس",
+          "كَبير"
+        ]
+      },
+      "check": "order+sequence",
+      "feedback": {
+        "pass": "الْشمس كَبير — a whole sentence! أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "sheen.buildSentence.picture",
+      "type": "buildSentence",
+      "skill": "syntax",
+      "_review": "SENTENCE — adjective is a DRAFT placeholder. Confirm with the mother.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the sentence for the picture, word by word."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.shams",
+          "caption": "شمس"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "sentence"
+      },
+      "expected": {
+        "words": [
+          "الْشمس",
+          "جَميل"
+        ]
+      },
+      "check": "order+sequence",
+      "feedback": {
+        "pass": "الْشمس جَميل — أحسنت!"
+      },
+      "signedOff": false
+    }
+  ]
+}

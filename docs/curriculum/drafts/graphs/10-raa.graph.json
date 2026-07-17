@@ -1,0 +1,174 @@
+{
+  "_meta": {
+    "title": "raa curriculum graph — DRAFT (mirrors the signed baa structure)",
+    "status": "DRAFT — signedOff:false. The mother signs at the TIER level; owner promotes into curriculum_graph.json.",
+    "structureSource": "assets/curriculum/curriculum_graph.json (signed baa graph — competencies + tiers reused mechanically).",
+    "nodeIdSource": "draft ids in docs/curriculum/drafts/exercises/10-raa.exercises.json",
+    "reviewNote": "Confirm the competency/tier placement + per-skill clean-reps for THIS letter, and the exercise content (which stays signedOff:false at the exercise level)."
+  },
+  "letterId": "raa",
+  "signedOff": false,
+  "competencies": [
+    {
+      "id": "recognize",
+      "essential": true,
+      "prerequisites": []
+    },
+    {
+      "id": "positionalForms",
+      "essential": true,
+      "prerequisites": [
+        "recognize"
+      ]
+    },
+    {
+      "id": "copyWrite",
+      "essential": true,
+      "prerequisites": [
+        "positionalForms"
+      ]
+    },
+    {
+      "id": "fluentReading",
+      "essential": true,
+      "prerequisites": [
+        "copyWrite"
+      ]
+    },
+    {
+      "id": "wordBuilding",
+      "essential": false,
+      "prerequisites": [
+        "copyWrite"
+      ]
+    },
+    {
+      "id": "grammarTransform",
+      "essential": false,
+      "prerequisites": [
+        "copyWrite"
+      ]
+    }
+  ],
+  "tiers": [
+    "manqul",
+    "manzur",
+    "ghayrManzur"
+  ],
+  "nodes": [
+    {
+      "exerciseId": "raa.teachCard.meet",
+      "competency": "recognize",
+      "tier": null,
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "raa.traceLetter.isolated",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "raa.traceLetter.initial",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "raa.traceLetter.medial",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "raa.writeLetter.fromSound",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "raa.writeLetter.fromPicture",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "raa.writeLetter.writeForm",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "raa.writeWord.dictation",
+      "competency": "copyWrite",
+      "tier": "ghayrManzur",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "raa.writeWord.copy",
+      "competency": "copyWrite",
+      "tier": "manzur",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "raa.writeWord.picture",
+      "competency": "copyWrite",
+      "tier": "manzur",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "raa.connectWord.rummaan",
+      "competency": "copyWrite",
+      "tier": "manqul",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "raa.connectWord.riishat",
+      "competency": "copyWrite",
+      "tier": "manqul",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "raa.completeWord.middle",
+      "competency": "copyWrite",
+      "tier": "manqul",
+      "minCleanReps": 3
+    },
+    {
+      "exerciseId": "raa.transformWord.dual",
+      "competency": "grammarTransform",
+      "tier": null,
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "raa.transformWord.plural",
+      "competency": "grammarTransform",
+      "tier": null,
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "raa.transformWord.opposite",
+      "competency": "grammarTransform",
+      "tier": null,
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "raa.fillBlank.adjective",
+      "competency": "wordBuilding",
+      "tier": null,
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "raa.buildSentence.hear",
+      "competency": "fluentReading",
+      "tier": "ghayrManzur",
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "raa.buildSentence.picture",
+      "competency": "fluentReading",
+      "tier": "manzur",
+      "minCleanReps": 1
+    }
+  ]
+}

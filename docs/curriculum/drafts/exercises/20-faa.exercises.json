@@ -1,0 +1,594 @@
+{
+  "_meta": {
+    "title": "DRAFT exercises — Faa (faa)",
+    "status": "DRAFT — signedOff:false on every item. Owner's mother signs; owner promotes into exercises.json.",
+    "letterId": "faa",
+    "introOrder": 20,
+    "template": "mirrors the signed taa 19-exercise set",
+    "vocabSource": "draft-bank vocab (source image-only / not found — NEEDS MOTHER)",
+    "alsoSee": null,
+    "reviewFlags": "transformWord.plural/opposite need the mother; sentence adjectives are placeholders; grammar transforms are best-effort."
+  },
+  "letterId": "faa",
+  "signedOff": false,
+  "exercises": [
+    {
+      "id": "faa.teachCard.meet",
+      "type": "teachCard",
+      "skill": "comprehension",
+      "_note": "SUPPORT section: teaches only, no write surface.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "This card just teaches — the sound and the shapes."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.faa"
+        },
+        {
+          "kind": "image",
+          "imageId": "img.fiil",
+          "caption": "فيل · elephant"
+        },
+        {
+          "kind": "forms",
+          "char": "ف",
+          "forms": [
+            "isolated",
+            "initial",
+            "medial",
+            "final"
+          ]
+        }
+      ],
+      "surface": null,
+      "expected": null,
+      "check": null,
+      "feedback": null,
+      "signedOff": false
+    },
+    {
+      "id": "faa.traceLetter.isolated",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Trace Faa — isolated form."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.faa"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "isolated",
+        "demo": true
+      },
+      "expected": {
+        "glyph": {
+          "char": "ف",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "أحسنت — nicely traced."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "faa.traceLetter.initial",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Trace Faa — initial form."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.faa"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "initial",
+        "demo": false
+      },
+      "expected": {
+        "glyph": {
+          "char": "ف",
+          "form": "initial"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "أحسنت — nicely traced."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "faa.traceLetter.medial",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Trace Faa — medial form."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.faa"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "medial",
+        "demo": false
+      },
+      "expected": {
+        "glyph": {
+          "char": "ف",
+          "form": "medial"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "أحسنت — nicely traced."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "faa.writeLetter.fromSound",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen, then write the letter the word starts with."
+        },
+        {
+          "kind": "audio",
+          "audioId": "word.fiil"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ف",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongLetter": "Listen again — which letter makes that sound?"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "faa.writeLetter.fromPicture",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the letter this picture's word starts with."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.faraashat",
+          "caption": "فراشة"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ف",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongLetter": "Listen again — which letter makes that sound?"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "faa.writeLetter.writeForm",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write Faa in its isolated form."
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ف",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "faa.writeWord.dictation",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen and write the whole word."
+        },
+        {
+          "kind": "audio",
+          "audioId": "word.fiil"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "فيل"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "فيل — from memory. Real writing! أحسنت!",
+        "incomplete": "Look again and write all of its letters."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "faa.writeWord.copy",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Copy the word."
+        },
+        {
+          "kind": "text",
+          "text": "فراشة"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "فراشة"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "فراشة — neatly done. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "faa.writeWord.picture",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the word for the picture."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.fiil",
+          "caption": "فيل"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "فيل"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "فيل — from memory. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "faa.connectWord.fiil",
+      "type": "connectWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Join the letters into one connected word."
+        },
+        {
+          "kind": "text",
+          "text": "ف  ي  ل"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "فيل"
+        }
+      },
+      "check": "sequence+joinContinuity",
+      "feedback": {
+        "pass": "فيل — joined beautifully. أحسنت!",
+        "lifted": "Keep the letters joined — one flowing word, no lifts."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "faa.connectWord.faraashat",
+      "type": "connectWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Join the letters into one connected word."
+        },
+        {
+          "kind": "text",
+          "text": "ف  ر  ا  ش  ة"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "فراشة"
+        }
+      },
+      "check": "sequence+joinContinuity",
+      "feedback": {
+        "pass": "فراشة — joined beautifully. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "faa.completeWord.middle",
+      "type": "completeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Fill in the missing Faa to finish the word."
+        },
+        {
+          "kind": "text",
+          "text": "فم"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "word": {
+          "text": "فم"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "Complete! فم. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "faa.transformWord.dual",
+      "type": "transformWord",
+      "skill": "grammar",
+      "_review": "DUAL — regular sound dual (+ان) is a best-effort DRAFT; confirm with the mother.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "One becomes two. Write the dual of فيل."
+        },
+        {
+          "kind": "rule",
+          "label": "Dual · مثنى"
+        },
+        {
+          "kind": "text",
+          "text": "فيل"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "فيلان"
+        }
+      },
+      "check": "sequence+transformRule",
+      "feedback": {
+        "pass": "فيلان — أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "faa.transformWord.plural",
+      "type": "transformWord",
+      "skill": "grammar",
+      "_review": "PLURAL — NEEDS THE MOTHER (broken plurals are irregular). Placeholder expected.",
+      "_todo": "owner-mother: correct plural form",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the plural of فيل."
+        },
+        {
+          "kind": "rule",
+          "label": "Plural · جمع"
+        },
+        {
+          "kind": "text",
+          "text": "فيل"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": null,
+      "check": "sequence+transformRule",
+      "feedback": null,
+      "signedOff": false
+    },
+    {
+      "id": "faa.transformWord.opposite",
+      "type": "transformWord",
+      "skill": "grammar",
+      "_review": "OPPOSITE — NEEDS THE MOTHER (choose an age-right antonym pair).",
+      "_todo": "owner-mother: choose opposite pair",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the opposite."
+        },
+        {
+          "kind": "rule",
+          "label": "Opposite · ضد"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": null,
+      "check": "sequence+transformRule",
+      "feedback": null,
+      "signedOff": false
+    },
+    {
+      "id": "faa.fillBlank.adjective",
+      "type": "fillBlank",
+      "skill": "vocabulary",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the word that completes the sentence."
+        },
+        {
+          "kind": "text",
+          "text": "فيل"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "فيل"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "Yes! أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "faa.buildSentence.hear",
+      "type": "buildSentence",
+      "skill": "syntax",
+      "_review": "SENTENCE — adjective is a DRAFT placeholder (كبير). Confirm sentence + audio with the mother.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen to the sentence, then write it in order."
+        },
+        {
+          "kind": "audio",
+          "audioId": "sentence.faa-draft"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "sentence"
+      },
+      "expected": {
+        "words": [
+          "الْفيل",
+          "كَبير"
+        ]
+      },
+      "check": "order+sequence",
+      "feedback": {
+        "pass": "الْفيل كَبير — a whole sentence! أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "faa.buildSentence.picture",
+      "type": "buildSentence",
+      "skill": "syntax",
+      "_review": "SENTENCE — adjective is a DRAFT placeholder. Confirm with the mother.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the sentence for the picture, word by word."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.fiil",
+          "caption": "فيل"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "sentence"
+      },
+      "expected": {
+        "words": [
+          "الْفيل",
+          "جَميل"
+        ]
+      },
+      "check": "order+sequence",
+      "feedback": {
+        "pass": "الْفيل جَميل — أحسنت!"
+      },
+      "signedOff": false
+    }
+  ]
+}

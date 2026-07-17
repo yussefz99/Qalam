@@ -8,6 +8,12 @@ __pycache__/
 # (they are normalized into assets/audio/). Keep the folder via .gitkeep.
 tools/audio_pipeline/staging/*
 !tools/audio_pipeline/staging/.gitkeep
+
+# Owner-mother's raw teaching materials (large binary export, ~138M). Not
+# committed — the extracted text digests under docs/curriculum/drafts/source-digest/
+# are the citable, version-controlled record instead.
+/رنو-*/
+docs/curriculum/source/
 *.swp
 .DS_Store
 .atom/
