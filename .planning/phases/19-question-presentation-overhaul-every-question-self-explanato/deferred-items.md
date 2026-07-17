@@ -24,6 +24,31 @@ here; the owning plan or a future phase resolves them.
     "not yours" note). Re-verified failing at the same `img.door` assertion after
     19-03's changes.
 
+## Pre-existing test failures (out of scope for 19-05)
+
+The `alif_reference` cluster — 4 failures, all alif-only, in `test/curriculum/`:
+
+- **`reference_overlay_golden_test.dart`** — "alif resolved pen path overlays the
+  glyph in draw order" → `alif_reference_overlay.png` pixel diff (~1.47%). The
+  documented local Arabic-font golden drift (MEMORY: golden-tests-font-drift; do
+  NOT re-bake).
+- **`alif_reference_test.dart`** (2 cases) — "alif corrected centerline … first
+  point at top / y monotonic" and "normalized total length ≈ 1.0". alif
+  `letters.json` centerline data state.
+- **`all_letters_validation_test.dart`** — "only signed-off letters claim
+  signedOff: true" expects `[alif, baa, taa]`, gets `[baa, taa]` (alif currently
+  signedOff:false in `letters.json`).
+
+**Verified pre-existing (2026-07-18):** `git diff --name-only fef2c2c` (the
+pre-plan base) over `letters.json`, `alif_reference_overlay.png`,
+`alif_reference_test.dart`, `all_letters_validation_test.dart`,
+`reference_overlay_golden_test.dart` is **empty** — every input to these tests is
+byte-identical to base, so they fail identically before and after 19-05. 19-05
+touches only the baa graph (`curriculum_graph.json`), the baa `kitaab` card
+(`exercises.json`), and two baa test files — zero overlap with alif. STATE.md
+repeatedly lists `alif-reference` as a known out-of-scope failure. Not this
+plan's to fix; do NOT re-bake the golden.
+
 ## Wave-0 RED tests greened by later Wave-2 plans (expected RED at 19-02)
 
 - **`copy_stimulus_test.dart`** (QP-03) — RED by missing `CopyStimulus`; greened

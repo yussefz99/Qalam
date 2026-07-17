@@ -149,9 +149,16 @@ void main() {
       // baa.traceLetter.final is the 2026-07-12 owner amendment (trace ALL FOUR
       // forms before production tasks) — authored signedOff:false, pending the
       // same mother gate as the micro-drill copy.
+      // baa.connectWord.kitaab is the Plan 19-05 D-09 rewrite (كتاب → the alif+baa
+      // word باب, so the baa unit uses only learned letters — QP-07 lint). Per
+      // D-09/D-11 the DRAFT ships signedOff:false; the mother confirms rewrite-vs-gate
+      // in 19-REVIEW-PACKET.md and flips the sign-off. Carve it out (Pitfall 8) —
+      // no executor ever sets signedOff:true.
       final coreBaa = baaExercises
           .where((e) =>
-              e['type'] != 'microDrill' && e['id'] != 'baa.traceLetter.final')
+              e['type'] != 'microDrill' &&
+              e['id'] != 'baa.traceLetter.final' &&
+              e['id'] != 'baa.connectWord.kitaab')
           .toList();
       final unsigned = coreBaa
           .where((e) => e['signedOff'] != true)

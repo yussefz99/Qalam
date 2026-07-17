@@ -26,24 +26,30 @@ void main() {
     return json.decode(file.readAsStringSync()) as Map<String, Object?>;
   }
 
-  test('CurriculumGraph parses the baa asset (20 baa.* nodes: 19 signed core + unsigned final trace, no microDrills)',
+  test('CurriculumGraph parses the baa asset (17 baa.* nodes: 14 core + 3 restored microDrills, 6 gated cards removed)',
       () {
     final graph = CurriculumGraph.fromJson(rawGraph());
 
     expect(graph.letterId, 'baa');
     expect(graph.signedOff, isTrue,
         reason: 'owner-mother signed the graph at the tier level (D-05); Plan 15-07 flipped it. '
-            'The 2026-07-12 owner amendment (18-11 UAT) adds/removes nodes but does NOT touch her '
-            'tier-structure sign-off — new CONTENT is signedOff:false at the exercise level.');
-    // 19 signed core nodes + baa.traceLetter.final (owner amendment 2026-07-12, unsigned content).
-    // The 3 baa.microDrill.* nodes were REMOVED the same day — feature parked; the policy's
-    // injection logic stays pinned in microdrill_selection_test.dart via a fixture-augmented graph.
-    expect(graph.nodes.length, 20,
-        reason: '19 core baa.* nodes + traceLetter.final; microDrills parked (owner, 2026-07-12)');
+            'Plan 19-05 (D-18 restore / D-19 gate) adds/removes nodes but does NOT touch her '
+            'tier-structure sign-off — new/rewritten CONTENT is signedOff:false at the exercise level.');
+    // Plan 19-05 reshaped the live baa graph:
+    //   • D-18 RESTORED the 3 baa.microDrill.{dot,bowl,start} enrichment nodes (parked 2026-07-12);
+    //   • D-19 GATED (removed) the 6 cards that need unlearned letters —
+    //     baa.buildSentence.{hear,picture}, baa.fillBlank.adjective,
+    //     baa.transformWord.{dual,plural,opposite} — filed for their letters' own units (Phase 20/21).
+    // Net: 20 (pre-19-05) + 3 microDrills − 6 gated = 17 live nodes.
+    // The micro-drill policy stays pinned in microdrill_selection_test.dart, now sourced from
+    // the live graph (its fixture no longer injects the nodes).
+    expect(graph.nodes.length, 17,
+        reason: '14 core baa.* nodes (incl. traceLetter.final) + 3 restored microDrills; '
+            '6 unlearned-letter cards gated out (19-05 D-18/D-19)');
     final microDrills =
         graph.nodes.where((n) => n.competency == 'microDrill').toList();
-    expect(microDrills, isEmpty,
-        reason: 'micro-drill nodes are parked out of the live graph (owner, 2026-07-12)');
+    expect(microDrills, hasLength(3),
+        reason: 'the 3 baa.microDrill.{dot,bowl,start} nodes are restored to the live graph (19-05 D-18)');
     expect(
       graph.nodes.every((n) => n.exerciseId.startsWith('baa.')),
       isTrue,

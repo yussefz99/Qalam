@@ -161,7 +161,9 @@
       },
       "check": "glyph+positionalForm",
       "feedback": {
-        "pass": "أحسنت! Now you have traced baa in every shape it takes."
+        "pass": "أحسنت! Now you have traced baa in every shape it takes.",
+        "noTail": "The final baa keeps its little tail — finish the bowl with a small sweep up.",
+        "dotMisplaced": "Good bowl — now put the dot right below it, not inside."
       },
       "signedOff": false,
       "letters": [
@@ -461,6 +463,7 @@
       "id": "baa.connectWord.kitaab",
       "type": "connectWord",
       "skill": "spelling",
+      "_rewrite_19_05": "D-09/D-12: original word كتاب needed kaaf+taa (unlearned in the baa unit). Rewritten to the alif+baa word باب, keeping the distinct teaching angle — baa returning in its FINAL positional shape at the word's end (baab teaches the join; this spotlights the final form). Ships signedOff:false: the mother confirms rewrite-vs-gate (and may prefer to gate كتاب to the kaaf/taa unit, or pick بابا) in 19-REVIEW-PACKET.md. The id is kept stable (a graph node references it); rename is the mother's later call.",
       "prompt": [
         {
           "kind": "say",
@@ -468,7 +471,7 @@
         },
         {
           "kind": "text",
-          "text": "ك  ت  ا  ب",
+          "text": "ب  ا  ب",
           "loose": true
         }
       ],
@@ -478,20 +481,18 @@
       },
       "expected": {
         "word": {
-          "text": "كتاب"
+          "text": "باب"
         }
       },
       "check": "sequence+joinContinuity+positionalForm",
       "feedback": {
-        "pass": "كتاب — “book,” joined. أحسنت!",
+        "pass": "باب — joined, and baa returns in its final shape at the end. أحسنت!",
         "lifted": "Keep the run connected — let baa's tail return at the end."
       },
-      "signedOff": true,
+      "signedOff": false,
       "letters": [
-        "kaaf",
-        "taa",
-        "alif",
-        "baa"
+        "baa",
+        "alif"
       ],
       "criteria": [
         "present",

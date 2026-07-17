@@ -149,42 +149,6 @@
       "minCleanReps": 3
     },
     {
-      "exerciseId": "baa.buildSentence.hear",
-      "competency": "fluentReading",
-      "tier": "ghayrManzur",
-      "minCleanReps": 1
-    },
-    {
-      "exerciseId": "baa.buildSentence.picture",
-      "competency": "fluentReading",
-      "tier": "manzur",
-      "minCleanReps": 1
-    },
-    {
-      "exerciseId": "baa.fillBlank.adjective",
-      "competency": "wordBuilding",
-      "tier": null,
-      "minCleanReps": 1
-    },
-    {
-      "exerciseId": "baa.transformWord.dual",
-      "competency": "grammarTransform",
-      "tier": null,
-      "minCleanReps": 1
-    },
-    {
-      "exerciseId": "baa.transformWord.plural",
-      "competency": "grammarTransform",
-      "tier": null,
-      "minCleanReps": 1
-    },
-    {
-      "exerciseId": "baa.transformWord.opposite",
-      "competency": "grammarTransform",
-      "tier": null,
-      "minCleanReps": 1
-    },
-    {
       "exerciseId": "baa.microDrill.dot",
       "competency": "microDrill",
       "tier": null,
