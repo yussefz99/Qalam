@@ -832,7 +832,7 @@ Plans:
 **Goal:** Every "next exercise" pick is a deliberate, explainable teaching move informed by a persistent per-child model — targeting the weakest criterion, building remediation arcs back to confidence, injecting just-this-part micro-drills — while staying railed to the signed curriculum graph, preserving the offline walker floor, and closing the cost/latency research question with measured numbers.
 **Requirements**: SPEC-18-R1..R9 (the 9 locked requirements in 18-SPEC.md)
 **Depends on:** Phase 17 (LetterScore criteria + weakest; ADR-017); Phase 17.2 (graph-legal candidates over the wire, coach proposes+announces, Teacher's Eye strip — merge to main before branching)
-**Plans:** 10/11 plans executed
+**Plans:** 11 planned + 5 gap-closure plans (18-12..18-16, UAT 2026-07-17)
 
 Plans:
 
@@ -867,6 +867,14 @@ Plans:
 **Wave 7** *(blocked on Wave 6 — human/infra gates, autonomous:false)*
 
 - [ ] 18-11-PLAN.md — Ordered deploy (server FIRST, rules, Cloud Run Job + Scheduler) + CLOSE cost/latency with measured numbers + mother sign-off flips signed:false→true + make eval (R2/R3/R4/R7/R8/R9)
+
+**Gap closure — UAT 2026-07-17** *(5 issues diagnosed; plans 18-12..18-16)*
+
+- [ ] 18-12-PLAN.md — BLOCKER+major: one coordinated same-id re-present remount fix (presentation-epoch key) for the retry no-op (T3) AND the active-arc stuck state (T6) + replay-instruction control (UAT T3/T6)
+- [ ] 18-13-PLAN.md — cosmetic: responsive stimulus image sizing + caption LTR bidi fix (UAT T2)
+- [ ] 18-14-PLAN.md — major: server tool-schema fix so the coach's per-attempt rationale reaches the client on the clean-pass path (structural half of T5) + Cloud Run re-deploy gate (UAT T5)
+- [ ] 18-15-PLAN.md — major: restore selection/presenter mode from the durable cursor on cold boot so relaunch resumes in place (UAT T7) *(depends on 18-12)*
+- [ ] 18-16-PLAN.md — blocker/major: Teacher's Margin distinct identity beside the canvas + real arc-step narration + per-attempt WHY variance; demo Teacher's Eye gated out of non-demo builds (margin half of T6 + client half of T5) *(depends on 18-12, 18-15)*
 
 #### Phase 19: Question presentation overhaul — every question self-explanatory on screen
 
