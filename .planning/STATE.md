@@ -4,12 +4,12 @@ milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
 stopped_at: Phase 19 UI-SPEC approved (mid plan-phase --chain)
-last_updated: "2026-07-17T20:55:20.674Z"
+last_updated: "2026-07-17T21:14:53.766Z"
 progress:
   total_phases: 29
   completed_phases: 15
   total_plans: 112
-  completed_plans: 102
+  completed_plans: 103
   percent: 52
 ---
 
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 19 (Question presentation overhaul — every question self-explanatory on screen) — EXECUTING
-Plan: 2 of 6
+Plan: 3 of 6
 Status: Ready to execute
 Next: Resume with either (a) `/gsd:verify-work 18` re-run against the 18-UAT.md gaps to formally re-test each of T2/T3/T5/T6/T7 on the deployed build and close that UAT session, or (b) go straight to the ORIGINAL phase-close plan 18-11-PLAN.md (separate from this gap-closure round) — its Task 2 (device cost/latency measurement) could piggyback on the current iPad session; Task 3 (mother's sign-off on kArcEntryFailStreak/kArcMaxAttempts/EMA constants/micro-drill copy/selection gold set) is still fully open and required before the phase verifier can flip R1/R4/R5/R6/R7/R8/R9. Phase 18 is NOT complete until 18-11 lands.
 PriorNext: 18-07 (live-path wiring) confirmed genuinely done in the prior session (the earlier "18-07 done" note had been an inaccurate narrative — only a plan-amendment commit existed until that pass landed real source wiring). 18-08/18-09 (server WHY grounding + nightly compiler) executed before 18-07 since the server/eval legs don't depend on client wiring.
@@ -113,6 +113,7 @@ PriorNext: 18-07 (live-path wiring) confirmed genuinely done in the prior sessio
 | Phase 18 P07 | 67min | 3 tasks | 19 files |
 | Phase 18 P10 | 8min | 2 tasks | 7 files |
 | Phase 19 P01 | 26min | 2 tasks | 6 files |
+| Phase 19 P02 | 11min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -269,6 +270,9 @@ Recent decisions affecting current work:
 - [Phase 19]: recall_no_model_test (QP-06) is GREEN-by-construction, not RED — no writeLetter/writeWord recall config authors a model/ghost surface part in the authored data; 19-03 keeps it green (assertion over configs is the deliverable, no new UI).
 - [Phase 19]: The v6->v7 migration case is pure raw SQL (signature-independent) + skip-marked 'v6->v7 lands in 19-06 (QP-09)' so app_database_test.dart exits 0 whole-file; 19-06 un-skips it (its only permitted test edit).
 - [Phase 19]: learned-letters lint scopes to LIVE baa graph nodes so it self-greens for BOTH dispositions (rewrite -> letters subset-of learned; gate -> removed from curriculum_graph.json); QP-01..09 requirements NOT checkbox-marked at Wave-0 (17-01 precedent).
+- [Phase 19]: [19-02] Instruction bar shipped — persistent per-type strip in ExerciseScaffold._mainColumn (D-01/D-02/D-03), Key('instructionBar'), guarded by _hasInstruction; text from instructionTemplateFor(exercise) keyed on exercise.type (NOT the say line, Pitfall 6). writeWord/writeLetter copy-vs-listen split by reveal:thenHide / AudioPart; microDrill overrides per criteria.first. 15 instructionBar* ARB keys at TOP of app_en.arb + defaults on ExerciseScaffoldStrings.
+- [Phase 19]: [19-02] _HearAgainCta pill DELETED, folded into the bar — one replay affordance never two (D-03); hearAgain default 'Hear again'->'Hear it again' is now the bar Semantics label. 19-01 live-path test greened with ZERO test edits; obsolete 18-12 exercise_scaffold_test Test 5/6 reconciled to the bar (Rule 1).
+- [Phase 19]: [19-02] Bar content is an LTR English island (Directionality.ltr, _teacherEye precedent) inside the RTL scaffold; all values cite QalamTokens/QalamTextStyles, no gold. QP-01/QP-02 done at plan level (SUMMARY frontmatter) — QP-* not present in REQUIREMENTS.md (phase-local IDs), so requirements mark-complete is a no-op.
 
 ### Pending Todos
 
@@ -309,6 +313,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-17T20:53:16.297Z
+Last session: 2026-07-17T21:13:10.872Z
 Stopped at: Phase 19 UI-SPEC approved (mid plan-phase --chain)
 Resume files: .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-02-PLAN.md (next — cross-letter labels + baa micro-drill set), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-03-PLAN.md (EMA + Drift v6), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-01-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
