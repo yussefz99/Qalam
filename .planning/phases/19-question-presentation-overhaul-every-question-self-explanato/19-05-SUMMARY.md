@@ -120,6 +120,31 @@ completed: 2026-07-17
 - **Gating removes only the graph node** — the 6 gated cards' `exercises.json` configs stay `signedOff:true` (mother-signed 15-07), dormant, refiled for their letters' units. Gating does not unsign content.
 - **`learned_letters_lint_test.dart` = ZERO edits** — the 19-01 lint is disposition-agnostic (scopes to live nodes), so it self-greens. The plan frontmatter listed it under `files_modified`, but the plan-notes' explicit "ZERO edits to the test file" is correct and was followed.
 
+## Post-wave fix (2026-07-18)
+
+The post-wave integration gate caught ONE regression from Task 1's D-18 graph re-shape:
+`test/features/letter_unit/same_id_represent_test.dart` **UAT T6** (an active-arc same-id
+pass re-mounts the floor trace; "Next exercise" is not a permanently dead button) failed.
+
+**Root cause:** re-adding `baa.microDrill.{dot,bowl,start}` to the live graph made
+`graph.drillForCriterion('baa', <criterion>)` return a drill where it returned `null` in the
+parked world. The remediation-arc step-down (`SelectionPolicy` entry line + `_drillOrRetry`)
+preferred the drill over the floor trace — so a same-criterion **trace** fail landed the child
+on the micro-drill instead of the guaranteed-doable floor trace, and T6's `_presentedGraphKey`
+for the floor trace came back null. (The floor resolution itself was never null; the restored
+drill preempted it.)
+
+**Fix (`fe6487c`):** a new `_stepDownTarget` makes the arc floor resolution exercise-type-aware
+— a failing guided **trace** steps down to the floor trace (the UAT-pinned confidence rebuild),
+while a failing **production** exercise still steps down to its restored micro-drill (D-18
+preserved for the case it targets). The micro-drill nodes stay live and are still injected as
+candidates via R3; they simply never preempt the floor when the child is already at the trace
+level. This is pure `lib/` selection logic — ZERO edits to the 19-01 contract tests, and the
+D-18/D-19 graph decisions are untouched. Verified: `same_id_represent_test` (incl. T6),
+`microdrill_selection_test`, `remediation_arc_test`, `selection_policy_test`,
+`selection_rails_property_test`, and `test/curriculum/` all green (minus the documented
+pre-existing `alif_reference` cluster + the pre-existing `meet_section` `img.door` case).
+
 ## Deviations from Plan
 
 ### Auto-fixed Issues
