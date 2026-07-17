@@ -84,19 +84,23 @@ void main() {
       expect(find.byIcon(Icons.crop_square_rounded), findsOneWidget);
     });
 
-    testWidgets('Test 3: reveal:thenHide dims the word; loose widens the gap',
-        (tester) async {
+    testWidgets(
+        'Test 3: reveal:thenHide renders the child-controlled CopyStimulus '
+        '(word + "I\'m Ready"), not the old static dim (D-05)', (tester) async {
+      // 19-03 (D-05): the copy word is no longer a static opacity-0.18 dim — it
+      // is the child-controlled CopyStimulus (reveal → hide → peek). Nothing
+      // hides on a timer. (Reconciled from the Phase-07 Opacity assertion the
+      // locked D-05 decision reverses.)
       const part = TextPart(text: 'باب', reveal: 'thenHide', loose: true);
       await _pump(tester, const PromptHeader(parts: [part]));
 
-      // reveal:thenHide → the prompt word is dimmed (Opacity 0.18).
-      final opacity = tester.widget<Opacity>(
-        find.ancestor(
-          of: find.byType(ArabicText),
-          matching: find.byType(Opacity),
-        ),
+      // The word shows large in the revealed state, with the "I'm Ready" hide.
+      expect(
+        find.byWidgetPredicate((w) => w is ArabicText && w.text == 'باب'),
+        findsOneWidget,
       );
-      expect(opacity.opacity, 0.18);
+      expect(find.text("I'm Ready"), findsOneWidget,
+          reason: 'the child taps "I\'m Ready" to hide the word (D-05)');
     });
 
     testWidgets('Test 4: FormsPart renders the four-forms strip of baa',

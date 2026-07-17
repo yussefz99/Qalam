@@ -143,18 +143,24 @@ void main() {
     );
   });
 
-  testWidgets('Test 5: the trace PromptHeader Play plays the baa sound offline',
-      (tester) async {
+  testWidgets(
+      'Test 5: the trace PromptHeader hero audio card auto-plays the baa sound '
+      'on mount and replays on tap (D-07)', (tester) async {
     final audio = await _pump(tester);
     await tester.tap(find.text("I'll try"));
     await tester.pumpAndSettle();
 
-    expect(audio.played, isEmpty);
-    // The single audio affordance is the engine PromptHeader Play button (the
-    // overlaid Listen card that duplicated it AND covered the CTAs was removed —
-    // owner bugs #3a/#3b).
-    await tester.tap(find.text('Play'));
+    // 19-03 (D-07): the lone audio prompt is the hero "sound to write" card — it
+    // AUTO-PLAYS the clip once on entering the trace phase (reconciled from the
+    // Phase-07 empty-until-tap assertion; auto-play is the locked D-07 behavior).
+    expect(audio.played, contains('snd.baa'),
+        reason: 'the hero audio card auto-plays the clip once on mount');
+    final playedOnMount = audio.played.length;
+
+    // Tapping the 'Listen' card replays the clip any time.
+    await tester.tap(find.text('Listen'));
     await tester.pump();
-    expect(audio.played, contains('snd.baa'));
+    expect(audio.played.length, greaterThan(playedOnMount),
+        reason: 'tapping the hero audio card replays the clip');
   });
 }
