@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
-status: completed
-stopped_at: Phase 19 context gathered
-last_updated: "2026-07-17T15:48:30.211Z"
+status: executing
+stopped_at: Phase 19 UI-SPEC approved (mid plan-phase --chain)
+last_updated: "2026-07-17T20:22:12.247Z"
 progress:
   total_phases: 29
   completed_phases: 15
-  total_plans: 106
+  total_plans: 112
   completed_plans: 101
   percent: 52
 ---
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 
 Phase: 18 — COMPLETE
 Plan: 16 of 16 planned (18-01..18-10 + 18-12..18-16 all have SUMMARY.md; 18-11 not started)
-Status: Phase 18 complete
+Status: Ready to execute
 Next: Resume with either (a) `/gsd:verify-work 18` re-run against the 18-UAT.md gaps to formally re-test each of T2/T3/T5/T6/T7 on the deployed build and close that UAT session, or (b) go straight to the ORIGINAL phase-close plan 18-11-PLAN.md (separate from this gap-closure round) — its Task 2 (device cost/latency measurement) could piggyback on the current iPad session; Task 3 (mother's sign-off on kArcEntryFailStreak/kArcMaxAttempts/EMA constants/micro-drill copy/selection gold set) is still fully open and required before the phase verifier can flip R1/R4/R5/R6/R7/R8/R9. Phase 18 is NOT complete until 18-11 lands.
 PriorNext: 18-07 (live-path wiring) confirmed genuinely done in the prior session (the earlier "18-07 done" note had been an inaccurate narrative — only a plan-amendment commit existed until that pass landed real source wiring). 18-08/18-09 (server WHY grounding + nightly compiler) executed before 18-07 since the server/eval legs don't depend on client wiring.
 
@@ -304,6 +304,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-17T15:48:30.202Z
-Stopped at: Phase 19 context gathered
+Last session: 2026-07-17T16:26:52.808Z
+Stopped at: Phase 19 UI-SPEC approved (mid plan-phase --chain)
 Resume files: .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-02-PLAN.md (next — cross-letter labels + baa micro-drill set), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-03-PLAN.md (EMA + Drift v6), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-01-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
