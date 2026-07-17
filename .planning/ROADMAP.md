@@ -938,7 +938,7 @@ by (childProfileId, letterId) with migration, so a new profile starts fresh.
   4. Two child profiles on one device keep separate graph cursors/arc state (a fresh profile starts at the opening).
 
 **UI hint**: yes
-**Plans:** 4/6 plans executed
+**Plans:** 5/6 plans executed
 Plans:
 
 **Wave 1**
@@ -950,7 +950,7 @@ Plans:
 - [x] 19-02-PLAN.md — Instruction bar in ExerciseScaffold + _HearAgainCta fold (QP-01/QP-02; D-01..D-04)
 - [x] 19-03-PLAN.md — Stimulus zone: slot box, audio card, copy hide+peek, recall no-model (QP-03..QP-06; D-05..D-08)
 - [x] 19-04-PLAN.md — LetterReps reader/writer fold onto LetterExerciseReps aggregates (QP-09 prep; D-15)
-- [ ] 19-05-PLAN.md — Micro-drill re-add + learned-letters lint + card gate/rewrite + mother's review packet (QP-07/QP-08; D-09..D-12/D-18/D-19/D-21)
+- [x] 19-05-PLAN.md — Micro-drill re-add + learned-letters lint + card gate/rewrite + mother's review packet (QP-07/QP-08; D-09..D-12/D-18/D-19/D-21)
 
 **Wave 3** *(blocked on 19-04)*
 
@@ -1075,7 +1075,7 @@ is DROPPED from this milestone's scope (owner, 2026-07-16).
 | 16. BUILD — presence + voice + eval gate + demo-harden | 3/6 | In Progress (re-scope: eval-trust legs survive; demo-harden moot) |  |
 | 17. BUILD — stroke-aware coaching (on-device geo-diff → coach) | 10/10 | Complete   | 2026-07-06 |
 | 18. BUILD — the living tutor (per-child dynamic exercise selection) | 15/16 | In Progress|  |
-| 19. Question presentation overhaul | 4/6 | In Progress|  |
+| 19. Question presentation overhaul | 5/6 | In Progress|  |
 | 20. Curriculum graph + pipeline for all 28 letters | 0/TBD | Not started | - |
 | 21. Letter content at scale (mother-signed batches) | 0/TBD | Not started | - |
 | 22. Cross-letter selection + next-day planner | 0/TBD | Not started | - |
