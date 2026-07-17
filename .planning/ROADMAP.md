@@ -897,14 +897,18 @@ parallel with Phase 19. Feeds Phases 20–21 (authoring pipeline + content at sc
      clips named by the existing `snd.*`/`word.*`/`sentence.*` convention, and the
      `assets/audio/README.md` manifest table AND the Dart `_audioIdToAsset` map are GENERATED
      from one manifest source — never hand-edited again.
+
   2. All 28 `snd.<letterId>` placeholder clips are replaced with real recordings (voice choice
      is the owner + mother's call; TTS drafts allowed meanwhile but always marked `draft-tts`,
      never passed off as real).
+
   3. A draft vocabulary bank (staged outside the live curriculum files) covers all 28 letters
      with the words.json schema (id/text/audio/image/gloss/letters[]), and a validator proves
      which words are legal at each point in the mother's intro order.
+
   4. Review packets exist for all 26 unsigned letters (per-form stroke diagrams with order +
      direction, common mistakes, reps-to-advance, sign-off checklist), ready for batch review.
+
   5. Zero edits to Phase-19 territory: `lib/features/letter_unit/`, `lib/data/`,
      `assets/curriculum/exercises.json`, `assets/curriculum/curriculum_graph.json`, `server/`.
 
@@ -934,12 +938,12 @@ by (childProfileId, letterId) with migration, so a new profile starts fresh.
   4. Two child profiles on one device keep separate graph cursors/arc state (a fresh profile starts at the opening).
 
 **UI hint**: yes
-**Plans:** 6 plans
+**Plans:** 1/6 plans executed
 Plans:
 
 **Wave 1**
 
-- [ ] 19-01-PLAN.md — Wave 0 RED contract: failing live-path + migration + lint tests for QP-01..QP-10
+- [x] 19-01-PLAN.md — Wave 0 RED contract: failing live-path + migration + lint tests for QP-01..QP-10
 
 **Wave 2** *(blocked on Wave 1)*
 
@@ -1071,7 +1075,7 @@ is DROPPED from this milestone's scope (owner, 2026-07-16).
 | 16. BUILD — presence + voice + eval gate + demo-harden | 3/6 | In Progress (re-scope: eval-trust legs survive; demo-harden moot) |  |
 | 17. BUILD — stroke-aware coaching (on-device geo-diff → coach) | 10/10 | Complete   | 2026-07-06 |
 | 18. BUILD — the living tutor (per-child dynamic exercise selection) | 15/16 | In Progress|  |
-| 19. Question presentation overhaul | 0/TBD | Not started | - |
+| 19. Question presentation overhaul | 1/6 | In Progress|  |
 | 20. Curriculum graph + pipeline for all 28 letters | 0/TBD | Not started | - |
 | 21. Letter content at scale (mother-signed batches) | 0/TBD | Not started | - |
 | 22. Cross-letter selection + next-day planner | 0/TBD | Not started | - |

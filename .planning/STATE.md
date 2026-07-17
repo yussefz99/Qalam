@@ -4,12 +4,12 @@ milestone: v2.0
 milestone_name: — AI Tutor
 status: executing
 stopped_at: Phase 19 UI-SPEC approved (mid plan-phase --chain)
-last_updated: "2026-07-17T20:22:12.247Z"
+last_updated: "2026-07-17T20:55:20.674Z"
 progress:
   total_phases: 29
   completed_phases: 15
   total_plans: 112
-  completed_plans: 101
+  completed_plans: 102
   percent: 52
 ---
 
@@ -20,12 +20,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-30)
 
 **Core value:** A child traces an Arabic letter, gets immediate specific feedback on their actual strokes, and advances through a real teacher's curriculum — so the language sticks through the hand.
-**Current focus:** Phase 18 — build-the-living-tutor-dynamic-exercise-selection
+**Current focus:** Phase 19 — Question presentation overhaul — every question self-explanatory on screen
 
 ## Current Position
 
-Phase: 18 — COMPLETE
-Plan: 16 of 16 planned (18-01..18-10 + 18-12..18-16 all have SUMMARY.md; 18-11 not started)
+Phase: 19 (Question presentation overhaul — every question self-explanatory on screen) — EXECUTING
+Plan: 2 of 6
 Status: Ready to execute
 Next: Resume with either (a) `/gsd:verify-work 18` re-run against the 18-UAT.md gaps to formally re-test each of T2/T3/T5/T6/T7 on the deployed build and close that UAT session, or (b) go straight to the ORIGINAL phase-close plan 18-11-PLAN.md (separate from this gap-closure round) — its Task 2 (device cost/latency measurement) could piggyback on the current iPad session; Task 3 (mother's sign-off on kArcEntryFailStreak/kArcMaxAttempts/EMA constants/micro-drill copy/selection gold set) is still fully open and required before the phase verifier can flip R1/R4/R5/R6/R7/R8/R9. Phase 18 is NOT complete until 18-11 lands.
 PriorNext: 18-07 (live-path wiring) confirmed genuinely done in the prior session (the earlier "18-07 done" note had been an inaccurate narrative — only a plan-amendment commit existed until that pass landed real source wiring). 18-08/18-09 (server WHY grounding + nightly compiler) executed before 18-07 since the server/eval legs don't depend on client wiring.
@@ -112,6 +112,7 @@ PriorNext: 18-07 (live-path wiring) confirmed genuinely done in the prior sessio
 | Phase 18 P09 | ~5min | 2 tasks | 3 files |
 | Phase 18 P07 | 67min | 3 tasks | 19 files |
 | Phase 18 P10 | 8min | 2 tasks | 7 files |
+| Phase 19 P01 | 26min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -264,6 +265,10 @@ Recent decisions affecting current work:
 - [Phase ?]: [18-10]: requirements-completed left [] (18-01..18-09 precedent) — SPEC-18-R1/R3/R4 now VISIBLE on the client but the arc/step-down framing copy is signed:false (mother signs at 18-11) + deploy gates remain; verifier/18-11 flips them.
 - [Phase 18]: Owner (2026-07-16): S2-03 ask-Qalam voice dropped from v2.0 scope; milestone closes at Technion submission-readiness via Phases 19-24 (presentation overhaul, all-28-letters pipeline+content, cross-letter selection + next-day planner, parent insight, submission hardening)
 - [Phase 18]: Owner declared Phase 18 (Living Tutor) DONE on 2026-07-17 without the device retest of the 5 UAT gap fixes (18-12..18-16) and with 18-11 Tasks 2-3 (on-device cost/latency measurement; mother's sign-off on drill set / arc-N / alpha-EMA thresholds / eval gold set) still open — carried forward as deferred items, not dropped.
+- [Phase 19]: Wave-0 RED contract authored for Phase 19 (Tracks A/B/C) — 5 new test files + 1 extended migration case; the instruction-bar test mounts via the live presentGraphExercise path (Phase-15 dead-wire lesson), never a bare scaffold.
+- [Phase 19]: recall_no_model_test (QP-06) is GREEN-by-construction, not RED — no writeLetter/writeWord recall config authors a model/ghost surface part in the authored data; 19-03 keeps it green (assertion over configs is the deliverable, no new UI).
+- [Phase 19]: The v6->v7 migration case is pure raw SQL (signature-independent) + skip-marked 'v6->v7 lands in 19-06 (QP-09)' so app_database_test.dart exits 0 whole-file; 19-06 un-skips it (its only permitted test edit).
+- [Phase 19]: learned-letters lint scopes to LIVE baa graph nodes so it self-greens for BOTH dispositions (rewrite -> letters subset-of learned; gate -> removed from curriculum_graph.json); QP-01..09 requirements NOT checkbox-marked at Wave-0 (17-01 precedent).
 
 ### Pending Todos
 
@@ -304,6 +309,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-17T16:26:52.808Z
+Last session: 2026-07-17T20:53:16.297Z
 Stopped at: Phase 19 UI-SPEC approved (mid plan-phase --chain)
 Resume files: .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-02-PLAN.md (next — cross-letter labels + baa micro-drill set), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-03-PLAN.md (EMA + Drift v6), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-01-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
