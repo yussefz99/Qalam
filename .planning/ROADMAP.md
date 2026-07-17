@@ -925,7 +925,7 @@ per-child position keying fix: `LetterGraphPosition`, arc-state, and profile-mir
 by (childProfileId, letterId) with migration, so a new profile starts fresh.
 **Mode:** build
 **Depends on:** Phase 18 (Teacher's Margin + live selection path). Source findings: `.planning/todos/pending/2026-07-12-question-presentation-overhaul.md`
-**Requirements**: TBD (derive from the owner UAT findings at plan time)
+**Requirements**: QP-01, QP-02, QP-03, QP-04, QP-05, QP-06, QP-07, QP-08, QP-09, QP-10 (derived at plan time 2026-07-17 from the folded 2026-07-12 owner UAT findings — see 19-RESEARCH.md Phase Requirements map)
 **Success Criteria** (what must be TRUE):
 
   1. Any question type read cold from the screen alone tells the child what to do — instruction + stimulus + affordance — with the spoken line as reinforcement, never the only carrier.
@@ -934,7 +934,23 @@ by (childProfileId, letterId) with migration, so a new profile starts fresh.
   4. Two child profiles on one device keep separate graph cursors/arc state (a fresh profile starts at the opening).
 
 **UI hint**: yes
-**Plans:** TBD
+**Plans:** 6 plans
+Plans:
+
+**Wave 1**
+
+- [ ] 19-01-PLAN.md — Wave 0 RED contract: failing live-path + migration + lint tests for QP-01..QP-10
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [ ] 19-02-PLAN.md — Instruction bar in ExerciseScaffold + _HearAgainCta fold (QP-01/QP-02; D-01..D-04)
+- [ ] 19-03-PLAN.md — Stimulus zone: slot box, audio card, copy hide+peek, recall no-model (QP-03..QP-06; D-05..D-08)
+- [ ] 19-04-PLAN.md — LetterReps reader/writer fold onto LetterExerciseReps aggregates (QP-09 prep; D-15)
+- [ ] 19-05-PLAN.md — Micro-drill re-add + learned-letters lint + card gate/rewrite + mother's review packet (QP-07/QP-08; D-09..D-12/D-18/D-19/D-21)
+
+**Wave 3** *(blocked on 19-04)*
+
+- [ ] 19-06-PLAN.md — Per-child keying migration v6→v7 + childProfileId threading + drop LetterReps + ADR-018 (QP-09/QP-10; D-13..D-17/D-20)
 
 #### Phase 20: Curriculum graph and authoring pipeline for all 28 letters
 
