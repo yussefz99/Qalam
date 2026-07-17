@@ -340,9 +340,13 @@ Future<void> _pumpScreen(
 /// Enter the trace phase, drive a scored PASS, then tap Next — the pass/continue
 /// CTA that swaps the shell to the selected node.
 Future<void> _traceAndAdvance(WidgetTester tester) async {
-  // Watch&Trace opens on the Watch phase — tap "I'll try" to reveal the surface.
-  await tester.tap(find.text("I'll try"));
-  await tester.pumpAndSettle();
+  // 18-15: a seeded real-node cursor RESUMES straight into the presenter, so the
+  // trace surface is already on screen — the legacy Watch&Trace "I'll try" gate is
+  // bypassed. Guarded so it still works for a legacy watch-first setup.
+  if (find.text("I'll try").evaluate().isNotEmpty) {
+    await tester.tap(find.text("I'll try"));
+    await tester.pumpAndSettle();
+  }
 
   final ws = tester.widget<WriteSurface>(find.byType(WriteSurface));
   ws.onResult!(const CheckResult.pass());

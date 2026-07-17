@@ -183,8 +183,14 @@ Future<void> _pumpAndEnterTrace(
     ),
   );
   await tester.pumpAndSettle();
-  await tester.tap(find.text("I'll try"));
-  await tester.pumpAndSettle();
+  // 18-15: a seeded real-node cursor now RESUMES straight into the presenter
+  // (selection mode), so the trace WriteSurface is already on screen — the legacy
+  // Watch&Trace "I'll try" gate is bypassed. Guarded so the helper still works for
+  // any setup that routes through the legacy watch-first step.
+  if (find.text("I'll try").evaluate().isNotEmpty) {
+    await tester.tap(find.text("I'll try"));
+    await tester.pumpAndSettle();
+  }
 }
 
 void main() {
