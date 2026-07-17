@@ -595,7 +595,8 @@ requirements** by design — investigations that tune the deployed system.
 - [x] **Phase 15: BUILD — dynamic grounded exercise selection on baa** - The server agent's **plan node** drives `present_activity` selection over baa's 19 Schema-v2 configs (reasoning about recent mistakes); the curriculum rails the choices; resume-aware; one quiet star at mastery; first-measure grounding faithfulness. (completed 2026-06-28)
 - [ ] **Phase 16: BUILD — presence + voice + eval gate + demo-harden** - Server-**streamed/TTS** coaching within the Phase-12 budget (reflex stays local), the Phase-13 harness promoted to a regression gate, the baa AI-tutor path (client + Cloud Run server) demo-hardened on the Pixel Tablet, and the per-node model choices finalized.
 - [x] **Phase 17: BUILD — stroke-aware coaching (on-device geo-diff → coach)** - The coach names the specific geometry of the child's actual attempt via an on-device derived diff; raw strokes never leave the device. (completed 2026-07-06)
-- [ ] **Phase 18: BUILD — the living tutor: per-child dynamic exercise selection** - Two-timescale child model, remediation arcs, just-this-part micro-drills, railed to the signed graph. (10/11 — 18-11 human gates remain)
+- [x] **Phase 18: BUILD — the living tutor: per-child dynamic exercise selection** - Two-timescale child model, remediation arcs, just-this-part micro-drills, railed to the signed graph. (owner-closed 2026-07-17; 18-11 human gates + UAT device retest deferred — see the phase's deferred-items.md)
+- [ ] **Phase 18.1: Content & audio at scale (INSERTED — partner track)** - Real pronunciation clips through a manifest-driven pipeline, a draft vocabulary bank for all 28 letters, and per-letter sign-off review packets — runs parallel with Phase 19, feeds Phases 20–21.
 - [ ] **Phase 19: Question presentation overhaul** - Every question self-explanatory on screen (persistent instruction, big stimulus, per-type affordance); language cards rewritten with the mother; micro-drills return; per-child position keying fixed.
 - [ ] **Phase 20: Curriculum graph + authoring pipeline for all 28 letters** - Generalize the baa-only graph to the full alphabet (mother's intro order) + the model-drafts/mother-signs pipeline, proven on the first batch.
 - [ ] **Phase 21: Letter content at scale** - All remaining letters authored as data in mother-signed batches through the Phase-20 pipeline.
@@ -875,6 +876,40 @@ Plans:
 - [x] 18-14-PLAN.md — major: server tool-schema fix so the coach's per-attempt rationale reaches the client on the clean-pass path (structural half of T5) + Cloud Run re-deploy gate (UAT T5)
 - [x] 18-15-PLAN.md — major: restore selection/presenter mode from the durable cursor on cold boot so relaunch resumes in place (UAT T7) *(depends on 18-12)*
 - [x] 18-16-PLAN.md — blocker/major: Teacher's Margin distinct identity beside the canvas + real arc-step narration + per-attempt WHY variance; demo Teacher's Eye gated out of non-demo builds (margin half of T6 + client half of T5) *(depends on 18-12, 18-15)*
+
+#### Phase 18.1: Content & audio at scale (INSERTED — partner track)
+
+**Goal:** All raw content inputs needed to take the app from a one-letter demo to the full
+28-letter curriculum are produced or pipelined by the partner, in parallel with Phase 19 and
+without touching any file Phase 19 owns: real (non-placeholder) pronunciation audio flowing
+through a manifest-driven Python pipeline, a draft vocabulary bank covering every letter with
+per-word letter decomposition, and per-letter review packets that make the mother's sign-off
+sessions fast. Drafts only — nothing child-facing ships until she signs (the standing
+curriculum-governance rule).
+**Mode:** build (partner-executed; owner merges PRs to main)
+**Depends on:** Phase 18 (Schema-v2 audioId convention; letters.json stroke drafts). Runs
+parallel with Phase 19. Feeds Phases 20–21 (authoring pipeline + content at scale).
+**Working brief:** `.planning/phases/18.1-content-and-audio-at-scale-partner-track/PARTNER-BRIEF.md`
+**Requirements**: derived from the brief (audio pipeline, vocab bank, review packets)
+**Success Criteria** (what must be TRUE):
+
+  1. A Python audio pipeline (`tools/audio_pipeline/`) turns raw recordings into normalized
+     clips named by the existing `snd.*`/`word.*`/`sentence.*` convention, and the
+     `assets/audio/README.md` manifest table AND the Dart `_audioIdToAsset` map are GENERATED
+     from one manifest source — never hand-edited again.
+  2. All 28 `snd.<letterId>` placeholder clips are replaced with real recordings (voice choice
+     is the owner + mother's call; TTS drafts allowed meanwhile but always marked `draft-tts`,
+     never passed off as real).
+  3. A draft vocabulary bank (staged outside the live curriculum files) covers all 28 letters
+     with the words.json schema (id/text/audio/image/gloss/letters[]), and a validator proves
+     which words are legal at each point in the mother's intro order.
+  4. Review packets exist for all 26 unsigned letters (per-form stroke diagrams with order +
+     direction, common mistakes, reps-to-advance, sign-off checklist), ready for batch review.
+  5. Zero edits to Phase-19 territory: `lib/features/letter_unit/`, `lib/data/`,
+     `assets/curriculum/exercises.json`, `assets/curriculum/curriculum_graph.json`, `server/`.
+
+**UI hint**: no — Python tooling + assets + generated docs; no app screens.
+**Research hint**: no — conventions already exist in-repo (audio README, words.json schema, letters.json).
 
 #### Phase 19: Question presentation overhaul — every question self-explanatory on screen
 
