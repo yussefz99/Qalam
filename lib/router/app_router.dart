@@ -19,17 +19,17 @@ import '../providers/profile_providers.dart';
 import '../screens/parent_auth_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/parent_dashboard_screen.dart';
+import '../core/demo_flag.dart';
 import '../features/practice/practice_screen.dart';
 import '../screens/settings_screen.dart';
 import 'demo_routes.dart';
 
 part 'app_router.g.dart';
 
-/// Compile-time flag that boots the app straight into the presentation demo
-/// walkthrough (phase 02.1.1). Off by default — `flutter run` starts at '/' as
-/// usual. Pass `--dart-define=DEMO=true` to launch at `/demo/home` so the full
-/// Home → Watch → Trace → Feedback → Celebration loop is tappable for a demo.
-const bool kDemoMode = bool.fromEnvironment('DEMO');
+// The DEMO compile-time flag ([kDemoMode]) now lives in `core/demo_flag.dart` so
+// the router and the exercise scaffold share ONE definition. Pass
+// `--dart-define=DEMO=true` to launch at `/demo/home` (the full Home → Watch →
+// Trace → Feedback → Celebration walkthrough is tappable for a demo).
 
 /// App router, exposed as a Riverpod-codegen provider (Riverpod-only — D-11).
 @Riverpod(keepAlive: true)

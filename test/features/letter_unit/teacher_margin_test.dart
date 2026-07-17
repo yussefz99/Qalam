@@ -21,6 +21,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:qalam/features/letter_unit/widgets/exercise_scaffold.dart';
 import 'package:qalam/features/letter_unit/widgets/teacher_margin_panel.dart';
+import 'package:qalam/models/exercise.dart';
 import 'package:qalam/models/letter.dart';
 
 Letter _baa() {
@@ -59,9 +60,24 @@ Letter _baa() {
   );
 }
 
+/// A micro-drill exercise that DECLARES its focus (the bowl) via `criteria`, so
+/// the resting note can name it before the first verdict (18-16).
+Exercise _bowlDrill() => const Exercise(
+      id: 'baa.microDrill.bowl',
+      skill: 'formation',
+      prompt: [SayPart('Just the bowl.')],
+      signedOff: false,
+      criteria: ['shape'],
+    );
+
 /// Pump the panel and publish [insight] into the shared [tutorInsightProvider]
-/// (the SAME channel the scaffold uses), then settle so the panel reads it.
-Future<void> _pump(WidgetTester tester, {TutorInsight? insight}) async {
+/// (the SAME channel the scaffold uses), then settle so the panel reads it. Pass
+/// [exercise] to give the panel its resting-presence context (18-16).
+Future<void> _pump(
+  WidgetTester tester, {
+  TutorInsight? insight,
+  Exercise? exercise,
+}) async {
   tester.view.physicalSize = const Size(1280, 800);
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.resetPhysicalSize);
@@ -74,7 +90,7 @@ Future<void> _pump(WidgetTester tester, {TutorInsight? insight}) async {
             body: SizedBox(
               width: 260,
               height: 600,
-              child: TeacherMarginPanel(letter: _baa()),
+              child: TeacherMarginPanel(letter: _baa(), exercise: exercise),
             ),
           ),
         ),
@@ -198,6 +214,22 @@ void main() {
     );
     final text = _allText(tester).toLowerCase();
     for (final token in ['streak', 'points', 'badge', '+', 'score']) {
+      expect(text.contains(token), isFalse,
+          reason: 'forbidden reward token "$token" must never render');
+    }
+  });
+
+  testWidgets(
+      'Test 6 (18-16): with an exercise + no insight, a calm resting note shows '
+      '(persistent presence, not a verdict-only blast)', (tester) async {
+    await _pump(tester, exercise: _bowlDrill());
+    final text = _allText(tester).toLowerCase();
+    // A calm resting line renders even before the first verdict.
+    expect(text.contains('take your time'), isTrue);
+    // The drill's declared focus (the bowl) is named.
+    expect(text.contains('the bowl'), isTrue);
+    // Still strictly anti-gamification.
+    for (final token in ['streak', 'points', 'badge', 'score']) {
       expect(text.contains(token), isFalse,
           reason: 'forbidden reward token "$token" must never render');
     }

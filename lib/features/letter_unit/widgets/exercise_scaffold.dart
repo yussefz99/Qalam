@@ -22,6 +22,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/demo_flag.dart';
 import '../../../core/exercise_engine/check_result.dart';
 import '../../../models/exercise.dart';
 import '../../../models/letter.dart';
@@ -364,7 +365,7 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
     final graphId = widget.graphExerciseId;
     final bool selectionBegan = _isAgentPath && graphId != null;
     final candidates = selectionBegan
-        ? controller.beginSelection(result, graphId!,
+        ? controller.beginSelection(result, graphId,
             recentMistakes: List<String>.of(_recentMistakes))
         : const <String>[];
 
@@ -663,14 +664,17 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
                     strings: s,
                     isAgentPath: _isAgentPath,
                   ),
-                  // 18-10 (D-01): the CHILD-FACING Teacher's Margin — the warm WHY
-                  // line + remediation-arc step-down narration, beside the canvas.
-                  // Reads the SAME TutorInsight the verdict/coach publish (no second
-                  // insight source); silent until the first verdict. Agent path only
-                  // (the living tutor is baa-scoped).
-                  if (_isAgentPath) TeacherMarginPanel(letter: widget.letter),
-                  // DEMO "Teacher's Eye" — what the tutor saw (agent path only).
-                  if (_isAgentPath) _teacherEye(),
+                  // 18-16 (UAT T6): the child-facing Teacher's Margin moved OUT of
+                  // this column to BESIDE the writing canvas (see _mainColumn), so
+                  // it reads as "a note near the writing canvas" and is not the
+                  // visual twin of the demo Teacher's Eye strip below.
+                  //
+                  // DEMO "Teacher's Eye" — the 17.2 diagnostic read-out. 18-16
+                  // (UAT T6): gated to DEMO builds only (kDemoMode). Real
+                  // child-facing builds omit --dart-define=DEMO=true, so this
+                  // duplicate strip disappears and the Teacher's Margin is the
+                  // SINGLE margin surface.
+                  if (_isAgentPath && kDemoMode) _teacherEye(),
                 ],
               ),
             ),
@@ -734,9 +738,36 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
           ),
         ],
         // The center surface: WriteSurface (graded) / custom (teachCard) / none.
-        // Held (not writable) while the tutor speaks the instruction.
+        // Held (not writable) while the tutor speaks the instruction. On the
+        // agent path (baa) with a graded surface the Teacher's Margin sits BESIDE
+        // the canvas (18-16 / UAT T6).
         const SizedBox(height: 14), // .ex-surface margin-top:14
-        Expanded(child: _holdWhileInstruction(_centerSurface())),
+        Expanded(
+          child: (_isAgentPath && !_isTeachCard)
+              ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(child: _holdWhileInstruction(_centerSurface())),
+                    const SizedBox(width: 18),
+                    // 18-16 (UAT T6): the child-facing Teacher's Margin — the
+                    // SINGLE, recognizable margin note beside the canvas (the demo
+                    // Teacher's Eye twin is gated out of non-demo builds). It shows
+                    // a calm resting focus BEFORE the first verdict, then the WHY +
+                    // arc step-down at verdict — a persistent presence, not a
+                    // verdict-only blast. Scrolls if the note grows.
+                    SizedBox(
+                      width: 224,
+                      child: SingleChildScrollView(
+                        child: TeacherMarginPanel(
+                          letter: widget.letter,
+                          exercise: widget.exercise,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : _holdWhileInstruction(_centerSurface()),
+        ),
         // FeedbackPanel + CTA (bottom) — .ex-foot.
         const SizedBox(height: 12),
         _foot(state, s, agentLine),
