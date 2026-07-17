@@ -2,16 +2,15 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
-status: paused
-stopped_at: Completed gap-closure 18-12..18-16 (5 UAT issues fixed, merged, deployed, iPad-verified) — phase 18 NOT yet fully closed, 18-11 (mother sign-off + cost/latency) still open
-last_updated: "2026-07-17T12:54:03.723Z"
-last_activity: 2026-07-17 -- UAT found 5 gaps, diagnosed, fixed, deployed, device-verified; session paused
+status: completed
+stopped_at: Completed 18-10-PLAN.md (Teacher's Margin panel D-01 + Spotlight overlay D-05 — the arc + micro-drill are now VISIBLE and warm on the live path, reading the SAME TutorInsight, IgnorePointer capture-safe, zero reward surface)
+last_updated: "2026-07-17T13:34:56.294Z"
 progress:
   total_phases: 28
   completed_phases: 15
-  total_plans: 105
+  total_plans: 106
   completed_plans: 101
-  percent: 96
+  percent: 54
 ---
 
 # Project State
@@ -25,9 +24,9 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 
 ## Current Position
 
-Phase: 18 (build-the-living-tutor-dynamic-exercise-selection) — PAUSED (gap-closure round complete; original phase-close plan 18-11 still open)
+Phase: 18 — COMPLETE
 Plan: 16 of 16 planned (18-01..18-10 + 18-12..18-16 all have SUMMARY.md; 18-11 not started)
-Status: /gsd:verify-work 18 ran a fresh conversational UAT this session (18-UAT.md), found 5 issues (T2 cosmetic, T3/T5/T7 major, T6 blocker), diagnosed root causes via 5 parallel debug agents (hard cases routed to Fable 5 per owner preference), planned+checker-verified 5 gap-closure plans (18-12..18-16), executed all 5 across 3 waves with zero regressions (Dart 850/858 pass — 8 known pre-existing baseline reds, unchanged; Python 165/166 pass, 1 skip-by-design), merged, and deployed the server half (18-14) to Cloud Run — revision qalam-tutor-00027-nqw live, /health 200. A real (non-demo) build was pushed to the owner's iPad and the owner began hands-on testing; informally positive so far ("working perfectly"), plus visual confirmation the Teacher's Margin panel and "Hear again" control render correctly on a completeWord exercise. The 5 UAT findings have NOT yet been individually re-verified one-by-one against the deployed build.
+Status: Phase 18 complete
 Next: Resume with either (a) `/gsd:verify-work 18` re-run against the 18-UAT.md gaps to formally re-test each of T2/T3/T5/T6/T7 on the deployed build and close that UAT session, or (b) go straight to the ORIGINAL phase-close plan 18-11-PLAN.md (separate from this gap-closure round) — its Task 2 (device cost/latency measurement) could piggyback on the current iPad session; Task 3 (mother's sign-off on kArcEntryFailStreak/kArcMaxAttempts/EMA constants/micro-drill copy/selection gold set) is still fully open and required before the phase verifier can flip R1/R4/R5/R6/R7/R8/R9. Phase 18 is NOT complete until 18-11 lands.
 PriorNext: 18-07 (live-path wiring) confirmed genuinely done in the prior session (the earlier "18-07 done" note had been an inaccurate narrative — only a plan-amendment commit existed until that pass landed real source wiring). 18-08/18-09 (server WHY grounding + nightly compiler) executed before 18-07 since the server/eval legs don't depend on client wiring.
 
@@ -264,6 +263,7 @@ Recent decisions affecting current work:
 - [Phase ?]: [18-10]: SpotlightOverlay (D-05) is IgnorePointer+CustomPaint radial scrim, layered by WriteSurface only for type=='microDrill' (above ink, below chrome); a capture-still-fires test locks the score path untouched. Exercise.spotlightZone added presentational-only (Rule-3, never the scorer) so the lit-region string reaches the overlay.
 - [Phase ?]: [18-10]: requirements-completed left [] (18-01..18-09 precedent) — SPEC-18-R1/R3/R4 now VISIBLE on the client but the arc/step-down framing copy is signed:false (mother signs at 18-11) + deploy gates remain; verifier/18-11 flips them.
 - [Phase 18]: Owner (2026-07-16): S2-03 ask-Qalam voice dropped from v2.0 scope; milestone closes at Technion submission-readiness via Phases 19-24 (presentation overhaul, all-28-letters pipeline+content, cross-letter selection + next-day planner, parent insight, submission hardening)
+- [Phase 18]: Owner declared Phase 18 (Living Tutor) DONE on 2026-07-17 without the device retest of the 5 UAT gap fixes (18-12..18-16) and with 18-11 Tasks 2-3 (on-device cost/latency measurement; mother's sign-off on drill set / arc-N / alpha-EMA thresholds / eval gold set) still open — carried forward as deferred items, not dropped.
 
 ### Pending Todos
 
