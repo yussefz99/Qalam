@@ -69,6 +69,26 @@ class PromptHeader extends StatelessWidget {
     // Empty header collapses (components.css `.prompt-header.empty{display:none}`).
     if (visuals.isEmpty) return const SizedBox.shrink();
 
+    // A LONE stimulus picture (the [say, image] picture-prompt exercises —
+    // writeLetter.fromPicture / writeWord.picture / buildSentence.picture) is
+    // rendered on its OWN here so it claims the full header width and sizes
+    // RESPONSIVELY (UAT T2). The general Row path below caps a non-flex part to
+    // its own footprint AND wraps the row in an IntrinsicHeight (which cannot host
+    // a LayoutBuilder), so a lone image there would read as a small fixed island
+    // in a wide column. The child reads the question FROM the picture — it must be
+    // big and readable.
+    if (visuals.length == 1 && visuals.first is ImagePart) {
+      final img = visuals.first as ImagePart;
+      return Padding(
+        padding: const EdgeInsets.only(top: 12),
+        child: _ImagePart(
+          imageId: img.imageId,
+          caption: img.caption,
+          responsive: true,
+        ),
+      );
+    }
+
     return Padding(
       // components.css `.prompt-header{margin-top:12px;…}`
       padding: const EdgeInsets.only(top: 12),
@@ -169,22 +189,47 @@ class _AudioPart extends StatelessWidget {
 
 // ── image (.pp-img hatched stub + caption) ───────────────────────────────────
 
-/// The picture card — components.css `.pp-img` (a 128×84 aqua box, radius 14)
-/// with an optional caption beneath (.pp-cap). Renders the REAL illustration
-/// when its `imageId` resolves to a bundled `assets/images/` asset
-/// (quick task 260615-tqu, wiring the baa unit's door/duck/big-door art);
-/// otherwise it falls back to the original hatched stub — the imageId shown as a
-/// Text chip inside the box.
+/// Responsive stimulus sizing (UAT T2): a LONE picture prompt grows to a readable
+/// fraction of the available header width, clamped to a sane min/max, at the
+/// ~260:176 aspect the art was authored for. This REPLACES the old fixed 260x176
+/// pixel box, which read as a small island in a wide tablet column no matter how
+/// large the constant was set.
+const double _kStimulusWidthFraction = 0.6;
+const double _kStimulusMinWidth = 220;
+const double _kStimulusMaxWidth = 560;
+const double _kStimulusAspect = 260 / 176; // ≈ 1.48
+
+/// The picture card — components.css `.pp-img` (an aqua box, radius 14) with an
+/// optional caption beneath (.pp-cap). Renders the REAL illustration when its
+/// `imageId` resolves to a bundled `assets/images/` asset (quick task 260615-tqu,
+/// wiring the baa unit's door/duck/big-door art); otherwise it falls back to the
+/// original hatched stub — the imageId shown as a Text chip inside the box.
+///
+/// SIZING: when [responsive] (the lone picture-prompt path) the box sizes to a
+/// fraction of the available header width via a [LayoutBuilder] + [AspectRatio] —
+/// big on a wide tablet column, shrinking to fit a narrow one (UAT T2). When NOT
+/// [responsive] (a thumbnail alongside other prompt parts, e.g. the teachCard.meet
+/// row) it keeps a compact fixed footprint — and stays free of [LayoutBuilder] so
+/// it survives that row's [IntrinsicHeight] (which cannot query a LayoutBuilder's
+/// intrinsic dimensions).
 ///
 /// SILENT-DEGRADE (mirrors the audio seam's never-block posture): an unmapped
 /// imageId resolves to null → the hatched stub; and a mapped-but-unloadable file
 /// hits `Image.asset`'s errorBuilder, which reuses the SAME stub. Either way a
 /// missing image never throws and never blocks the trace loop.
 class _ImagePart extends StatelessWidget {
-  const _ImagePart({required this.imageId, this.caption});
+  const _ImagePart({
+    required this.imageId,
+    this.caption,
+    this.responsive = false,
+  });
 
   final String imageId;
   final String? caption;
+
+  /// Size the stimulus responsively to the available header width (the lone
+  /// picture-prompt path) instead of a fixed pixel box.
+  final bool responsive;
 
   @override
   Widget build(BuildContext context) {
@@ -196,38 +241,18 @@ class _ImagePart extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Container(
-          // Owner UAT 2026-07-12: the stimulus picture must be BIG — the child
-          // reads the question from it (was 128x84, unreadably small on tablet).
-          width: 260,
-          height: 176,
-          decoration: BoxDecoration(
-            color: QalamTokens.softAqua,
-            borderRadius: BorderRadius.circular(14), // .pp-img radius 14
-            border: Border.all(color: QalamTokens.aquaEdge),
-          ),
-          alignment: Alignment.center,
-          // The real illustration when resolvable; the hatched imageId stub
-          // otherwise. The Image is clipped to the radius-14 box and falls back
-          // to the SAME stub if the asset fails to load (silent degrade).
-          child: assetPath == null
-              ? _hatchedStub()
-              : ClipRRect(
-                  borderRadius: BorderRadius.circular(14),
-                  child: Image.asset(
-                    assetPath,
-                    width: 260,
-                    height: 176,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stack) => _hatchedStub(),
-                  ),
-                ),
-        ),
+        responsive ? _responsiveBox(assetPath) : _fixedBox(assetPath),
         if (caption != null && caption!.isNotEmpty) ...[
-          const SizedBox(height: 4),
+          const SizedBox(height: 6),
           Text(
             caption!,
             textAlign: TextAlign.center,
+            // UAT T2 (mirrors feedback_panel_v2.dart's idle-hint fix): a pure-
+            // English caption ("what does it start with?") under the exercise's
+            // ambient RTL Directionality has its trailing "?" bidi-resolved toward
+            // the RTL embedding direction (it jumps to the front). Pin LTR so the
+            // punctuation stays at the end. The source caption string is unchanged.
+            textDirection: TextDirection.ltr,
             style: QalamTextStyles.label
                 .copyWith(fontSize: 15, color: QalamTokens.fgMuted),
           ),
@@ -235,6 +260,66 @@ class _ImagePart extends StatelessWidget {
       ],
     );
   }
+
+  /// The responsive stimulus box: a fraction of the available header width
+  /// (clamped), at the authored aspect. Grows on a wide tablet column, shrinks to
+  /// fit a narrow one, never overflows.
+  Widget _responsiveBox(String? assetPath) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double available = constraints.maxWidth.isFinite
+            ? constraints.maxWidth
+            : _kStimulusMaxWidth; // defensive: an unbounded parent → the max cap.
+        double boxWidth = (available * _kStimulusWidthFraction)
+            .clamp(_kStimulusMinWidth, _kStimulusMaxWidth);
+        // Never overflow a column narrower than the readable minimum.
+        if (boxWidth > available) boxWidth = available;
+        return SizedBox(
+          width: boxWidth,
+          child: AspectRatio(
+            aspectRatio: _kStimulusAspect,
+            child: _decoratedBox(assetPath),
+          ),
+        );
+      },
+    );
+  }
+
+  /// The compact fixed footprint for a thumbnail alongside other prompt parts
+  /// (the teachCard.meet row). No LayoutBuilder — safe under the row's
+  /// IntrinsicHeight. Keeps the ~260:176 authored aspect.
+  Widget _fixedBox(String? assetPath) => SizedBox(
+        width: 260,
+        height: 176,
+        child: _decoratedBox(assetPath),
+      );
+
+  /// The aqua card (radius 14) that fills whatever tight box it is given, showing
+  /// the real illustration (clipped, cover) or the hatched stub. Shared by both
+  /// sizing paths so the silent-degrade posture is identical in each.
+  Widget _decoratedBox(String? assetPath) => Container(
+        decoration: BoxDecoration(
+          color: QalamTokens.softAqua,
+          borderRadius: BorderRadius.circular(14), // .pp-img radius 14
+          border: Border.all(color: QalamTokens.aquaEdge),
+        ),
+        alignment: Alignment.center,
+        // The real illustration when resolvable; the hatched imageId stub
+        // otherwise. The Image is clipped to the radius-14 box and falls back to
+        // the SAME stub if the asset fails to load (silent degrade).
+        child: assetPath == null
+            ? _hatchedStub()
+            : ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Image.asset(
+                  assetPath,
+                  width: double.infinity,
+                  height: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stack) => _hatchedStub(),
+                ),
+              ),
+      );
 
   /// The original hatched stub — the imageId in a raised rounded chip. Shared by
   /// BOTH the unknown-id branch and the Image.asset load-error fallback so the
