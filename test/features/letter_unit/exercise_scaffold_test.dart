@@ -22,6 +22,8 @@ import 'package:qalam/features/letter_unit/widgets/prompt_header.dart';
 import 'package:qalam/features/letter_unit/widgets/write_surface.dart';
 import 'package:qalam/models/exercise.dart';
 import 'package:qalam/models/letter.dart';
+import 'package:qalam/providers/tts_providers.dart';
+import 'package:qalam/tutor/tts_coach_speaker.dart';
 import 'package:qalam/widgets/qalam_mascot.dart';
 
 Letter _baa() {
@@ -122,6 +124,49 @@ Future<void> _pump(WidgetTester tester, Widget child) async {
   addTearDown(tester.view.resetPhysicalSize);
   await tester.pumpWidget(
     ProviderScope(
+      child: MaterialApp(home: Scaffold(body: child)),
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+/// A CoachSpeaker that RECORDS calls — so a test can assert the "Hear again"
+/// control re-invoked the instruction speak (18-12). Every method completes
+/// instantly (mirrors NoopTtsCoachSpeaker → no instruction hold is observed).
+class _RecordingSpeaker implements CoachSpeaker {
+  int speakCount = 0;
+  int stopCount = 0;
+  final List<String> lines = [];
+
+  @override
+  Future<void> speak(String line) async {
+    speakCount++;
+    lines.add(line);
+  }
+
+  @override
+  Future<void> stop() async => stopCount++;
+
+  @override
+  Future<void> dispose() async {}
+}
+
+/// Pump [child] with an injected coach [speaker] (defaults to a Noop) so the
+/// scaffold's on-mount + replay instruction speak can be observed.
+Future<void> _pumpWith(
+  WidgetTester tester,
+  Widget child, {
+  CoachSpeaker? speaker,
+}) async {
+  tester.view.physicalSize = const Size(1280, 800);
+  tester.view.devicePixelRatio = 1.0;
+  addTearDown(tester.view.resetPhysicalSize);
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [
+        ttsCoachSpeakerProvider
+            .overrideWithValue(speaker ?? const NoopTtsCoachSpeaker()),
+      ],
       child: MaterialApp(home: Scaffold(body: child)),
     ),
   );
@@ -250,5 +295,74 @@ void main() {
     // A support CTA ("Got it") is shown instead of grading CTAs.
     expect(find.text('Got it'), findsOneWidget);
     expect(find.text('Next exercise'), findsNothing);
+  });
+
+  testWidgets(
+      'Test 5 (18-12): a "Hear again" control is present in idle/fix/pass and '
+      're-speaks the instruction on demand (the UAT T3 secondary ask)',
+      (tester) async {
+    final speaker = _RecordingSpeaker();
+    await _pumpWith(
+      tester,
+      ExerciseScaffold(exercise: _graded(), letter: _alif()),
+      speaker: speaker,
+    );
+
+    // IDLE: the control is present, and initState already spoke the instruction
+    // once on mount (the "listen first" hold).
+    expect(find.text('Hear again'), findsOneWidget);
+    final afterMount = speaker.speakCount;
+    expect(afterMount, greaterThanOrEqualTo(1),
+        reason: 'the instruction is spoken on mount');
+
+    // Tapping "Hear again" RE-invokes the instruction speak (does not crash).
+    await tester.tap(find.text('Hear again'));
+    await tester.pumpAndSettle();
+    expect(speaker.speakCount, greaterThan(afterMount),
+        reason: 'the control re-speaks the instruction');
+    expect(speaker.lines.last, 'Trace baa.',
+        reason: 'it re-speaks the prompt say-line, not some other text');
+
+    final ctx = tester.element(find.byType(ExerciseScaffold));
+    final container = ProviderScope.containerOf(ctx);
+
+    // FIX phase: the control stays reachable (not only while writing).
+    container.read(exerciseControllerProvider.notifier)
+      ..load(_graded())
+      ..applyResult(const CheckResult.fail('shallowBowl'));
+    await tester.pumpAndSettle();
+    expect(find.text('Hear again'), findsOneWidget,
+        reason: 'reachable in the fix phase');
+    final atFix = speaker.speakCount;
+    await tester.tap(find.text('Hear again'));
+    await tester.pumpAndSettle();
+    expect(speaker.speakCount, greaterThan(atFix),
+        reason: 'safe to tap repeatedly — re-arms the speak in the fix phase');
+
+    // PASS phase: the control stays reachable (a second working control on the
+    // pass phase — belt-and-suspenders against a dead end).
+    container.read(exerciseControllerProvider.notifier)
+      ..load(_graded())
+      ..applyResult(const CheckResult.pass());
+    await tester.pumpAndSettle();
+    expect(find.text('Hear again'), findsOneWidget,
+        reason: 'reachable in the pass phase');
+    final atPass = speaker.speakCount;
+    await tester.tap(find.text('Hear again'));
+    await tester.pumpAndSettle();
+    expect(speaker.speakCount, greaterThan(atPass),
+        reason: 're-speaks in the pass phase too');
+  });
+
+  testWidgets(
+      'Test 6 (18-12): a teachCard shows NO "Hear again" (nothing to replay)',
+      (tester) async {
+    await _pumpWith(
+      tester,
+      ExerciseScaffold(exercise: _teachCard(), letter: _baa()),
+    );
+    // The teachCard is not graded and _speakInstructionThenRelease no-ops for it,
+    // so the replay control is hidden rather than offering a dead tap.
+    expect(find.text('Hear again'), findsNothing);
   });
 }
