@@ -133,9 +133,10 @@ class SelectionPolicy {
       candidates.removeWhere((id) => id == current);
       // The entry moment steps DOWN immediately (owner directive 2026-07-12:
       // "fail twice → go back" must be the very next card): the criterion's
-      // drill when authored, else the guided floor trace, joins the menu.
-      final down = graph.drillForCriterion(letterId, criterion) ??
-          _floorTrace(letterId, position);
+      // drill for a production miss, else/or the guaranteed-doable floor trace
+      // when the child is failing a guided trace itself (_stepDownTarget), joins
+      // the menu.
+      final down = _stepDownTarget(letterId, criterion, current, position);
       if (down != null &&
           down != current &&
           _isLegal(down, position) &&
@@ -326,22 +327,45 @@ class SelectionPolicy {
     return counts.values.any((c) => c >= 2);
   }
 
-  /// The micro-drill for [criterion] (or the original at rebuild), rail-checked.
+  /// The step-DOWN candidates for an active-arc step: the step-down target
+  /// (drill for a production miss, floor trace for a trace miss — see
+  /// [_stepDownTarget]) plus the original to retry, rail-checked.
   List<String> _drillOrRetry(
     String letterId,
     String? criterion,
     String? retry,
     GraphPosition position,
   ) {
+    // A step DOWN must still step down, never re-present the failing card as its
+    // own remediation: land the step-down target first; rebuild → retryOriginal
+    // follow.
+    final down = _stepDownTarget(letterId, criterion, retry, position);
+    return _legalize([?down, ?retry], position);
+  }
+
+  /// The arc step-DOWN target. For a PRODUCTION miss it is the criterion's
+  /// restored micro-drill (D-18/R3 — just-this-part practice). But when the
+  /// exercise the child is failing ([failingId]) is ITSELF a guided trace, the
+  /// confidence rebuild is the guaranteed-doable FLOOR TRACE, not a sub-part
+  /// drill: a same-criterion trace fail steps down to the floor trace so the arc
+  /// re-presents a doable full-letter success (UAT T6 — the floor-trace
+  /// step-down + re-present that keeps "Next exercise" alive; do NOT let a
+  /// restored micro-drill preempt it). The drill stays a live candidate via the
+  /// R3 injection either way (D-18 graph nodes unchanged) — it just never
+  /// preempts the floor when the child is already at the trace level.
+  String? _stepDownTarget(
+    String letterId,
+    String? criterion,
+    String? failingId,
+    GraphPosition position,
+  ) {
+    final floor = _floorTrace(letterId, position);
+    final failingTrace =
+        failingId != null && failingId.contains('.traceLetter.');
+    if (failingTrace) return floor;
     final drill =
         criterion == null ? null : graph.drillForCriterion(letterId, criterion);
-    if (drill != null) return _legalize([drill, ?retry], position);
-    // No drill authored for this criterion (the micro-drills are parked —
-    // owner decision 2026-07-12): a step DOWN must still step down, never
-    // re-present the failing card as its own remediation. Land the
-    // guaranteed-doable guided trace first; rebuild → retryOriginal follow.
-    final floor = _floorTrace(letterId, position);
-    return _legalize([?floor, ?retry], position);
+    return drill ?? floor;
   }
 
   /// The guaranteed-doable trace success the floor guard lands on (D-04) — the
