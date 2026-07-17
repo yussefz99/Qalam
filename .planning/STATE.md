@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
 status: completed
-stopped_at: Completed 18-10-PLAN.md (Teacher's Margin panel D-01 + Spotlight overlay D-05 — the arc + micro-drill are now VISIBLE and warm on the live path, reading the SAME TutorInsight, IgnorePointer capture-safe, zero reward surface)
-last_updated: "2026-07-17T13:34:56.294Z"
+stopped_at: Phase 19 context gathered
+last_updated: "2026-07-17T15:48:30.211Z"
 progress:
-  total_phases: 28
+  total_phases: 29
   completed_phases: 15
   total_plans: 106
   completed_plans: 101
-  percent: 54
+  percent: 52
 ---
 
 # Project State
@@ -304,6 +304,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-11T15:50:21.356Z
-Stopped at: Completed 18-10-PLAN.md (Teacher's Margin panel D-01 + Spotlight overlay D-05 — the arc + micro-drill are now VISIBLE and warm on the live path, reading the SAME TutorInsight, IgnorePointer capture-safe, zero reward surface)
+Last session: 2026-07-17T15:48:30.202Z
+Stopped at: Phase 19 context gathered
 Resume files: .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-02-PLAN.md (next — cross-letter labels + baa micro-drill set), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-03-PLAN.md (EMA + Drift v6), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-01-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
