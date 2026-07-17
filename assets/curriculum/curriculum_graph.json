@@ -5,7 +5,9 @@
     "regenerate": "cd server && uv run python -m app.curriculum_data.generate",
     "sign_off": "Owner-mother signs at the TIER level (D-05): she confirms the baa-config→competency mapping, the 70/30 essential/enrichment split, and the per-skill clean-reps. signedOff stays false until then — Claude DRAFTED this; she REVIEWS and signs (mirror the AUTHORED_BAA_IDS gate). Plan 15-07 owns the flip to true.",
     "microDrills": "Plan 18-02 adds baa.microDrill.{dot,bowl,start} as ADDITIVE enrichment nodes (competency 'microDrill', essential:false, criterion-tagged dot/shape/strokeOrder). They never gate the star (D-06). Their CONTENT ships signedOff:false at the EXERCISE level (assets/curriculum/exercises.json); the file-level signedOff:true is the owner-mother's 15-07 tier-structure sign-off, unchanged. The drill copy is signed at the 18-11 HUMAN-UAT gate.",
-    "owner_amendment_2026_07_12": "Owner-directed UAT amendment: (a) baa.traceLetter.final added to positionalForms so the child traces ALL FOUR forms before production tasks ('really saw the letter in all forms'); (b) microDrill nodes + competency REMOVED from the graph (feature parked — exercises.json content kept dormant; re-add the nodes to restore). Both pending owner-mother sign-off."
+    "owner_amendment_2026_07_12": "Owner-directed UAT amendment: (a) baa.traceLetter.final added to positionalForms so the child traces ALL FOUR forms before production tasks ('really saw the letter in all forms'); (b) microDrill nodes + competency were REMOVED from the graph (feature parked). Both pending owner-mother sign-off.",
+    "microDrill_restore_19_05": "Plan 19-05 (D-18) RESTORES the 3 authored baa.microDrill.{dot,bowl,start} nodes + the 'microDrill' competency to the live graph, behind the reworked question presentation (19-02 instruction bar + 19-03 stimulus renderers) and the 18-10 SpotlightOverlay. They remain ADDITIVE enrichment (essential:false → never gate the star, D-06); the drill CONTENT stays signedOff:false at the exercise level (its sign-off is the mother's review-packet gate). The file-level signedOff:true (15-07 tier-structure) is unchanged. microdrill_selection_test's fixture no longer needs to inject them — the live graph now supplies them.",
+    "gated_cards_19_05": "Plan 19-05 (D-12/D-19) GATES the 6 baa cards that fundamentally need unlearned letters — baa.buildSentence.{hear,picture}, baa.fillBlank.adjective, baa.transformWord.{dual,plural,opposite} — by REMOVING their nodes from this graph so they are unreachable in the baa unit's cleared set (learned-letters lint QP-07). Their exercise CONFIGS stay dormant in exercises.json (signedOff:true, mother-signed at 15-07) and are filed for the target letter's own unit in Phase 20/21; no cross-unit-prerequisite schema field is added (A6). baa.connectWord.kitaab is REWRITTEN to an alif+baa word (signedOff:false) rather than gated — the mother confirms rewrite-vs-gate in 19-REVIEW-PACKET.md."
   },
   "letterId": "baa",
   "signedOff": true,
@@ -49,6 +51,11 @@
       "prerequisites": [
         "copyWrite"
       ]
+    },
+    {
+      "id": "microDrill",
+      "essential": false,
+      "prerequisites": []
     }
   ],
   "tiers": [
@@ -176,6 +183,30 @@
       "competency": "grammarTransform",
       "tier": null,
       "minCleanReps": 1
+    },
+    {
+      "exerciseId": "baa.microDrill.dot",
+      "competency": "microDrill",
+      "tier": null,
+      "minCleanReps": 1,
+      "criterion": "dot",
+      "essential": false
+    },
+    {
+      "exerciseId": "baa.microDrill.bowl",
+      "competency": "microDrill",
+      "tier": null,
+      "minCleanReps": 1,
+      "criterion": "shape",
+      "essential": false
+    },
+    {
+      "exerciseId": "baa.microDrill.start",
+      "competency": "microDrill",
+      "tier": null,
+      "minCleanReps": 1,
+      "criterion": "strokeOrder",
+      "essential": false
     }
   ]
 }
