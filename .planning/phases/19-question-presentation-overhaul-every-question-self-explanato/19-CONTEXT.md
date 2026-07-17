@@ -118,6 +118,23 @@ card-rewrite sitting is explicitly NON-BLOCKING — rewrites ship drafted `signe
 - Test depth per surface (widget tests for the bar/affordances; migration tests for the
   re-key — live-path widget tests are MANDATORY per the Phase-15 dead-wire lesson).
 
+### Planning-time resolutions (owner, 2026-07-17 — answers to RESEARCH.md Open Questions)
+- **D-15 CONFIRMED at plan time: retire `LetterReps` now.** Owner re-affirmed the retirement
+  despite it being the highest deadline-risk sub-item: fold its 3 live readers (parent
+  dashboard `allInProgress`, practice provider, journey progression ribbon
+  `watchCleanReps`) into `LetterExerciseReps` aggregates, then drop the table in the same
+  v6→v7 migration. The "key it and defer" fallback is REJECTED.
+- **D-19: Gated cards are REMOVED from the baa graph, not cross-unit-gated.** The 4–5
+  cards demanding unlearned letters drop out of the baa unit's `curriculum_graph.json`
+  reachable set now and are filed for the target letter's unit in Phase 20/21. No
+  cross-unit-prerequisite schema extension this phase. Placement confirmed in the
+  mother's review packet.
+- **D-20: Migration leaves orphaned rows in place.** D-16 adoption only; no orphan
+  cleanup this phase (researcher recommendation accepted).
+- **D-21: Card "№" identity = the lint's flag set.** The enforceable set is the 7
+  `letters`-violating baa cards enumerated in RESEARCH.md; the №↔exercise-id mapping is
+  confirmed against the owner's № 10, 15–20 list inside the mother's review packet (A5).
+
 ### Folded Todos
 - **`.planning/todos/pending/2026-07-12-question-presentation-overhaul.md`** — the
   phase's named source (owner device-UAT findings, 2026-07-12). All six of its findings
