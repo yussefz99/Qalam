@@ -14,6 +14,15 @@ here; the owning plan or a future phase resolves them.
   touches only `exercise_scaffold.dart` (the resolver + instruction bar) and its
   test — nothing in `PromptHeader`/`meet_section`/image rendering. Owned by the
   stimulus-renderer plan (19-03) or a later PromptHeader pass, not here.
+  - **19-03 assessment (2026-07-17):** still out of scope. 19-03 touches the
+    audio (`_AudioPart`) / text (`_TextPart`) / gap-slot (`_GapWord`/`_GapLetter`)
+    renderers for D-05/D-06/D-07 — it does NOT touch `_ImagePart`. The failure is
+    an obsolete assertion (`find.textContaining('img.door')`) expecting the
+    hatched-stub id text on an image that now resolves to a real bundled asset;
+    it is a meet-test / image-caption reconciliation, not a stimulus-renderer
+    change. Left for a later PromptHeader/image pass (per the plan's explicit
+    "not yours" note). Re-verified failing at the same `img.door` assertion after
+    19-03's changes.
 
 ## Wave-0 RED tests greened by later Wave-2 plans (expected RED at 19-02)
 
