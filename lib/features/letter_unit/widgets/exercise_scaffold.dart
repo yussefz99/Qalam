@@ -62,6 +62,7 @@ class ExerciseScaffoldStrings {
     this.playLabel = 'Play',
     this.watchMe = 'Watch me',
     this.teachCardHint = 'Nothing to write — this card teaches.',
+    this.hearAgain = 'Hear again',
   });
 
   final String tutorName;
@@ -76,6 +77,9 @@ class ExerciseScaffoldStrings {
   final String playLabel;
   final String watchMe;
   final String teachCardHint;
+
+  /// 18-12: the label of the always-available replay-instruction control.
+  final String hearAgain;
 }
 
 /// DEMO (17.2) — the "Teacher's Eye": what the tutor saw on the LAST attempt,
@@ -202,6 +206,16 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
   bool _instructionHold = false;
 
   bool get _isTeachCard => widget.exercise.surface == null;
+
+  /// 18-12: whether this exercise has a spoken instruction to replay — a
+  /// non-empty prompt `say` line on a graded (non-teachCard) surface. Gates the
+  /// "Hear again" control so it appears only when there is actually something to
+  /// re-speak (mirrors the no-op guard in [_speakInstructionThenRelease]).
+  bool get _hasInstruction =>
+      !_isTeachCard &&
+      widget.exercise.prompt
+          .whereType<SayPart>()
+          .any((p) => p.line.trim().isNotEmpty);
 
   /// Phase 17.2 (owner directive 2026-07-07): baa is the LIVE-AGENT path. On it
   /// the cloud coach's line is the ONLY feedback words shown — the authored
@@ -670,6 +684,24 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
           onAudioTap: widget.onAudioTap,
           playLabel: s.playLabel,
         ),
+        // 18-12: the always-available "Hear again" control — re-speaks the
+        // current question's spoken instruction on demand (the secondary ask in
+        // the UAT T3 report: "something to make the tutor speak again the
+        // instructions"). It sits ABOVE the phase-driven foot, so it is reachable
+        // in the idle, fix, AND pass phases — not only while writing. It reuses
+        // [_speakInstructionThenRelease] verbatim (stops any in-flight voice, arms
+        // the 8s-capped hold, no-ops on a teachCard / empty say-line), so it is
+        // safe to tap repeatedly. A help control, never a reward surface.
+        if (_hasInstruction) ...[
+          const SizedBox(height: 10),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: _HearAgainCta(
+              label: s.hearAgain,
+              onTap: _speakInstructionThenRelease,
+            ),
+          ),
+        ],
         // The center surface: WriteSurface (graded) / custom (teachCard) / none.
         // Held (not writable) while the tutor speaks the instruction.
         const SizedBox(height: 14), // .ex-surface margin-top:14
@@ -979,6 +1011,57 @@ class _QuietCta extends StatelessWidget {
             style: QalamTextStyles.button.copyWith(
               fontSize: 18,
               color: QalamTokens.fgMuted,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 18-12: the small, calm "Hear again" affordance — a compact ghost pill (the
+/// `_QuietCta` grammar, scaled down) with a quiet volume glyph. It re-speaks the
+/// current question's instruction; it is a HELP control, never a reward surface
+/// (no gold, no counter). Available in every phase because it lives above the
+/// phase-driven foot.
+class _HearAgainCta extends StatelessWidget {
+  const _HearAgainCta({required this.label, this.onTap});
+
+  final String label;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: label,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(14),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: onTap,
+          child: Container(
+            height: 40,
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: QalamTokens.aquaEdge, width: 1.5),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.volume_up_rounded,
+                    size: 18, color: QalamTokens.fgMuted),
+                const SizedBox(width: 7),
+                Text(
+                  label,
+                  style: QalamTextStyles.button.copyWith(
+                    fontSize: 14,
+                    color: QalamTokens.fgMuted,
+                  ),
+                ),
+              ],
             ),
           ),
         ),

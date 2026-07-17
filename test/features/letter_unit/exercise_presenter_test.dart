@@ -1,8 +1,10 @@
 // Phase 18-07 Task 3 — the exercise PRESENTER renders any graph node (the seam
 // that makes the unit visibly dynamic). `presentGraphExercise` must render EVERY
 // config family the baa graph contains through the SAME ExerciseScaffold (never
-// new UI), keyed `graph:<id>` so each node gets a fresh scaffold. This test pumps
-// one node of each family and asserts it renders without throwing.
+// new UI), keyed `graph:<id>#<epoch>` so each PRESENTATION gets a fresh scaffold
+// (18-12: the epoch defaults to 0 here — the presenter is called directly with no
+// re-present). This test pumps one node of each family and asserts it renders
+// without throwing.
 
 import 'package:flutter/material.dart' hide Form;
 import 'package:flutter_test/flutter_test.dart';
@@ -160,8 +162,9 @@ void main() {
     for (final entry in families.entries) {
       final data = _data([entry.value]);
       await _pump(tester, data, entry.key);
-      // The node rendered, keyed graph:<id> (a fresh scaffold per node).
-      expect(find.byKey(ValueKey('graph:${entry.key}')), findsOneWidget,
+      // The node rendered, keyed graph:<id>#<epoch> (a fresh scaffold per node;
+      // the presenter defaults presentEpoch to 0 when called directly — 18-12).
+      expect(find.byKey(ValueKey('graph:${entry.key}#0')), findsOneWidget,
           reason: '${entry.key} must render through the presenter');
     }
   });
@@ -170,7 +173,7 @@ void main() {
       (tester) async {
     // No exercises supplied → the presenter builds a calm fallback per id.
     await _pump(tester, _data(const []), 'baa.writeLetter.fromSound');
-    expect(find.byKey(const ValueKey('graph:baa.writeLetter.fromSound')),
+    expect(find.byKey(const ValueKey('graph:baa.writeLetter.fromSound#0')),
         findsOneWidget);
     expect(find.byType(ExerciseScaffold), findsOneWidget);
   });

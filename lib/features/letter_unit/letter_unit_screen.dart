@@ -184,6 +184,15 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
   /// pass/continue CTA (never at verdict time), so the feedback moment survives.
   String? _presentedId;
 
+  /// 18-12 (UAT T3 + T6): a monotonic presentation epoch folded into the presenter
+  /// key. Incremented on EVERY advance so a re-present of the SAME id still yields
+  /// a DIFFERENT key → a fresh mount → `_ExerciseScaffoldState.initState()` re-runs
+  /// (resets phase, clears the canvas, re-arms the instruction hold). Without it a
+  /// same-id re-present (a first-fail retry-in-place, or an active-arc pass
+  /// re-present of the floor trace) reused the Element, stranding the child on a
+  /// dead CTA that only a force-quit could escape.
+  int _presentEpoch = 0;
+
   @override
   void initState() {
     super.initState();
@@ -269,8 +278,9 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
   /// The pass/continue CTA while the presenter drives (18-07 Task 3). It AWAITS the
   /// controller's in-flight selection (`nextReady`) — so a fast Next tap reads the
   /// FRESH cursor, never a stale one (audit finding §5) — then swaps the presented
-  /// node (a fresh `graph:<id>` scaffold). Graph exhausted (null) → route to the
-  /// Mastery section, where the quiet star stays reachable (`_recordMasteryIfMet`).
+  /// node (a fresh `graph:<id>#<epoch>` scaffold). Graph exhausted (null) → route
+  /// to the Mastery section, where the quiet star stays reachable
+  /// (`_recordMasteryIfMet`).
   Future<void> _advanceSelection() async {
     final ctrl = ref.read(letterUnitControllerProvider(_letterId).notifier);
     final pending = ctrl.nextReady();
@@ -282,12 +292,21 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
     if (next == null) {
       // Graph exhausted → the Mastery section (index total-1), which fires
       // _recordMasteryIfMet post-frame. Leave presenter mode so the star renders.
+      // Do NOT bump the epoch — it only matters for a presented node (18-12).
       setState(() => _presentedId = null);
       ctrl.goTo(total > 0 ? total - 1 : 0);
       return;
     }
     _followRibbon(next);
-    setState(() => _presentedId = next);
+    // 18-12: bump the presentation epoch on EVERY real advance in the SAME
+    // setState as the id swap. A monotonic increment guarantees a fresh mount
+    // whether `next` is the SAME id as the current one (a legitimate
+    // retry-in-place or an active-arc pass re-present — the UAT T3/T6 stuck
+    // states) or a different id (which already remounts; the epoch is harmless).
+    setState(() {
+      _presentEpoch++;
+      _presentedId = next;
+    });
   }
 
   /// The section ribbon FOLLOWS the presented node: map its competency → a section
@@ -379,6 +398,8 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
                     onNodeResult: _onNodePassed,
                     onNext: _advanceSelection,
                     onAudioTap: _onAudioTap,
+                    // 18-12: the monotonic epoch → a same-id re-present remounts.
+                    presentEpoch: _presentEpoch,
                   )
                 : _section(data, index),
           ),

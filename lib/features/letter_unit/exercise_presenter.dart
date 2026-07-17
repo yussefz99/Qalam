@@ -33,11 +33,18 @@ import 'widgets/exercise_scaffold.dart';
 /// Render the graph node [exerciseId] as its engine surface, resolving the config
 /// from [data] (with a calm fallback so a section is always navigable). A
 /// `teachCard` (no surface) renders the Meet/support-card path; every other node
-/// renders an [ExerciseScaffold] keyed `graph:<id>` (a fresh scaffold per node).
+/// renders an [ExerciseScaffold] keyed `graph:<id>#<epoch>` (a fresh scaffold per
+/// presentation — see [presentEpoch]).
 ///
 /// [onNodeResult] is the T2/T1 scoring chokepoint (increment reps + markNodeCleared);
 /// [onNext] is the pass/continue CTA (the shell awaits the controller's `nextReady`
 /// and swaps to the next selected node). [onAudioTap] plays a prompt clip.
+///
+/// [presentEpoch] (18-12) is a monotonic counter the shell increments on EVERY
+/// advance. It is folded into the widget key so a re-present of the SAME
+/// [exerciseId] still produces a DIFFERENT key — forcing Flutter to remount the
+/// scaffold (re-running initState) instead of a silent update that leaves the
+/// child stuck on a dead CTA (UAT T3 retry-in-place + T6 active-arc pass).
 Widget presentGraphExercise({
   required LetterUnitData data,
   required String exerciseId,
@@ -45,15 +52,29 @@ Widget presentGraphExercise({
   required VoidCallback onNext,
   void Function(String audioId)? onAudioTap,
   ({int total, int active})? ribbon,
+  int presentEpoch = 0,
 }) {
   final letter = data.letter;
   final exercise = data.exercise(exerciseId) ?? _fallbackExercise(exerciseId, letter);
+
+  // 18-12 (UAT T3 + T6): the key carries a monotonic PRESENTATION EPOCH, not the
+  // exercise id alone. A legitimate re-present of the SAME graph-node id — a
+  // first-fail retry-in-place, OR an active-arc pass re-present of the floor trace
+  // — would otherwise reuse the existing Element (same runtimeType + same Key), so
+  // `_ExerciseScaffoldState.initState()` (the ONLY place that resets the controller
+  // phase to idle, clears the canvas, and re-arms the instruction hold) never
+  // re-ran and the CTA tap was a silent no-op / a permanent dead button. Folding
+  // the epoch in makes every advance a DIFFERENT key → a fresh mount → initState
+  // re-runs. (See retry-does-nothing-after-fail.md §Resolution + app-stuck-and-
+  // teacher-margin-not-understood.md §Resolution cause 1 — one mechanism, both
+  // triggers.)
+  final key = ValueKey('graph:$exerciseId#$presentEpoch');
 
   // teachCard (surface == null): the Meet / PromptHeader-only support card — it is
   // not graded through the WriteSurface, so "Got it" just advances (plain onNext).
   if (exercise.surface == null) {
     return MeetSection(
-      key: ValueKey('graph:$exerciseId'),
+      key: key,
       exercise: exercise,
       letter: letter,
       onAdvance: onNext,
@@ -62,7 +83,7 @@ Widget presentGraphExercise({
   }
 
   return ExerciseScaffold(
-    key: ValueKey('graph:$exerciseId'),
+    key: key,
     exercise: exercise,
     letter: letter,
     graphExerciseId: exerciseId,

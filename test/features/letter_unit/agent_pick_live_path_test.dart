@@ -237,11 +237,12 @@ void main() {
       await _pumpScreen(tester, brain: _PickBrain(_agentLegalPick));
       await _traceAndAdvance(tester);
 
-      // The presenter now renders the AGENT's pick — a fresh graph:<id> scaffold.
-      expect(find.byKey(const ValueKey('graph:$_agentLegalPick')), findsOneWidget,
+      // The presenter now renders the AGENT's pick — a fresh graph:<id>#<epoch>
+      // scaffold (18-12: the epoch-tolerant finder tracks WHICH node renders).
+      expect(_graphNode(_agentLegalPick), findsOneWidget,
           reason: 'the selection is RENDERED — the Phase-15 dead wire is closed '
               'end-to-end, not just at the cursor');
-      expect(find.byKey(const ValueKey('graph:$_walkerForward')), findsNothing);
+      expect(_graphNode(_walkerForward), findsNothing);
     });
 
     testWidgets('an illegal pick renders the walker\'s choice instead',
@@ -249,13 +250,22 @@ void main() {
       await _pumpScreen(tester, brain: _PickBrain(_agentIllegalPick));
       await _traceAndAdvance(tester);
 
-      expect(find.byKey(const ValueKey('graph:$_walkerForward')), findsOneWidget,
+      expect(_graphNode(_walkerForward), findsOneWidget,
           reason: 'an out-of-rail pick never renders — the rail holds on screen');
     });
   });
 }
 
 // ── full-screen harness ────────────────────────────────────────────────────────
+
+/// Find the presented graph node by [id], tolerant of the 18-12 presentation
+/// epoch suffix (`graph:<id>#<epoch>`) so the assertion tracks WHICH node renders,
+/// not its epoch.
+Finder _graphNode(String id) => find.byWidgetPredicate((w) {
+      final k = w.key;
+      return k is ValueKey<String> &&
+          (k.value == 'graph:$id' || k.value.startsWith('graph:$id#'));
+    });
 
 class _CapturingAudioPlayer implements LetterAudioPlayer {
   @override
