@@ -318,4 +318,193 @@ void main() {
       await db.close();
     },
   );
+
+  // ---------------------------------------------------------------------------
+  // Plan 19-01 (Wave 0) — QP-09 / D-14 / D-16 / D-15: the v6→v7 per-child keying
+  // migration + two-profile isolation.
+  //
+  // AUTHORED COMPLETE, but SKIP-MARKED: `skip: 'v6→v7 lands in 19-06 (QP-09)'`.
+  // The body is a full, would-be-RED assertion of the v7 behaviour that does not
+  // exist yet (schemaVersion is still 6). The skip keeps this whole file green for
+  // the intermediate plans (19-02..19-05) that run it. 19-06 removes the marker as
+  // its ONLY permitted edit to this file, then greens the case with the real
+  // migration.
+  //
+  // WHY THE BODY IS PURE RAW SQL (customStatement / customSelect), never the typed
+  // accessors: 19-06 re-keys five tables by `childProfileId`, which CHANGES the
+  // typed accessor signatures (recordMastery/setPosition/… gain a childProfileId
+  // arg). A body written against the typed API would fail to COMPILE after 19-06
+  // and could not be greened by a skip-removal alone. Raw SQL is signature-
+  // independent: it compiles today (v6) AND passes after 19-06 un-skips it (v7),
+  // with zero body edits.
+  //
+  // The temp-FILE NativeDatabase (never a shared in-memory executor) is the ONLY
+  // way to exercise the real onUpgrade path — the v3→v4 precedent above (Pitfall 2).
+  // ---------------------------------------------------------------------------
+  test(
+    'migration v6→v7: the five progress tables re-key by childProfileId — '
+    "profile-A's rows are adopted (survive) keyed to the current profile, a "
+    'fresh profile reads clean, and legacy LetterReps is dropped '
+    '(QP-09 / D-14 / D-16 / D-15)',
+    () async {
+      final dir = await Directory.systemTemp.createTemp('qalam_v7_migration');
+      final file = File('${dir.path}${Platform.pathSeparator}qalam.db');
+      addTearDown(() => dir.delete(recursive: true));
+
+      // COUNT the rows a given profile owns for a letter, via raw SQL over the
+      // v7 `child_profile_id` column — signature-independent of the typed API.
+      Future<int> countRows(
+        AppDatabase db,
+        String table,
+        int profileId,
+        String letterId,
+      ) async {
+        final rows = await db.customSelect(
+          'SELECT COUNT(*) AS c FROM $table '
+          'WHERE child_profile_id = ? AND letter_id = ?;',
+          variables: [
+            Variable.withInt(profileId),
+            Variable.withString(letterId),
+          ],
+        ).get();
+        return rows.single.read<int>('c');
+      }
+
+      // ── Seed a genuine v6-era database in raw SQL ──────────────────────────
+      // Reshape whatever onCreate built (v6 today, v7 after 19-06) to the EXACT
+      // v6 schema, insert v6-shaped rows (no child_profile_id), rewind to v6.
+      final seed = AppDatabase(NativeDatabase(file));
+      for (final t in const [
+        'letter_graph_position',
+        'letter_exercise_reps',
+        'letter_mastery',
+        'arc_state_rows',
+        'letter_reps',
+        'child_profiles',
+      ]) {
+        await seed.customStatement('DROP TABLE IF EXISTS $t;');
+      }
+      // EXACT v6 DDL (captured from the live v6 Drift schema) so the v7
+      // TableMigration recreate reads the tables it expects.
+      await seed.customStatement(
+        'CREATE TABLE "child_profiles" ("id" INTEGER NOT NULL PRIMARY KEY '
+        'AUTOINCREMENT, "nickname_id" TEXT NOT NULL, "avatar_id" TEXT NOT NULL, '
+        '"grade" TEXT NOT NULL, "starting_lesson_id" TEXT NOT NULL, '
+        '"created_at" INTEGER NOT NULL)',
+      );
+      await seed.customStatement(
+        'CREATE TABLE "letter_mastery" ("letter_id" TEXT NOT NULL, '
+        '"clean_reps" INTEGER NOT NULL, "mastered_at" INTEGER NOT NULL, '
+        'PRIMARY KEY ("letter_id"))',
+      );
+      await seed.customStatement(
+        'CREATE TABLE "letter_reps" ("letter_id" TEXT NOT NULL, '
+        '"clean_reps" INTEGER NOT NULL, "updated_at" INTEGER NOT NULL, '
+        'PRIMARY KEY ("letter_id"))',
+      );
+      await seed.customStatement(
+        'CREATE TABLE "letter_graph_position" ("letter_id" TEXT NOT NULL, '
+        '"current_exercise_id" TEXT NULL, "cleared_competencies" TEXT NOT NULL, '
+        '"cleared_tiers" TEXT NOT NULL, "updated_at" INTEGER NOT NULL, '
+        'PRIMARY KEY ("letter_id"))',
+      );
+      await seed.customStatement(
+        'CREATE TABLE "letter_exercise_reps" ("letter_id" TEXT NOT NULL, '
+        '"exercise_id" TEXT NOT NULL, "clean_reps" INTEGER NOT NULL, '
+        '"updated_at" INTEGER NOT NULL, PRIMARY KEY ("letter_id", "exercise_id"))',
+      );
+      await seed.customStatement(
+        'CREATE TABLE "arc_state_rows" ("letter_id" TEXT NOT NULL, '
+        '"active" INTEGER NOT NULL CHECK ("active" IN (0, 1)), '
+        '"step" TEXT NOT NULL, "target_criterion" TEXT NULL, '
+        '"exercise_to_retry" TEXT NULL, "updated_at" INTEGER NOT NULL, '
+        'PRIMARY KEY ("letter_id"))',
+      );
+      // The SINGLE existing profile (D-16 — whoever was practicing is adopted).
+      await seed.customStatement(
+        "INSERT INTO child_profiles (nickname_id, avatar_id, grade, "
+        "starting_lesson_id, created_at) "
+        "VALUES ('nick_star', 'avatar_1', 'kg', 'lesson_01', 0)",
+      );
+      // Profile-A progress across ALL FOUR keyed tables + a legacy letter_reps row.
+      await seed.customStatement(
+        "INSERT INTO letter_graph_position (letter_id, current_exercise_id, "
+        "cleared_competencies, cleared_tiers, updated_at) "
+        "VALUES ('baa', 'baa.writeLetter.fromSound', '[\"recognize\"]', '[]', 0)",
+      );
+      await seed.customStatement(
+        "INSERT INTO letter_exercise_reps (letter_id, exercise_id, clean_reps, "
+        "updated_at) VALUES ('baa', 'baa.traceLetter.isolated', 2, 0)",
+      );
+      await seed.customStatement(
+        "INSERT INTO letter_mastery (letter_id, clean_reps, mastered_at) "
+        "VALUES ('alif', 3, 0)",
+      );
+      await seed.customStatement(
+        "INSERT INTO arc_state_rows (letter_id, active, step, target_criterion, "
+        "exercise_to_retry, updated_at) "
+        "VALUES ('baa', 1, 'stepDown', 'shape', 'baa.writeLetter.fromSound', 0)",
+      );
+      await seed.customStatement(
+        "INSERT INTO letter_reps (letter_id, clean_reps, updated_at) "
+        "VALUES ('baa', 2, 0)",
+      );
+      // Rewind the schema version so the next open runs onUpgrade(from: 6).
+      await seed.customStatement('PRAGMA user_version = 6;');
+      await seed.close();
+
+      // ── Open a fresh AppDatabase → the REAL onUpgrade(6→7) runs ─────────────
+      // After 19-06 this exercises the production `if (from < 7)` onUpgrade block
+      // (TableMigration recreate + Constant<int> backfill + drop letter_reps).
+      final migrated = AppDatabase(NativeDatabase(file));
+
+      // The migration backfills child_profile_id from the single existing
+      // profile (SELECT id FROM child_profiles LIMIT 1) — that adopted id.
+      final profileRows = await migrated
+          .customSelect('SELECT id FROM child_profiles LIMIT 1;')
+          .get();
+      final profileA = profileRows.single.read<int>('id');
+      final profileB = profileA + 1; // an id with NO rows → clean/fresh
+
+      // (a) D-16 — profile-A rows SURVIVE, adopted under the current profile id.
+      expect(await countRows(migrated, 'letter_graph_position', profileA, 'baa'),
+          1,
+          reason: 'the graph cursor is adopted (no progress loss, D-16)');
+      expect(await countRows(migrated, 'letter_exercise_reps', profileA, 'baa'),
+          1,
+          reason: 'per-exercise clean reps are adopted (D-16)');
+      expect(await countRows(migrated, 'arc_state_rows', profileA, 'baa'), 1,
+          reason: 'the remediation-arc state is adopted (D-16)');
+      expect(await countRows(migrated, 'letter_mastery', profileA, 'alif'), 1,
+          reason: 'mastery rows are adopted (D-16)');
+
+      // (b) success criterion 4 — a SECOND profile reads CLEAN (no inherited
+      // cursor). This is the cross-profile-leak invariant (T-19-01).
+      expect(await countRows(migrated, 'letter_graph_position', profileB, 'baa'),
+          0,
+          reason: 'a fresh profile starts at the opening — never the old cursor');
+      expect(await countRows(migrated, 'letter_exercise_reps', profileB, 'baa'),
+          0);
+      expect(await countRows(migrated, 'arc_state_rows', profileB, 'baa'), 0);
+
+      // (c) D-15 — the legacy LetterReps table is GONE after v7 (one rep counter).
+      final repsTable = await migrated
+          .customSelect(
+            "SELECT name FROM sqlite_master "
+            "WHERE type='table' AND name='letter_reps';",
+          )
+          .get();
+      expect(repsTable, isEmpty,
+          reason: 'legacy letter_reps is retired in the same migration (D-15)');
+      await migrated.close();
+
+      // (d) idempotence — a second open runs NO migration (from == 7) and changes
+      // nothing; the adopted rows survive a restart.
+      final again = AppDatabase(NativeDatabase(file));
+      expect(await countRows(again, 'letter_graph_position', profileA, 'baa'), 1,
+          reason: 'a second restart must change nothing (idempotence)');
+      await again.close();
+    },
+    skip: 'v6→v7 lands in 19-06 (QP-09)',
+  );
 }
