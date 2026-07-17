@@ -196,8 +196,13 @@ void main() {
     await tester.pumpAndSettle();
 
     // Enter the trace phase, PASS once → advance INTO the presenter on _failNode.
-    await tester.tap(find.text("I'll try"));
-    await tester.pumpAndSettle();
+    // 18-15: a seeded real-node cursor RESUMES straight into the presenter, so the
+    // trace surface is already on screen — the legacy "I'll try" watch gate is
+    // bypassed. Guarded so it still works for a legacy watch-first setup.
+    if (find.text("I'll try").evaluate().isNotEmpty) {
+      await tester.tap(find.text("I'll try"));
+      await tester.pumpAndSettle();
+    }
     tester.widget<WriteSurface>(find.byType(WriteSurface)).onResult!(
           const CheckResult.pass(),
         );

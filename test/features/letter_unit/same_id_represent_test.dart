@@ -219,8 +219,13 @@ Future<void> _pumpScreen(WidgetTester tester) async {
 /// presenter on the walker's forward pick (_forward). The child is now in
 /// selection mode with a fresh presented node.
 Future<void> _enterPresenterOnForward(WidgetTester tester) async {
-  await tester.tap(find.text("I'll try"));
-  await tester.pumpAndSettle();
+  // 18-15: a seeded real-node cursor RESUMES straight into the presenter, so the
+  // trace surface is already on screen — the legacy Watch&Trace "I'll try" gate is
+  // bypassed. Guarded so the helper still works for a legacy watch-first setup.
+  if (find.text("I'll try").evaluate().isNotEmpty) {
+    await tester.tap(find.text("I'll try"));
+    await tester.pumpAndSettle();
+  }
   tester.widget<WriteSurface>(find.byType(WriteSurface)).onResult!(
         const CheckResult.pass(),
       );

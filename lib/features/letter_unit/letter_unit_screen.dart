@@ -205,16 +205,37 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
       ref.read(tutorHttpClientProvider),
       ref.read(tutorBaseUrlProvider),
     ));
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
-      // start() now reads the DURABLE Drift graph position (D-08) — it is async,
-      // but we don't await it here (the post-frame callback can't be async); the
-      // controller drives the rebuild once the persisted position resolves.
-      ref.read(letterUnitControllerProvider(_letterId).notifier).start(
-            letterId: _letterId,
-            total: widget.data.unit.sections.length,
-            resumeSection: widget.resumeSection,
-          );
+      final controller =
+          ref.read(letterUnitControllerProvider(_letterId).notifier);
+      // start() reads the DURABLE Drift graph position (D-08) and, when the saved
+      // cursor is a real authored node, RESTORES selection mode (18-15 Task 1).
+      await controller.start(
+        letterId: _letterId,
+        total: widget.data.unit.sections.length,
+        resumeSection: widget.resumeSection,
+      );
+      if (!mounted) return;
+      // 18-15 Task 2 — RESUME IN PLACE after a cold boot (UAT T7). This fresh
+      // screen state has no presented node yet (`_presentedId == null`). When
+      // start() restored selection mode from the durable cursor
+      // (`selectionActive` true), SEED `_presentedId` from that restored
+      // `currentExerciseId` so the presenter re-enters on the EXACT node the child
+      // left off — bypassing the legacy `_section` walk (whose coarse
+      // `_sectionHintFor` heuristic commonly lands on section 0 = "Meet"). Seeding
+      // `_presentedId` here (rather than a build-time `?? currentExerciseId`
+      // fallback) keeps it AUTHORITATIVE: a later verdict-time cursor advance
+      // (selectNext) does NOT swap the view — only "Next exercise" does, so the
+      // 18-07 "swap on Continue, never at verdict" timing is preserved. A truly-
+      // fresh child (null/unauthored cursor → selectionActive false) skips this
+      // and keeps the legacy walk (no false resume).
+      final resumed = ref.read(letterUnitControllerProvider(_letterId));
+      if (_presentedId == null &&
+          resumed.selectionActive &&
+          resumed.currentExerciseId != null) {
+        setState(() => _presentedId = resumed.currentExerciseId);
+      }
     });
   }
 
