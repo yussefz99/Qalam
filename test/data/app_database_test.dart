@@ -64,8 +64,8 @@ void main() {
       final db1 = AppDatabase(shared.executor);
       await db1.setSetting('last_letter', 'alif');
 
-      // Write a letter_mastery row (v2 table).
-      await db1.recordMastery(letterId: 'alif', cleanReps: 3);
+      // Write a letter_mastery row (v2 table), keyed by childProfileId (ADR-018).
+      await db1.recordMastery(childProfileId: 1, letterId: 'alif', cleanReps: 3);
 
       // Insert a child_profiles row (v3 table) — must NOT throw
       // "no such table: child_profiles".
@@ -90,7 +90,7 @@ void main() {
         reason: 'app_settings rows must survive the v2→v3 migration',
       );
       expect(
-        await db2.isMastered('alif'),
+        await db2.isMastered('alif', childProfileId: 1),
         isTrue,
         reason: 'letter_mastery rows must survive the v2→v3 migration',
       );
@@ -127,7 +127,7 @@ void main() {
       final exec1 = NativeDatabase(file);
       final db1 = AppDatabase(exec1);
       await db1.setSetting('last_letter', 'baa');
-      await db1.recordMastery(letterId: 'alif', cleanReps: 3);
+      await db1.recordMastery(childProfileId: 1, letterId: 'alif', cleanReps: 3);
       await db1.createProfile(
         nicknameId: 'nick_star',
         avatarId: 'avatar_1',
@@ -150,7 +150,7 @@ void main() {
         reason: 'app_settings rows must survive the v3→v4 migration',
       );
       expect(
-        await db2.isMastered('alif'),
+        await db2.isMastered('alif', childProfileId: 1),
         isTrue,
         reason: 'letter_mastery rows must survive the v3→v4 migration',
       );
@@ -164,65 +164,40 @@ void main() {
         reason: 'v4 must rewrite legacy letter-id startingLessonId rows into '
             'the lesson-id namespace (RESEARCH Pitfall 2)',
       );
-      // The new letter_reps table must exist and be usable post-migration.
-      await db2.setCleanReps(letterId: 'baa', cleanReps: 1);
-      expect(await db2.getCleanReps('baa'), 1,
-          reason: 'letter_reps must be created by the v3→v4 migration');
+      // NOTE (19-06 / ADR-018 / D-15): the v3→v4 step used to create the legacy
+      // `letter_reps` table; that table + its setCleanReps/getCleanReps accessors
+      // are RETIRED (dropped in the v6→v7 migration), so the old
+      // "letter_reps is created + usable" assertions were removed. This test now
+      // pins only the surviving v3→v4 behaviour (row survival + the
+      // startingLessonId namespace rewrite + idempotence).
       await db2.close();
       await exec2.close();
 
-      // "Restart" #2: from == 4 → no upgrade runs; nothing changes.
+      // "Restart" #2: from == 7 → no upgrade runs; nothing changes.
       final exec3 = NativeDatabase(file);
       final db3 = AppDatabase(exec3);
       expect(await db3.getSetting('last_letter'), 'baa',
           reason: 'a second restart must change nothing (idempotence)');
-      expect(await db3.isMastered('alif'), isTrue);
+      expect(await db3.isMastered('alif', childProfileId: 1), isTrue);
       expect((await db3.getProfile())!.startingLessonId, 'lesson_01',
           reason: 'the rewrite must not run twice or corrupt data');
-      expect(await db3.getCleanReps('baa'), 1,
-          reason: 'letter_reps rows must survive a restart');
       await db3.close();
       await exec3.close();
     },
   );
 
-  // ---------------------------------------------------------------------------
-  // Plan 06-02 — D-10: partial clean reps persist across an app restart in the
-  // LetterReps table, including the overwrite-to-0 write-through reset shape
-  // (Pitfall 7) and a 0 default for letters never practiced.
-  // ---------------------------------------------------------------------------
-  test(
-    'setCleanReps persists across a simulated restart, overwrites to 0, and '
-    'getCleanReps of an unknown letter returns 0 (D-10)',
-    () async {
-      final shared = DatabaseConnection(NativeDatabase.memory());
-
-      final db1 = AppDatabase(shared.executor);
-      await db1.setCleanReps(letterId: 'baa', cleanReps: 2);
-      expect(await db1.getCleanReps('baa'), 2);
-      await db1.close();
-
-      // "Restart": the partial count must survive (D-10).
-      final db2 = AppDatabase(shared.executor);
-      expect(await db2.getCleanReps('baa'), 2,
-          reason: 'partial clean reps must survive an app restart (D-10)');
-
-      // Write-through reset: overwriting to 0 must stick (Pitfall 7 shape).
-      await db2.setCleanReps(letterId: 'baa', cleanReps: 0);
-      expect(await db2.getCleanReps('baa'), 0,
-          reason: 'setCleanReps(0) must overwrite, not be ignored');
-
-      // Letters never practiced read as 0, never null/throw.
-      expect(await db2.getCleanReps('seen'), 0,
-          reason: 'unknown letters must read as 0 clean reps');
-      await db2.close();
-    },
-  );
+  // NOTE (19-06 / ADR-018 / D-15): the legacy LetterReps `setCleanReps` /
+  // `getCleanReps` / `watchCleanReps` accessors were REMOVED with the table (the
+  // v6→v7 migration drops it). The two Plan 06-02 tests that exercised them
+  // (partial-clean-reps persistence + `watchCleanReps` emission) are deleted —
+  // the surviving per-letter counter is the LetterExerciseReps MAX aggregate,
+  // covered by the D-15 fold tests below (`letterCleanReps` / `watchLetterCleanReps`).
 
   // ---------------------------------------------------------------------------
   // Plan 06-02 — drift .watch() streams: the S1-09 "unlock is immediate on
   // pass" substrate. The first emission may be the current state; subsequent
-  // emissions fire on write with no manual invalidation.
+  // emissions fire on write with no manual invalidation. Re-keyed by
+  // childProfileId (ADR-018).
   // ---------------------------------------------------------------------------
   test(
     'watchMasteredLetterIds emits a set containing "alif" after recordMastery',
@@ -230,10 +205,11 @@ void main() {
       final shared = DatabaseConnection(NativeDatabase.memory());
       final db = AppDatabase(shared.executor);
 
-      final Stream<Set<String>> stream = db.watchMasteredLetterIds();
+      final Stream<Set<String>> stream =
+          db.watchMasteredLetterIds(childProfileId: 1);
       final expectation = expectLater(stream, emitsThrough(contains('alif')));
 
-      await db.recordMastery(letterId: 'alif', cleanReps: 3);
+      await db.recordMastery(childProfileId: 1, letterId: 'alif', cleanReps: 3);
 
       await expectation;
       await db.close();
@@ -241,17 +217,21 @@ void main() {
   );
 
   test(
-    'watchCleanReps emits the new count after setCleanReps',
+    'watchMasteredLetterIds is per-child — a fresh profile never sees the prior '
+    "child's mastered letters (ADR-018 / T-19-01)",
     () async {
       final shared = DatabaseConnection(NativeDatabase.memory());
       final db = AppDatabase(shared.executor);
 
-      final Stream<int> stream = db.watchCleanReps('baa');
-      final expectation = expectLater(stream, emitsThrough(2));
+      await db.recordMastery(childProfileId: 1, letterId: 'alif', cleanReps: 3);
 
-      await db.setCleanReps(letterId: 'baa', cleanReps: 2);
-
-      await expectation;
+      // A different profile reads a CLEAN mastered set (no cross-profile leak).
+      expect(await db.watchMasteredLetterIds(childProfileId: 2).first, isEmpty,
+          reason: 'a fresh profile must not inherit the prior child stars');
+      expect(
+          await db.watchMasteredLetterIds(childProfileId: 1).first,
+          contains('alif'),
+          reason: 'the practicing profile keeps its own mastery');
       await db.close();
     },
   );
@@ -279,10 +259,11 @@ void main() {
 
       // Seed in a deliberately non-chronological insert order; allMastered()
       // must return them ordered by masteredAt (oldest → newest).
-      await db.recordMastery(letterId: 'alif', cleanReps: 3);
-      await db.recordMastery(letterId: 'baa', cleanReps: 5);
+      await db.recordMastery(childProfileId: 1, letterId: 'alif', cleanReps: 3);
+      await db.recordMastery(childProfileId: 1, letterId: 'baa', cleanReps: 5);
 
-      final List<LetterMasteryData> mastered = await db.allMastered();
+      final List<LetterMasteryData> mastered =
+          await db.allMastered(childProfileId: 1);
       expect(mastered.length, 2,
           reason: 'both mastered letters must be returned');
       expect(
@@ -298,26 +279,11 @@ void main() {
     },
   );
 
-  test(
-    'allInProgress() returns only LetterReps rows with cleanReps > 0 '
-    '(read-only, S1-11)',
-    () async {
-      final shared = DatabaseConnection(NativeDatabase.memory());
-      final db = AppDatabase(shared.executor);
-
-      await db.setCleanReps(letterId: 'baa', cleanReps: 2); // in progress
-      await db.setCleanReps(letterId: 'taa', cleanReps: 0); // not started
-
-      final List<LetterRep> inProgress = await db.allInProgress();
-      expect(inProgress.map((r) => r.letterId), contains('baa'),
-          reason: 'letters with cleanReps > 0 are in progress');
-      expect(inProgress.map((r) => r.letterId), isNot(contains('taa')),
-          reason: 'a 0 clean-rep letter is NOT in progress');
-      final baa = inProgress.firstWhere((r) => r.letterId == 'baa');
-      expect(baa.cleanReps, 2);
-      await db.close();
-    },
-  );
+  // NOTE (19-06 / ADR-018 / D-15): the legacy read-only `allInProgress()`
+  // (LetterReps rows with cleanReps > 0) was REMOVED with the table. The parent
+  // dashboard's in-progress list reads the childProfileId-keyed
+  // `allInProgressByExerciseReps()` fold instead — covered by the D-15 fold test
+  // below (which now asserts the per-child filter too).
 
   // ---------------------------------------------------------------------------
   // Plan 19-04 — D-15 FOLD: aggregate accessors over LetterExerciseReps that
@@ -335,23 +301,28 @@ void main() {
       final db = AppDatabase(shared.executor);
 
       // Unpracticed → 0, never null/throw.
-      expect(await db.letterCleanReps('baa'), 0,
+      expect(await db.letterCleanReps('baa', childProfileId: 1), 0,
           reason: 'a letter with no exercise rows reads as 0');
 
       // Two exercises for baa: the aggregate is the MAX across them.
       await db.setExerciseCleanReps(
+          childProfileId: 1,
           letterId: 'baa',
           exerciseId: 'baa.traceLetter.isolated',
           cleanReps: 2);
       await db.setExerciseCleanReps(
+          childProfileId: 1,
           letterId: 'baa',
           exerciseId: 'baa.writeLetter.isolated',
           cleanReps: 3);
-      expect(await db.letterCleanReps('baa'), 3,
+      expect(await db.letterCleanReps('baa', childProfileId: 1), 3,
           reason: 'the letter clean-reps aggregate is the MAX across exercises');
 
       // A different letter is unaffected.
-      expect(await db.letterCleanReps('taa'), 0);
+      expect(await db.letterCleanReps('taa', childProfileId: 1), 0);
+      // A different PROFILE is unaffected (ADR-018 per-child filter).
+      expect(await db.letterCleanReps('baa', childProfileId: 2), 0,
+          reason: 'a fresh profile never inherits the prior child clean-reps');
       await db.close();
     },
   );
@@ -363,10 +334,11 @@ void main() {
       final shared = DatabaseConnection(NativeDatabase.memory());
       final db = AppDatabase(shared.executor);
 
-      final Stream<int> stream = db.watchLetterCleanReps('baa');
+      final Stream<int> stream = db.watchLetterCleanReps('baa', childProfileId: 1);
       final expectation = expectLater(stream, emitsThrough(2));
 
       await db.setExerciseCleanReps(
+          childProfileId: 1,
           letterId: 'baa',
           exerciseId: 'baa.traceLetter.isolated',
           cleanReps: 2);
@@ -385,20 +357,23 @@ void main() {
 
       // baa: two exercises, one at 1 and one at 3 → in progress at MAX 3.
       await db.setExerciseCleanReps(
+          childProfileId: 1,
           letterId: 'baa',
           exerciseId: 'baa.traceLetter.isolated',
           cleanReps: 1);
       await db.setExerciseCleanReps(
+          childProfileId: 1,
           letterId: 'baa',
           exerciseId: 'baa.writeLetter.isolated',
           cleanReps: 3);
       // taa: a single 0-rep exercise → NOT in progress (mirrors cleanReps > 0).
       await db.setExerciseCleanReps(
+          childProfileId: 1,
           letterId: 'taa',
           exerciseId: 'taa.traceLetter.isolated',
           cleanReps: 0);
 
-      final inProgress = await db.allInProgressByExerciseReps();
+      final inProgress = await db.allInProgressByExerciseReps(childProfileId: 1);
       expect(inProgress.keys, contains('baa'),
           reason: 'a letter with an exercise clean-rep > 0 is in progress');
       expect(inProgress['baa'], 3,
@@ -407,6 +382,9 @@ void main() {
       expect(inProgress.keys, isNot(contains('taa')),
           reason: 'a letter whose only exercise has 0 clean-reps is NOT in '
               'progress');
+      // A fresh profile sees an empty in-progress map (ADR-018 per-child filter).
+      expect(await db.allInProgressByExerciseReps(childProfileId: 2), isEmpty,
+          reason: 'a fresh profile never inherits the prior child in-progress');
       await db.close();
     },
   );
@@ -597,6 +575,5 @@ void main() {
           reason: 'a second restart must change nothing (idempotence)');
       await again.close();
     },
-    skip: 'v6→v7 lands in 19-06 (QP-09)',
   );
 }

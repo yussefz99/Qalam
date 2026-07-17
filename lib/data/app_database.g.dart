@@ -217,6 +217,17 @@ class $LetterMasteryTable extends LetterMastery
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $LetterMasteryTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _childProfileIdMeta = const VerificationMeta(
+    'childProfileId',
+  );
+  @override
+  late final GeneratedColumn<int> childProfileId = GeneratedColumn<int>(
+    'child_profile_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _letterIdMeta = const VerificationMeta(
     'letterId',
   );
@@ -251,7 +262,12 @@ class $LetterMasteryTable extends LetterMastery
     requiredDuringInsert: true,
   );
   @override
-  List<GeneratedColumn> get $columns => [letterId, cleanReps, masteredAt];
+  List<GeneratedColumn> get $columns => [
+    childProfileId,
+    letterId,
+    cleanReps,
+    masteredAt,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -264,6 +280,17 @@ class $LetterMasteryTable extends LetterMastery
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
+    if (data.containsKey('child_profile_id')) {
+      context.handle(
+        _childProfileIdMeta,
+        childProfileId.isAcceptableOrUnknown(
+          data['child_profile_id']!,
+          _childProfileIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_childProfileIdMeta);
+    }
     if (data.containsKey('letter_id')) {
       context.handle(
         _letterIdMeta,
@@ -292,11 +319,15 @@ class $LetterMasteryTable extends LetterMastery
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {letterId};
+  Set<GeneratedColumn> get $primaryKey => {childProfileId, letterId};
   @override
   LetterMasteryData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return LetterMasteryData(
+      childProfileId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}child_profile_id'],
+      )!,
       letterId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}letter_id'],
@@ -320,10 +351,12 @@ class $LetterMasteryTable extends LetterMastery
 
 class LetterMasteryData extends DataClass
     implements Insertable<LetterMasteryData> {
+  final int childProfileId;
   final String letterId;
   final int cleanReps;
   final DateTime masteredAt;
   const LetterMasteryData({
+    required this.childProfileId,
     required this.letterId,
     required this.cleanReps,
     required this.masteredAt,
@@ -331,6 +364,7 @@ class LetterMasteryData extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    map['child_profile_id'] = Variable<int>(childProfileId);
     map['letter_id'] = Variable<String>(letterId);
     map['clean_reps'] = Variable<int>(cleanReps);
     map['mastered_at'] = Variable<DateTime>(masteredAt);
@@ -339,6 +373,7 @@ class LetterMasteryData extends DataClass
 
   LetterMasteryCompanion toCompanion(bool nullToAbsent) {
     return LetterMasteryCompanion(
+      childProfileId: Value(childProfileId),
       letterId: Value(letterId),
       cleanReps: Value(cleanReps),
       masteredAt: Value(masteredAt),
@@ -351,6 +386,7 @@ class LetterMasteryData extends DataClass
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return LetterMasteryData(
+      childProfileId: serializer.fromJson<int>(json['childProfileId']),
       letterId: serializer.fromJson<String>(json['letterId']),
       cleanReps: serializer.fromJson<int>(json['cleanReps']),
       masteredAt: serializer.fromJson<DateTime>(json['masteredAt']),
@@ -360,6 +396,7 @@ class LetterMasteryData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'childProfileId': serializer.toJson<int>(childProfileId),
       'letterId': serializer.toJson<String>(letterId),
       'cleanReps': serializer.toJson<int>(cleanReps),
       'masteredAt': serializer.toJson<DateTime>(masteredAt),
@@ -367,16 +404,21 @@ class LetterMasteryData extends DataClass
   }
 
   LetterMasteryData copyWith({
+    int? childProfileId,
     String? letterId,
     int? cleanReps,
     DateTime? masteredAt,
   }) => LetterMasteryData(
+    childProfileId: childProfileId ?? this.childProfileId,
     letterId: letterId ?? this.letterId,
     cleanReps: cleanReps ?? this.cleanReps,
     masteredAt: masteredAt ?? this.masteredAt,
   );
   LetterMasteryData copyWithCompanion(LetterMasteryCompanion data) {
     return LetterMasteryData(
+      childProfileId: data.childProfileId.present
+          ? data.childProfileId.value
+          : this.childProfileId,
       letterId: data.letterId.present ? data.letterId.value : this.letterId,
       cleanReps: data.cleanReps.present ? data.cleanReps.value : this.cleanReps,
       masteredAt: data.masteredAt.present
@@ -388,6 +430,7 @@ class LetterMasteryData extends DataClass
   @override
   String toString() {
     return (StringBuffer('LetterMasteryData(')
+          ..write('childProfileId: $childProfileId, ')
           ..write('letterId: $letterId, ')
           ..write('cleanReps: $cleanReps, ')
           ..write('masteredAt: $masteredAt')
@@ -396,42 +439,50 @@ class LetterMasteryData extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(letterId, cleanReps, masteredAt);
+  int get hashCode =>
+      Object.hash(childProfileId, letterId, cleanReps, masteredAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is LetterMasteryData &&
+          other.childProfileId == this.childProfileId &&
           other.letterId == this.letterId &&
           other.cleanReps == this.cleanReps &&
           other.masteredAt == this.masteredAt);
 }
 
 class LetterMasteryCompanion extends UpdateCompanion<LetterMasteryData> {
+  final Value<int> childProfileId;
   final Value<String> letterId;
   final Value<int> cleanReps;
   final Value<DateTime> masteredAt;
   final Value<int> rowid;
   const LetterMasteryCompanion({
+    this.childProfileId = const Value.absent(),
     this.letterId = const Value.absent(),
     this.cleanReps = const Value.absent(),
     this.masteredAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   LetterMasteryCompanion.insert({
+    required int childProfileId,
     required String letterId,
     required int cleanReps,
     required DateTime masteredAt,
     this.rowid = const Value.absent(),
-  }) : letterId = Value(letterId),
+  }) : childProfileId = Value(childProfileId),
+       letterId = Value(letterId),
        cleanReps = Value(cleanReps),
        masteredAt = Value(masteredAt);
   static Insertable<LetterMasteryData> custom({
+    Expression<int>? childProfileId,
     Expression<String>? letterId,
     Expression<int>? cleanReps,
     Expression<DateTime>? masteredAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
+      if (childProfileId != null) 'child_profile_id': childProfileId,
       if (letterId != null) 'letter_id': letterId,
       if (cleanReps != null) 'clean_reps': cleanReps,
       if (masteredAt != null) 'mastered_at': masteredAt,
@@ -440,12 +491,14 @@ class LetterMasteryCompanion extends UpdateCompanion<LetterMasteryData> {
   }
 
   LetterMasteryCompanion copyWith({
+    Value<int>? childProfileId,
     Value<String>? letterId,
     Value<int>? cleanReps,
     Value<DateTime>? masteredAt,
     Value<int>? rowid,
   }) {
     return LetterMasteryCompanion(
+      childProfileId: childProfileId ?? this.childProfileId,
       letterId: letterId ?? this.letterId,
       cleanReps: cleanReps ?? this.cleanReps,
       masteredAt: masteredAt ?? this.masteredAt,
@@ -456,6 +509,9 @@ class LetterMasteryCompanion extends UpdateCompanion<LetterMasteryData> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (childProfileId.present) {
+      map['child_profile_id'] = Variable<int>(childProfileId.value);
+    }
     if (letterId.present) {
       map['letter_id'] = Variable<String>(letterId.value);
     }
@@ -474,6 +530,7 @@ class LetterMasteryCompanion extends UpdateCompanion<LetterMasteryData> {
   @override
   String toString() {
     return (StringBuffer('LetterMasteryCompanion(')
+          ..write('childProfileId: $childProfileId, ')
           ..write('letterId: $letterId, ')
           ..write('cleanReps: $cleanReps, ')
           ..write('masteredAt: $masteredAt, ')
@@ -888,278 +945,23 @@ class ChildProfilesCompanion extends UpdateCompanion<ChildProfile> {
   }
 }
 
-class $LetterRepsTable extends LetterReps
-    with TableInfo<$LetterRepsTable, LetterRep> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $LetterRepsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _letterIdMeta = const VerificationMeta(
-    'letterId',
-  );
-  @override
-  late final GeneratedColumn<String> letterId = GeneratedColumn<String>(
-    'letter_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _cleanRepsMeta = const VerificationMeta(
-    'cleanReps',
-  );
-  @override
-  late final GeneratedColumn<int> cleanReps = GeneratedColumn<int>(
-    'clean_reps',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
-    'updatedAt',
-  );
-  @override
-  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
-    'updated_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: true,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [letterId, cleanReps, updatedAt];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'letter_reps';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<LetterRep> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('letter_id')) {
-      context.handle(
-        _letterIdMeta,
-        letterId.isAcceptableOrUnknown(data['letter_id']!, _letterIdMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_letterIdMeta);
-    }
-    if (data.containsKey('clean_reps')) {
-      context.handle(
-        _cleanRepsMeta,
-        cleanReps.isAcceptableOrUnknown(data['clean_reps']!, _cleanRepsMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_cleanRepsMeta);
-    }
-    if (data.containsKey('updated_at')) {
-      context.handle(
-        _updatedAtMeta,
-        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_updatedAtMeta);
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {letterId};
-  @override
-  LetterRep map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return LetterRep(
-      letterId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}letter_id'],
-      )!,
-      cleanReps: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}clean_reps'],
-      )!,
-      updatedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}updated_at'],
-      )!,
-    );
-  }
-
-  @override
-  $LetterRepsTable createAlias(String alias) {
-    return $LetterRepsTable(attachedDatabase, alias);
-  }
-}
-
-class LetterRep extends DataClass implements Insertable<LetterRep> {
-  final String letterId;
-  final int cleanReps;
-  final DateTime updatedAt;
-  const LetterRep({
-    required this.letterId,
-    required this.cleanReps,
-    required this.updatedAt,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['letter_id'] = Variable<String>(letterId);
-    map['clean_reps'] = Variable<int>(cleanReps);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
-    return map;
-  }
-
-  LetterRepsCompanion toCompanion(bool nullToAbsent) {
-    return LetterRepsCompanion(
-      letterId: Value(letterId),
-      cleanReps: Value(cleanReps),
-      updatedAt: Value(updatedAt),
-    );
-  }
-
-  factory LetterRep.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return LetterRep(
-      letterId: serializer.fromJson<String>(json['letterId']),
-      cleanReps: serializer.fromJson<int>(json['cleanReps']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'letterId': serializer.toJson<String>(letterId),
-      'cleanReps': serializer.toJson<int>(cleanReps),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
-    };
-  }
-
-  LetterRep copyWith({String? letterId, int? cleanReps, DateTime? updatedAt}) =>
-      LetterRep(
-        letterId: letterId ?? this.letterId,
-        cleanReps: cleanReps ?? this.cleanReps,
-        updatedAt: updatedAt ?? this.updatedAt,
-      );
-  LetterRep copyWithCompanion(LetterRepsCompanion data) {
-    return LetterRep(
-      letterId: data.letterId.present ? data.letterId.value : this.letterId,
-      cleanReps: data.cleanReps.present ? data.cleanReps.value : this.cleanReps,
-      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('LetterRep(')
-          ..write('letterId: $letterId, ')
-          ..write('cleanReps: $cleanReps, ')
-          ..write('updatedAt: $updatedAt')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(letterId, cleanReps, updatedAt);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is LetterRep &&
-          other.letterId == this.letterId &&
-          other.cleanReps == this.cleanReps &&
-          other.updatedAt == this.updatedAt);
-}
-
-class LetterRepsCompanion extends UpdateCompanion<LetterRep> {
-  final Value<String> letterId;
-  final Value<int> cleanReps;
-  final Value<DateTime> updatedAt;
-  final Value<int> rowid;
-  const LetterRepsCompanion({
-    this.letterId = const Value.absent(),
-    this.cleanReps = const Value.absent(),
-    this.updatedAt = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  LetterRepsCompanion.insert({
-    required String letterId,
-    required int cleanReps,
-    required DateTime updatedAt,
-    this.rowid = const Value.absent(),
-  }) : letterId = Value(letterId),
-       cleanReps = Value(cleanReps),
-       updatedAt = Value(updatedAt);
-  static Insertable<LetterRep> custom({
-    Expression<String>? letterId,
-    Expression<int>? cleanReps,
-    Expression<DateTime>? updatedAt,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (letterId != null) 'letter_id': letterId,
-      if (cleanReps != null) 'clean_reps': cleanReps,
-      if (updatedAt != null) 'updated_at': updatedAt,
-      if (rowid != null) 'rowid': rowid,
-    });
-  }
-
-  LetterRepsCompanion copyWith({
-    Value<String>? letterId,
-    Value<int>? cleanReps,
-    Value<DateTime>? updatedAt,
-    Value<int>? rowid,
-  }) {
-    return LetterRepsCompanion(
-      letterId: letterId ?? this.letterId,
-      cleanReps: cleanReps ?? this.cleanReps,
-      updatedAt: updatedAt ?? this.updatedAt,
-      rowid: rowid ?? this.rowid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (letterId.present) {
-      map['letter_id'] = Variable<String>(letterId.value);
-    }
-    if (cleanReps.present) {
-      map['clean_reps'] = Variable<int>(cleanReps.value);
-    }
-    if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
-    }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('LetterRepsCompanion(')
-          ..write('letterId: $letterId, ')
-          ..write('cleanReps: $cleanReps, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('rowid: $rowid')
-          ..write(')'))
-        .toString();
-  }
-}
-
 class $LetterGraphPositionTable extends LetterGraphPosition
     with TableInfo<$LetterGraphPositionTable, LetterGraphPositionData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $LetterGraphPositionTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _childProfileIdMeta = const VerificationMeta(
+    'childProfileId',
+  );
+  @override
+  late final GeneratedColumn<int> childProfileId = GeneratedColumn<int>(
+    'child_profile_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _letterIdMeta = const VerificationMeta(
     'letterId',
   );
@@ -1218,6 +1020,7 @@ class $LetterGraphPositionTable extends LetterGraphPosition
   );
   @override
   List<GeneratedColumn> get $columns => [
+    childProfileId,
     letterId,
     currentExerciseId,
     clearedCompetencies,
@@ -1236,6 +1039,17 @@ class $LetterGraphPositionTable extends LetterGraphPosition
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
+    if (data.containsKey('child_profile_id')) {
+      context.handle(
+        _childProfileIdMeta,
+        childProfileId.isAcceptableOrUnknown(
+          data['child_profile_id']!,
+          _childProfileIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_childProfileIdMeta);
+    }
     if (data.containsKey('letter_id')) {
       context.handle(
         _letterIdMeta,
@@ -1287,7 +1101,7 @@ class $LetterGraphPositionTable extends LetterGraphPosition
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {letterId};
+  Set<GeneratedColumn> get $primaryKey => {childProfileId, letterId};
   @override
   LetterGraphPositionData map(
     Map<String, dynamic> data, {
@@ -1295,6 +1109,10 @@ class $LetterGraphPositionTable extends LetterGraphPosition
   }) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return LetterGraphPositionData(
+      childProfileId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}child_profile_id'],
+      )!,
       letterId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}letter_id'],
@@ -1326,12 +1144,14 @@ class $LetterGraphPositionTable extends LetterGraphPosition
 
 class LetterGraphPositionData extends DataClass
     implements Insertable<LetterGraphPositionData> {
+  final int childProfileId;
   final String letterId;
   final String? currentExerciseId;
   final String clearedCompetencies;
   final String clearedTiers;
   final DateTime updatedAt;
   const LetterGraphPositionData({
+    required this.childProfileId,
     required this.letterId,
     this.currentExerciseId,
     required this.clearedCompetencies,
@@ -1341,6 +1161,7 @@ class LetterGraphPositionData extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    map['child_profile_id'] = Variable<int>(childProfileId);
     map['letter_id'] = Variable<String>(letterId);
     if (!nullToAbsent || currentExerciseId != null) {
       map['current_exercise_id'] = Variable<String>(currentExerciseId);
@@ -1353,6 +1174,7 @@ class LetterGraphPositionData extends DataClass
 
   LetterGraphPositionCompanion toCompanion(bool nullToAbsent) {
     return LetterGraphPositionCompanion(
+      childProfileId: Value(childProfileId),
       letterId: Value(letterId),
       currentExerciseId: currentExerciseId == null && nullToAbsent
           ? const Value.absent()
@@ -1369,6 +1191,7 @@ class LetterGraphPositionData extends DataClass
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return LetterGraphPositionData(
+      childProfileId: serializer.fromJson<int>(json['childProfileId']),
       letterId: serializer.fromJson<String>(json['letterId']),
       currentExerciseId: serializer.fromJson<String?>(
         json['currentExerciseId'],
@@ -1384,6 +1207,7 @@ class LetterGraphPositionData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'childProfileId': serializer.toJson<int>(childProfileId),
       'letterId': serializer.toJson<String>(letterId),
       'currentExerciseId': serializer.toJson<String?>(currentExerciseId),
       'clearedCompetencies': serializer.toJson<String>(clearedCompetencies),
@@ -1393,12 +1217,14 @@ class LetterGraphPositionData extends DataClass
   }
 
   LetterGraphPositionData copyWith({
+    int? childProfileId,
     String? letterId,
     Value<String?> currentExerciseId = const Value.absent(),
     String? clearedCompetencies,
     String? clearedTiers,
     DateTime? updatedAt,
   }) => LetterGraphPositionData(
+    childProfileId: childProfileId ?? this.childProfileId,
     letterId: letterId ?? this.letterId,
     currentExerciseId: currentExerciseId.present
         ? currentExerciseId.value
@@ -1409,6 +1235,9 @@ class LetterGraphPositionData extends DataClass
   );
   LetterGraphPositionData copyWithCompanion(LetterGraphPositionCompanion data) {
     return LetterGraphPositionData(
+      childProfileId: data.childProfileId.present
+          ? data.childProfileId.value
+          : this.childProfileId,
       letterId: data.letterId.present ? data.letterId.value : this.letterId,
       currentExerciseId: data.currentExerciseId.present
           ? data.currentExerciseId.value
@@ -1426,6 +1255,7 @@ class LetterGraphPositionData extends DataClass
   @override
   String toString() {
     return (StringBuffer('LetterGraphPositionData(')
+          ..write('childProfileId: $childProfileId, ')
           ..write('letterId: $letterId, ')
           ..write('currentExerciseId: $currentExerciseId, ')
           ..write('clearedCompetencies: $clearedCompetencies, ')
@@ -1437,6 +1267,7 @@ class LetterGraphPositionData extends DataClass
 
   @override
   int get hashCode => Object.hash(
+    childProfileId,
     letterId,
     currentExerciseId,
     clearedCompetencies,
@@ -1447,6 +1278,7 @@ class LetterGraphPositionData extends DataClass
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is LetterGraphPositionData &&
+          other.childProfileId == this.childProfileId &&
           other.letterId == this.letterId &&
           other.currentExerciseId == this.currentExerciseId &&
           other.clearedCompetencies == this.clearedCompetencies &&
@@ -1456,6 +1288,7 @@ class LetterGraphPositionData extends DataClass
 
 class LetterGraphPositionCompanion
     extends UpdateCompanion<LetterGraphPositionData> {
+  final Value<int> childProfileId;
   final Value<String> letterId;
   final Value<String?> currentExerciseId;
   final Value<String> clearedCompetencies;
@@ -1463,6 +1296,7 @@ class LetterGraphPositionCompanion
   final Value<DateTime> updatedAt;
   final Value<int> rowid;
   const LetterGraphPositionCompanion({
+    this.childProfileId = const Value.absent(),
     this.letterId = const Value.absent(),
     this.currentExerciseId = const Value.absent(),
     this.clearedCompetencies = const Value.absent(),
@@ -1471,17 +1305,20 @@ class LetterGraphPositionCompanion
     this.rowid = const Value.absent(),
   });
   LetterGraphPositionCompanion.insert({
+    required int childProfileId,
     required String letterId,
     this.currentExerciseId = const Value.absent(),
     required String clearedCompetencies,
     required String clearedTiers,
     required DateTime updatedAt,
     this.rowid = const Value.absent(),
-  }) : letterId = Value(letterId),
+  }) : childProfileId = Value(childProfileId),
+       letterId = Value(letterId),
        clearedCompetencies = Value(clearedCompetencies),
        clearedTiers = Value(clearedTiers),
        updatedAt = Value(updatedAt);
   static Insertable<LetterGraphPositionData> custom({
+    Expression<int>? childProfileId,
     Expression<String>? letterId,
     Expression<String>? currentExerciseId,
     Expression<String>? clearedCompetencies,
@@ -1490,6 +1327,7 @@ class LetterGraphPositionCompanion
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
+      if (childProfileId != null) 'child_profile_id': childProfileId,
       if (letterId != null) 'letter_id': letterId,
       if (currentExerciseId != null) 'current_exercise_id': currentExerciseId,
       if (clearedCompetencies != null)
@@ -1501,6 +1339,7 @@ class LetterGraphPositionCompanion
   }
 
   LetterGraphPositionCompanion copyWith({
+    Value<int>? childProfileId,
     Value<String>? letterId,
     Value<String?>? currentExerciseId,
     Value<String>? clearedCompetencies,
@@ -1509,6 +1348,7 @@ class LetterGraphPositionCompanion
     Value<int>? rowid,
   }) {
     return LetterGraphPositionCompanion(
+      childProfileId: childProfileId ?? this.childProfileId,
       letterId: letterId ?? this.letterId,
       currentExerciseId: currentExerciseId ?? this.currentExerciseId,
       clearedCompetencies: clearedCompetencies ?? this.clearedCompetencies,
@@ -1521,6 +1361,9 @@ class LetterGraphPositionCompanion
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (childProfileId.present) {
+      map['child_profile_id'] = Variable<int>(childProfileId.value);
+    }
     if (letterId.present) {
       map['letter_id'] = Variable<String>(letterId.value);
     }
@@ -1545,6 +1388,7 @@ class LetterGraphPositionCompanion
   @override
   String toString() {
     return (StringBuffer('LetterGraphPositionCompanion(')
+          ..write('childProfileId: $childProfileId, ')
           ..write('letterId: $letterId, ')
           ..write('currentExerciseId: $currentExerciseId, ')
           ..write('clearedCompetencies: $clearedCompetencies, ')
@@ -1562,6 +1406,17 @@ class $LetterExerciseRepsTable extends LetterExerciseReps
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $LetterExerciseRepsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _childProfileIdMeta = const VerificationMeta(
+    'childProfileId',
+  );
+  @override
+  late final GeneratedColumn<int> childProfileId = GeneratedColumn<int>(
+    'child_profile_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _letterIdMeta = const VerificationMeta(
     'letterId',
   );
@@ -1608,6 +1463,7 @@ class $LetterExerciseRepsTable extends LetterExerciseReps
   );
   @override
   List<GeneratedColumn> get $columns => [
+    childProfileId,
     letterId,
     exerciseId,
     cleanReps,
@@ -1625,6 +1481,17 @@ class $LetterExerciseRepsTable extends LetterExerciseReps
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
+    if (data.containsKey('child_profile_id')) {
+      context.handle(
+        _childProfileIdMeta,
+        childProfileId.isAcceptableOrUnknown(
+          data['child_profile_id']!,
+          _childProfileIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_childProfileIdMeta);
+    }
     if (data.containsKey('letter_id')) {
       context.handle(
         _letterIdMeta,
@@ -1661,11 +1528,19 @@ class $LetterExerciseRepsTable extends LetterExerciseReps
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {letterId, exerciseId};
+  Set<GeneratedColumn> get $primaryKey => {
+    childProfileId,
+    letterId,
+    exerciseId,
+  };
   @override
   LetterExerciseRep map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return LetterExerciseRep(
+      childProfileId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}child_profile_id'],
+      )!,
       letterId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}letter_id'],
@@ -1693,11 +1568,13 @@ class $LetterExerciseRepsTable extends LetterExerciseReps
 
 class LetterExerciseRep extends DataClass
     implements Insertable<LetterExerciseRep> {
+  final int childProfileId;
   final String letterId;
   final String exerciseId;
   final int cleanReps;
   final DateTime updatedAt;
   const LetterExerciseRep({
+    required this.childProfileId,
     required this.letterId,
     required this.exerciseId,
     required this.cleanReps,
@@ -1706,6 +1583,7 @@ class LetterExerciseRep extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    map['child_profile_id'] = Variable<int>(childProfileId);
     map['letter_id'] = Variable<String>(letterId);
     map['exercise_id'] = Variable<String>(exerciseId);
     map['clean_reps'] = Variable<int>(cleanReps);
@@ -1715,6 +1593,7 @@ class LetterExerciseRep extends DataClass
 
   LetterExerciseRepsCompanion toCompanion(bool nullToAbsent) {
     return LetterExerciseRepsCompanion(
+      childProfileId: Value(childProfileId),
       letterId: Value(letterId),
       exerciseId: Value(exerciseId),
       cleanReps: Value(cleanReps),
@@ -1728,6 +1607,7 @@ class LetterExerciseRep extends DataClass
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return LetterExerciseRep(
+      childProfileId: serializer.fromJson<int>(json['childProfileId']),
       letterId: serializer.fromJson<String>(json['letterId']),
       exerciseId: serializer.fromJson<String>(json['exerciseId']),
       cleanReps: serializer.fromJson<int>(json['cleanReps']),
@@ -1738,6 +1618,7 @@ class LetterExerciseRep extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'childProfileId': serializer.toJson<int>(childProfileId),
       'letterId': serializer.toJson<String>(letterId),
       'exerciseId': serializer.toJson<String>(exerciseId),
       'cleanReps': serializer.toJson<int>(cleanReps),
@@ -1746,11 +1627,13 @@ class LetterExerciseRep extends DataClass
   }
 
   LetterExerciseRep copyWith({
+    int? childProfileId,
     String? letterId,
     String? exerciseId,
     int? cleanReps,
     DateTime? updatedAt,
   }) => LetterExerciseRep(
+    childProfileId: childProfileId ?? this.childProfileId,
     letterId: letterId ?? this.letterId,
     exerciseId: exerciseId ?? this.exerciseId,
     cleanReps: cleanReps ?? this.cleanReps,
@@ -1758,6 +1641,9 @@ class LetterExerciseRep extends DataClass
   );
   LetterExerciseRep copyWithCompanion(LetterExerciseRepsCompanion data) {
     return LetterExerciseRep(
+      childProfileId: data.childProfileId.present
+          ? data.childProfileId.value
+          : this.childProfileId,
       letterId: data.letterId.present ? data.letterId.value : this.letterId,
       exerciseId: data.exerciseId.present
           ? data.exerciseId.value
@@ -1770,6 +1656,7 @@ class LetterExerciseRep extends DataClass
   @override
   String toString() {
     return (StringBuffer('LetterExerciseRep(')
+          ..write('childProfileId: $childProfileId, ')
           ..write('letterId: $letterId, ')
           ..write('exerciseId: $exerciseId, ')
           ..write('cleanReps: $cleanReps, ')
@@ -1779,11 +1666,13 @@ class LetterExerciseRep extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(letterId, exerciseId, cleanReps, updatedAt);
+  int get hashCode =>
+      Object.hash(childProfileId, letterId, exerciseId, cleanReps, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is LetterExerciseRep &&
+          other.childProfileId == this.childProfileId &&
           other.letterId == this.letterId &&
           other.exerciseId == this.exerciseId &&
           other.cleanReps == this.cleanReps &&
@@ -1791,12 +1680,14 @@ class LetterExerciseRep extends DataClass
 }
 
 class LetterExerciseRepsCompanion extends UpdateCompanion<LetterExerciseRep> {
+  final Value<int> childProfileId;
   final Value<String> letterId;
   final Value<String> exerciseId;
   final Value<int> cleanReps;
   final Value<DateTime> updatedAt;
   final Value<int> rowid;
   const LetterExerciseRepsCompanion({
+    this.childProfileId = const Value.absent(),
     this.letterId = const Value.absent(),
     this.exerciseId = const Value.absent(),
     this.cleanReps = const Value.absent(),
@@ -1804,16 +1695,19 @@ class LetterExerciseRepsCompanion extends UpdateCompanion<LetterExerciseRep> {
     this.rowid = const Value.absent(),
   });
   LetterExerciseRepsCompanion.insert({
+    required int childProfileId,
     required String letterId,
     required String exerciseId,
     required int cleanReps,
     required DateTime updatedAt,
     this.rowid = const Value.absent(),
-  }) : letterId = Value(letterId),
+  }) : childProfileId = Value(childProfileId),
+       letterId = Value(letterId),
        exerciseId = Value(exerciseId),
        cleanReps = Value(cleanReps),
        updatedAt = Value(updatedAt);
   static Insertable<LetterExerciseRep> custom({
+    Expression<int>? childProfileId,
     Expression<String>? letterId,
     Expression<String>? exerciseId,
     Expression<int>? cleanReps,
@@ -1821,6 +1715,7 @@ class LetterExerciseRepsCompanion extends UpdateCompanion<LetterExerciseRep> {
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
+      if (childProfileId != null) 'child_profile_id': childProfileId,
       if (letterId != null) 'letter_id': letterId,
       if (exerciseId != null) 'exercise_id': exerciseId,
       if (cleanReps != null) 'clean_reps': cleanReps,
@@ -1830,6 +1725,7 @@ class LetterExerciseRepsCompanion extends UpdateCompanion<LetterExerciseRep> {
   }
 
   LetterExerciseRepsCompanion copyWith({
+    Value<int>? childProfileId,
     Value<String>? letterId,
     Value<String>? exerciseId,
     Value<int>? cleanReps,
@@ -1837,6 +1733,7 @@ class LetterExerciseRepsCompanion extends UpdateCompanion<LetterExerciseRep> {
     Value<int>? rowid,
   }) {
     return LetterExerciseRepsCompanion(
+      childProfileId: childProfileId ?? this.childProfileId,
       letterId: letterId ?? this.letterId,
       exerciseId: exerciseId ?? this.exerciseId,
       cleanReps: cleanReps ?? this.cleanReps,
@@ -1848,6 +1745,9 @@ class LetterExerciseRepsCompanion extends UpdateCompanion<LetterExerciseRep> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (childProfileId.present) {
+      map['child_profile_id'] = Variable<int>(childProfileId.value);
+    }
     if (letterId.present) {
       map['letter_id'] = Variable<String>(letterId.value);
     }
@@ -1869,6 +1769,7 @@ class LetterExerciseRepsCompanion extends UpdateCompanion<LetterExerciseRep> {
   @override
   String toString() {
     return (StringBuffer('LetterExerciseRepsCompanion(')
+          ..write('childProfileId: $childProfileId, ')
           ..write('letterId: $letterId, ')
           ..write('exerciseId: $exerciseId, ')
           ..write('cleanReps: $cleanReps, ')
@@ -1897,6 +1798,17 @@ class $LetterCriterionEvidenceTable extends LetterCriterionEvidence
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'PRIMARY KEY AUTOINCREMENT',
     ),
+  );
+  static const VerificationMeta _childProfileIdMeta = const VerificationMeta(
+    'childProfileId',
+  );
+  @override
+  late final GeneratedColumn<int> childProfileId = GeneratedColumn<int>(
+    'child_profile_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
   );
   static const VerificationMeta _letterIdMeta = const VerificationMeta(
     'letterId',
@@ -1955,6 +1867,7 @@ class $LetterCriterionEvidenceTable extends LetterCriterionEvidence
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    childProfileId,
     letterId,
     criterion,
     passed,
@@ -1975,6 +1888,17 @@ class $LetterCriterionEvidenceTable extends LetterCriterionEvidence
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('child_profile_id')) {
+      context.handle(
+        _childProfileIdMeta,
+        childProfileId.isAcceptableOrUnknown(
+          data['child_profile_id']!,
+          _childProfileIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_childProfileIdMeta);
     }
     if (data.containsKey('letter_id')) {
       context.handle(
@@ -2032,6 +1956,10 @@ class $LetterCriterionEvidenceTable extends LetterCriterionEvidence
         DriftSqlType.int,
         data['${effectivePrefix}id'],
       )!,
+      childProfileId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}child_profile_id'],
+      )!,
       letterId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}letter_id'],
@@ -2064,6 +1992,7 @@ class $LetterCriterionEvidenceTable extends LetterCriterionEvidence
 class LetterCriterionEvidenceData extends DataClass
     implements Insertable<LetterCriterionEvidenceData> {
   final int id;
+  final int childProfileId;
   final String letterId;
   final String criterion;
   final bool passed;
@@ -2071,6 +2000,7 @@ class LetterCriterionEvidenceData extends DataClass
   final DateTime createdAt;
   const LetterCriterionEvidenceData({
     required this.id,
+    required this.childProfileId,
     required this.letterId,
     required this.criterion,
     required this.passed,
@@ -2081,6 +2011,7 @@ class LetterCriterionEvidenceData extends DataClass
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['child_profile_id'] = Variable<int>(childProfileId);
     map['letter_id'] = Variable<String>(letterId);
     map['criterion'] = Variable<String>(criterion);
     map['passed'] = Variable<bool>(passed);
@@ -2092,6 +2023,7 @@ class LetterCriterionEvidenceData extends DataClass
   LetterCriterionEvidenceCompanion toCompanion(bool nullToAbsent) {
     return LetterCriterionEvidenceCompanion(
       id: Value(id),
+      childProfileId: Value(childProfileId),
       letterId: Value(letterId),
       criterion: Value(criterion),
       passed: Value(passed),
@@ -2107,6 +2039,7 @@ class LetterCriterionEvidenceData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return LetterCriterionEvidenceData(
       id: serializer.fromJson<int>(json['id']),
+      childProfileId: serializer.fromJson<int>(json['childProfileId']),
       letterId: serializer.fromJson<String>(json['letterId']),
       criterion: serializer.fromJson<String>(json['criterion']),
       passed: serializer.fromJson<bool>(json['passed']),
@@ -2119,6 +2052,7 @@ class LetterCriterionEvidenceData extends DataClass
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'childProfileId': serializer.toJson<int>(childProfileId),
       'letterId': serializer.toJson<String>(letterId),
       'criterion': serializer.toJson<String>(criterion),
       'passed': serializer.toJson<bool>(passed),
@@ -2129,6 +2063,7 @@ class LetterCriterionEvidenceData extends DataClass
 
   LetterCriterionEvidenceData copyWith({
     int? id,
+    int? childProfileId,
     String? letterId,
     String? criterion,
     bool? passed,
@@ -2136,6 +2071,7 @@ class LetterCriterionEvidenceData extends DataClass
     DateTime? createdAt,
   }) => LetterCriterionEvidenceData(
     id: id ?? this.id,
+    childProfileId: childProfileId ?? this.childProfileId,
     letterId: letterId ?? this.letterId,
     criterion: criterion ?? this.criterion,
     passed: passed ?? this.passed,
@@ -2147,6 +2083,9 @@ class LetterCriterionEvidenceData extends DataClass
   ) {
     return LetterCriterionEvidenceData(
       id: data.id.present ? data.id.value : this.id,
+      childProfileId: data.childProfileId.present
+          ? data.childProfileId.value
+          : this.childProfileId,
       letterId: data.letterId.present ? data.letterId.value : this.letterId,
       criterion: data.criterion.present ? data.criterion.value : this.criterion,
       passed: data.passed.present ? data.passed.value : this.passed,
@@ -2159,6 +2098,7 @@ class LetterCriterionEvidenceData extends DataClass
   String toString() {
     return (StringBuffer('LetterCriterionEvidenceData(')
           ..write('id: $id, ')
+          ..write('childProfileId: $childProfileId, ')
           ..write('letterId: $letterId, ')
           ..write('criterion: $criterion, ')
           ..write('passed: $passed, ')
@@ -2169,13 +2109,21 @@ class LetterCriterionEvidenceData extends DataClass
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, letterId, criterion, passed, source, createdAt);
+  int get hashCode => Object.hash(
+    id,
+    childProfileId,
+    letterId,
+    criterion,
+    passed,
+    source,
+    createdAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is LetterCriterionEvidenceData &&
           other.id == this.id &&
+          other.childProfileId == this.childProfileId &&
           other.letterId == this.letterId &&
           other.criterion == this.criterion &&
           other.passed == this.passed &&
@@ -2186,6 +2134,7 @@ class LetterCriterionEvidenceData extends DataClass
 class LetterCriterionEvidenceCompanion
     extends UpdateCompanion<LetterCriterionEvidenceData> {
   final Value<int> id;
+  final Value<int> childProfileId;
   final Value<String> letterId;
   final Value<String> criterion;
   final Value<bool> passed;
@@ -2193,6 +2142,7 @@ class LetterCriterionEvidenceCompanion
   final Value<DateTime> createdAt;
   const LetterCriterionEvidenceCompanion({
     this.id = const Value.absent(),
+    this.childProfileId = const Value.absent(),
     this.letterId = const Value.absent(),
     this.criterion = const Value.absent(),
     this.passed = const Value.absent(),
@@ -2201,18 +2151,21 @@ class LetterCriterionEvidenceCompanion
   });
   LetterCriterionEvidenceCompanion.insert({
     this.id = const Value.absent(),
+    required int childProfileId,
     required String letterId,
     required String criterion,
     required bool passed,
     required String source,
     required DateTime createdAt,
-  }) : letterId = Value(letterId),
+  }) : childProfileId = Value(childProfileId),
+       letterId = Value(letterId),
        criterion = Value(criterion),
        passed = Value(passed),
        source = Value(source),
        createdAt = Value(createdAt);
   static Insertable<LetterCriterionEvidenceData> custom({
     Expression<int>? id,
+    Expression<int>? childProfileId,
     Expression<String>? letterId,
     Expression<String>? criterion,
     Expression<bool>? passed,
@@ -2221,6 +2174,7 @@ class LetterCriterionEvidenceCompanion
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (childProfileId != null) 'child_profile_id': childProfileId,
       if (letterId != null) 'letter_id': letterId,
       if (criterion != null) 'criterion': criterion,
       if (passed != null) 'passed': passed,
@@ -2231,6 +2185,7 @@ class LetterCriterionEvidenceCompanion
 
   LetterCriterionEvidenceCompanion copyWith({
     Value<int>? id,
+    Value<int>? childProfileId,
     Value<String>? letterId,
     Value<String>? criterion,
     Value<bool>? passed,
@@ -2239,6 +2194,7 @@ class LetterCriterionEvidenceCompanion
   }) {
     return LetterCriterionEvidenceCompanion(
       id: id ?? this.id,
+      childProfileId: childProfileId ?? this.childProfileId,
       letterId: letterId ?? this.letterId,
       criterion: criterion ?? this.criterion,
       passed: passed ?? this.passed,
@@ -2252,6 +2208,9 @@ class LetterCriterionEvidenceCompanion
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (childProfileId.present) {
+      map['child_profile_id'] = Variable<int>(childProfileId.value);
     }
     if (letterId.present) {
       map['letter_id'] = Variable<String>(letterId.value);
@@ -2275,6 +2234,7 @@ class LetterCriterionEvidenceCompanion
   String toString() {
     return (StringBuffer('LetterCriterionEvidenceCompanion(')
           ..write('id: $id, ')
+          ..write('childProfileId: $childProfileId, ')
           ..write('letterId: $letterId, ')
           ..write('criterion: $criterion, ')
           ..write('passed: $passed, ')
@@ -2291,6 +2251,17 @@ class $ArcStateRowsTable extends ArcStateRows
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $ArcStateRowsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _childProfileIdMeta = const VerificationMeta(
+    'childProfileId',
+  );
+  @override
+  late final GeneratedColumn<int> childProfileId = GeneratedColumn<int>(
+    'child_profile_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _letterIdMeta = const VerificationMeta(
     'letterId',
   );
@@ -2358,6 +2329,7 @@ class $ArcStateRowsTable extends ArcStateRows
   );
   @override
   List<GeneratedColumn> get $columns => [
+    childProfileId,
     letterId,
     active,
     step,
@@ -2377,6 +2349,17 @@ class $ArcStateRowsTable extends ArcStateRows
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
+    if (data.containsKey('child_profile_id')) {
+      context.handle(
+        _childProfileIdMeta,
+        childProfileId.isAcceptableOrUnknown(
+          data['child_profile_id']!,
+          _childProfileIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_childProfileIdMeta);
+    }
     if (data.containsKey('letter_id')) {
       context.handle(
         _letterIdMeta,
@@ -2431,11 +2414,15 @@ class $ArcStateRowsTable extends ArcStateRows
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {letterId};
+  Set<GeneratedColumn> get $primaryKey => {childProfileId, letterId};
   @override
   ArcStateRow map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return ArcStateRow(
+      childProfileId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}child_profile_id'],
+      )!,
       letterId: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}letter_id'],
@@ -2470,6 +2457,7 @@ class $ArcStateRowsTable extends ArcStateRows
 }
 
 class ArcStateRow extends DataClass implements Insertable<ArcStateRow> {
+  final int childProfileId;
   final String letterId;
   final bool active;
   final String step;
@@ -2477,6 +2465,7 @@ class ArcStateRow extends DataClass implements Insertable<ArcStateRow> {
   final String? exerciseToRetry;
   final DateTime updatedAt;
   const ArcStateRow({
+    required this.childProfileId,
     required this.letterId,
     required this.active,
     required this.step,
@@ -2487,6 +2476,7 @@ class ArcStateRow extends DataClass implements Insertable<ArcStateRow> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    map['child_profile_id'] = Variable<int>(childProfileId);
     map['letter_id'] = Variable<String>(letterId);
     map['active'] = Variable<bool>(active);
     map['step'] = Variable<String>(step);
@@ -2502,6 +2492,7 @@ class ArcStateRow extends DataClass implements Insertable<ArcStateRow> {
 
   ArcStateRowsCompanion toCompanion(bool nullToAbsent) {
     return ArcStateRowsCompanion(
+      childProfileId: Value(childProfileId),
       letterId: Value(letterId),
       active: Value(active),
       step: Value(step),
@@ -2521,6 +2512,7 @@ class ArcStateRow extends DataClass implements Insertable<ArcStateRow> {
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return ArcStateRow(
+      childProfileId: serializer.fromJson<int>(json['childProfileId']),
       letterId: serializer.fromJson<String>(json['letterId']),
       active: serializer.fromJson<bool>(json['active']),
       step: serializer.fromJson<String>(json['step']),
@@ -2533,6 +2525,7 @@ class ArcStateRow extends DataClass implements Insertable<ArcStateRow> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
+      'childProfileId': serializer.toJson<int>(childProfileId),
       'letterId': serializer.toJson<String>(letterId),
       'active': serializer.toJson<bool>(active),
       'step': serializer.toJson<String>(step),
@@ -2543,6 +2536,7 @@ class ArcStateRow extends DataClass implements Insertable<ArcStateRow> {
   }
 
   ArcStateRow copyWith({
+    int? childProfileId,
     String? letterId,
     bool? active,
     String? step,
@@ -2550,6 +2544,7 @@ class ArcStateRow extends DataClass implements Insertable<ArcStateRow> {
     Value<String?> exerciseToRetry = const Value.absent(),
     DateTime? updatedAt,
   }) => ArcStateRow(
+    childProfileId: childProfileId ?? this.childProfileId,
     letterId: letterId ?? this.letterId,
     active: active ?? this.active,
     step: step ?? this.step,
@@ -2563,6 +2558,9 @@ class ArcStateRow extends DataClass implements Insertable<ArcStateRow> {
   );
   ArcStateRow copyWithCompanion(ArcStateRowsCompanion data) {
     return ArcStateRow(
+      childProfileId: data.childProfileId.present
+          ? data.childProfileId.value
+          : this.childProfileId,
       letterId: data.letterId.present ? data.letterId.value : this.letterId,
       active: data.active.present ? data.active.value : this.active,
       step: data.step.present ? data.step.value : this.step,
@@ -2579,6 +2577,7 @@ class ArcStateRow extends DataClass implements Insertable<ArcStateRow> {
   @override
   String toString() {
     return (StringBuffer('ArcStateRow(')
+          ..write('childProfileId: $childProfileId, ')
           ..write('letterId: $letterId, ')
           ..write('active: $active, ')
           ..write('step: $step, ')
@@ -2591,6 +2590,7 @@ class ArcStateRow extends DataClass implements Insertable<ArcStateRow> {
 
   @override
   int get hashCode => Object.hash(
+    childProfileId,
     letterId,
     active,
     step,
@@ -2602,6 +2602,7 @@ class ArcStateRow extends DataClass implements Insertable<ArcStateRow> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is ArcStateRow &&
+          other.childProfileId == this.childProfileId &&
           other.letterId == this.letterId &&
           other.active == this.active &&
           other.step == this.step &&
@@ -2611,6 +2612,7 @@ class ArcStateRow extends DataClass implements Insertable<ArcStateRow> {
 }
 
 class ArcStateRowsCompanion extends UpdateCompanion<ArcStateRow> {
+  final Value<int> childProfileId;
   final Value<String> letterId;
   final Value<bool> active;
   final Value<String> step;
@@ -2619,6 +2621,7 @@ class ArcStateRowsCompanion extends UpdateCompanion<ArcStateRow> {
   final Value<DateTime> updatedAt;
   final Value<int> rowid;
   const ArcStateRowsCompanion({
+    this.childProfileId = const Value.absent(),
     this.letterId = const Value.absent(),
     this.active = const Value.absent(),
     this.step = const Value.absent(),
@@ -2628,6 +2631,7 @@ class ArcStateRowsCompanion extends UpdateCompanion<ArcStateRow> {
     this.rowid = const Value.absent(),
   });
   ArcStateRowsCompanion.insert({
+    required int childProfileId,
     required String letterId,
     required bool active,
     required String step,
@@ -2635,11 +2639,13 @@ class ArcStateRowsCompanion extends UpdateCompanion<ArcStateRow> {
     this.exerciseToRetry = const Value.absent(),
     required DateTime updatedAt,
     this.rowid = const Value.absent(),
-  }) : letterId = Value(letterId),
+  }) : childProfileId = Value(childProfileId),
+       letterId = Value(letterId),
        active = Value(active),
        step = Value(step),
        updatedAt = Value(updatedAt);
   static Insertable<ArcStateRow> custom({
+    Expression<int>? childProfileId,
     Expression<String>? letterId,
     Expression<bool>? active,
     Expression<String>? step,
@@ -2649,6 +2655,7 @@ class ArcStateRowsCompanion extends UpdateCompanion<ArcStateRow> {
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
+      if (childProfileId != null) 'child_profile_id': childProfileId,
       if (letterId != null) 'letter_id': letterId,
       if (active != null) 'active': active,
       if (step != null) 'step': step,
@@ -2660,6 +2667,7 @@ class ArcStateRowsCompanion extends UpdateCompanion<ArcStateRow> {
   }
 
   ArcStateRowsCompanion copyWith({
+    Value<int>? childProfileId,
     Value<String>? letterId,
     Value<bool>? active,
     Value<String>? step,
@@ -2669,6 +2677,7 @@ class ArcStateRowsCompanion extends UpdateCompanion<ArcStateRow> {
     Value<int>? rowid,
   }) {
     return ArcStateRowsCompanion(
+      childProfileId: childProfileId ?? this.childProfileId,
       letterId: letterId ?? this.letterId,
       active: active ?? this.active,
       step: step ?? this.step,
@@ -2682,6 +2691,9 @@ class ArcStateRowsCompanion extends UpdateCompanion<ArcStateRow> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
+    if (childProfileId.present) {
+      map['child_profile_id'] = Variable<int>(childProfileId.value);
+    }
     if (letterId.present) {
       map['letter_id'] = Variable<String>(letterId.value);
     }
@@ -2709,6 +2721,7 @@ class ArcStateRowsCompanion extends UpdateCompanion<ArcStateRow> {
   @override
   String toString() {
     return (StringBuffer('ArcStateRowsCompanion(')
+          ..write('childProfileId: $childProfileId, ')
           ..write('letterId: $letterId, ')
           ..write('active: $active, ')
           ..write('step: $step, ')
@@ -3100,7 +3113,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $AppSettingsTable appSettings = $AppSettingsTable(this);
   late final $LetterMasteryTable letterMastery = $LetterMasteryTable(this);
   late final $ChildProfilesTable childProfiles = $ChildProfilesTable(this);
-  late final $LetterRepsTable letterReps = $LetterRepsTable(this);
   late final $LetterGraphPositionTable letterGraphPosition =
       $LetterGraphPositionTable(this);
   late final $LetterExerciseRepsTable letterExerciseReps =
@@ -3118,7 +3130,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     appSettings,
     letterMastery,
     childProfiles,
-    letterReps,
     letterGraphPosition,
     letterExerciseReps,
     letterCriterionEvidence,
@@ -3268,6 +3279,7 @@ typedef $$AppSettingsTableProcessedTableManager =
     >;
 typedef $$LetterMasteryTableCreateCompanionBuilder =
     LetterMasteryCompanion Function({
+      required int childProfileId,
       required String letterId,
       required int cleanReps,
       required DateTime masteredAt,
@@ -3275,6 +3287,7 @@ typedef $$LetterMasteryTableCreateCompanionBuilder =
     });
 typedef $$LetterMasteryTableUpdateCompanionBuilder =
     LetterMasteryCompanion Function({
+      Value<int> childProfileId,
       Value<String> letterId,
       Value<int> cleanReps,
       Value<DateTime> masteredAt,
@@ -3290,6 +3303,11 @@ class $$LetterMasteryTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  ColumnFilters<int> get childProfileId => $composableBuilder(
+    column: $table.childProfileId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get letterId => $composableBuilder(
     column: $table.letterId,
     builder: (column) => ColumnFilters(column),
@@ -3315,6 +3333,11 @@ class $$LetterMasteryTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  ColumnOrderings<int> get childProfileId => $composableBuilder(
+    column: $table.childProfileId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get letterId => $composableBuilder(
     column: $table.letterId,
     builder: (column) => ColumnOrderings(column),
@@ -3340,6 +3363,11 @@ class $$LetterMasteryTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  GeneratedColumn<int> get childProfileId => $composableBuilder(
+    column: $table.childProfileId,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get letterId =>
       $composableBuilder(column: $table.letterId, builder: (column) => column);
 
@@ -3387,11 +3415,13 @@ class $$LetterMasteryTableTableManager
               $$LetterMasteryTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
+                Value<int> childProfileId = const Value.absent(),
                 Value<String> letterId = const Value.absent(),
                 Value<int> cleanReps = const Value.absent(),
                 Value<DateTime> masteredAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LetterMasteryCompanion(
+                childProfileId: childProfileId,
                 letterId: letterId,
                 cleanReps: cleanReps,
                 masteredAt: masteredAt,
@@ -3399,11 +3429,13 @@ class $$LetterMasteryTableTableManager
               ),
           createCompanionCallback:
               ({
+                required int childProfileId,
                 required String letterId,
                 required int cleanReps,
                 required DateTime masteredAt,
                 Value<int> rowid = const Value.absent(),
               }) => LetterMasteryCompanion.insert(
+                childProfileId: childProfileId,
                 letterId: letterId,
                 cleanReps: cleanReps,
                 masteredAt: masteredAt,
@@ -3651,167 +3683,9 @@ typedef $$ChildProfilesTableProcessedTableManager =
       ChildProfile,
       PrefetchHooks Function()
     >;
-typedef $$LetterRepsTableCreateCompanionBuilder =
-    LetterRepsCompanion Function({
-      required String letterId,
-      required int cleanReps,
-      required DateTime updatedAt,
-      Value<int> rowid,
-    });
-typedef $$LetterRepsTableUpdateCompanionBuilder =
-    LetterRepsCompanion Function({
-      Value<String> letterId,
-      Value<int> cleanReps,
-      Value<DateTime> updatedAt,
-      Value<int> rowid,
-    });
-
-class $$LetterRepsTableFilterComposer
-    extends Composer<_$AppDatabase, $LetterRepsTable> {
-  $$LetterRepsTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<String> get letterId => $composableBuilder(
-    column: $table.letterId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get cleanReps => $composableBuilder(
-    column: $table.cleanReps,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-}
-
-class $$LetterRepsTableOrderingComposer
-    extends Composer<_$AppDatabase, $LetterRepsTable> {
-  $$LetterRepsTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<String> get letterId => $composableBuilder(
-    column: $table.letterId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get cleanReps => $composableBuilder(
-    column: $table.cleanReps,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-}
-
-class $$LetterRepsTableAnnotationComposer
-    extends Composer<_$AppDatabase, $LetterRepsTable> {
-  $$LetterRepsTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<String> get letterId =>
-      $composableBuilder(column: $table.letterId, builder: (column) => column);
-
-  GeneratedColumn<int> get cleanReps =>
-      $composableBuilder(column: $table.cleanReps, builder: (column) => column);
-
-  GeneratedColumn<DateTime> get updatedAt =>
-      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
-}
-
-class $$LetterRepsTableTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          $LetterRepsTable,
-          LetterRep,
-          $$LetterRepsTableFilterComposer,
-          $$LetterRepsTableOrderingComposer,
-          $$LetterRepsTableAnnotationComposer,
-          $$LetterRepsTableCreateCompanionBuilder,
-          $$LetterRepsTableUpdateCompanionBuilder,
-          (
-            LetterRep,
-            BaseReferences<_$AppDatabase, $LetterRepsTable, LetterRep>,
-          ),
-          LetterRep,
-          PrefetchHooks Function()
-        > {
-  $$LetterRepsTableTableManager(_$AppDatabase db, $LetterRepsTable table)
-    : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$LetterRepsTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$LetterRepsTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $$LetterRepsTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback:
-              ({
-                Value<String> letterId = const Value.absent(),
-                Value<int> cleanReps = const Value.absent(),
-                Value<DateTime> updatedAt = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => LetterRepsCompanion(
-                letterId: letterId,
-                cleanReps: cleanReps,
-                updatedAt: updatedAt,
-                rowid: rowid,
-              ),
-          createCompanionCallback:
-              ({
-                required String letterId,
-                required int cleanReps,
-                required DateTime updatedAt,
-                Value<int> rowid = const Value.absent(),
-              }) => LetterRepsCompanion.insert(
-                letterId: letterId,
-                cleanReps: cleanReps,
-                updatedAt: updatedAt,
-                rowid: rowid,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
-              .toList(),
-          prefetchHooksCallback: null,
-        ),
-      );
-}
-
-typedef $$LetterRepsTableProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      $LetterRepsTable,
-      LetterRep,
-      $$LetterRepsTableFilterComposer,
-      $$LetterRepsTableOrderingComposer,
-      $$LetterRepsTableAnnotationComposer,
-      $$LetterRepsTableCreateCompanionBuilder,
-      $$LetterRepsTableUpdateCompanionBuilder,
-      (LetterRep, BaseReferences<_$AppDatabase, $LetterRepsTable, LetterRep>),
-      LetterRep,
-      PrefetchHooks Function()
-    >;
 typedef $$LetterGraphPositionTableCreateCompanionBuilder =
     LetterGraphPositionCompanion Function({
+      required int childProfileId,
       required String letterId,
       Value<String?> currentExerciseId,
       required String clearedCompetencies,
@@ -3821,6 +3695,7 @@ typedef $$LetterGraphPositionTableCreateCompanionBuilder =
     });
 typedef $$LetterGraphPositionTableUpdateCompanionBuilder =
     LetterGraphPositionCompanion Function({
+      Value<int> childProfileId,
       Value<String> letterId,
       Value<String?> currentExerciseId,
       Value<String> clearedCompetencies,
@@ -3838,6 +3713,11 @@ class $$LetterGraphPositionTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  ColumnFilters<int> get childProfileId => $composableBuilder(
+    column: $table.childProfileId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get letterId => $composableBuilder(
     column: $table.letterId,
     builder: (column) => ColumnFilters(column),
@@ -3873,6 +3753,11 @@ class $$LetterGraphPositionTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  ColumnOrderings<int> get childProfileId => $composableBuilder(
+    column: $table.childProfileId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get letterId => $composableBuilder(
     column: $table.letterId,
     builder: (column) => ColumnOrderings(column),
@@ -3908,6 +3793,11 @@ class $$LetterGraphPositionTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  GeneratedColumn<int> get childProfileId => $composableBuilder(
+    column: $table.childProfileId,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get letterId =>
       $composableBuilder(column: $table.letterId, builder: (column) => column);
 
@@ -3973,6 +3863,7 @@ class $$LetterGraphPositionTableTableManager
               ),
           updateCompanionCallback:
               ({
+                Value<int> childProfileId = const Value.absent(),
                 Value<String> letterId = const Value.absent(),
                 Value<String?> currentExerciseId = const Value.absent(),
                 Value<String> clearedCompetencies = const Value.absent(),
@@ -3980,6 +3871,7 @@ class $$LetterGraphPositionTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LetterGraphPositionCompanion(
+                childProfileId: childProfileId,
                 letterId: letterId,
                 currentExerciseId: currentExerciseId,
                 clearedCompetencies: clearedCompetencies,
@@ -3989,6 +3881,7 @@ class $$LetterGraphPositionTableTableManager
               ),
           createCompanionCallback:
               ({
+                required int childProfileId,
                 required String letterId,
                 Value<String?> currentExerciseId = const Value.absent(),
                 required String clearedCompetencies,
@@ -3996,6 +3889,7 @@ class $$LetterGraphPositionTableTableManager
                 required DateTime updatedAt,
                 Value<int> rowid = const Value.absent(),
               }) => LetterGraphPositionCompanion.insert(
+                childProfileId: childProfileId,
                 letterId: letterId,
                 currentExerciseId: currentExerciseId,
                 clearedCompetencies: clearedCompetencies,
@@ -4034,6 +3928,7 @@ typedef $$LetterGraphPositionTableProcessedTableManager =
     >;
 typedef $$LetterExerciseRepsTableCreateCompanionBuilder =
     LetterExerciseRepsCompanion Function({
+      required int childProfileId,
       required String letterId,
       required String exerciseId,
       required int cleanReps,
@@ -4042,6 +3937,7 @@ typedef $$LetterExerciseRepsTableCreateCompanionBuilder =
     });
 typedef $$LetterExerciseRepsTableUpdateCompanionBuilder =
     LetterExerciseRepsCompanion Function({
+      Value<int> childProfileId,
       Value<String> letterId,
       Value<String> exerciseId,
       Value<int> cleanReps,
@@ -4058,6 +3954,11 @@ class $$LetterExerciseRepsTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  ColumnFilters<int> get childProfileId => $composableBuilder(
+    column: $table.childProfileId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get letterId => $composableBuilder(
     column: $table.letterId,
     builder: (column) => ColumnFilters(column),
@@ -4088,6 +3989,11 @@ class $$LetterExerciseRepsTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  ColumnOrderings<int> get childProfileId => $composableBuilder(
+    column: $table.childProfileId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get letterId => $composableBuilder(
     column: $table.letterId,
     builder: (column) => ColumnOrderings(column),
@@ -4118,6 +4024,11 @@ class $$LetterExerciseRepsTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  GeneratedColumn<int> get childProfileId => $composableBuilder(
+    column: $table.childProfileId,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get letterId =>
       $composableBuilder(column: $table.letterId, builder: (column) => column);
 
@@ -4173,12 +4084,14 @@ class $$LetterExerciseRepsTableTableManager
               ),
           updateCompanionCallback:
               ({
+                Value<int> childProfileId = const Value.absent(),
                 Value<String> letterId = const Value.absent(),
                 Value<String> exerciseId = const Value.absent(),
                 Value<int> cleanReps = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => LetterExerciseRepsCompanion(
+                childProfileId: childProfileId,
                 letterId: letterId,
                 exerciseId: exerciseId,
                 cleanReps: cleanReps,
@@ -4187,12 +4100,14 @@ class $$LetterExerciseRepsTableTableManager
               ),
           createCompanionCallback:
               ({
+                required int childProfileId,
                 required String letterId,
                 required String exerciseId,
                 required int cleanReps,
                 required DateTime updatedAt,
                 Value<int> rowid = const Value.absent(),
               }) => LetterExerciseRepsCompanion.insert(
+                childProfileId: childProfileId,
                 letterId: letterId,
                 exerciseId: exerciseId,
                 cleanReps: cleanReps,
@@ -4231,6 +4146,7 @@ typedef $$LetterExerciseRepsTableProcessedTableManager =
 typedef $$LetterCriterionEvidenceTableCreateCompanionBuilder =
     LetterCriterionEvidenceCompanion Function({
       Value<int> id,
+      required int childProfileId,
       required String letterId,
       required String criterion,
       required bool passed,
@@ -4240,6 +4156,7 @@ typedef $$LetterCriterionEvidenceTableCreateCompanionBuilder =
 typedef $$LetterCriterionEvidenceTableUpdateCompanionBuilder =
     LetterCriterionEvidenceCompanion Function({
       Value<int> id,
+      Value<int> childProfileId,
       Value<String> letterId,
       Value<String> criterion,
       Value<bool> passed,
@@ -4258,6 +4175,11 @@ class $$LetterCriterionEvidenceTableFilterComposer
   });
   ColumnFilters<int> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get childProfileId => $composableBuilder(
+    column: $table.childProfileId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4301,6 +4223,11 @@ class $$LetterCriterionEvidenceTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get childProfileId => $composableBuilder(
+    column: $table.childProfileId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get letterId => $composableBuilder(
     column: $table.letterId,
     builder: (column) => ColumnOrderings(column),
@@ -4338,6 +4265,11 @@ class $$LetterCriterionEvidenceTableAnnotationComposer
   });
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get childProfileId => $composableBuilder(
+    column: $table.childProfileId,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get letterId =>
       $composableBuilder(column: $table.letterId, builder: (column) => column);
@@ -4402,6 +4334,7 @@ class $$LetterCriterionEvidenceTableTableManager
           updateCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
+                Value<int> childProfileId = const Value.absent(),
                 Value<String> letterId = const Value.absent(),
                 Value<String> criterion = const Value.absent(),
                 Value<bool> passed = const Value.absent(),
@@ -4409,6 +4342,7 @@ class $$LetterCriterionEvidenceTableTableManager
                 Value<DateTime> createdAt = const Value.absent(),
               }) => LetterCriterionEvidenceCompanion(
                 id: id,
+                childProfileId: childProfileId,
                 letterId: letterId,
                 criterion: criterion,
                 passed: passed,
@@ -4418,6 +4352,7 @@ class $$LetterCriterionEvidenceTableTableManager
           createCompanionCallback:
               ({
                 Value<int> id = const Value.absent(),
+                required int childProfileId,
                 required String letterId,
                 required String criterion,
                 required bool passed,
@@ -4425,6 +4360,7 @@ class $$LetterCriterionEvidenceTableTableManager
                 required DateTime createdAt,
               }) => LetterCriterionEvidenceCompanion.insert(
                 id: id,
+                childProfileId: childProfileId,
                 letterId: letterId,
                 criterion: criterion,
                 passed: passed,
@@ -4462,6 +4398,7 @@ typedef $$LetterCriterionEvidenceTableProcessedTableManager =
     >;
 typedef $$ArcStateRowsTableCreateCompanionBuilder =
     ArcStateRowsCompanion Function({
+      required int childProfileId,
       required String letterId,
       required bool active,
       required String step,
@@ -4472,6 +4409,7 @@ typedef $$ArcStateRowsTableCreateCompanionBuilder =
     });
 typedef $$ArcStateRowsTableUpdateCompanionBuilder =
     ArcStateRowsCompanion Function({
+      Value<int> childProfileId,
       Value<String> letterId,
       Value<bool> active,
       Value<String> step,
@@ -4490,6 +4428,11 @@ class $$ArcStateRowsTableFilterComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  ColumnFilters<int> get childProfileId => $composableBuilder(
+    column: $table.childProfileId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get letterId => $composableBuilder(
     column: $table.letterId,
     builder: (column) => ColumnFilters(column),
@@ -4530,6 +4473,11 @@ class $$ArcStateRowsTableOrderingComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  ColumnOrderings<int> get childProfileId => $composableBuilder(
+    column: $table.childProfileId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get letterId => $composableBuilder(
     column: $table.letterId,
     builder: (column) => ColumnOrderings(column),
@@ -4570,6 +4518,11 @@ class $$ArcStateRowsTableAnnotationComposer
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
+  GeneratedColumn<int> get childProfileId => $composableBuilder(
+    column: $table.childProfileId,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get letterId =>
       $composableBuilder(column: $table.letterId, builder: (column) => column);
 
@@ -4624,6 +4577,7 @@ class $$ArcStateRowsTableTableManager
               $$ArcStateRowsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
+                Value<int> childProfileId = const Value.absent(),
                 Value<String> letterId = const Value.absent(),
                 Value<bool> active = const Value.absent(),
                 Value<String> step = const Value.absent(),
@@ -4632,6 +4586,7 @@ class $$ArcStateRowsTableTableManager
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ArcStateRowsCompanion(
+                childProfileId: childProfileId,
                 letterId: letterId,
                 active: active,
                 step: step,
@@ -4642,6 +4597,7 @@ class $$ArcStateRowsTableTableManager
               ),
           createCompanionCallback:
               ({
+                required int childProfileId,
                 required String letterId,
                 required bool active,
                 required String step,
@@ -4650,6 +4606,7 @@ class $$ArcStateRowsTableTableManager
                 required DateTime updatedAt,
                 Value<int> rowid = const Value.absent(),
               }) => ArcStateRowsCompanion.insert(
+                childProfileId: childProfileId,
                 letterId: letterId,
                 active: active,
                 step: step,
@@ -4908,8 +4865,6 @@ class $AppDatabaseManager {
       $$LetterMasteryTableTableManager(_db, _db.letterMastery);
   $$ChildProfilesTableTableManager get childProfiles =>
       $$ChildProfilesTableTableManager(_db, _db.childProfiles);
-  $$LetterRepsTableTableManager get letterReps =>
-      $$LetterRepsTableTableManager(_db, _db.letterReps);
   $$LetterGraphPositionTableTableManager get letterGraphPosition =>
       $$LetterGraphPositionTableTableManager(_db, _db.letterGraphPosition);
   $$LetterExerciseRepsTableTableManager get letterExerciseReps =>

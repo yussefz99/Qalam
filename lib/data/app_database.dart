@@ -22,6 +22,16 @@ import '../providers/auth_providers.dart';
 
 part 'app_database.g.dart';
 
+/// The in-file "no child yet" sentinel for [childProfileId] (ADR-018 / D-16).
+///
+/// `ChildProfiles.id` is an autoincrement surrogate whose real ids start at 1, so
+/// `0` can never collide with a real profile. It is used as the adoption sentinel
+/// in the v6→v7 migration (`SELECT id FROM child_profiles LIMIT 1` → `0` when no
+/// profile exists) and as the fallback a writer caches when no profile has been
+/// created yet (a child never practices before onboarding creates a profile, so
+/// this is a safety floor, not a live path).
+const int kUnassignedChildProfileId = 0;
+
 /// Trivial key/value settings table — the persist-proof row (D-09).
 class AppSettings extends Table {
   TextColumn get key => text()();
@@ -33,16 +43,20 @@ class AppSettings extends Table {
 
 /// Per-letter mastery record — Phase 3 (D-09, Plan 03-02).
 ///
-/// SECURITY (T-03-01/T-01-05): only letterId, cleanReps, and masteredAt are
-/// stored. Captured stroke points are NEVER persisted here or anywhere else —
-/// they stay in-memory only and are discarded on dispose.
+/// SECURITY (T-03-01/T-01-05): only childProfileId, letterId, cleanReps, and
+/// masteredAt are stored. Captured stroke points are NEVER persisted here or
+/// anywhere else — they stay in-memory only and are discarded on dispose.
+///
+/// ADR-018 (D-13/D-14): re-keyed by (childProfileId, letterId) so a fresh profile
+/// in the same account file never reads the prior child's mastery.
 class LetterMastery extends Table {
+  IntColumn get childProfileId => integer()();
   TextColumn get letterId => text()();
   IntColumn get cleanReps => integer()();
   DateTimeColumn get masteredAt => dateTime()();
 
   @override
-  Set<Column> get primaryKey => {letterId};
+  Set<Column> get primaryKey => {childProfileId, letterId};
 }
 
 /// One child profile — Phase 5 (S1-02 / S1-03, Plan 05-02).
@@ -62,22 +76,11 @@ class ChildProfiles extends Table {
   IntColumn get createdAt => integer()(); // unix epoch ms
 }
 
-/// Per-letter PARTIAL clean-rep counter — Phase 6 (D-10, Plan 06-02).
-///
-/// Distinct from [LetterMastery]: a row here means "in progress" (the child has
-/// some clean reps banked toward mastery); a LetterMastery row means "passed".
-///
-/// SECURITY (T-03-01/T-06-01): only letterId, cleanReps, and updatedAt are
-/// stored. Captured stroke points are NEVER persisted here or anywhere else —
-/// they stay in-memory only and are discarded on dispose.
-class LetterReps extends Table {
-  TextColumn get letterId => text()();
-  IntColumn get cleanReps => integer()();
-  DateTimeColumn get updatedAt => dateTime()();
-
-  @override
-  Set<Column> get primaryKey => {letterId};
-}
+// LetterReps (the legacy per-letter clean-rep counter) was RETIRED in the v6→v7
+// migration (ADR-018 / D-15). Its three live readers were folded onto a
+// MAX-aggregate over LetterExerciseReps in Plan 19-04; 19-06 drops the table and
+// removes its class + accessors. There is now ONE way to count reps —
+// LetterExerciseReps.
 
 /// The child's durable position in a letter's curriculum graph — Phase 15
 /// (DYN-02 / D-08, Plan 15-04). One row per letter the child has started.
@@ -95,15 +98,20 @@ class LetterReps extends Table {
 /// current exercise id, derived competency/tier id lists, and updatedAt. NEVER a
 /// stroke point, an Offset, a child name, or any PII (mirrors the LetterReps /
 /// LetterMastery no-PII convention). Values are never logged.
+///
+/// ADR-018 (D-13/D-14): re-keyed by (childProfileId, letterId) — this is the
+/// cursor whose profile-agnostic key caused the resume leak; the child dimension
+/// closes it.
 class LetterGraphPosition extends Table {
-  TextColumn get letterId => text()(); // PK — "baa"
+  IntColumn get childProfileId => integer()(); // PK part — the child in this file
+  TextColumn get letterId => text()(); // PK part — "baa"
   TextColumn get currentExerciseId => text().nullable()(); // the walk cursor
   TextColumn get clearedCompetencies => text()(); // JSON-encoded List<String>
   TextColumn get clearedTiers => text()(); // JSON-encoded List<String>
   DateTimeColumn get updatedAt => dateTime()();
 
   @override
-  Set<Column> get primaryKey => {letterId};
+  Set<Column> get primaryKey => {childProfileId, letterId};
 }
 
 /// Per-essential-EXERCISE clean-rep counter — Phase 15 (Open Q3 / D-06, Plan
@@ -119,14 +127,18 @@ class LetterGraphPosition extends Table {
 ///
 /// SECURITY (T-15-04-ID): only ids + a count + a timestamp; never stroke points
 /// or PII. Values are never logged.
+///
+/// ADR-018 (D-13/D-14): re-keyed by (childProfileId, letterId, exerciseId) so
+/// `isMasteryMet` reads only the current child's per-exercise reps.
 class LetterExerciseReps extends Table {
+  IntColumn get childProfileId => integer()();
   TextColumn get letterId => text()();
   TextColumn get exerciseId => text()();
   IntColumn get cleanReps => integer()();
   DateTimeColumn get updatedAt => dateTime()();
 
   @override
-  Set<Column> get primaryKey => {letterId, exerciseId};
+  Set<Column> get primaryKey => {childProfileId, letterId, exerciseId};
 }
 
 /// Offline per-criterion evidence accrual — Phase 18 (D-14 digest, Plan 18-03).
@@ -140,8 +152,13 @@ class LetterExerciseReps extends Table {
 /// SECURITY (T-18-03-01): only ids / a bool / a fixed `source` enum / a timestamp —
 /// NEVER a stroke point, an Offset, a child name, or any PII. Values are never
 /// logged (mirrors the LetterReps / LetterMastery no-PII convention).
+///
+/// ADR-018 (D-14 / A3): the autoincrement surrogate `id` stays the PRIMARY KEY
+/// (append-only evidence rows need a stable surrogate); `childProfileId` is a
+/// REQUIRED filtered COLUMN — every append stamps it and every read filters by it.
 class LetterCriterionEvidence extends Table {
   IntColumn get id => integer().autoIncrement()();
+  IntColumn get childProfileId => integer()(); // filtered column, not PK (A3)
   TextColumn get letterId => text()(); // "baa"
   TextColumn get criterion => text()(); // "dot" | "shape" | "strokeOrder" | ...
   BoolColumn get passed => boolean()(); // the already-derived attempt outcome
@@ -158,8 +175,12 @@ class LetterCriterionEvidence extends Table {
 ///
 /// SECURITY (T-18-03-01): only ids / a bool / fixed-vocabulary step & criterion ids
 /// / a timestamp — never a stroke point or PII. Values are never logged.
+///
+/// ADR-018 (D-13/D-14): re-keyed by (childProfileId, letterId) so a fresh profile
+/// never resumes the prior child's remediation arc.
 class ArcStateRows extends Table {
-  TextColumn get letterId => text()(); // PK — "baa"
+  IntColumn get childProfileId => integer()(); // PK part — the child in this file
+  TextColumn get letterId => text()(); // PK part — "baa"
   BoolColumn get active => boolean()(); // is an arc in flight?
   TextColumn get step =>
       text()(); // entry | stepDown | rebuild | retryOriginal
@@ -170,7 +191,7 @@ class ArcStateRows extends Table {
   DateTimeColumn get updatedAt => dateTime()();
 
   @override
-  Set<Column> get primaryKey => {letterId};
+  Set<Column> get primaryKey => {childProfileId, letterId};
 }
 
 /// The on-device mirror of the child's compiled cross-session profile — Phase 18
@@ -201,7 +222,6 @@ class ChildProfileMirror extends Table {
   AppSettings,
   LetterMastery,
   ChildProfiles,
-  LetterReps,
   LetterGraphPosition,
   LetterExerciseReps,
   LetterCriterionEvidence,
@@ -233,7 +253,7 @@ class AppDatabase extends _$AppDatabase {
   final bool _ownsExecutor;
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -243,7 +263,10 @@ class AppDatabase extends _$AppDatabase {
           if (from < 2) await m.createTable(letterMastery);
           if (from < 3) await m.createTable(childProfiles);
           if (from < 4) {
-            await m.createTable(letterReps);
+            // NOTE (ADR-018 / D-15): the legacy `letter_reps` table used to be
+            // created here. It is RETIRED in the v6→v7 step below, so we no longer
+            // create it — a device upgrading across this boundary never gets it,
+            // and the v6→v7 DROP is an IF-EXISTS no-op for such a device.
             // Namespace rewrite (RESEARCH Pitfall 2): startingLessonId moves
             // from the letter-id namespace ('alif') to the lesson-id namespace
             // ('lesson_01'). Generated names verified against app_database.g.dart
@@ -272,6 +295,84 @@ class AppDatabase extends _$AppDatabase {
             await m.createTable(letterCriterionEvidence);
             await m.createTable(arcStateRows);
             await m.createTable(childProfileMirror);
+          }
+          if (from < 7) {
+            // Phase 19 (ADR-018 / D-13/D-14/D-15/D-16): the per-child keying
+            // migration. Four progress tables gain childProfileId in their PRIMARY
+            // KEY and LetterCriterionEvidence gains it as a filtered column; the
+            // legacy LetterReps table is dropped in the same step. SQLite cannot
+            // alter a primary key in place, so each PK-changed table is RECREATED
+            // via `Migrator.alterTable(TableMigration(...))` (the verified drift
+            // 2.31 recreate-and-copy path — ADR-018), backfilling childProfileId
+            // onto every existing row with a `Constant<int>` columnTransformer.
+            //
+            // D-16 adoption: existing rows are adopted into the SINGLE existing
+            // profile (SELECT id FROM child_profiles LIMIT 1; sentinel 0 when no
+            // profile yet). A profile created AFTER this migration gets a new id,
+            // so its filtered reads find no rows and it starts clean (the leak fix).
+            final profileRows =
+                await customSelect('SELECT id FROM child_profiles LIMIT 1;')
+                    .get();
+            final adoptedProfileId = profileRows.isEmpty
+                ? kUnassignedChildProfileId
+                : profileRows.first.read<int>('id');
+            final adopted = Constant<int>(adoptedProfileId);
+
+            // Guard each recreate so an upgrade that ALREADY created a table at the
+            // current (v7) schema in an earlier `if (from < N)` block (e.g. a
+            // from==5 upgrade just created arc_state_rows / letter_criterion_evidence
+            // at v7) is not re-altered — the column is already present. This keeps
+            // the whole chain idempotent for every `from`.
+            Future<bool> alreadyKeyed(String table) async {
+              final rows = await customSelect(
+                "SELECT 1 AS present FROM pragma_table_info('$table') "
+                "WHERE name = 'child_profile_id' LIMIT 1;",
+              ).get();
+              return rows.isNotEmpty;
+            }
+
+            if (!await alreadyKeyed('letter_mastery')) {
+              await m.alterTable(TableMigration(
+                letterMastery,
+                columnTransformer: {letterMastery.childProfileId: adopted},
+                newColumns: [letterMastery.childProfileId],
+              ));
+            }
+            if (!await alreadyKeyed('letter_graph_position')) {
+              await m.alterTable(TableMigration(
+                letterGraphPosition,
+                columnTransformer: {letterGraphPosition.childProfileId: adopted},
+                newColumns: [letterGraphPosition.childProfileId],
+              ));
+            }
+            if (!await alreadyKeyed('letter_exercise_reps')) {
+              await m.alterTable(TableMigration(
+                letterExerciseReps,
+                columnTransformer: {letterExerciseReps.childProfileId: adopted},
+                newColumns: [letterExerciseReps.childProfileId],
+              ));
+            }
+            if (!await alreadyKeyed('arc_state_rows')) {
+              await m.alterTable(TableMigration(
+                arcStateRows,
+                columnTransformer: {arcStateRows.childProfileId: adopted},
+                newColumns: [arcStateRows.childProfileId],
+              ));
+            }
+            if (!await alreadyKeyed('letter_criterion_evidence')) {
+              await m.alterTable(TableMigration(
+                letterCriterionEvidence,
+                columnTransformer: {
+                  letterCriterionEvidence.childProfileId: adopted
+                },
+                newColumns: [letterCriterionEvidence.childProfileId],
+              ));
+            }
+
+            // D-15: retire the legacy per-letter rep counter (its readers were
+            // folded onto LetterExerciseReps in 19-04). IF EXISTS so a device that
+            // never had it (from < 4, per the note above) is a safe no-op.
+            await customStatement('DROP TABLE IF EXISTS letter_reps;');
           }
         },
       );
@@ -307,29 +408,43 @@ class AppDatabase extends _$AppDatabase {
   // SECURITY: only letterId/cleanReps/masteredAt — never stroke points (T-03-01)
   // ---------------------------------------------------------------------------
 
-  /// Record (or overwrite) a letter mastery result.
+  /// Record (or overwrite) a letter mastery result for [childProfileId] (ADR-018).
   Future<void> recordMastery({
+    required int childProfileId,
     required String letterId,
     required int cleanReps,
   }) => into(letterMastery).insertOnConflictUpdate(
     LetterMasteryCompanion.insert(
+      childProfileId: childProfileId,
       letterId: letterId,
       cleanReps: cleanReps,
       masteredAt: DateTime.now(),
     ),
   );
 
-  /// Returns true if the letter has a mastery record.
-  Future<bool> isMastered(String letterId) async =>
-      (await (select(
-        letterMastery,
-      )..where((t) => t.letterId.equals(letterId))).getSingleOrNull()) !=
+  /// Returns true if the letter has a mastery record for [childProfileId].
+  Future<bool> isMastered(
+    String letterId, {
+    required int childProfileId,
+  }) async =>
+      (await (select(letterMastery)
+                ..where((t) =>
+                    t.childProfileId.equals(childProfileId) &
+                    t.letterId.equals(letterId)))
+              .getSingleOrNull()) !=
       null;
 
   /// Returns the recorded clean-rep count for the letter, or null if absent.
-  Future<int?> cleanRepsFor(String letterId) async => (await (select(
-    letterMastery,
-  )..where((t) => t.letterId.equals(letterId))).getSingleOrNull())?.cleanReps;
+  Future<int?> cleanRepsFor(
+    String letterId, {
+    required int childProfileId,
+  }) async =>
+      (await (select(letterMastery)
+                ..where((t) =>
+                    t.childProfileId.equals(childProfileId) &
+                    t.letterId.equals(letterId)))
+              .getSingleOrNull())
+          ?.cleanReps;
 
   // ---------------------------------------------------------------------------
   // ChildProfiles accessors (Phase 5, S1-02 / S1-03)
@@ -381,46 +496,24 @@ class AppDatabase extends _$AppDatabase {
   );
 
   // ---------------------------------------------------------------------------
-  // LetterReps accessors + watch streams — Phase 6 (D-10 / S1-09, Plan 06-02)
-  // SECURITY: only letterId/cleanReps/updatedAt — never stroke points (T-06-01)
+  // Mastered-letter stream — Phase 6 (S1-09), re-keyed by childProfileId
+  // (ADR-018). The legacy LetterReps accessors (setCleanReps/getCleanReps/
+  // watchCleanReps/allInProgress) were REMOVED with the table in the v6→v7
+  // migration (D-15); their live readers fold onto the LetterExerciseReps
+  // aggregate accessors below (19-04).
+  // SECURITY: only childProfileId/letterId — never stroke points (T-06-01).
   // ---------------------------------------------------------------------------
 
-  /// Write (or overwrite) the partial clean-rep count for a letter (D-10).
-  ///
-  /// Write-through, including 0: `setCleanReps(letterId: x, cleanReps: 0)`
-  /// resets the banked count (the Pitfall-7 reset shape).
-  Future<void> setCleanReps({
-    required String letterId,
-    required int cleanReps,
-  }) => into(letterReps).insertOnConflictUpdate(
-    LetterRepsCompanion.insert(
-      letterId: letterId,
-      cleanReps: cleanReps,
-      updatedAt: DateTime.now(),
-    ),
-  );
-
-  /// Read the banked clean-rep count for a letter; 0 when never practiced.
-  Future<int> getCleanReps(String letterId) async =>
-      (await (select(
-            letterReps,
-          )..where((t) => t.letterId.equals(letterId))).getSingleOrNull())
-          ?.cleanReps ??
-      0;
-
-  /// Watch the set of mastered letter IDs; emits the current state first, then
-  /// on every mastery write — the S1-09 "unlock is immediate" substrate
-  /// (RESEARCH Pattern 1: first drift .watch() in the codebase).
-  Stream<Set<String>> watchMasteredLetterIds() => select(
-    letterMastery,
-  ).watch().map((rows) => rows.map((r) => r.letterId).toSet());
-
-  /// Watch the banked clean-rep count for one letter; emits 0 while no row
-  /// exists, then the new count on every [setCleanReps] write.
-  Stream<int> watchCleanReps(String letterId) =>
-      (select(letterReps)..where((t) => t.letterId.equals(letterId)))
-          .watchSingleOrNull()
-          .map((row) => row?.cleanReps ?? 0);
+  /// Watch the set of mastered letter IDs for [childProfileId]; emits the current
+  /// state first, then on every mastery write — the S1-09 "unlock is immediate"
+  /// substrate (RESEARCH Pattern 1: first drift .watch() in the codebase).
+  Stream<Set<String>> watchMasteredLetterIds({
+    required int childProfileId,
+  }) =>
+      (select(letterMastery)
+            ..where((t) => t.childProfileId.equals(childProfileId)))
+          .watch()
+          .map((rows) => rows.map((r) => r.letterId).toSet());
 
   // ---------------------------------------------------------------------------
   // LetterGraphPosition accessors — Phase 15 (DYN-02 / D-08, Plan 15-04).
@@ -434,16 +527,24 @@ class AppDatabase extends _$AppDatabase {
   // (T-15-04-ID). Values are never logged.
   // ---------------------------------------------------------------------------
 
-  /// Read the persisted graph position for a letter, or null if the child has
-  /// never started it (clean default — start at the graph root, never throws).
-  Future<LetterGraphPositionData?> getPosition(String letterId) =>
+  /// Read the persisted graph position for a letter under [childProfileId], or
+  /// null if this child has never started it (clean default — start at the graph
+  /// root, never throws). A fresh profile reads null even if a prior profile in
+  /// the same file has a cursor for the letter (ADR-018 — the leak fix).
+  Future<LetterGraphPositionData?> getPosition(
+    String letterId, {
+    required int childProfileId,
+  }) =>
       (select(letterGraphPosition)
-            ..where((t) => t.letterId.equals(letterId)))
+            ..where((t) =>
+                t.childProfileId.equals(childProfileId) &
+                t.letterId.equals(letterId)))
           .getSingleOrNull();
 
-  /// Write (or overwrite) the graph position for a letter. The competency/tier
-  /// lists are JSON-encoded into their text columns.
+  /// Write (or overwrite) the graph position for a letter under [childProfileId].
+  /// The competency/tier lists are JSON-encoded into their text columns.
   Future<void> setPosition({
+    required int childProfileId,
     required String letterId,
     String? currentExerciseId,
     required List<String> clearedCompetencies,
@@ -451,6 +552,7 @@ class AppDatabase extends _$AppDatabase {
   }) =>
       into(letterGraphPosition).insertOnConflictUpdate(
         LetterGraphPositionCompanion.insert(
+          childProfileId: childProfileId,
           letterId: letterId,
           currentExerciseId: Value(currentExerciseId),
           clearedCompetencies: jsonEncode(clearedCompetencies),
@@ -466,14 +568,16 @@ class AppDatabase extends _$AppDatabase {
   // ---------------------------------------------------------------------------
 
   /// Write (or overwrite) the banked clean-rep count for one exercise within a
-  /// letter (write-through, including 0 — mirrors setCleanReps' reset shape).
+  /// letter under [childProfileId] (write-through, including 0 — the reset shape).
   Future<void> setExerciseCleanReps({
+    required int childProfileId,
     required String letterId,
     required String exerciseId,
     required int cleanReps,
   }) =>
       into(letterExerciseReps).insertOnConflictUpdate(
         LetterExerciseRepsCompanion.insert(
+          childProfileId: childProfileId,
           letterId: letterId,
           exerciseId: exerciseId,
           cleanReps: cleanReps,
@@ -481,42 +585,54 @@ class AppDatabase extends _$AppDatabase {
         ),
       );
 
-  /// Read the banked clean-rep count for one exercise; 0 when never practiced.
+  /// Read the banked clean-rep count for one exercise under [childProfileId]; 0
+  /// when never practiced.
   Future<int> getExerciseCleanReps({
+    required int childProfileId,
     required String letterId,
     required String exerciseId,
   }) async =>
       (await (select(letterExerciseReps)
                 ..where((t) =>
+                    t.childProfileId.equals(childProfileId) &
                     t.letterId.equals(letterId) &
                     t.exerciseId.equals(exerciseId)))
               .getSingleOrNull())
           ?.cleanReps ??
       0;
 
-  /// Atomically increment the banked clean-rep count for one exercise by 1.
-  /// Reads the current count, adds 1, and writes back. Safe to call from an
-  /// async context; a missing row is treated as 0 before incrementing.
+  /// Atomically increment the banked clean-rep count for one exercise by 1 under
+  /// [childProfileId]. Reads the current count, adds 1, and writes back. Safe to
+  /// call from an async context; a missing row is treated as 0 before incrementing.
   Future<void> incrementExerciseCleanReps({
+    required int childProfileId,
     required String letterId,
     required String exerciseId,
   }) async {
     final current = await getExerciseCleanReps(
+      childProfileId: childProfileId,
       letterId: letterId,
       exerciseId: exerciseId,
     );
     await setExerciseCleanReps(
+      childProfileId: childProfileId,
       letterId: letterId,
       exerciseId: exerciseId,
       cleanReps: current + 1,
     );
   }
 
-  /// Read every banked per-exercise clean-rep count for a letter as a
-  /// `{exerciseId: cleanReps}` map — the exact shape `isMasteryMet` consumes.
-  Future<Map<String, int>> exerciseCleanRepsFor(String letterId) async {
+  /// Read every banked per-exercise clean-rep count for a letter under
+  /// [childProfileId] as a `{exerciseId: cleanReps}` map — the exact shape
+  /// `isMasteryMet` consumes.
+  Future<Map<String, int>> exerciseCleanRepsFor(
+    String letterId, {
+    required int childProfileId,
+  }) async {
     final rows = await (select(letterExerciseReps)
-          ..where((t) => t.letterId.equals(letterId)))
+          ..where((t) =>
+              t.childProfileId.equals(childProfileId) &
+              t.letterId.equals(letterId)))
         .get();
     return {for (final r in rows) r.exerciseId: r.cleanReps};
   }
@@ -545,38 +661,51 @@ class AppDatabase extends _$AppDatabase {
   // SECURITY: only ids/counts — never stroke points / PII (T-15-04-ID).
   // ---------------------------------------------------------------------------
 
-  /// One-shot MAX(clean_reps) across [letterId]'s LetterExerciseReps rows; 0
-  /// when the letter has no exercise rows. Folds the legacy `getCleanReps`.
-  Future<int> letterCleanReps(String letterId) async {
+  /// One-shot MAX(clean_reps) across [letterId]'s LetterExerciseReps rows for
+  /// [childProfileId]; 0 when this child has no exercise rows. Folds the legacy
+  /// `getCleanReps`.
+  Future<int> letterCleanReps(
+    String letterId, {
+    required int childProfileId,
+  }) async {
     final maxReps = letterExerciseReps.cleanReps.max();
     final row = await (selectOnly(letterExerciseReps)
           ..addColumns([maxReps])
-          ..where(letterExerciseReps.letterId.equals(letterId)))
+          ..where(letterExerciseReps.childProfileId.equals(childProfileId) &
+              letterExerciseReps.letterId.equals(letterId)))
         .getSingleOrNull();
     return row?.read(maxReps) ?? 0;
   }
 
-  /// Watch MAX(clean_reps) across [letterId]'s LetterExerciseReps rows; emits 0
-  /// while the letter has no exercise rows, then the new aggregate on every
-  /// per-exercise write. Folds the legacy `watchCleanReps` — the journey-ribbon
-  /// substrate (read via the `_bindDriftStream` bridge, never a bare
-  /// StreamProvider.future — Pitfall 5).
-  Stream<int> watchLetterCleanReps(String letterId) {
+  /// Watch MAX(clean_reps) across [letterId]'s LetterExerciseReps rows for
+  /// [childProfileId]; emits 0 while this child has no exercise rows, then the new
+  /// aggregate on every per-exercise write. Folds the legacy `watchCleanReps` —
+  /// the journey-ribbon substrate (read via the `_bindDriftStream` bridge, never
+  /// a bare StreamProvider.future — Pitfall 5).
+  Stream<int> watchLetterCleanReps(
+    String letterId, {
+    required int childProfileId,
+  }) {
     final maxReps = letterExerciseReps.cleanReps.max();
     return (selectOnly(letterExerciseReps)
           ..addColumns([maxReps])
-          ..where(letterExerciseReps.letterId.equals(letterId)))
+          ..where(letterExerciseReps.childProfileId.equals(childProfileId) &
+              letterExerciseReps.letterId.equals(letterId)))
         .watchSingleOrNull()
         .map((row) => row?.read(maxReps) ?? 0);
   }
 
-  /// All in-progress letters keyed to their MAX aggregate clean-rep count — the
-  /// letters with >=1 exercise clean-rep (> 0). Folds the legacy `allInProgress`
-  /// (which returned LetterReps rows with cleanReps > 0). READ-ONLY.
-  Future<Map<String, int>> allInProgressByExerciseReps() async {
+  /// All in-progress letters for [childProfileId] keyed to their MAX aggregate
+  /// clean-rep count — the letters with >=1 exercise clean-rep (> 0). Folds the
+  /// legacy `allInProgress` (which returned LetterReps rows with cleanReps > 0).
+  /// READ-ONLY.
+  Future<Map<String, int>> allInProgressByExerciseReps({
+    required int childProfileId,
+  }) async {
     final maxReps = letterExerciseReps.cleanReps.max();
     final rows = await (selectOnly(letterExerciseReps)
           ..addColumns([letterExerciseReps.letterId, maxReps])
+          ..where(letterExerciseReps.childProfileId.equals(childProfileId))
           ..groupBy(
             [letterExerciseReps.letterId],
             having: maxReps.isBiggerThanValue(0),
@@ -596,9 +725,10 @@ class AppDatabase extends _$AppDatabase {
   // SECURITY: only ids/bool/source/timestamp — never stroke points / PII.
   // ---------------------------------------------------------------------------
 
-  /// Append ONE evidence row for a graded attempt (auto-increment id, createdAt
-  /// stamped now). Returns the new row id.
+  /// Append ONE evidence row for a graded attempt under [childProfileId]
+  /// (auto-increment id, createdAt stamped now). Returns the new row id.
   Future<int> appendEvidence({
+    required int childProfileId,
     required String letterId,
     required String criterion,
     required bool passed,
@@ -606,6 +736,7 @@ class AppDatabase extends _$AppDatabase {
   }) =>
       into(letterCriterionEvidence).insert(
         LetterCriterionEvidenceCompanion.insert(
+          childProfileId: childProfileId,
           letterId: letterId,
           criterion: criterion,
           passed: passed,
@@ -614,10 +745,14 @@ class AppDatabase extends _$AppDatabase {
         ),
       );
 
-  /// Every accrued evidence row not yet cleared, oldest → newest — the batch the
-  /// nightly digest reads before syncing. Returns raw Drift rows (primitive layer).
-  Future<List<LetterCriterionEvidenceData>> unsyncedEvidence() =>
+  /// Every accrued evidence row for [childProfileId] not yet cleared, oldest →
+  /// newest — the batch the nightly digest reads before syncing. Returns raw
+  /// Drift rows (primitive layer).
+  Future<List<LetterCriterionEvidenceData>> unsyncedEvidence({
+    required int childProfileId,
+  }) =>
       (select(letterCriterionEvidence)
+            ..where((t) => t.childProfileId.equals(childProfileId))
             ..orderBy([(t) => OrderingTerm(expression: t.createdAt)]))
           .get();
 
@@ -635,14 +770,21 @@ class AppDatabase extends _$AppDatabase {
   // SECURITY: only ids/bool/fixed-vocab step/timestamp — never PII.
   // ---------------------------------------------------------------------------
 
-  /// Read the persisted arc state for a letter, or null if none (clean default —
-  /// no active arc, never throws). Returns the raw Drift row.
-  Future<ArcStateRow?> getArcStateRow(String letterId) =>
-      (select(arcStateRows)..where((t) => t.letterId.equals(letterId)))
+  /// Read the persisted arc state for a letter under [childProfileId], or null if
+  /// none (clean default — no active arc, never throws). Returns the raw Drift row.
+  Future<ArcStateRow?> getArcStateRow(
+    String letterId, {
+    required int childProfileId,
+  }) =>
+      (select(arcStateRows)
+            ..where((t) =>
+                t.childProfileId.equals(childProfileId) &
+                t.letterId.equals(letterId)))
           .getSingleOrNull();
 
-  /// Write (or overwrite) the arc state for a letter.
+  /// Write (or overwrite) the arc state for a letter under [childProfileId].
   Future<void> setArcStateRow({
+    required int childProfileId,
     required String letterId,
     required bool active,
     required String step,
@@ -651,6 +793,7 @@ class AppDatabase extends _$AppDatabase {
   }) =>
       into(arcStateRows).insertOnConflictUpdate(
         ArcStateRowsCompanion.insert(
+          childProfileId: childProfileId,
           letterId: letterId,
           active: active,
           step: step,
@@ -700,17 +843,17 @@ class AppDatabase extends _$AppDatabase {
   // (threat T-09-09). SECURITY: read-only; never logs values.
   // ---------------------------------------------------------------------------
 
-  /// All mastered letters, ordered oldest → newest by masteredAt. Each row
-  /// carries the cleanReps + masteredAt the dashboard renders. READ-ONLY.
-  Future<List<LetterMasteryData>> allMastered() => (select(
-    letterMastery,
-  )..orderBy([(t) => OrderingTerm(expression: t.masteredAt)])).get();
-
-  /// All in-progress letters (cleanReps > 0). A 0-rep row is "not started" and
-  /// is excluded. READ-ONLY.
-  Future<List<LetterRep>> allInProgress() => (select(
-    letterReps,
-  )..where((t) => t.cleanReps.isBiggerThanValue(0))).get();
+  /// All mastered letters for [childProfileId], ordered oldest → newest by
+  /// masteredAt. Each row carries the cleanReps + masteredAt the dashboard
+  /// renders. READ-ONLY. (The legacy LetterReps `allInProgress` was removed with
+  /// the table — the parent in-progress list reads `allInProgressByExerciseReps`.)
+  Future<List<LetterMasteryData>> allMastered({
+    required int childProfileId,
+  }) =>
+      (select(letterMastery)
+            ..where((t) => t.childProfileId.equals(childProfileId))
+            ..orderBy([(t) => OrderingTerm(expression: t.masteredAt)]))
+          .get();
 }
 
 LazyDatabase _openLegacyConnection() {
