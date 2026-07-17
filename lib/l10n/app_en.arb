@@ -1,5 +1,69 @@
 {
   "@@locale": "en",
+  "instructionBarTrace": "Trace the letter",
+  "@instructionBarTrace": {
+    "description": "Phase 19 instruction-bar per-type line for traceLetter (D-02). Sentence case, read-aloud imperative to a 5-10 year old. NOT the say line (Pitfall 6)."
+  },
+  "instructionBarWriteLetter": "Write the letter",
+  "@instructionBarWriteLetter": {
+    "description": "Phase 19 instruction-bar line for writeLetter (recall, no audio). Sentence case."
+  },
+  "instructionBarWriteWord": "Write the word",
+  "@instructionBarWriteWord": {
+    "description": "Phase 19 instruction-bar line for writeWord (write the whole word, no audio, not a copy). Sentence case."
+  },
+  "instructionBarCopyWord": "Copy the word",
+  "@instructionBarCopyWord": {
+    "description": "Phase 19 instruction-bar line for the writeWord copy variant (a reveal:thenHide word the child copies). Sentence case."
+  },
+  "instructionBarListenWrite": "Listen and write",
+  "@instructionBarListenWrite": {
+    "description": "Phase 19 instruction-bar line for the writeWord/writeLetter listen variant (the exercise carries an AudioPart). Sentence case."
+  },
+  "instructionBarConnect": "Join the letters",
+  "@instructionBarConnect": {
+    "description": "Phase 19 instruction-bar line for connectWord (join the spaced letters into a word). Sentence case."
+  },
+  "instructionBarCompleteWord": "Write the missing letter",
+  "@instructionBarCompleteWord": {
+    "description": "Phase 19 instruction-bar line for completeWord (write the one missing letter of the word). Sentence case."
+  },
+  "instructionBarFillBlank": "Write the missing part",
+  "@instructionBarFillBlank": {
+    "description": "Phase 19 instruction-bar line for fillBlank (write the missing part). Sentence case."
+  },
+  "instructionBarTransform": "Change the word",
+  "@instructionBarTransform": {
+    "description": "Phase 19 instruction-bar line for transformWord (change the word per the rule chip). Sentence case."
+  },
+  "instructionBarBuildSentence": "Build the sentence",
+  "@instructionBarBuildSentence": {
+    "description": "Phase 19 instruction-bar line for buildSentence (build the sentence from the words). Sentence case."
+  },
+  "instructionBarMicroDrill": "Practice this part",
+  "@instructionBarMicroDrill": {
+    "description": "Phase 19 instruction-bar base line for microDrill (practice one part of the letter), before the per-criterion override. Sentence case."
+  },
+  "instructionBarMicroDrillDot": "Practice the dot",
+  "@instructionBarMicroDrillDot": {
+    "description": "Phase 19 instruction-bar microDrill override when the target criterion is the dot. Sentence case."
+  },
+  "instructionBarMicroDrillShape": "Practice the curve",
+  "@instructionBarMicroDrillShape": {
+    "description": "Phase 19 instruction-bar microDrill override when the target criterion is the shape (the curve/bowl). Sentence case."
+  },
+  "instructionBarMicroDrillStart": "Practice the start",
+  "@instructionBarMicroDrillStart": {
+    "description": "Phase 19 instruction-bar microDrill override when the target criterion is strokeOrder (where the stroke starts). Sentence case."
+  },
+  "instructionBarFallback": "Look and write",
+  "@instructionBarFallback": {
+    "description": "Phase 19 instruction-bar fallback line for an unknown/null exercise type. Sentence case."
+  },
+  "instructionBarReplayLabel": "Hear it again",
+  "@instructionBarReplayLabel": {
+    "description": "Phase 19 instruction-bar accessibility label — the whole bar is one tap target that re-speaks the spoken instruction (UI-SPEC §1 Semantics(button:true, label:))."
+  },
   "openPractice": "Open Practice",
   "@openPractice": {
     "description": "Primary CTA on Home that opens the Practice screen."

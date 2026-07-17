@@ -63,7 +63,22 @@ class ExerciseScaffoldStrings {
     this.playLabel = 'Play',
     this.watchMe = 'Watch me',
     this.teachCardHint = 'Nothing to write — this card teaches.',
-    this.hearAgain = 'Hear again',
+    this.hearAgain = 'Hear it again',
+    this.instructionTrace = 'Trace the letter',
+    this.instructionWriteLetter = 'Write the letter',
+    this.instructionWriteWord = 'Write the word',
+    this.instructionCopyWord = 'Copy the word',
+    this.instructionListenWrite = 'Listen and write',
+    this.instructionConnect = 'Join the letters',
+    this.instructionCompleteWord = 'Write the missing letter',
+    this.instructionFillBlank = 'Write the missing part',
+    this.instructionTransform = 'Change the word',
+    this.instructionBuildSentence = 'Build the sentence',
+    this.instructionMicroDrill = 'Practice this part',
+    this.instructionMicroDrillDot = 'Practice the dot',
+    this.instructionMicroDrillShape = 'Practice the curve',
+    this.instructionMicroDrillStart = 'Practice the start',
+    this.instructionFallback = 'Look and write',
   });
 
   final String tutorName;
@@ -79,8 +94,156 @@ class ExerciseScaffoldStrings {
   final String watchMe;
   final String teachCardHint;
 
-  /// 18-12: the label of the always-available replay-instruction control.
+  /// 18-12 / 19-02: the accessibility label of the replay-instruction control.
+  /// 19-02 folds the standalone pill into the instruction bar; this is now the
+  /// bar's `Semantics(button:true, label:)` (UI-SPEC §1 "Hear it again").
   final String hearAgain;
+
+  // ── 19-02: per-type instruction-bar templates (D-02) ───────────────────────
+  // The bar shows the PER-TYPE line keyed on `exercise.type` (NOT the say line,
+  // Pitfall 6). English defaults live here so widget tests stay l10n-independent
+  // (the `hearAgain` precedent); `app_en.arb` mirrors them as translatable keys.
+
+  /// `traceLetter` — trace over the dotted guide.
+  final String instructionTrace;
+
+  /// `writeLetter` (no audio) — write the single letter from memory.
+  final String instructionWriteLetter;
+
+  /// `writeWord` (no audio, not a copy) — write the whole word.
+  final String instructionWriteWord;
+
+  /// `writeWord` copy variant (a `reveal:"thenHide"` word) — copy the shown word.
+  final String instructionCopyWord;
+
+  /// `writeWord`/`writeLetter` listen variant (carries an `AudioPart`).
+  final String instructionListenWrite;
+
+  /// `connectWord` — join the spaced letters into a word.
+  final String instructionConnect;
+
+  /// `completeWord` — write the one missing letter of the word.
+  final String instructionCompleteWord;
+
+  /// `fillBlank` — write the missing part.
+  final String instructionFillBlank;
+
+  /// `transformWord` — change the word per the rule chip.
+  final String instructionTransform;
+
+  /// `buildSentence` — build the sentence from the words.
+  final String instructionBuildSentence;
+
+  /// `microDrill` — practice one part (base line, before the criterion override).
+  final String instructionMicroDrill;
+
+  /// `microDrill` criterion `dot` override.
+  final String instructionMicroDrillDot;
+
+  /// `microDrill` criterion `shape` override.
+  final String instructionMicroDrillShape;
+
+  /// `microDrill` criterion `strokeOrder` override.
+  final String instructionMicroDrillStart;
+
+  /// Unknown/null type fallback.
+  final String instructionFallback;
+}
+
+/// The brand nib glyph used as the `traceLetter` instruction icon (UI-SPEC §
+/// Copywriting Contract). A vector asset, coloured ink-teal at the call site.
+const String _kNibGlyphAsset = 'assets/icons/qalam-nib.svg';
+
+/// The leading glyph + short child-readable line the instruction bar shows for
+/// an exercise (19-02, D-02). Exactly one of [icon] / [svgAsset] is non-null:
+/// [svgAsset] carries the brand nib glyph (traceLetter); [icon] is a Material
+/// `*_rounded` glyph for every other type. [text] is the per-type imperative.
+class InstructionSpec {
+  const InstructionSpec({this.icon, this.svgAsset, required this.text})
+      : assert(icon != null || svgAsset != null,
+            'an InstructionSpec needs either a Material icon or a brand glyph');
+
+  /// A Material `*_rounded` glyph, or null when [svgAsset] carries a brand glyph.
+  final IconData? icon;
+
+  /// A brand-glyph SVG asset path (traceLetter), or null when [icon] is used.
+  final String? svgAsset;
+
+  /// The short imperative line (sentence case), e.g. "Write the missing letter".
+  final String text;
+}
+
+/// Resolve the per-type instruction (icon + text) for [exercise] (D-02) — the
+/// content of the persistent instruction bar. Keyed on `exercise.type`, NOT the
+/// `say` line (Pitfall 6: the say line is the spoken/bubble layer). The
+/// `writeWord`/`writeLetter` sub-variants are disambiguated by an `AudioPart`
+/// (listen → "Listen and write") vs a `reveal:"thenHide"` word (copy → "Copy the
+/// word"); a `microDrill` overrides its base line per its first criterion
+/// (dot/shape/strokeOrder). Text comes from [strings] so callers stay
+/// l10n-independent (the `hearAgain` precedent). An unknown/null type falls back
+/// to "Look and write".
+InstructionSpec instructionTemplateFor(
+  Exercise exercise, {
+  ExerciseScaffoldStrings strings = const ExerciseScaffoldStrings(),
+}) {
+  final bool hasAudio = exercise.prompt.whereType<AudioPart>().isNotEmpty;
+  final bool isCopy = exercise.prompt
+      .whereType<TextPart>()
+      .any((p) => p.reveal == 'thenHide');
+
+  switch (exercise.type) {
+    case 'traceLetter':
+      return InstructionSpec(
+          svgAsset: _kNibGlyphAsset, text: strings.instructionTrace);
+    case 'writeLetter':
+      if (hasAudio) {
+        return InstructionSpec(
+            icon: Icons.hearing_rounded, text: strings.instructionListenWrite);
+      }
+      return InstructionSpec(
+          icon: Icons.create_rounded, text: strings.instructionWriteLetter);
+    case 'writeWord':
+      if (hasAudio) {
+        return InstructionSpec(
+            icon: Icons.hearing_rounded, text: strings.instructionListenWrite);
+      }
+      if (isCopy) {
+        return InstructionSpec(
+            icon: Icons.content_copy_rounded, text: strings.instructionCopyWord);
+      }
+      return InstructionSpec(
+          icon: Icons.create_rounded, text: strings.instructionWriteWord);
+    case 'connectWord':
+      return InstructionSpec(
+          icon: Icons.link_rounded, text: strings.instructionConnect);
+    case 'completeWord':
+      return InstructionSpec(
+          icon: Icons.border_color_rounded,
+          text: strings.instructionCompleteWord);
+    case 'fillBlank':
+      return InstructionSpec(
+          icon: Icons.border_color_rounded, text: strings.instructionFillBlank);
+    case 'transformWord':
+      return InstructionSpec(
+          icon: Icons.autorenew_rounded, text: strings.instructionTransform);
+    case 'buildSentence':
+      return InstructionSpec(
+          icon: Icons.notes_rounded, text: strings.instructionBuildSentence);
+    case 'microDrill':
+      final String? criterion =
+          exercise.criteria.isNotEmpty ? exercise.criteria.first : null;
+      final String text = switch (criterion) {
+        'dot' => strings.instructionMicroDrillDot,
+        'shape' => strings.instructionMicroDrillShape,
+        'strokeOrder' => strings.instructionMicroDrillStart,
+        _ => strings.instructionMicroDrill,
+      };
+      return InstructionSpec(
+          icon: Icons.center_focus_strong_rounded, text: text);
+    default:
+      return InstructionSpec(
+          icon: Icons.visibility_rounded, text: strings.instructionFallback);
+  }
 }
 
 /// DEMO (17.2) — the "Teacher's Eye": what the tutor saw on the LAST attempt,
