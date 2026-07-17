@@ -118,6 +118,24 @@ class _FakeProgressRepository implements ProgressRepository {
   @override
   Stream<int> watchCleanReps(String letterId) =>
       Stream.value(reps[letterId] ?? 0);
+
+  // D-15 fold (19-04): the folded aggregate accessors share the SAME `reps`
+  // store, so the write-through / seed assertions below are behavior-identical
+  // after the practice provider re-points onto them.
+  @override
+  Future<int> letterCleanReps(String letterId) async => reps[letterId] ?? 0;
+
+  @override
+  Stream<int> watchLetterCleanReps(String letterId) =>
+      Stream.value(reps[letterId] ?? 0);
+
+  @override
+  Future<void> setLetterCleanReps({
+    required String letterId,
+    required int cleanReps,
+  }) async {
+    reps[letterId] = cleanReps;
+  }
 }
 
 /// A repository whose persistence ALWAYS fails — proves the best-effort
@@ -133,6 +151,22 @@ class _ThrowingProgressRepository extends _FakeProgressRepository {
 
   @override
   Future<int> getCleanReps(String letterId) async {
+    throw StateError('disk full');
+  }
+
+  // The practice provider reads/writes the folded accessors after 19-04 — make
+  // THOSE throw too so the "persistence failures are swallowed" test still
+  // exercises a failing read + write.
+  @override
+  Future<void> setLetterCleanReps({
+    required String letterId,
+    required int cleanReps,
+  }) async {
+    throw StateError('disk full');
+  }
+
+  @override
+  Future<int> letterCleanReps(String letterId) async {
     throw StateError('disk full');
   }
 }

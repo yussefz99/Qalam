@@ -522,6 +522,73 @@ class AppDatabase extends _$AppDatabase {
   }
 
   // ---------------------------------------------------------------------------
+  // D-15 FOLD (Plan 19-04): aggregate accessors over LetterExerciseReps that
+  // reproduce the three legacy LetterReps reads (`watchCleanReps` /
+  // `getCleanReps` / `allInProgress` above) WITHOUT a schema change, so 19-06
+  // can DROP LetterReps once every live reader points here. The LetterReps
+  // accessors above stay present-but-unused by live code this plan (19-06
+  // removes them together with the table in the v6→v7 migration).
+  //
+  // AGGREGATION RULE — "the letter's clean-reps" = MAX(clean_reps) across the
+  // letter's LetterExerciseReps rows. Rationale for MAX (the plan sanctions
+  // "essential-node floor OR max across the letter's exercises"):
+  //   * Purely DB-computable — no curriculum-graph dependency — so this stays a
+  //     clean data-layer accessor (the graph/essential-node set is not visible
+  //     here; `isMasteryMet` reads it in lib/curriculum, not in the DB layer).
+  //   * Behavior-preserving for the legacy per-letter /practice counter: that
+  //     path banks ONE synthetic exercise row, so MAX == that single value ==
+  //     the old `LetterReps.cleanReps` it replaces.
+  //   * A non-regressing "furthest progress" indicator for the home ink-fill /
+  //     resume depth (never drops while any exercise still has banked reps).
+  // This aggregate is a DISPLAY / RESUME indicator only — the authoritative star
+  // gate remains `isMasteryMet` over the essential nodes (unchanged, D-06).
+  // SECURITY: only ids/counts — never stroke points / PII (T-15-04-ID).
+  // ---------------------------------------------------------------------------
+
+  /// One-shot MAX(clean_reps) across [letterId]'s LetterExerciseReps rows; 0
+  /// when the letter has no exercise rows. Folds the legacy `getCleanReps`.
+  Future<int> letterCleanReps(String letterId) async {
+    final maxReps = letterExerciseReps.cleanReps.max();
+    final row = await (selectOnly(letterExerciseReps)
+          ..addColumns([maxReps])
+          ..where(letterExerciseReps.letterId.equals(letterId)))
+        .getSingleOrNull();
+    return row?.read(maxReps) ?? 0;
+  }
+
+  /// Watch MAX(clean_reps) across [letterId]'s LetterExerciseReps rows; emits 0
+  /// while the letter has no exercise rows, then the new aggregate on every
+  /// per-exercise write. Folds the legacy `watchCleanReps` — the journey-ribbon
+  /// substrate (read via the `_bindDriftStream` bridge, never a bare
+  /// StreamProvider.future — Pitfall 5).
+  Stream<int> watchLetterCleanReps(String letterId) {
+    final maxReps = letterExerciseReps.cleanReps.max();
+    return (selectOnly(letterExerciseReps)
+          ..addColumns([maxReps])
+          ..where(letterExerciseReps.letterId.equals(letterId)))
+        .watchSingleOrNull()
+        .map((row) => row?.read(maxReps) ?? 0);
+  }
+
+  /// All in-progress letters keyed to their MAX aggregate clean-rep count — the
+  /// letters with >=1 exercise clean-rep (> 0). Folds the legacy `allInProgress`
+  /// (which returned LetterReps rows with cleanReps > 0). READ-ONLY.
+  Future<Map<String, int>> allInProgressByExerciseReps() async {
+    final maxReps = letterExerciseReps.cleanReps.max();
+    final rows = await (selectOnly(letterExerciseReps)
+          ..addColumns([letterExerciseReps.letterId, maxReps])
+          ..groupBy(
+            [letterExerciseReps.letterId],
+            having: maxReps.isBiggerThanValue(0),
+          ))
+        .get();
+    return {
+      for (final r in rows)
+        r.read(letterExerciseReps.letterId)!: r.read(maxReps) ?? 0,
+    };
+  }
+
+  // ---------------------------------------------------------------------------
   // LetterCriterionEvidence accessors — Phase 18 (D-14 digest, Plan 18-03). The
   // offline per-criterion evidence queue the nightly digest drains, then caps.
   // Primitive layer: appends primitives, returns raw Drift rows (no lib/curriculum

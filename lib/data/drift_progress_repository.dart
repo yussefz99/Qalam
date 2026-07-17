@@ -44,6 +44,40 @@ class DriftProgressRepository implements ProgressRepository {
 
   @override
   Stream<int> watchCleanReps(String letterId) => _db.watchCleanReps(letterId);
+
+  // ---------------------------------------------------------------------------
+  // D-15 FOLD (Plan 19-04): delegate the folded per-letter aggregate to the
+  // LetterExerciseReps accessors on [AppDatabase]. The legacy LetterReps
+  // delegations above stay until 19-06 drops the table.
+  // ---------------------------------------------------------------------------
+
+  /// The synthetic LetterExerciseReps exercise id under which the legacy
+  /// per-letter /practice counter banks its single row (D-15 fold). Chosen so it
+  /// NEVER collides with a real curriculum-graph exercise id (those are
+  /// `<letter>.<config>`, e.g. `baa.traceLetter.isolated`); and only NON-unit
+  /// letters use the /practice loop (unit letters — alif/baa/taa — route to
+  /// /unit and write real graph rows), so a letter never mixes this row with
+  /// graph rows. MAX over one row == that row, so the ribbon/resume value is
+  /// behavior-identical to the old LetterReps counter.
+  static const String wholeLetterExerciseId = '__whole_letter__';
+
+  @override
+  Future<int> letterCleanReps(String letterId) => _db.letterCleanReps(letterId);
+
+  @override
+  Stream<int> watchLetterCleanReps(String letterId) =>
+      _db.watchLetterCleanReps(letterId);
+
+  @override
+  Future<void> setLetterCleanReps({
+    required String letterId,
+    required int cleanReps,
+  }) =>
+      _db.setExerciseCleanReps(
+        letterId: letterId,
+        exerciseId: wholeLetterExerciseId,
+        cleanReps: cleanReps,
+      );
 }
 
 /// Riverpod provider for [ProgressRepository] — keepAlive mirrors the

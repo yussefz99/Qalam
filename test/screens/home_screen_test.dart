@@ -101,6 +101,25 @@ class _FakeProgressRepository implements ProgressRepository {
     if (controller != null) return controller.stream;
     return Stream<int>.value(reps[letterId] ?? 0);
   }
+
+  // D-15 fold (19-04): the home ink-fill ribbon re-points onto the folded
+  // aggregate — mirror the SAME repsController/reps seam so the live-update
+  // test still drives it after the re-point.
+  @override
+  Future<int> letterCleanReps(String letterId) async => reps[letterId] ?? 0;
+
+  @override
+  Stream<int> watchLetterCleanReps(String letterId) {
+    final controller = repsController;
+    if (controller != null) return controller.stream;
+    return Stream<int>.value(reps[letterId] ?? 0);
+  }
+
+  @override
+  Future<void> setLetterCleanReps({
+    required String letterId,
+    required int cleanReps,
+  }) async {}
 }
 
 /// A fixed-set profile fixture — nickname `nick_star`, avatar `avatar_1`.

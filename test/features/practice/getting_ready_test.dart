@@ -57,6 +57,19 @@ class _FakeProgressRepository implements ProgressRepository {
 
   @override
   Stream<int> watchCleanReps(String letterId) => Stream.value(0);
+
+  // D-15 fold (19-04): folded aggregate accessors — no persisted reps here.
+  @override
+  Future<int> letterCleanReps(String letterId) async => 0;
+
+  @override
+  Stream<int> watchLetterCleanReps(String letterId) => Stream.value(0);
+
+  @override
+  Future<void> setLetterCleanReps({
+    required String letterId,
+    required int cleanReps,
+  }) async {}
 }
 
 const String _lettersJson = '''

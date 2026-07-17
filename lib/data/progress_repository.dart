@@ -51,4 +51,38 @@ abstract interface class ProgressRepository {
   ///
   /// SECURITY: emits only an int count — never stroke points (T-03-01/T-06-01).
   Stream<int> watchCleanReps(String letterId);
+
+  // ---------------------------------------------------------------------------
+  // D-15 FOLD (Plan 19-04): the folded per-letter aggregate over
+  // LetterExerciseReps that replaces [getCleanReps]/[watchCleanReps]/the
+  // [setCleanReps] write-through on the LIVE path. The three legacy methods
+  // above stay present-but-unused by live code this plan; 19-06 drops them with
+  // the LetterReps table. See AppDatabase for the MAX aggregation rule.
+  // ---------------------------------------------------------------------------
+
+  /// Read the folded per-letter clean-reps aggregate for [letterId] over its
+  /// LetterExerciseReps rows (D-15); 0 when never practiced. Replaces
+  /// [getCleanReps] on the live path.
+  ///
+  /// SECURITY: returns only an int count — never stroke points (T-06-01).
+  Future<int> letterCleanReps(String letterId);
+
+  /// Watch the folded per-letter clean-reps aggregate for [letterId] (D-15);
+  /// emits 0 while no exercise row exists, then the new aggregate on every
+  /// per-exercise write. Replaces [watchCleanReps] on the live ribbon path.
+  ///
+  /// SECURITY: emits only an int count — never stroke points (T-06-01).
+  Stream<int> watchLetterCleanReps(String letterId);
+
+  /// Write the per-letter clean-rep count for [letterId] THROUGH to the
+  /// LetterExerciseReps table (D-15 fold of the legacy /practice write-through).
+  /// Absolute write, including 0 (the reset shape). Replaces [setCleanReps] on
+  /// the live path.
+  ///
+  /// SECURITY: only [letterId] + an int count are persisted — never stroke
+  /// points (T-06-01).
+  Future<void> setLetterCleanReps({
+    required String letterId,
+    required int cleanReps,
+  });
 }

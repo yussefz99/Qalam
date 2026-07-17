@@ -320,6 +320,98 @@ void main() {
   );
 
   // ---------------------------------------------------------------------------
+  // Plan 19-04 — D-15 FOLD: aggregate accessors over LetterExerciseReps that
+  // reproduce the three legacy LetterReps reads (watchCleanReps / getCleanReps /
+  // allInProgress) WITHOUT a schema change, so 19-06 can DROP LetterReps after
+  // this fold lands. AGGREGATION RULE: "the letter's clean-reps" = MAX(clean_reps)
+  // across the letter's LetterExerciseReps rows (documented in app_database.dart).
+  // ---------------------------------------------------------------------------
+
+  test(
+    'letterCleanReps aggregates MAX over a letter\'s LetterExerciseReps rows; '
+    '0 for an unpracticed letter (D-15 fold)',
+    () async {
+      final shared = DatabaseConnection(NativeDatabase.memory());
+      final db = AppDatabase(shared.executor);
+
+      // Unpracticed → 0, never null/throw.
+      expect(await db.letterCleanReps('baa'), 0,
+          reason: 'a letter with no exercise rows reads as 0');
+
+      // Two exercises for baa: the aggregate is the MAX across them.
+      await db.setExerciseCleanReps(
+          letterId: 'baa',
+          exerciseId: 'baa.traceLetter.isolated',
+          cleanReps: 2);
+      await db.setExerciseCleanReps(
+          letterId: 'baa',
+          exerciseId: 'baa.writeLetter.isolated',
+          cleanReps: 3);
+      expect(await db.letterCleanReps('baa'), 3,
+          reason: 'the letter clean-reps aggregate is the MAX across exercises');
+
+      // A different letter is unaffected.
+      expect(await db.letterCleanReps('taa'), 0);
+      await db.close();
+    },
+  );
+
+  test(
+    'watchLetterCleanReps emits the aggregate and updates on a per-exercise '
+    'write (D-15 fold, ribbon substrate)',
+    () async {
+      final shared = DatabaseConnection(NativeDatabase.memory());
+      final db = AppDatabase(shared.executor);
+
+      final Stream<int> stream = db.watchLetterCleanReps('baa');
+      final expectation = expectLater(stream, emitsThrough(2));
+
+      await db.setExerciseCleanReps(
+          letterId: 'baa',
+          exerciseId: 'baa.traceLetter.isolated',
+          cleanReps: 2);
+
+      await expectation;
+      await db.close();
+    },
+  );
+
+  test(
+    'allInProgressByExerciseReps returns letters with >=1 exercise clean-rep, '
+    'mapped to the MAX aggregate (matches allInProgress semantics, D-15 fold)',
+    () async {
+      final shared = DatabaseConnection(NativeDatabase.memory());
+      final db = AppDatabase(shared.executor);
+
+      // baa: two exercises, one at 1 and one at 3 → in progress at MAX 3.
+      await db.setExerciseCleanReps(
+          letterId: 'baa',
+          exerciseId: 'baa.traceLetter.isolated',
+          cleanReps: 1);
+      await db.setExerciseCleanReps(
+          letterId: 'baa',
+          exerciseId: 'baa.writeLetter.isolated',
+          cleanReps: 3);
+      // taa: a single 0-rep exercise → NOT in progress (mirrors cleanReps > 0).
+      await db.setExerciseCleanReps(
+          letterId: 'taa',
+          exerciseId: 'taa.traceLetter.isolated',
+          cleanReps: 0);
+
+      final inProgress = await db.allInProgressByExerciseReps();
+      expect(inProgress.keys, contains('baa'),
+          reason: 'a letter with an exercise clean-rep > 0 is in progress');
+      expect(inProgress['baa'], 3,
+          reason: 'the in-progress value is the MAX across the letter\'s '
+              'exercises');
+      expect(inProgress.keys, isNot(contains('taa')),
+          reason: 'a letter whose only exercise has 0 clean-reps is NOT in '
+              'progress');
+      await db.close();
+    },
+  );
+
+  // ---------------------------------------------------------------------------
   // Plan 19-01 (Wave 0) — QP-09 / D-14 / D-16 / D-15: the v6→v7 per-child keying
   // migration + two-profile isolation.
   //

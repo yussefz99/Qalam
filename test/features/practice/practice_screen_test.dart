@@ -112,6 +112,19 @@ class _FakeProgressRepository implements ProgressRepository {
 
   @override
   Stream<int> watchCleanReps(String letterId) => Stream.value(0);
+
+  // D-15 fold (19-04): folded aggregate accessors — no persisted reps here.
+  @override
+  Future<int> letterCleanReps(String letterId) async => 0;
+
+  @override
+  Stream<int> watchLetterCleanReps(String letterId) => Stream.value(0);
+
+  @override
+  Future<void> setLetterCleanReps({
+    required String letterId,
+    required int cleanReps,
+  }) async {}
 }
 
 // ---------------------------------------------------------------------------
@@ -230,6 +243,22 @@ class _StatefulProgressRepository implements ProgressRepository {
 
   @override
   Stream<int> watchCleanReps(String letterId) => Stream.value(_reps[letterId] ?? 0);
+
+  // D-15 fold (19-04): folded aggregate accessors share the SAME `_reps` store.
+  @override
+  Future<int> letterCleanReps(String letterId) async => _reps[letterId] ?? 0;
+
+  @override
+  Stream<int> watchLetterCleanReps(String letterId) =>
+      Stream.value(_reps[letterId] ?? 0);
+
+  @override
+  Future<void> setLetterCleanReps({
+    required String letterId,
+    required int cleanReps,
+  }) async {
+    _reps[letterId] = cleanReps;
+  }
 }
 
 Widget _buildScreen() {
