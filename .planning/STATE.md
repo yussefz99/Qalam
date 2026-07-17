@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
-status: executing
-stopped_at: Completed 18-10-PLAN.md (Teacher's Margin panel D-01 + Spotlight overlay D-05 — the arc + micro-drill are now VISIBLE and warm on the live path, reading the SAME TutorInsight, IgnorePointer capture-safe, zero reward surface)
-last_updated: "2026-07-17T09:03:31.029Z"
-last_activity: 2026-07-17 -- Phase 18 execution started
+status: paused
+stopped_at: Completed gap-closure 18-12..18-16 (5 UAT issues fixed, merged, deployed, iPad-verified) — phase 18 NOT yet fully closed, 18-11 (mother sign-off + cost/latency) still open
+last_updated: "2026-07-17T12:54:03.723Z"
+last_activity: 2026-07-17 -- UAT found 5 gaps, diagnosed, fixed, deployed, device-verified; session paused
 progress:
   total_phases: 28
   completed_phases: 15
-  total_plans: 106
-  completed_plans: 96
-  percent: 54
+  total_plans: 105
+  completed_plans: 101
+  percent: 96
 ---
 
 # Project State
@@ -25,12 +25,11 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 
 ## Current Position
 
-Phase: 18 (build-the-living-tutor-dynamic-exercise-selection) — EXECUTING
-Plan: 1 of 16
-Status: Executing Phase 18
-Last activity: 2026-07-17 -- Phase 18 execution started
-Next: Continue /gsd-execute-phase 18 — 18-07 now GENUINELY done (the earlier "18-07 done" note below was the INACCURATE narrative; only a plan-amendment commit existed — no source wiring — until this pass). The two-timescale brain now DRIVES the live selection path: RouterExerciseSelector narrows to SelectionPolicy candidates (accept agent pick iff candidate AND graph-legal, else the walker over the SAME set — R5 property green, 200 cases); the coach TutorDecision is threaded into controller.selectNext on the LIVE screen (Phase-15 dead wire CLOSED + RENDERED via exercise_presenter, proven by agent_pick_live_path / live_fail_streak widget tests); selection runs on pass AND fail; arcs persist to Drift (D-12); micro-drills score by their target criterion (D-08); buildSentence is passable (writtenWords wired). test/features/ = +147/-2 (the 2 = known baseline: meet_section img.door + mastery golden). Remaining: 18-10 (micro-drill Spotlight chrome) then 18-11 HUMAN-UAT — deploy gates (Cloud Run re-deploy for the wire fields, Job+Scheduler, child_models owner-read rule) + mother signs kArcEntryFailStreak/kArcMaxAttempts + micro-drill copy + selection gold set (then the verifier flips R1/R4/R5/R6).
-PriorNext: Wave 3/4 — 18-05 (server-first profile/evidenceDigest wire + evidence.py + /coach BackgroundTask + owner-read rule), 18-06 (Dart mirror + Drift child-model repository), 18-08 (coach WHY grounding D-10 + selection_policy eval dimension), 18-09 (nightly EMA compiler) all done; 18-08/18-09 greened test_selection_dimension + test_compile_profiles (the last two Wave-0 RED server modules). NOTE: 18-08/18-09 executed BEFORE 18-07 (server/eval legs don't depend on the client wiring); 18-07 is the client live-path leg, landed this pass.
+Phase: 18 (build-the-living-tutor-dynamic-exercise-selection) — PAUSED (gap-closure round complete; original phase-close plan 18-11 still open)
+Plan: 16 of 16 planned (18-01..18-10 + 18-12..18-16 all have SUMMARY.md; 18-11 not started)
+Status: /gsd:verify-work 18 ran a fresh conversational UAT this session (18-UAT.md), found 5 issues (T2 cosmetic, T3/T5/T7 major, T6 blocker), diagnosed root causes via 5 parallel debug agents (hard cases routed to Fable 5 per owner preference), planned+checker-verified 5 gap-closure plans (18-12..18-16), executed all 5 across 3 waves with zero regressions (Dart 850/858 pass — 8 known pre-existing baseline reds, unchanged; Python 165/166 pass, 1 skip-by-design), merged, and deployed the server half (18-14) to Cloud Run — revision qalam-tutor-00027-nqw live, /health 200. A real (non-demo) build was pushed to the owner's iPad and the owner began hands-on testing; informally positive so far ("working perfectly"), plus visual confirmation the Teacher's Margin panel and "Hear again" control render correctly on a completeWord exercise. The 5 UAT findings have NOT yet been individually re-verified one-by-one against the deployed build.
+Next: Resume with either (a) `/gsd:verify-work 18` re-run against the 18-UAT.md gaps to formally re-test each of T2/T3/T5/T6/T7 on the deployed build and close that UAT session, or (b) go straight to the ORIGINAL phase-close plan 18-11-PLAN.md (separate from this gap-closure round) — its Task 2 (device cost/latency measurement) could piggyback on the current iPad session; Task 3 (mother's sign-off on kArcEntryFailStreak/kArcMaxAttempts/EMA constants/micro-drill copy/selection gold set) is still fully open and required before the phase verifier can flip R1/R4/R5/R6/R7/R8/R9. Phase 18 is NOT complete until 18-11 lands.
+PriorNext: 18-07 (live-path wiring) confirmed genuinely done in the prior session (the earlier "18-07 done" note had been an inaccurate narrative — only a plan-amendment commit existed until that pass landed real source wiring). 18-08/18-09 (server WHY grounding + nightly compiler) executed before 18-07 since the server/eval legs don't depend on client wiring.
 
 ## Performance Metrics
 
