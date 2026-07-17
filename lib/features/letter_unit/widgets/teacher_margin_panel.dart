@@ -75,12 +75,22 @@ class TeacherMarginPanel extends ConsumerWidget {
     }
 
     final criterion = _targetedCriterion(insight);
-    // ONLINE → the coach's WHY line; OFFLINE / pre-coach → the authored template
-    // keyed by the targeted criterion (D-10 degradation, same panel).
+    // The WHY resolution (18-16 — vary per attempt; the authored table is a LAST-
+    // RESORT offline FLOOR, not the majority-path output):
+    //   1) ONLINE → the coach's `rationale` verbatim (the per-attempt WHY, now
+    //      populated on the clean-pass path too, 18-14).
+    //   2) CLEAN PASS offline (no failed criterion) → a warm pass-appropriate
+    //      line — NOT the criterion-skewed static 'deeper bowl'.
+    //   3) GENUINE miss offline → the authored floor for THAT failed criterion.
     final rationale = insight.rationale?.trim();
-    final why = (rationale != null && rationale.isNotEmpty)
-        ? rationale
-        : _authoredWhy(criterion);
+    final String why;
+    if (rationale != null && rationale.isNotEmpty) {
+      why = rationale;
+    } else if (criterion == null) {
+      why = _passWhy;
+    } else {
+      why = _authoredWhy(criterion);
+    }
     // The arc's named step-down — present only during a GENUINE remediation arc
     // (the policy's real `arcStep`), NOT a micro-drill pick (drills parked, D-03).
     final arcLine = _arcStepDownLine(insight);
@@ -208,19 +218,21 @@ class TeacherMarginPanel extends ConsumerWidget {
         _ => 'this part',
       };
 
-  /// The criterion the arc/coach is targeting — the first criterion whose zone is
-  /// NOT `certainlyCorrect` (the one the child keeps missing), else the first
-  /// listed, else null (the pass case with all-correct criteria).
+  /// The criterion the child ACTUALLY missed — the first criterion the scorer
+  /// marked `certainlyWrong`. Returns null when NOTHING is certainly wrong (a
+  /// clean pass, or a merely-`fuzzy` soft-band criterion under the provisional
+  /// uncalibrated bands): the WHY then shows a pass-appropriate line rather than
+  /// skewing to a fixed 'shape' fallback (18-16 — the "feels static, always the
+  /// deeper-bowl line" fix). Only a genuine miss names a "Working on" part.
   String? _targetedCriterion(TutorInsight insight) {
     final criteria = insight.criteria;
     if (criteria == null || criteria.isEmpty) return null;
     for (final c in criteria) {
       final zone = c['zone'];
       final name = c['criterion'];
-      if (name is String && zone != 'certainlyCorrect') return name;
+      if (name is String && zone == 'certainlyWrong') return name;
     }
-    final first = criteria.first['criterion'];
-    return first is String ? first : null;
+    return null; // no genuine miss → a clean pass (no skew to 'shape').
   }
 
   /// A child-friendly name for a scorer criterion (the part being worked on).
@@ -233,10 +245,19 @@ class TeacherMarginPanel extends ConsumerWidget {
         _ => 'this part',
       };
 
+  /// PROVISIONAL (signed:false, mother-signed at 18-11, D-03). The warm
+  /// pass-appropriate WHY line shown on a CLEAN PASS with no coach rationale
+  /// (18-16) — so the WHY is not the criterion-skewed static 'deeper bowl' after
+  /// every correct attempt. Names what the child did well; never over-praises
+  /// (a clean pass earns it) and never a score/streak.
+  static const String _passWhy =
+      "That's a steady baa — smooth and sure. Lovely writing.";
+
   /// PROVISIONAL (signed:false, mother-signed at 18-11, D-03). The authored WHY
-  /// line keyed by the targeted criterion — the OFFLINE floor the panel shows
-  /// when the coach `rationale` is absent (D-10). Warm, names the exact fix,
-  /// never fake cheer.
+  /// line keyed by the criterion the child GENUINELY missed — the last-resort
+  /// OFFLINE floor the panel shows when the coach `rationale` is absent AND a
+  /// criterion is `certainlyWrong` (D-10). Warm, names the exact fix, never fake
+  /// cheer. Not the majority path (a clean pass shows [_passWhy] instead).
   String _authoredWhy(String? criterion) => switch (criterion) {
         'dot' =>
           "baa's dot lives just below the bowl — let's set it right under the middle.",

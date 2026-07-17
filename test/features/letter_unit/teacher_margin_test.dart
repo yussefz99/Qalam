@@ -234,4 +234,63 @@ void main() {
           reason: 'forbidden reward token "$token" must never render');
     }
   });
+
+  testWidgets(
+      'Test 7 (18-16): a CLEAN PASS (no rationale, no failed criterion) does NOT '
+      'show the static "deeper bowl" line — it shows a pass-appropriate line',
+      (tester) async {
+    // A genuinely good attempt: every criterion certainlyCorrect, no coach line.
+    await _pump(
+      tester,
+      insight: const TutorInsight(
+        criteria: [
+          {'criterion': 'shape', 'zone': 'certainlyCorrect'},
+          {'criterion': 'dot', 'zone': 'certainlyCorrect'},
+        ],
+      ),
+    );
+    final text = _allText(tester).toLowerCase();
+    // The exact criterion-skewed static line must NOT fire on a clean pass.
+    expect(text.contains('deeper bowl'), isFalse,
+        reason: 'the static bowl fallback must not skew a clean pass');
+    // A warm pass-appropriate line shows instead.
+    expect(text.contains('lovely writing'), isTrue);
+  });
+
+  testWidgets(
+      'Test 8 (18-16): a GENUINE criterion FAIL (no rationale) still shows the '
+      'authored offline floor for THAT criterion', (tester) async {
+    await _pump(
+      tester,
+      insight: const TutorInsight(
+        criteria: [
+          {'criterion': 'dot', 'zone': 'certainlyWrong'},
+        ],
+      ),
+    );
+    final text = _allText(tester).toLowerCase();
+    // The authored floor for the FAILED criterion (the dot) is preserved.
+    expect(text.contains("baa's dot lives just below"), isTrue);
+  });
+
+  testWidgets(
+      'Test 9 (18-16): the coach rationale, when present, is shown verbatim as '
+      'the per-attempt WHY (not the authored floor)', (tester) async {
+    await _pump(
+      tester,
+      insight: const TutorInsight(
+        criteria: [
+          {'criterion': 'shape', 'zone': 'certainlyWrong'},
+        ],
+        rationale: 'Your scoop is a touch shallow today — dip a little lower.',
+      ),
+    );
+    final text = _allText(tester);
+    expect(
+      text.contains('Your scoop is a touch shallow today — dip a little lower.'),
+      isTrue,
+    );
+    // The authored floor is NOT the source when a rationale is present.
+    expect(text.toLowerCase().contains('deeper bowl'), isFalse);
+  });
 }
