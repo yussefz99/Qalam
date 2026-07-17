@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Qalam — letter review packets</title>
+<style>
+:root { --parchment:#fbf5e6; --ink:#2b2320; --rule:#d8ccb4; --accent:#7a4e9e; }
+* { box-sizing: border-box; }
+body { margin:0; background:#efe6d2; color:var(--ink);
+  font-family: 'Segoe UI', system-ui, sans-serif; line-height:1.5; }
+.arabic { font-family: 'Noto Naskh Arabic', 'Amiri', 'Segoe UI', 'Traditional Arabic', serif; }
+.page { max-width: 900px; margin: 24px auto; background: var(--parchment);
+  padding: 32px 40px; box-shadow: 0 2px 10px rgba(0,0,0,.12); }
+.stamp { background:#8a1f1f; color:#fff; font-weight:700; letter-spacing:.04em;
+  padding:8px 14px; border-radius:4px; display:inline-block; margin-bottom:18px;
+  text-transform:uppercase; font-size:14px; }
+h1 { margin:.2em 0; font-size:28px; }
+h2 { margin:1.4em 0 .5em; font-size:20px; border-bottom:2px solid var(--rule); padding-bottom:4px; }
+.subtle { color:#6b5f52; font-size:14px; }
+.glyph { font-size:96px; line-height:1; }
+.grid { display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start; }
+.forms { display:flex; gap:14px; flex-wrap:wrap; direction:rtl; }
+.form-card { background:#fffaf0; border:1px solid var(--rule); border-radius:8px;
+  padding:12px 16px; text-align:center; min-width:96px; }
+.form-card .g { font-size:48px; line-height:1.1; }
+.form-card .lbl { font-size:12px; color:#6b5f52; margin-top:6px; direction:ltr; }
+svg { background:#fffaf0; border:1px solid var(--rule); border-radius:8px; }
+table { border-collapse:collapse; width:100%; margin-top:8px; font-size:14px; }
+th, td { border:1px solid var(--rule); padding:6px 10px; text-align:left; }
+th { background:#f0e7d3; }
+.dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; vertical-align:middle; }
+.mistake { background:#fffaf0; border:1px solid var(--rule); border-left:4px solid var(--accent);
+  border-radius:6px; padding:10px 14px; margin:8px 0; }
+.mistake .fb { font-size:16px; }
+.mistake .meta { font-size:12px; color:#6b5f52; margin-top:4px; font-family:monospace; }
+.reps { font-size:16px; }
+.reps b { font-size:22px; }
+.check-row { display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+  padding:8px 0; border-bottom:1px dashed var(--rule); }
+.check-label { flex:1 1 260px; min-width:220px; }
+.opt { font-size:14px; white-space:nowrap; }
+.box { display:inline-block; width:16px; height:16px; border:2px solid var(--ink);
+  border-radius:3px; vertical-align:middle; margin-right:4px; }
+.notes { flex:1 1 200px; border-bottom:1px solid var(--ink); min-height:22px; color:#6b5f52; font-size:13px; }
+.nav { display:flex; justify-content:space-between; margin-top:28px; font-size:14px; }
+.nav a { color:var(--accent); text-decoration:none; }
+.foot { margin-top:22px; font-size:12px; color:#6b5f52; border-top:1px solid var(--rule); padding-top:10px; }
+@media print {
+  body { background:#fff; }
+  .page { box-shadow:none; margin:0; max-width:none; }
+  .stamp { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  a { color:var(--ink); }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="stamp">Draft — model-authored, awaiting review</div>
+<h1>Letter sign-off review packets</h1>
+<p class="subtle">26 letters still need the owner's-mother's sign-off
+  (<code>signedOff: false</code>). Each packet shows the drafted stroke order,
+  the four forms, the common mistakes and a sign-off checklist. Print or mark up
+  on iPad. Ordered by intro order.</p>
+<table>
+  <thead><tr><th>order</th><th>letter</th><th>name</th><th>id</th><th></th></tr></thead>
+  <tbody><tr><td>1</td><td class="arabic" style="font-size:28px">ا</td><td>Alif</td><td><code>alif</code></td><td><a href="01-alif.html">open review packet →</a></td></tr><tr><td>4</td><td class="arabic" style="font-size:28px">ث</td><td>Thaa</td><td><code>thaa</code></td><td><a href="04-thaa.html">open review packet →</a></td></tr><tr><td>5</td><td class="arabic" style="font-size:28px">ج</td><td>Jeem</td><td><code>jeem</code></td><td><a href="05-jeem.html">open review packet →</a></td></tr><tr><td>6</td><td class="arabic" style="font-size:28px">ح</td><td>Haa</td><td><code>haa_c</code></td><td><a href="06-haa_c.html">open review packet →</a></td></tr><tr><td>7</td><td class="arabic" style="font-size:28px">خ</td><td>Khaa</td><td><code>khaa</code></td><td><a href="07-khaa.html">open review packet →</a></td></tr><tr><td>8</td><td class="arabic" style="font-size:28px">د</td><td>Daal</td><td><code>daal</code></td><td><a href="08-daal.html">open review packet →</a></td></tr><tr><td>9</td><td class="arabic" style="font-size:28px">ذ</td><td>Dhaal</td><td><code>dhaal</code></td><td><a href="09-dhaal.html">open review packet →</a></td></tr><tr><td>10</td><td class="arabic" style="font-size:28px">ر</td><td>Raa</td><td><code>raa</code></td><td><a href="10-raa.html">open review packet →</a></td></tr><tr><td>11</td><td class="arabic" style="font-size:28px">ز</td><td>Zaay</td><td><code>zaay</code></td><td><a href="11-zaay.html">open review packet →</a></td></tr><tr><td>12</td><td class="arabic" style="font-size:28px">س</td><td>Seen</td><td><code>seen</code></td><td><a href="12-seen.html">open review packet →</a></td></tr><tr><td>13</td><td class="arabic" style="font-size:28px">ش</td><td>Sheen</td><td><code>sheen</code></td><td><a href="13-sheen.html">open review packet →</a></td></tr><tr><td>14</td><td class="arabic" style="font-size:28px">ص</td><td>Saad</td><td><code>saad</code></td><td><a href="14-saad.html">open review packet →</a></td></tr><tr><td>15</td><td class="arabic" style="font-size:28px">ض</td><td>Daad</td><td><code>daad</code></td><td><a href="15-daad.html">open review packet →</a></td></tr><tr><td>16</td><td class="arabic" style="font-size:28px">ط</td><td>Taa</td><td><code>taa_h</code></td><td><a href="16-taa_h.html">open review packet →</a></td></tr><tr><td>17</td><td class="arabic" style="font-size:28px">ظ</td><td>Zhaa</td><td><code>zhaa</code></td><td><a href="17-zhaa.html">open review packet →</a></td></tr><tr><td>18</td><td class="arabic" style="font-size:28px">ع</td><td>Ayn</td><td><code>ayn</code></td><td><a href="18-ayn.html">open review packet →</a></td></tr><tr><td>19</td><td class="arabic" style="font-size:28px">غ</td><td>Ghayn</td><td><code>ghayn</code></td><td><a href="19-ghayn.html">open review packet →</a></td></tr><tr><td>20</td><td class="arabic" style="font-size:28px">ف</td><td>Faa</td><td><code>faa</code></td><td><a href="20-faa.html">open review packet →</a></td></tr><tr><td>21</td><td class="arabic" style="font-size:28px">ق</td><td>Qaaf</td><td><code>qaaf</code></td><td><a href="21-qaaf.html">open review packet →</a></td></tr><tr><td>22</td><td class="arabic" style="font-size:28px">ك</td><td>Kaaf</td><td><code>kaaf</code></td><td><a href="22-kaaf.html">open review packet →</a></td></tr><tr><td>23</td><td class="arabic" style="font-size:28px">ل</td><td>Laam</td><td><code>laam</code></td><td><a href="23-laam.html">open review packet →</a></td></tr><tr><td>24</td><td class="arabic" style="font-size:28px">م</td><td>Meem</td><td><code>meem</code></td><td><a href="24-meem.html">open review packet →</a></td></tr><tr><td>25</td><td class="arabic" style="font-size:28px">ن</td><td>Noon</td><td><code>noon</code></td><td><a href="25-noon.html">open review packet →</a></td></tr><tr><td>26</td><td class="arabic" style="font-size:28px">ه</td><td>Haa</td><td><code>haa_f</code></td><td><a href="26-haa_f.html">open review packet →</a></td></tr><tr><td>27</td><td class="arabic" style="font-size:28px">و</td><td>Waaw</td><td><code>waaw</code></td><td><a href="27-waaw.html">open review packet →</a></td></tr><tr><td>28</td><td class="arabic" style="font-size:28px">ي</td><td>Yaa</td><td><code>yaa</code></td><td><a href="28-yaa.html">open review packet →</a></td></tr></tbody>
+</table>
+<div class="foot">Qalam · Phase 18.1 · regenerate any time with
+  <code>python -m review_packets</code> (from <code>tools/</code>).</div>
+
+</div>
+</body>
+</html>
