@@ -92,13 +92,19 @@ class _CleanRepsNotifier extends AsyncNotifier<int> {
   @override
   Future<int> build() => _bindDriftStream(
         ref,
-        ref.watch(progressRepositoryProvider).watchCleanReps(letterId),
+        // D-15 fold (19-04): the folded LetterExerciseReps MAX aggregate
+        // replaces the legacy LetterReps `watchCleanReps`. Still through the
+        // ProgressRepository seam (not appDatabaseProvider directly) so widget
+        // tests can fake the stream without a database, and STILL via
+        // `_bindDriftStream` — never a bare StreamProvider.future (Pitfall 5).
+        ref.watch(progressRepositoryProvider).watchLetterCleanReps(letterId),
         (value) => state = value,
       );
 }
 
 /// The banked partial clean-rep count for one letter (D-10), live from the
-/// LetterReps table. Emits 0 while the letter has never been practiced.
+/// folded LetterExerciseReps aggregate (D-15). Emits 0 while the letter has
+/// never been practiced.
 final cleanRepsForLetterProvider =
     AsyncNotifierProvider.family<_CleanRepsNotifier, int, String>(
   _CleanRepsNotifier.new,

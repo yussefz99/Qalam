@@ -250,8 +250,9 @@ void main() {
   });
 
   test(
-      'cleanRepsForLetterProvider(baa) emits the persisted count after '
-      'setCleanReps and updates on overwrite (D-10)', () async {
+      'cleanRepsForLetterProvider(baa) emits the folded LetterExerciseReps '
+      'aggregate after a per-exercise write and updates on overwrite '
+      '(D-15 fold — watchLetterCleanReps replaces watchCleanReps)', () async {
     final container = _makeContainer(
       db: db,
       curriculum: curriculum,
@@ -265,14 +266,18 @@ void main() {
     // Never practiced → 0, never null/throw.
     expect(await _repsWhen(container, 'baa', 0), 0);
 
-    await db.setCleanReps(letterId: 'baa', cleanReps: 2);
+    // The ribbon now reads the LetterExerciseReps MAX aggregate, NOT the legacy
+    // LetterReps counter — so the seed is a per-exercise write.
+    await db.setExerciseCleanReps(
+        letterId: 'baa', exerciseId: 'baa.traceLetter.isolated', cleanReps: 2);
     expect(await _repsWhen(container, 'baa', 2), 2,
-        reason: 'the family stream must emit the persisted count');
+        reason: 'the family stream must emit the aggregate clean-rep count');
 
-    // Overwrite semantics: a new write replaces the count.
-    await db.setCleanReps(letterId: 'baa', cleanReps: 3);
+    // Overwrite semantics: a new write to the same exercise replaces the count.
+    await db.setExerciseCleanReps(
+        letterId: 'baa', exerciseId: 'baa.traceLetter.isolated', cleanReps: 3);
     expect(await _repsWhen(container, 'baa', 3), 3,
-        reason: 'an overwrite must surface through the same stream');
+        reason: 'an overwrite must surface through the same aggregate stream');
   });
 
   test(

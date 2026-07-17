@@ -9,7 +9,8 @@
 //     can seed either state — the Wave-0 RED contract pins this exact shape.
 //  2. parentProgressProvider — a HAND-WRITTEN FutureProvider<ParentProgress>
 //     (NOT @riverpod codegen) assembling the read-only dashboard model from the
-//     curriculum letter list + the allMastered()/allInProgress() accessors.
+//     curriculum letter list + allMastered() + the folded
+//     allInProgressByExerciseReps() aggregate (D-15).
 //
 // KNOWN ANALYZER NOTE: riverpod_lint emits one `unsupported_provider_value`
 // warning for `parentGate` below, exactly as it does for `onboardingGate` in
@@ -104,7 +105,9 @@ ParentGate parentGate(Ref ref) {
 ///
 /// Assembly (RESEARCH 09-RESEARCH draft):
 ///   * `mastered` = {letterId → LetterMasteryData} from `allMastered()`;
-///   * `inProgress` = {letterId → cleanReps} from `allInProgress()`;
+///   * `inProgress` = {letterId → cleanReps} from `allInProgressByExerciseReps()`
+///     (D-15 fold: the LetterExerciseReps MAX aggregate replaces the legacy
+///     `allInProgress()` LetterReps read);
 ///   * iterate `getLetters()` (already sorted by introOrder) and emit a mastered
 ///     row for mastered ids, else an in-progress row for ids present in
 ///     inProgress, else SKIP untouched letters;
@@ -116,8 +119,10 @@ final parentProgressProvider = FutureProvider<ParentProgress>((ref) async {
 
   final masteredRows = await db.allMastered();
   final mastered = {for (final m in masteredRows) m.letterId: m};
-  final inProgressRows = await db.allInProgress();
-  final inProgress = {for (final r in inProgressRows) r.letterId: r.cleanReps};
+  // D-15 fold (19-04): the in-progress list now reads the LetterExerciseReps
+  // MAX aggregate (letterId → aggregate clean-reps) instead of the legacy
+  // LetterReps `allInProgress()` — LetterReps is off the live read path.
+  final inProgress = await db.allInProgressByExerciseReps();
 
   final letters = await curriculum.getLetters(); // sorted by introOrder
 

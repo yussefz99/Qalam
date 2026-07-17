@@ -157,11 +157,14 @@ class PracticeSessionController extends _$PracticeSessionController {
         : await curriculumRepo.getDefaultToleranceRamp();
 
     // D-20: prime the rep count from the persisted row — best-effort, a
-    // storage failure degrades to 0 and never blocks the session.
+    // storage failure degrades to 0 and never blocks the session. D-15 fold
+    // (19-04): reads the folded LetterExerciseReps aggregate, not the legacy
+    // LetterReps `getCleanReps`.
     var persisted = 0;
     try {
-      persisted =
-          await ref.read(progressRepositoryProvider).getCleanReps(_letterId!);
+      persisted = await ref
+          .read(progressRepositoryProvider)
+          .letterCleanReps(_letterId!);
     } catch (_) {
       // Swallow — start the sitting at 0.
     }
@@ -191,13 +194,18 @@ class PracticeSessionController extends _$PracticeSessionController {
   /// including the explicit reset to 0 on a miss (Pitfall 7). Mirrors the
   /// [_recordMastery] try/swallow: a storage failure must never interrupt
   /// the session. SECURITY: only letterId + an int count leave here (T-06-01).
+  ///
+  /// D-15 fold (19-04): the write-through now targets the folded
+  /// LetterExerciseReps table via [ProgressRepository.setLetterCleanReps]
+  /// (a single synthetic per-letter row) — LetterReps is off the live write
+  /// path so 19-06 can drop it.
   Future<void> _persistCleanReps(int cleanReps) async {
     final letterId = _letterId;
     if (letterId == null) return; // load not finished — nothing to address
     try {
       await ref
           .read(progressRepositoryProvider)
-          .setCleanReps(letterId: letterId, cleanReps: cleanReps);
+          .setLetterCleanReps(letterId: letterId, cleanReps: cleanReps);
     } catch (_) {
       // Swallow — the in-memory session continues.
     }
@@ -236,8 +244,8 @@ class PracticeSessionController extends _$PracticeSessionController {
   /// Shared by the whole-letter and (legacy) per-stroke pass paths.
   Future<void> _registerCleanRep() async {
     final newReps = state.cleanReps + 1;
-    // D-10: write the new count through to LetterReps on EVERY change
-    // (best-effort — never blocks the session).
+    // D-10: write the new count through to the folded LetterExerciseReps
+    // aggregate on EVERY change (best-effort — never blocks the session).
     await _persistCleanReps(newReps);
     if (!ref.mounted) return; // disposed mid-await (Riverpod 3)
     if (newReps >= state.cleanRepsToAdvance) {
