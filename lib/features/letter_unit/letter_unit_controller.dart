@@ -164,6 +164,27 @@ class LetterUnitController extends Notifier<LetterUnitState> {
   List<SessionAttempt> sessionHistory() =>
       List<SessionAttempt>.unmodifiable(_sessionHistory);
 
+  /// 18-16: the CURRENT feedback moment's GENUINE remediation-arc step (from the
+  /// policy outcome cached in [beginSelection], BEFORE [selectNext] consumes it) —
+  /// `entry`/`stepDown`/`rebuild`/`retryOriginal`, or null when no arc is in
+  /// progress. Only a genuine arc (entering or advancing) is surfaced: a mere
+  /// TRACKING arc (a first fail counting toward entry) carries NO `arcStep:`
+  /// why-fact, so this returns null and a single fail never narrates a step-down.
+  /// The scaffold threads this into the child-facing Teacher's Margin at verdict
+  /// time so the step-down narrates from the REAL arc state — no micro-drill pick
+  /// required (the drills are parked out of the live graph, D-03).
+  String? pendingArcStep() {
+    final out = _pendingNarrow;
+    if (out == null) return null;
+    final genuineArc = out.whyFacts.any((f) => f.startsWith('arcStep:'));
+    return genuineArc ? out.arcStep : null;
+  }
+
+  /// 18-16: the CURRENT moment's non-PII policy WHY facts (`criterion:*` /
+  /// `arcStep:*` / `struggle:*`) from the cached policy outcome, or empty. The
+  /// margin names the arc's target part from these (never child data / geometry).
+  List<String> pendingWhyFacts() => _pendingNarrow?.whyFacts ?? const [];
+
   /// The across-session profile as the non-PII wire map (R2), or null when there
   /// is no across-session signal yet (cold boot / empty) so the payload omits it.
   Map<String, Object?>? profileFacts() {

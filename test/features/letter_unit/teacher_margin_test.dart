@@ -9,8 +9,9 @@
 //     coach rationale when online).
 //   • offline (no coach line, criteria only) it degrades to the authored-template
 //     WHY line — same panel, degraded source (D-10).
-//   • during an arc (the coach picked a micro-drill) it narrates the named
-//     step-down ("just the dot … then we'll come back") — the D-03 register.
+//   • during a GENUINE remediation arc it narrates the named step-down ("just the
+//     dot … then we'll come back") driven by the REAL `insight.arcStep` — NOT a
+//     micro-drill pick (the drills are parked out of the live graph, D-03).
 //   • NO reward surface: no counter / streak / badge / points / "+N" token
 //     renders (anti-gamification, CLAUDE.md Decided).
 
@@ -141,7 +142,32 @@ void main() {
     expect(text.trim().isNotEmpty, isTrue);
   });
 
-  testWidgets('Test 4: during an arc it narrates the named step-down',
+  testWidgets(
+      'Test 4: a GENUINE arc step-down narrates from the real arcStep '
+      '(no micro-drill pick required)', (tester) async {
+    await _pump(
+      tester,
+      insight: const TutorInsight(
+        criteria: [
+          {'criterion': 'dot', 'zone': 'certainlyWrong'},
+        ],
+        // The REAL policy arc signal drives the step-down — NOT a `pick`
+        // containing 'microDrill' (the drills are parked out of the live graph,
+        // D-03; the step-down is a floor-trace detour). No `pick` is set here.
+        arcStep: 'stepDown',
+        whyFacts: ['criterion:dot', 'arcStep:stepDown'],
+      ),
+    );
+    final text = _allText(tester).toLowerCase();
+    // The warm named step-down: practice just this part, then come back.
+    expect(text.contains('just the'), isTrue);
+    expect(text.contains('come back'), isTrue);
+    // Naming the arc's targeted part (the dot).
+    expect(text.contains('just the dot'), isTrue);
+  });
+
+  testWidgets(
+      'Test 4b: no arc (arcStep null) → no step-down line renders',
       (tester) async {
     await _pump(
       tester,
@@ -149,14 +175,13 @@ void main() {
         criteria: [
           {'criterion': 'dot', 'zone': 'certainlyWrong'},
         ],
-        pick: 'baa.microDrill.dot',
-        rationale: "Let's give the dot a moment.",
+        rationale: "baa's dot lives just below the bowl.",
+        // arcStep omitted → null: no remediation arc in progress.
       ),
     );
     final text = _allText(tester).toLowerCase();
-    // The warm named step-down: practice just this part, then come back.
-    expect(text.contains('just the'), isTrue);
-    expect(text.contains('come back'), isTrue);
+    expect(text.contains('come back'), isFalse,
+        reason: 'no step-down narration without a real arc step');
   });
 
   testWidgets('Test 5: NO reward surface renders (anti-gamification guard)',

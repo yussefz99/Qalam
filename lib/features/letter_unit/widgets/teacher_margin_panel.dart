@@ -64,9 +64,9 @@ class TeacherMarginPanel extends ConsumerWidget {
     final why = (rationale != null && rationale.isNotEmpty)
         ? rationale
         : _authoredWhy(criterion);
-    // The arc's named step-down — present only when the coach routed the child to
-    // a micro-drill (the pick), i.e. the arc's stepDown moment (D-02/D-03).
-    final arcLine = _arcStepDownLine(insight.pick);
+    // The arc's named step-down — present only during a GENUINE remediation arc
+    // (the policy's real `arcStep`), NOT a micro-drill pick (drills parked, D-03).
+    final arcLine = _arcStepDownLine(insight);
 
     return Container(
       margin: const EdgeInsets.only(top: 10),
@@ -191,18 +191,28 @@ class TeacherMarginPanel extends ConsumerWidget {
       };
 
   /// PROVISIONAL (signed:false, D-03). The named step-down narration — present
-  /// only when the coach routed the child to a micro-drill (`pick` names a
-  /// `microDrill` node). "Let's practice just the dot for a moment — then we'll
-  /// come back" (the D-03 register, sketch 001: the arc never leaves the desk).
-  String? _arcStepDownLine(String? pick) {
-    if (pick == null || !pick.contains('microDrill')) return null;
-    final zone = pick.split('.').last;
-    final part = switch (zone) {
-      'dot' => 'the dot',
-      'bowl' => 'the bowl',
-      'start' => 'the start',
-      _ => 'this part',
-    };
+  /// only during a GENUINE remediation arc, driven by the REAL policy
+  /// `insight.arcStep` (`entry`/`stepDown`), NOT a micro-drill pick (the drills
+  /// are parked out of the live graph — the step-down is a floor-trace detour,
+  /// D-03). "Let's practice just the dot for a moment — then we'll come back"
+  /// (the D-03 register, sketch 001: a detour that comes right back, never a step
+  /// BACK, never framed as failure).
+  String? _arcStepDownLine(TutorInsight insight) {
+    final step = insight.arcStep;
+    if (step != 'entry' && step != 'stepDown') return null;
+    final criterion = _arcTargetCriterion(insight);
+    final part = criterion != null ? _friendlyCriterion(criterion) : 'this part';
     return "Let's practice just $part for a moment — then we'll come back.";
+  }
+
+  /// The arc's TARGET criterion — read from the policy `whyFacts`
+  /// (`criterion:<name>`) so the step-down names the part the arc is rebuilding
+  /// even when the current drill's criteria read clean, falling back to the
+  /// verdict-time targeted criterion.
+  String? _arcTargetCriterion(TutorInsight insight) {
+    for (final f in insight.whyFacts ?? const <String>[]) {
+      if (f.startsWith('criterion:')) return f.substring('criterion:'.length);
+    }
+    return _targetedCriterion(insight);
   }
 }

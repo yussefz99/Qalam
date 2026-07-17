@@ -87,11 +87,30 @@ class ExerciseScaffoldStrings {
 /// by data the client already holds (the scorer's criteria, the point-free
 /// geometry summary, and the agent's next-exercise pick + rationale).
 class TutorInsight {
-  const TutorInsight({this.criteria, this.diffSummary, this.pick, this.rationale});
+  const TutorInsight({
+    this.criteria,
+    this.diffSummary,
+    this.pick,
+    this.rationale,
+    this.arcStep,
+    this.whyFacts,
+  });
   final List<Map<String, Object?>>? criteria;
   final String? diffSummary;
   final String? pick;
   final String? rationale;
+
+  /// 18-16: the CURRENT feedback moment's GENUINE remediation-arc step
+  /// (`entry`/`stepDown`/`rebuild`/`retryOriginal`), or null when no arc is in
+  /// progress. Threaded from the controller's cached policy outcome (NOT parsed
+  /// from `pick` — the micro-drills are parked out of the live graph, D-03). The
+  /// child-facing Teacher's Margin narrates the step-down from THIS signal.
+  final String? arcStep;
+
+  /// 18-16: the non-PII policy WHY facts (`criterion:*` / `arcStep:*` /
+  /// `struggle:*`) for this moment. The margin names the arc's target part from
+  /// these; never carries child data / geometry (ADR-014).
+  final List<String>? whyFacts;
 }
 
 /// A [Notifier] (Riverpod 3 dropped `StateProvider`) mirroring the
@@ -327,15 +346,6 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
     // and bottom bar read the instant authored `state.line`, so this clear is
     // invisible there. The verdict/star are already applied and stand (D-A).
     ref.read(tutorLineProvider.notifier).clear();
-    // DEMO "Teacher's Eye": publish what the scorer just saw (criteria + the
-    // point-free geometry summary). The agent's pick merges in when the brain
-    // resolves. Agent path only — presenter chrome, read-only.
-    if (_isAgentPath) {
-      ref.read(tutorInsightProvider.notifier).set(TutorInsight(
-            criteria: result.criteria,
-            diffSummary: strokeDiff?['summary'] as String?,
-          ));
-    }
     if (result.passed && widget.graphExerciseId != null) {
       widget.onGraphNodePassed?.call(widget.graphExerciseId!);
     }
@@ -352,10 +362,27 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
         ref.read(letterUnitControllerProvider(widget.letter.id).notifier);
     final unitState = ref.read(letterUnitControllerProvider(widget.letter.id));
     final graphId = widget.graphExerciseId;
-    final candidates = (_isAgentPath && graphId != null)
-        ? controller.beginSelection(result, graphId,
+    final bool selectionBegan = _isAgentPath && graphId != null;
+    final candidates = selectionBegan
+        ? controller.beginSelection(result, graphId!,
             recentMistakes: List<String>.of(_recentMistakes))
         : const <String>[];
+
+    // DEMO "Teacher's Eye" + 18-16 Teacher's Margin: publish what the scorer just
+    // saw (criteria + the point-free geometry summary) AND — now that
+    // beginSelection above has populated the policy outcome — the REAL arc signal
+    // (arcStep + whyFacts). The child-facing Teacher's Margin narrates the
+    // step-down from THIS arc state, not a micro-drill pick (parked out of the
+    // live graph, D-03). The agent's next-exercise pick merges in when the brain
+    // resolves. Agent path only — read-only presenter chrome + the warm margin.
+    if (_isAgentPath) {
+      ref.read(tutorInsightProvider.notifier).set(TutorInsight(
+            criteria: result.criteria,
+            diffSummary: strokeDiff?['summary'] as String?,
+            arcStep: selectionBegan ? controller.pendingArcStep() : null,
+            whyFacts: selectionBegan ? controller.pendingWhyFacts() : null,
+          ));
+    }
 
     final facts = buildTutorFacts(
       letterId: widget.letter.id,
@@ -420,6 +447,10 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
               diffSummary: cur?.diffSummary,
               pick: plan!.nextExerciseId,
               rationale: plan.rationale,
+              // Carry the verdict-time arc signal through the merge (like
+              // criteria/diff) so the margin keeps narrating the step-down.
+              arcStep: cur?.arcStep,
+              whyFacts: cur?.whyFacts,
             ));
       }
 
