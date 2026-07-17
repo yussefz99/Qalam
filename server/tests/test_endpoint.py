@@ -62,11 +62,16 @@ class _FakePlanModel:
         return _FakeStructured(self._plan)
 
 
-def _patch_coach(monkeypatch, tool_calls):
+def _patch_coach(monkeypatch, tool_calls, clean_pass: bool = False):
     """Patch the whole node set offline: a struggle FACTS run goes analyze -> plan -> coach.
 
     The coach is patched to force `tool_calls`; analyze returns a struggle Insight (so the router
     takes the plan hop) and plan returns an authored, grounded Plan — both fully offline.
+
+    `clean_pass=True` makes analyze return an EMPTY-struggle Insight so `needs_plan` shortcuts
+    analyze -> coach directly (the plan node is SKIPPED, graph.py). This is the exact routing the
+    owner tested (a clean pass): the per-attempt WHY can then ONLY reach the client via the coach
+    tool-call args (next_exercise_id + rationale) — the mechanism 18-14 unblocks.
     """
     import app.nodes.analyze as analyze_mod
     import app.nodes.coach as coach_mod
@@ -74,10 +79,18 @@ def _patch_coach(monkeypatch, tool_calls):
     from app.nodes.analyze import Insight
     from app.nodes.plan import Plan
 
-    insight = Insight(
-        struggle_tags=["boat-curvature"],
-        strength_tags=["steady-hand"],
-        pattern_note="shallow bowl recurring",
+    insight = (
+        Insight(
+            struggle_tags=[],
+            strength_tags=["steady-hand", "deep-bowl"],
+            pattern_note="clean, confident pass",
+        )
+        if clean_pass
+        else Insight(
+            struggle_tags=["boat-curvature"],
+            strength_tags=["steady-hand"],
+            pattern_note="shallow bowl recurring",
+        )
     )
     plan_obj = Plan(
         next_exercise_id="baa.traceLetter.isolated",
@@ -118,6 +131,16 @@ ENLARGED_PASS_FACTS = {
     "recentMistakes": [],
     "trajectory": [{"passed": True, "mistakeId": None, "section": "traceLetter"}],
     "strengthTags": ["steady-hand", "deep-bowl"],
+}
+
+# A CLEAN-PASS payload carrying the graph-legal next-exercise candidates (18-14). The coach node's
+# next-exercise rail validates any proposed next_exercise_id against THIS list; a pick inside it
+# survives to the wire, a pick outside it is stripped (with its orphaned rationale).
+_LEGAL_NEXT = "baa.traceLetter.initial"
+PASS_FACTS_WITH_CANDIDATES = {
+    **ENLARGED_PASS_FACTS,
+    "weakestCriterion": "shape",
+    "legalNextExerciseIds": [_LEGAL_NEXT, "baa.traceLetter.medial"],
 }
 
 
@@ -220,3 +243,104 @@ async def test_present_activity_args_are_camelcase_on_the_wire(client, monkeypat
     # ... and the internal snake_case keys must NOT leak onto the wire.
     assert "letter_id" not in body["args"]
     assert "coaching_line" not in body["args"]
+
+
+# --- 4. The clean-pass per-attempt WHY survives the wire (18-14 — the structural fix). ---
+
+
+async def test_clean_pass_legal_next_and_rationale_reach_the_wire(client, monkeypatch):
+    """A CLEAN PASS: the coach attaches a LEGAL next_exercise_id + a rationale on its tool call
+    (now that tools.py declares those params). The wire CoachOut.args must carry BOTH the camelCase
+    `nextExerciseId` (via _to_wire_args) AND `rationale` — proving the per-attempt WHY now reaches
+    the client on the common clean-pass path (the plan node is SKIPPED here, so the coach args are
+    the ONLY carrier). `baa` is authored, so the G4 guard leaves present_activity intact.
+    """
+    _patch_coach(
+        monkeypatch,
+        [
+            {
+                "name": "present_activity",
+                "args": {
+                    "letter_id": "baa",
+                    "coaching_line": "Beautiful — a deep, smooth bowl. Ready for the initial form?",
+                    "next_exercise_id": _LEGAL_NEXT,
+                    "rationale": "smooth deep bowl — ready for the initial form",
+                },
+            }
+        ],
+        clean_pass=True,
+    )
+
+    resp = await client.post("/coach", json=PASS_FACTS_WITH_CANDIDATES, headers=VALID_AUTH_HEADERS)
+
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["toolName"] == "present_activity"
+    # The legal pick reached the wire, renamed to camelCase (the Dart TutorPlan parser reads this) ...
+    assert body["args"]["nextExerciseId"] == _LEGAL_NEXT
+    # ... the internal snake_case key must NOT leak, and the WHY rides alongside it.
+    assert "next_exercise_id" not in body["args"]
+    assert body["args"]["rationale"] == "smooth deep bowl — ready for the initial form"
+
+
+async def test_clean_pass_rationale_survives_on_a_say(client, monkeypatch):
+    """Same clean-pass WHY, carried on a `say` (the always-speak floor) rather than present_activity —
+    a legal pick + rationale still serialize to nextExerciseId + rationale on the wire."""
+    _patch_coach(
+        monkeypatch,
+        [
+            {
+                "name": "say",
+                "args": {
+                    "text": "أحسنت! A lovely deep bowl — let's try the initial form next.",
+                    "next_exercise_id": _LEGAL_NEXT,
+                    "rationale": "confident bowl — step to the initial form",
+                },
+            }
+        ],
+        clean_pass=True,
+    )
+
+    resp = await client.post("/coach", json=PASS_FACTS_WITH_CANDIDATES, headers=VALID_AUTH_HEADERS)
+
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["toolName"] == "say"
+    assert body["args"]["nextExerciseId"] == _LEGAL_NEXT
+    assert body["args"]["rationale"] == "confident bowl — step to the initial form"
+
+
+async def test_illegal_next_exercise_and_orphaned_rationale_are_stripped(client, monkeypatch):
+    """The trust boundary holds (T-18-14-01): a proposed next_exercise_id NOT in the request's
+    `legalNextExerciseIds` is stripped by the coach rail and NEVER forwarded — and its now-orphaned
+    `rationale` is dropped with it. An off-graph / hallucinated pick can never reach the client.
+    """
+    _patch_coach(
+        monkeypatch,
+        [
+            {
+                "name": "present_activity",
+                "args": {
+                    "letter_id": "baa",
+                    "coaching_line": "Beautiful bowl!",
+                    # NOT in PASS_FACTS_WITH_CANDIDATES.legalNextExerciseIds -> must be stripped.
+                    "next_exercise_id": "baa.writeWord.dictation",
+                    "rationale": "jump straight to dictation",
+                },
+            }
+        ],
+        clean_pass=True,
+    )
+
+    resp = await client.post("/coach", json=PASS_FACTS_WITH_CANDIDATES, headers=VALID_AUTH_HEADERS)
+
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["toolName"] == "present_activity"
+    # The illegal id was stripped (never forwarded under EITHER casing) ...
+    assert "nextExerciseId" not in body["args"]
+    assert "next_exercise_id" not in body["args"]
+    # ... and the orphaned rationale went with it (no dangling WHY for a pick that never survived).
+    assert "rationale" not in body["args"]
+    # The advisory spoken line is left intact (the rail only guards the id, not the words).
+    assert body["args"]["coachingLine"] == "Beautiful bowl!"
