@@ -1137,5 +1137,37 @@
   "letterUnitPreparing": "Getting your letter ready…",
   "@letterUnitPreparing": {
     "description": "Plan 07-06 LetterUnit shell — the calm panel shown while the unit loads or when the letter is not yet available (never a raw error to the child)."
+  },
+  "promptAudioListen": "Listen",
+  "@promptAudioListen": {
+    "description": "Phase 19-03 (D-07) PromptHeader hero audio stimulus card label — the 'sound to write' for listen-and-write questions. Title Case. Auto-plays once on mount, replays on tap."
+  },
+  "promptAudioListenSemantics": "Listen to the word, then write it",
+  "@promptAudioListenSemantics": {
+    "description": "Phase 19-03 (D-07) accessibility label for the hero audio stimulus card — the single-word 'Listen' visible label carries its full intent here (UI-SPEC Copywriting rationale)."
+  },
+  "copyReady": "I'm Ready",
+  "@copyReady": {
+    "description": "Phase 19-03 (D-05) CopyStimulus button — the child taps 'I'm Ready' to HIDE the copy word and write it from what they remember. Title Case. Nothing hides on a timer."
+  },
+  "copyReadySemantics": "I'm ready — hide the word",
+  "@copyReadySemantics": {
+    "description": "Phase 19-03 (D-05) accessibility label for the 'I'm Ready' copy-hide button — full verb+noun intent behind the short visible label."
+  },
+  "copyPeek": "Peek",
+  "@copyPeek": {
+    "description": "Phase 19-03 (D-05) CopyStimulus button — re-reveals the hidden copy word for a deliberate, child-initiated glance. Title Case. Never an auto-fade."
+  },
+  "copyPeekSemantics": "Peek at the word",
+  "@copyPeekSemantics": {
+    "description": "Phase 19-03 (D-05) accessibility label for the 'Peek' button — full intent behind the single-word visible label."
+  },
+  "copyHide": "Hide",
+  "@copyHide": {
+    "description": "Phase 19-03 (D-05) CopyStimulus button — returns a peeked copy word back to hidden. Title Case. Child-controlled, no timer."
+  },
+  "copyHideSemantics": "Hide the word again",
+  "@copyHideSemantics": {
+    "description": "Phase 19-03 (D-05) accessibility label for the 'Hide' toggle — full intent behind the single-word visible label."
   }
 }

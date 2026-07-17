@@ -24,6 +24,7 @@ import '../../../services/asset_image_resolver.dart';
 import '../../../theme/qalam_tokens.dart';
 import '../../../theme/text_styles.dart';
 import '../../../widgets/arabic_text.dart';
+import 'copy_stimulus.dart';
 
 /// The `say` part, extracted from a [PromptPart] list. The header never renders
 /// it (components.js); the scaffold puts it in the speech bubble.
@@ -46,18 +47,28 @@ class PromptHeader extends StatelessWidget {
     required this.parts,
     this.onAudioTap,
     this.playLabel = 'Play',
+    this.listenLabel = 'Listen',
   });
 
   /// The full ordered part list (the `say` part is skipped automatically).
   final List<PromptPart> parts;
 
-  /// Tapped when an audio part's teal play button is pressed (visual ping in the
-  /// prototype; the real audio wiring is the section screen's concern, 07-05).
+  /// Tapped when an audio part's play affordance is pressed (the real audio
+  /// wiring is the section screen's concern, 07-05). The hero audio card also
+  /// invokes this ONCE on mount to auto-play the clip (D-07).
   final void Function(String audioId)? onAudioTap;
 
-  /// Label on the audio play button. Defaults to a plain English fallback; the
-  /// call site passes the l10n `promptPlay` string.
+  /// Label on the SMALL audio play button — the normal `_AudioPart` variant used
+  /// when the audio sits ALONGSIDE other prompt parts (e.g. the meet teachCard's
+  /// "Hear"). The call site passes the l10n `promptPlay` string. Superseded by
+  /// [listenLabel] on the hero audio card (D-07) when audio is the lone stimulus.
   final String playLabel;
+
+  /// Label on the HERO audio stimulus card (UI-SPEC §2, D-07) — the large
+  /// auto-playing "sound to write" card shown when the audio is the LONE visual
+  /// stimulus (listen-and-write). Defaults to the English "Listen"; the l10n
+  /// `promptAudioListen` key mirrors it.
+  final String listenLabel;
 
   /// The visual parts only — `say` excluded (components.js `visuals` filter).
   List<PromptPart> get _visuals =>
@@ -85,6 +96,27 @@ class PromptHeader extends StatelessWidget {
           imageId: img.imageId,
           caption: img.caption,
           responsive: true,
+        ),
+      );
+    }
+
+    // A LONE audio part (the listen-and-write shape — [say, audio]) is the "sound
+    // to write" (D-07/QP-05): it renders as the HERO audio card filling the
+    // stimulus zone (auto-plays once on mount, replays on tap, silent-degrades on
+    // a missing clip). Audio that appears ALONGSIDE other parts (e.g. the meet
+    // teachCard's audio + image + forms) stays the small "Hear"/"Play" button via
+    // the general Row path below — so the hero treatment is scoped to the case
+    // where the sound IS the stimulus.
+    if (visuals.length == 1 && visuals.first is AudioPart) {
+      final audio = visuals.first as AudioPart;
+      return Padding(
+        padding: const EdgeInsets.only(top: 12),
+        child: _AudioPart(
+          key: const Key('audioCard'),
+          audioId: audio.audioId,
+          label: listenLabel,
+          onTap: onAudioTap,
+          hero: true,
         ),
       );
     }
@@ -133,29 +165,78 @@ class PromptHeader extends StatelessWidget {
   }
 }
 
-// ── audio (.pp-audio teal play button) ───────────────────────────────────────
+// ── audio (.pp-audio teal play button + the D-07 hero stimulus card) ─────────
 
-/// The teal play button — components.css `.pp-audio` (ink-teal fill, white text,
-/// the sticker bottom-shadow, radius 16, min-height 64 = the kids-UX target).
-class _AudioPart extends StatelessWidget {
-  const _AudioPart({required this.audioId, required this.label, this.onTap});
+/// The audio affordance — two variants (UI-SPEC §2, D-07):
+///
+///   • NORMAL (`hero: false`) — the small teal play button, components.css
+///     `.pp-audio` (ink-teal fill, white text, the sticker bottom-shadow,
+///     radius 16, min-height 64). Used when audio sits ALONGSIDE other parts
+///     (e.g. the meet teachCard "Hear"): a supplemental "hear it" control.
+///
+///   • HERO (`hero: true`) — the large "sound to write" stimulus card that fills
+///     the stimulus zone for listen-and-write (ink-teal fill, white 40px speaker
+///     + "Listen", radius 28, min-height 96, padding 24). It AUTO-PLAYS the clip
+///     ONCE on mount (mirrors the scaffold auto-speak) and replays on tap. When
+///     no clip/handler is wired it STILL renders and the tap silent-degrades to
+///     the TTS say-line seam — no error surface, no broken-audio icon (mirrors
+///     the `_ImagePart` errorBuilder posture; T-19-07).
+class _AudioPart extends StatefulWidget {
+  const _AudioPart({
+    super.key,
+    required this.audioId,
+    required this.label,
+    this.onTap,
+    this.hero = false,
+  });
 
   final String audioId;
   final String label;
   final void Function(String audioId)? onTap;
 
+  /// The large "sound to write" stimulus card (D-07) vs the small play button.
+  final bool hero;
+
   @override
-  Widget build(BuildContext context) {
+  State<_AudioPart> createState() => _AudioPartState();
+}
+
+class _AudioPartState extends State<_AudioPart> {
+  /// Guards the mount-time auto-play so the hero card plays exactly once.
+  bool _autoPlayed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.hero) {
+      // D-07: auto-play the clip ONCE on mount (the scaffold initState
+      // auto-speak precedent). Fires the existing audio seam; a null handler /
+      // missing clip silent-degrades to a no-op (the card still renders).
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || _autoPlayed) return;
+        _autoPlayed = true;
+        widget.onTap?.call(widget.audioId);
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      widget.hero ? _heroCard() : _playButton();
+
+  /// The small teal play button (`.pp-audio`) — unchanged from Plan 07-04.
+  Widget _playButton() {
     return Semantics(
       button: true,
-      label: label,
+      label: widget.label,
       child: Material(
         color: QalamTokens.inkTeal, // .pp-audio background:var(--ink-teal)
         borderRadius: BorderRadius.circular(16),
-        // .pp-audio box-shadow:0 4px 0 var(--deep-ink) (the sticker shadow)
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onTap: onTap == null ? null : () => onTap!(audioId),
+          onTap: widget.onTap == null
+              ? null
+              : () => widget.onTap!(widget.audioId),
           child: Container(
             constraints: const BoxConstraints(minHeight: 64), // target-min
             padding: const EdgeInsets.symmetric(horizontal: 22),
@@ -172,10 +253,55 @@ class _AudioPart extends StatelessWidget {
                     color: QalamTokens.fgOnPrimary, size: 24),
                 const SizedBox(width: 12), // .pp-audio gap:12
                 Text(
-                  label,
+                  widget.label,
                   style: QalamTextStyles.button.copyWith(
                     color: QalamTokens.fgOnPrimary,
                     fontSize: 18, // .pp-audio font-size:18px
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// The hero "sound to write" stimulus card (D-07) — radius 28, min-height 96,
+  /// white 40px speaker + "Listen", sticker shadow. Tokens only; no gold.
+  Widget _heroCard() {
+    return Semantics(
+      button: true,
+      label: 'Listen to the word, then write it',
+      child: Material(
+        color: QalamTokens.inkTeal, // --ink-teal fill (the "sound to write")
+        borderRadius: BorderRadius.circular(QalamTokens.radiusXl), // 28
+        child: InkWell(
+          borderRadius: BorderRadius.circular(QalamTokens.radiusXl),
+          onTap: () => widget.onTap?.call(widget.audioId), // replay any time
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 96), // --target-large
+            padding: const EdgeInsets.all(24), // space-6
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(QalamTokens.radiusXl),
+              boxShadow: const [
+                // sticker shadow 0 4px 0 --deep-ink.
+                BoxShadow(color: QalamTokens.deepInk, offset: Offset(0, 4)),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.volume_up_rounded,
+                    color: QalamTokens.fgOnPrimary, size: 40),
+                const SizedBox(width: 12), // icon↔label gap (space-3)
+                Text(
+                  widget.label,
+                  style: QalamTextStyles.button.copyWith(
+                    color: QalamTokens.fgOnPrimary,
+                    fontSize: 20, // UI-SPEC audio-card label 20px
                   ),
                 ),
               ],
@@ -355,8 +481,19 @@ class _TextPart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // D-05 (19-03): a copy word (`reveal:"thenHide"`) is now the child-controlled
+    // [CopyStimulus] (reveal → hide → peek), REPLACING the old static
+    // `opacity 0.18` dim. Nothing hides on a timer — every reveal/hide is a
+    // child action, so recall stays honest.
+    if (part.reveal == 'thenHide') {
+      return CopyStimulus(word: part.text);
+    }
+
     final double gap = part.loose ? 24 : 14; // .pp-text gap / .loose gap:24
-    final bool dim = part.reveal == 'thenHide'; // .hidden-word{opacity:.18}
+    // A slot exercise (completeWord/fillBlank) shows the word at the full 40px
+    // stimulus size (UI-SPEC Display role) so the highlighted gap reads as part
+    // of a real word; other prompt text keeps the 34px prompt Arabic role.
+    final double glyphSize = part.gaps.isNotEmpty ? 40 : 34;
 
     return Container(
       constraints: const BoxConstraints(minHeight: 64), // target-min
@@ -369,25 +506,24 @@ class _TextPart extends StatelessWidget {
           BoxShadow(color: Color(0x1A0E5B5F), offset: Offset(0, 2), blurRadius: 6, spreadRadius: -2),
         ],
       ),
-      child: Opacity(
-        opacity: dim ? 0.18 : 1.0,
-        child: Directionality(
-          textDirection: TextDirection.rtl,
-          child: Wrap(
-            spacing: gap,
-            runSpacing: 6,
-            alignment: WrapAlignment.center,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: _tokens(),
-          ),
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Wrap(
+          spacing: gap,
+          runSpacing: 6,
+          alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: _tokens(glyphSize),
         ),
       ),
     );
   }
 
   /// Splits the authored text on the `__blank__` / `_letter_` markers and renders
-  /// each run: plain Arabic via [ArabicText], a marker as its dashed slot.
-  List<Widget> _tokens() {
+  /// each run: plain Arabic via [ArabicText] at [glyphSize], a marker as its big
+  /// highlighted slot box (D-06). The literal marker NEVER reaches the screen
+  /// (Pitfall 6) — the split retires it before render.
+  List<Widget> _tokens(double glyphSize) {
     final widgets = <Widget>[];
     // Split keeping the markers (components.js replaces them inline).
     final pattern = RegExp(r'(__blank__|_letter_)');
@@ -396,7 +532,7 @@ class _TextPart extends StatelessWidget {
     for (final m in pattern.allMatches(raw)) {
       if (m.start > last) {
         final chunk = raw.substring(last, m.start).trim();
-        if (chunk.isNotEmpty) widgets.add(_arabic(chunk));
+        if (chunk.isNotEmpty) widgets.add(_arabic(chunk, glyphSize));
       }
       widgets.add(m.group(0) == '__blank__'
           ? const _GapWord()
@@ -405,58 +541,66 @@ class _TextPart extends StatelessWidget {
     }
     if (last < raw.length) {
       final chunk = raw.substring(last).trim();
-      if (chunk.isNotEmpty) widgets.add(_arabic(chunk));
+      if (chunk.isNotEmpty) widgets.add(_arabic(chunk, glyphSize));
     }
-    if (widgets.isEmpty) widgets.add(_arabic(raw));
+    if (widgets.isEmpty) widgets.add(_arabic(raw, glyphSize));
     return widgets;
   }
 
-  Widget _arabic(String text) => ArabicText(
+  Widget _arabic(String text, double fontSize) => ArabicText(
         text,
-        // .pp-text font-size:34px deep-ink (the prompt Arabic role).
+        // .pp-text deep-ink prompt Arabic role (34px prompt / 40px slot word).
         style: QalamTextStyles.arBody.copyWith(
-          fontSize: 34,
+          fontSize: fontSize,
           fontWeight: FontWeight.w600,
           color: QalamTokens.deepInk,
         ),
       );
 }
 
-/// `.pp-text .gap-word` — a dashed missing-WORD box (min 84 wide).
+/// The big highlighted missing-WORD slot box (D-06/QP-04, UI-SPEC §3): radius
+/// 14, 2px ink-teal outline, a gentle teal wash to draw the eye (no gold),
+/// min-width 72 / min-height 64 to match the 40px slot-word line. RTL-placed at
+/// the gap's reading position by the parent [Wrap]. `Key('gapSlot')` keys it for
+/// the D-06 contract. (The continuous "pulse" in the UI-SPEC is rendered as a
+/// strong static highlight — a repeating ticker would hang the many
+/// `pumpAndSettle` widget tests that drive real completeWord/fillBlank nodes.)
 class _GapWord extends StatelessWidget {
   const _GapWord();
   @override
   Widget build(BuildContext context) => Container(
-        constraints: const BoxConstraints(minWidth: 84),
-        height: 46,
+        key: const Key('gapSlot'),
+        constraints: const BoxConstraints(minWidth: 72, minHeight: 64),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: QalamTokens.inkTeal,
-            width: 2,
-            style: BorderStyle.solid, // dashed in CSS; Flutter draws a teal ring
-          ),
+          // gentle teal wash so the eye lands on the gap (mirrors the given-ink
+          // blank cell's inkTeal-alpha fill; NOT gold).
+          color: QalamTokens.inkTeal.withValues(alpha: 0.06),
+          borderRadius: BorderRadius.circular(14), // --radius-md
+          border: Border.all(color: QalamTokens.inkTeal, width: 2),
         ),
-        child: Icon(Icons.crop_square_rounded,
-            color: QalamTokens.inkTeal, size: 20),
+        child: const Icon(Icons.crop_square_rounded,
+            color: QalamTokens.inkTeal, size: 22),
       );
 }
 
-/// `.pp-text .gap-letter` — a dashed missing-LETTER slot (42 wide).
+/// The big highlighted missing-LETTER slot box (D-06/QP-04, UI-SPEC §3): radius
+/// 14, 2px ink-teal outline, teal wash, min-width 56 / min-height 64. Keyed
+/// `gapSlot` for the D-06 contract.
 class _GapLetter extends StatelessWidget {
   const _GapLetter();
   @override
   Widget build(BuildContext context) => Container(
-        width: 42,
-        height: 46,
+        key: const Key('gapSlot'),
+        constraints: const BoxConstraints(minWidth: 56, minHeight: 64),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
+          color: QalamTokens.inkTeal.withValues(alpha: 0.06),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(color: QalamTokens.inkTeal, width: 2),
         ),
-        child: Icon(Icons.circle_outlined,
-            color: QalamTokens.inkTeal, size: 18),
+        child: const Icon(Icons.circle_outlined,
+            color: QalamTokens.inkTeal, size: 20),
       );
 }
 
