@@ -24,9 +24,10 @@ use it for advertising.</p>
 
 <h2>Children never sign in</h2>
 <p>A child never creates an account and never enters an email address or
-password. The app starts with an anonymous identity created automatically on
-the device. An optional <strong>parent account</strong> (email/password or
-Google Sign-In) exists behind a PIN-protected parent area; it collects the
+password. A <strong>parent</strong> signs in once (email/password or Google
+Sign-In) to set the app up; the child then uses the app under the parent's
+account and never has credentials of their own. The parent settings area is
+additionally protected by a parent-created PIN. The account collects the
 parent's email address only.</p>
 
 <h2>What we collect</h2>
@@ -35,8 +36,8 @@ parent's email address only.</p>
       progress (which letters were practiced, repetitions, mastery). Stored on
       the device and in our cloud database (Google Firebase) under the
       anonymous or parent identity.</li>
-  <li><strong>Parent account (optional):</strong> the parent's email address,
-      only if a parent chooses to sign up.</li>
+  <li><strong>Parent account:</strong> the parent's email address, used only
+      for sign-in and account management.</li>
   <li><strong>Handwriting:</strong> the child's strokes are recognized and
       scored <strong>on the device</strong>. Raw handwriting and drawings are
       <strong>never uploaded</strong> and never stored on our servers.</li>
