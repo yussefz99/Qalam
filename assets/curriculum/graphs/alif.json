@@ -29,13 +29,6 @@
       ]
     },
     {
-      "id": "fluentReading",
-      "essential": true,
-      "prerequisites": [
-        "copyWrite"
-      ]
-    },
-    {
       "id": "wordBuilding",
       "essential": false,
       "prerequisites": [
@@ -108,12 +101,6 @@
       "exerciseId": "alif.transformWord.dual",
       "competency": "grammarTransform",
       "tier": null,
-      "minCleanReps": 1
-    },
-    {
-      "exerciseId": "alif.buildSentence.hear",
-      "competency": "fluentReading",
-      "tier": "ghayrManzur",
       "minCleanReps": 1
     }
   ]

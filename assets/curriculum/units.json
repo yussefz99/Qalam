@@ -157,8 +157,7 @@
         {
           "id": "listenWrite",
           "exercises": [
-            "alif.transformWord.dual",
-            "alif.buildSentence.hear"
+            "alif.transformWord.dual"
           ]
         },
         {
