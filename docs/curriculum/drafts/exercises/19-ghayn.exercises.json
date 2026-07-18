@@ -1,0 +1,594 @@
+{
+  "_meta": {
+    "title": "DRAFT exercises — Ghayn (ghayn)",
+    "status": "DRAFT — signedOff:false on every item. Owner's mother signs; owner promotes into exercises.json.",
+    "letterId": "ghayn",
+    "introOrder": 19,
+    "template": "mirrors the signed taa 19-exercise set",
+    "vocabSource": "draft-bank vocab (source image-only / not found — NEEDS MOTHER)",
+    "alsoSee": null,
+    "reviewFlags": "transformWord.plural/opposite need the mother; sentence adjectives are placeholders; grammar transforms are best-effort."
+  },
+  "letterId": "ghayn",
+  "signedOff": false,
+  "exercises": [
+    {
+      "id": "ghayn.teachCard.meet",
+      "type": "teachCard",
+      "skill": "comprehension",
+      "_note": "SUPPORT section: teaches only, no write surface.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "This card just teaches — the sound and the shapes."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.ghayn"
+        },
+        {
+          "kind": "image",
+          "imageId": "img.ghazaal",
+          "caption": "غزال · gazelle"
+        },
+        {
+          "kind": "forms",
+          "char": "غ",
+          "forms": [
+            "isolated",
+            "initial",
+            "medial",
+            "final"
+          ]
+        }
+      ],
+      "surface": null,
+      "expected": null,
+      "check": null,
+      "feedback": null,
+      "signedOff": false
+    },
+    {
+      "id": "ghayn.traceLetter.isolated",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Trace Ghayn — isolated form."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.ghayn"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "isolated",
+        "demo": true
+      },
+      "expected": {
+        "glyph": {
+          "char": "غ",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "أحسنت — nicely traced."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "ghayn.traceLetter.initial",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Trace Ghayn — initial form."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.ghayn"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "initial",
+        "demo": false
+      },
+      "expected": {
+        "glyph": {
+          "char": "غ",
+          "form": "initial"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "أحسنت — nicely traced."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "ghayn.traceLetter.medial",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Trace Ghayn — medial form."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.ghayn"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "medial",
+        "demo": false
+      },
+      "expected": {
+        "glyph": {
+          "char": "غ",
+          "form": "medial"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "أحسنت — nicely traced."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "ghayn.writeLetter.fromSound",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen, then write the letter the word starts with."
+        },
+        {
+          "kind": "audio",
+          "audioId": "word.ghazaal"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "غ",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongLetter": "Listen again — which letter makes that sound?"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "ghayn.writeLetter.fromPicture",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the letter this picture's word starts with."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.ghuraab",
+          "caption": "غراب"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "غ",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongLetter": "Listen again — which letter makes that sound?"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "ghayn.writeLetter.writeForm",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write Ghayn in its isolated form."
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "غ",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "ghayn.writeWord.dictation",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen and write the whole word."
+        },
+        {
+          "kind": "audio",
+          "audioId": "word.ghazaal"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "غزال"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "غزال — from memory. Real writing! أحسنت!",
+        "incomplete": "Look again and write all of its letters."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "ghayn.writeWord.copy",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Copy the word."
+        },
+        {
+          "kind": "text",
+          "text": "غراب"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "غراب"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "غراب — neatly done. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "ghayn.writeWord.picture",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the word for the picture."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.ghazaal",
+          "caption": "غزال"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "غزال"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "غزال — from memory. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "ghayn.connectWord.ghazaal",
+      "type": "connectWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Join the letters into one connected word."
+        },
+        {
+          "kind": "text",
+          "text": "غ  ز  ا  ل"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "غزال"
+        }
+      },
+      "check": "sequence+joinContinuity",
+      "feedback": {
+        "pass": "غزال — joined beautifully. أحسنت!",
+        "lifted": "Keep the letters joined — one flowing word, no lifts."
+      },
+      "signedOff": false
+    },
+    {
+      "id": "ghayn.connectWord.ghuraab",
+      "type": "connectWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Join the letters into one connected word."
+        },
+        {
+          "kind": "text",
+          "text": "غ  ر  ا  ب"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "غراب"
+        }
+      },
+      "check": "sequence+joinContinuity",
+      "feedback": {
+        "pass": "غراب — joined beautifully. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "ghayn.completeWord.middle",
+      "type": "completeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Fill in the missing Ghayn to finish the word."
+        },
+        {
+          "kind": "text",
+          "text": "غيمة"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "word": {
+          "text": "غيمة"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "Complete! غيمة. أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "ghayn.transformWord.dual",
+      "type": "transformWord",
+      "skill": "grammar",
+      "_review": "DUAL — regular sound dual (+ان) is a best-effort DRAFT; confirm with the mother.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "One becomes two. Write the dual of غزال."
+        },
+        {
+          "kind": "rule",
+          "label": "Dual · مثنى"
+        },
+        {
+          "kind": "text",
+          "text": "غزال"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "غزالان"
+        }
+      },
+      "check": "sequence+transformRule",
+      "feedback": {
+        "pass": "غزالان — أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "ghayn.transformWord.plural",
+      "type": "transformWord",
+      "skill": "grammar",
+      "_review": "PLURAL — NEEDS THE MOTHER (broken plurals are irregular). Placeholder expected.",
+      "_todo": "owner-mother: correct plural form",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the plural of غزال."
+        },
+        {
+          "kind": "rule",
+          "label": "Plural · جمع"
+        },
+        {
+          "kind": "text",
+          "text": "غزال"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": null,
+      "check": "sequence+transformRule",
+      "feedback": null,
+      "signedOff": false
+    },
+    {
+      "id": "ghayn.transformWord.opposite",
+      "type": "transformWord",
+      "skill": "grammar",
+      "_review": "OPPOSITE — NEEDS THE MOTHER (choose an age-right antonym pair).",
+      "_todo": "owner-mother: choose opposite pair",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the opposite."
+        },
+        {
+          "kind": "rule",
+          "label": "Opposite · ضد"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": null,
+      "check": "sequence+transformRule",
+      "feedback": null,
+      "signedOff": false
+    },
+    {
+      "id": "ghayn.fillBlank.adjective",
+      "type": "fillBlank",
+      "skill": "vocabulary",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the word that completes the sentence."
+        },
+        {
+          "kind": "text",
+          "text": "غزال"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "غزال"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "Yes! أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "ghayn.buildSentence.hear",
+      "type": "buildSentence",
+      "skill": "syntax",
+      "_review": "SENTENCE — adjective is a DRAFT placeholder (كبير). Confirm sentence + audio with the mother.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen to the sentence, then write it in order."
+        },
+        {
+          "kind": "audio",
+          "audioId": "sentence.ghayn-draft"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "sentence"
+      },
+      "expected": {
+        "words": [
+          "الْغزال",
+          "كَبير"
+        ]
+      },
+      "check": "order+sequence",
+      "feedback": {
+        "pass": "الْغزال كَبير — a whole sentence! أحسنت!"
+      },
+      "signedOff": false
+    },
+    {
+      "id": "ghayn.buildSentence.picture",
+      "type": "buildSentence",
+      "skill": "syntax",
+      "_review": "SENTENCE — adjective is a DRAFT placeholder. Confirm with the mother.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the sentence for the picture, word by word."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.ghazaal",
+          "caption": "غزال"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "sentence"
+      },
+      "expected": {
+        "words": [
+          "الْغزال",
+          "جَميل"
+        ]
+      },
+      "check": "order+sequence",
+      "feedback": {
+        "pass": "الْغزال جَميل — أحسنت!"
+      },
+      "signedOff": false
+    }
+  ]
+}

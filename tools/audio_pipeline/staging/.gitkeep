@@ -1,0 +1,2 @@
+# Drop raw recordings here, named <audioId>.<ext> (e.g. snd.baa.wav).
+# They are ingested by `python -m audio_pipeline normalize` and are NOT committed.

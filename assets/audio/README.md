@@ -28,24 +28,68 @@ resolves a Schema-v2 `audioId` to the asset path in the manifest below.
 
 ## audioId → asset manifest
 
-Every `audioId` the player resolves maps to a bundled file here. The
-`_audioIdToAsset` map in `asset_audio_player.dart` is the code-side mirror of
-this table — **keep them in lockstep.**
+Every `audioId` the player resolves maps to a bundled file here. **This table
+and the `_audioIdToAsset` map in `asset_audio_player.dart` are both GENERATED**
+from `tools/audio_pipeline/audio_manifest.json` — the single source of truth.
+Do not hand-edit either; edit the manifest and run `python -m audio_pipeline
+generate` (from `tools/`). `python -m audio_pipeline check` fails on any drift.
 
-| audioId | asset path | used by (baa unit) | real vs placeholder |
-|---------|-----------|--------------------|---------------------|
-| `snd.baa` | `assets/audio/snd.baa.mp3` | Meet card + `baa.traceLetter.isolated` + `baa.teachCard.meet` (the letter's sound) | **PLACEHOLDER** |
-| `word.baab` | `assets/audio/word.baab.mp3` | `baa.writeWord.dictation` (باب — "door") | **PLACEHOLDER** |
-| `word.batta` | `assets/audio/word.batta.mp3` | `baa.writeLetter.fromSound` (بطة — "duck") | **PLACEHOLDER** |
-| `sentence.albaab-kabiir` | `assets/audio/sentence.albaab-kabiir.mp3` | `baa.buildSentence.hear` (البابُ كبير — "the door is big") | **PLACEHOLDER** |
-| `word.haliib` | `assets/audio/word.haliib.mp3` | the حليب ("milk") card in the Words-with-Baa grid (`WordsSection`) | **PLACEHOLDER** (interim ElevenLabs) |
+<!-- BEGIN GENERATED (audio_manifest) -->
+<!-- Generated from tools/audio_pipeline/audio_manifest.json — do not edit by hand. -->
+<!-- Regenerate: `python -m audio_pipeline generate` (from tools/). -->
 
-### Real vs placeholder — and why the build stays green
+| audioId | asset path | used by | status |
+|---------|-----------|---------|--------|
+| `snd.alif` | `assets/audio/snd.alif.mp3` | alif Letter Unit (Meet / trace) | draft-tts (interim AI voice) |
+| `snd.baa` | `assets/audio/snd.baa.mp3` | baa Letter Unit (Meet / trace / teach card) | draft-tts (interim AI voice) |
+| `snd.taa` | `assets/audio/snd.taa.mp3` | taa Letter Unit (Meet / trace / teach card) | draft-tts (interim AI voice) |
+| `snd.thaa` | `assets/audio/snd.thaa.mp3` | Reserved — thaa unit not authored yet | draft-tts (interim AI voice) |
+| `snd.jeem` | `assets/audio/snd.jeem.mp3` | Reserved — jeem unit not authored yet | draft-tts (interim AI voice) |
+| `snd.haa_c` | `assets/audio/snd.haa_c.mp3` | Reserved — haa unit not authored yet | draft-tts (interim AI voice) |
+| `snd.khaa` | `assets/audio/snd.khaa.mp3` | Reserved — khaa unit not authored yet | draft-tts (interim AI voice) |
+| `snd.daal` | `assets/audio/snd.daal.mp3` | Reserved — daal unit not authored yet | draft-tts (interim AI voice) |
+| `snd.dhaal` | `assets/audio/snd.dhaal.mp3` | Reserved — dhaal unit not authored yet | draft-tts (interim AI voice) |
+| `snd.raa` | `assets/audio/snd.raa.mp3` | Reserved — raa unit not authored yet | draft-tts (interim AI voice) |
+| `snd.zaay` | `assets/audio/snd.zaay.mp3` | Reserved — zaay unit not authored yet | draft-tts (interim AI voice) |
+| `snd.seen` | `assets/audio/snd.seen.mp3` | Reserved — seen unit not authored yet | draft-tts (interim AI voice) |
+| `snd.sheen` | `assets/audio/snd.sheen.mp3` | Reserved — sheen unit not authored yet | draft-tts (interim AI voice) |
+| `snd.saad` | `assets/audio/snd.saad.mp3` | Reserved — saad unit not authored yet | draft-tts (interim AI voice) |
+| `snd.daad` | `assets/audio/snd.daad.mp3` | Reserved — daad unit not authored yet | draft-tts (interim AI voice) |
+| `snd.taa_h` | `assets/audio/snd.taa_h.mp3` | Reserved — taa_h unit not authored yet | draft-tts (interim AI voice) |
+| `snd.zhaa` | `assets/audio/snd.zhaa.mp3` | Reserved — zhaa unit not authored yet | draft-tts (interim AI voice) |
+| `snd.ayn` | `assets/audio/snd.ayn.mp3` | Reserved — ayn unit not authored yet | draft-tts (interim AI voice) |
+| `snd.ghayn` | `assets/audio/snd.ghayn.mp3` | Reserved — ghayn unit not authored yet | draft-tts (interim AI voice) |
+| `snd.faa` | `assets/audio/snd.faa.mp3` | Reserved — faa unit not authored yet | draft-tts (interim AI voice) |
+| `snd.qaaf` | `assets/audio/snd.qaaf.mp3` | Reserved — qaaf unit not authored yet | draft-tts (interim AI voice) |
+| `snd.kaaf` | `assets/audio/snd.kaaf.mp3` | Reserved — kaaf unit not authored yet | draft-tts (interim AI voice) |
+| `snd.laam` | `assets/audio/snd.laam.mp3` | Reserved — laam unit not authored yet | draft-tts (interim AI voice) |
+| `snd.meem` | `assets/audio/snd.meem.mp3` | Reserved — meem unit not authored yet | draft-tts (interim AI voice) |
+| `snd.noon` | `assets/audio/snd.noon.mp3` | Reserved — noon unit not authored yet | draft-tts (interim AI voice) |
+| `snd.haa_f` | `assets/audio/snd.haa_f.mp3` | Reserved — haa_f unit not authored yet | draft-tts (interim AI voice) |
+| `snd.waaw` | `assets/audio/snd.waaw.mp3` | Reserved — waaw unit not authored yet | draft-tts (interim AI voice) |
+| `snd.yaa` | `assets/audio/snd.yaa.mp3` | Reserved — yaa unit not authored yet | draft-tts (interim AI voice) |
+| `word.baab` | `assets/audio/word.baab.mp3` | baa unit (writeWord dictation) | draft-tts (interim AI voice) |
+| `word.batta` | `assets/audio/word.batta.mp3` | baa unit (writeLetter fromSound) | draft-tts (interim AI voice) |
+| `word.haliib` | `assets/audio/word.haliib.mp3` | baa unit (Words-with-Baa grid) | draft-tts (interim AI voice) |
+| `word.taaj` | `assets/audio/word.taaj.mp3` | taa unit | draft-tts (interim AI voice) |
+| `word.tuut` | `assets/audio/word.tuut.mp3` | taa unit | draft-tts (interim AI voice) |
+| `word.bayt` | `assets/audio/word.bayt.mp3` | baa/taa vocab | draft-tts (interim AI voice) |
+| `word.asad` | `assets/audio/word.asad.mp3` | alif unit | draft-tts (interim AI voice) |
+| `word.umm` | `assets/audio/word.umm.mp3` | alif unit | draft-tts (interim AI voice) |
+| `sentence.albaab-kabiir` | `assets/audio/sentence.albaab-kabiir.mp3` | baa unit (buildSentence hear) | draft-tts (interim AI voice) |
+| `sentence.attaaj-jamiil` | `assets/audio/sentence.attaaj-jamiil.mp3` | taa unit (buildSentence) | draft-tts (interim AI voice) |
+| `sentence.alasad-kabiir` | `assets/audio/sentence.alasad-kabiir.mp3` | alif unit (buildSentence) | draft-tts (interim AI voice) |
+<!-- END GENERATED -->
 
-All clips above are currently **PLACEHOLDER**. The **real** recordings are an
-**owner deliverable**: the pronunciations are the owner's-mother's voice saying
-each sound/word (the same source-of-truth that owns the curriculum). Until she
-records them, placeholder clip files ship in their place.
+### Real vs draft-tts — and why the build stays green
+
+The `status` column above is the honest state of each clip. Today every clip is
+**draft-tts**: an interim AI voice (ElevenLabs, via `tools/tts/generate_audio.py`),
+not the real recording. The **real** recordings are an **owner deliverable**: the
+owner's + mother's voice saying each sound/word (the same source-of-truth that
+owns the curriculum). A clip is only marked **real** once a human recording drops
+in — normalize it through `tools/audio_pipeline/` and set its `status` to `real`
+in the manifest. Until then the draft-tts clips ship in their place.
 
 The build, tests, and trace loop are **green regardless** of whether a given clip
 is real or placeholder, because:

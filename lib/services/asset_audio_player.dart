@@ -57,13 +57,51 @@ class AssetLetterAudioPlayer implements LetterAudioPlayer {
   /// `word.haliib` (حليب, "milk") is the third Words-with-Baa card. Its clip now
   /// ships in `assets/audio/`, so it is mapped here — without this entry the
   /// milk card's Play button resolves to null and is a silent no-op.
+  // BEGIN GENERATED (audio_manifest)
+  // Generated from tools/audio_pipeline/audio_manifest.json — do not edit by hand.
+  // Regenerate: `python -m audio_pipeline generate` (from tools/).
   static const Map<String, String> _audioIdToAsset = <String, String>{
+    'snd.alif': '$_audioDir/snd.alif.mp3',
     'snd.baa': '$_audioDir/snd.baa.mp3',
+    'snd.taa': '$_audioDir/snd.taa.mp3',
+    'snd.thaa': '$_audioDir/snd.thaa.mp3',
+    'snd.jeem': '$_audioDir/snd.jeem.mp3',
+    'snd.haa_c': '$_audioDir/snd.haa_c.mp3',
+    'snd.khaa': '$_audioDir/snd.khaa.mp3',
+    'snd.daal': '$_audioDir/snd.daal.mp3',
+    'snd.dhaal': '$_audioDir/snd.dhaal.mp3',
+    'snd.raa': '$_audioDir/snd.raa.mp3',
+    'snd.zaay': '$_audioDir/snd.zaay.mp3',
+    'snd.seen': '$_audioDir/snd.seen.mp3',
+    'snd.sheen': '$_audioDir/snd.sheen.mp3',
+    'snd.saad': '$_audioDir/snd.saad.mp3',
+    'snd.daad': '$_audioDir/snd.daad.mp3',
+    'snd.taa_h': '$_audioDir/snd.taa_h.mp3',
+    'snd.zhaa': '$_audioDir/snd.zhaa.mp3',
+    'snd.ayn': '$_audioDir/snd.ayn.mp3',
+    'snd.ghayn': '$_audioDir/snd.ghayn.mp3',
+    'snd.faa': '$_audioDir/snd.faa.mp3',
+    'snd.qaaf': '$_audioDir/snd.qaaf.mp3',
+    'snd.kaaf': '$_audioDir/snd.kaaf.mp3',
+    'snd.laam': '$_audioDir/snd.laam.mp3',
+    'snd.meem': '$_audioDir/snd.meem.mp3',
+    'snd.noon': '$_audioDir/snd.noon.mp3',
+    'snd.haa_f': '$_audioDir/snd.haa_f.mp3',
+    'snd.waaw': '$_audioDir/snd.waaw.mp3',
+    'snd.yaa': '$_audioDir/snd.yaa.mp3',
     'word.baab': '$_audioDir/word.baab.mp3',
     'word.batta': '$_audioDir/word.batta.mp3',
     'word.haliib': '$_audioDir/word.haliib.mp3',
+    'word.taaj': '$_audioDir/word.taaj.mp3',
+    'word.tuut': '$_audioDir/word.tuut.mp3',
+    'word.bayt': '$_audioDir/word.bayt.mp3',
+    'word.asad': '$_audioDir/word.asad.mp3',
+    'word.umm': '$_audioDir/word.umm.mp3',
     'sentence.albaab-kabiir': '$_audioDir/sentence.albaab-kabiir.mp3',
+    'sentence.attaaj-jamiil': '$_audioDir/sentence.attaaj-jamiil.mp3',
+    'sentence.alasad-kabiir': '$_audioDir/sentence.alasad-kabiir.mp3',
   };
+  // END GENERATED
 
   /// Pure resolver: maps an [audioIdOrPath] to a bundled asset path, or null
   /// when there is nothing to play.

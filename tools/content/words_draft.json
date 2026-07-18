@@ -1,0 +1,2012 @@
+{
+  "_meta": {
+    "title": "Qalam DRAFT vocabulary bank — all 28 letters",
+    "status": "DRAFT — signedOff:false on every word. Nothing reaches a child until the owner's mother signs it.",
+    "schemaNote": "Matches assets/curriculum/words.json (id/text/audio/image/gloss/letters) plus draft-only fields: source, focusLetter, signedOff.",
+    "doNotEdit": "Do NOT edit assets/curriculum/words.json from here — the owner promotes signed words there. Regenerate this file with `python -m content.build_draft`.",
+    "decompositionNote": "letters[] is computed by tools/content/arabic.py (written skeleton: harakat/shadda stripped, one id per written letter). Words with special characters are listed in decompositionReport for the mother's placement decision.",
+    "letterCount": 28,
+    "wordCount": 89,
+    "flaggedWordCount": 24
+  },
+  "decompositionReport": [
+    {
+      "id": "asad",
+      "text": "أسد",
+      "letters": [
+        "alif",
+        "seen",
+        "daal"
+      ],
+      "flags": [
+        {
+          "char": "أ",
+          "flag": "hamza_alif",
+          "index": 0
+        }
+      ],
+      "hasBlocking": false
+    },
+    {
+      "id": "umm",
+      "text": "أم",
+      "letters": [
+        "alif",
+        "meem"
+      ],
+      "flags": [
+        {
+          "char": "أ",
+          "flag": "hamza_alif",
+          "index": 0
+        }
+      ],
+      "hasBlocking": false
+    },
+    {
+      "id": "arnab",
+      "text": "أرنب",
+      "letters": [
+        "alif",
+        "raa",
+        "noon",
+        "baa"
+      ],
+      "flags": [
+        {
+          "char": "أ",
+          "flag": "hamza_alif",
+          "index": 0
+        }
+      ],
+      "hasBlocking": false
+    },
+    {
+      "id": "dajaja",
+      "text": "دجاجة",
+      "letters": [
+        "daal",
+        "jeem",
+        "alif",
+        "jeem",
+        "taa_marbuta"
+      ],
+      "flags": [
+        {
+          "char": "ة",
+          "flag": "taa_marbuta",
+          "index": 4
+        }
+      ],
+      "hasBlocking": false
+    },
+    {
+      "id": "khaymat",
+      "text": "خيمة",
+      "letters": [
+        "khaa",
+        "yaa",
+        "meem",
+        "taa_marbuta"
+      ],
+      "flags": [
+        {
+          "char": "ة",
+          "flag": "taa_marbuta",
+          "index": 3
+        }
+      ],
+      "hasBlocking": false
+    },
+    {
+      "id": "dhib",
+      "text": "ذئب",
+      "letters": [
+        "dhaal",
+        "yaa",
+        "baa"
+      ],
+      "flags": [
+        {
+          "char": "ئ",
+          "flag": "hamza_yaa",
+          "index": 1
+        }
+      ],
+      "hasBlocking": false
+    },
+    {
+      "id": "dhurat",
+      "text": "ذرة",
+      "letters": [
+        "dhaal",
+        "raa",
+        "taa_marbuta"
+      ],
+      "flags": [
+        {
+          "char": "ة",
+          "flag": "taa_marbuta",
+          "index": 2
+        }
+      ],
+      "hasBlocking": false
+    },
+    {
+      "id": "riishat",
+      "text": "ريشة",
+      "letters": [
+        "raa",
+        "yaa",
+        "sheen",
+        "taa_marbuta"
+      ],
+      "flags": [
+        {
+          "char": "ة",
+          "flag": "taa_marbuta",
+          "index": 3
+        }
+      ],
+      "hasBlocking": false
+    },
+    {
+      "id": "zahrat",
+      "text": "زهرة",
+      "letters": [
+        "zaay",
+        "haa_f",
+        "raa",
+        "taa_marbuta"
+      ],
+      "flags": [
+        {
+          "char": "ة",
+          "flag": "taa_marbuta",
+          "index": 3
+        }
+      ],
+      "hasBlocking": false
+    },
+    {
+      "id": "zaraafat",
+      "text": "زرافة",
+      "letters": [
+        "zaay",
+        "raa",
+        "alif",
+        "faa",
+        "taa_marbuta"
+      ],
+      "flags": [
+        {
+          "char": "ة",
+          "flag": "taa_marbuta",
+          "index": 4
+        }
+      ],
+      "hasBlocking": false
+    },
+    {
+      "id": "sayyaarat",
+      "text": "سيارة",
+      "letters": [
+        "seen",
+        "yaa",
+        "alif",
+        "raa",
+        "taa_marbuta"
+      ],
+      "flags": [
+        {
+          "char": "ة",
+          "flag": "taa_marbuta",
+          "index": 4
+        }
+      ],
+      "hasBlocking": false
+    },
+    {
+      "id": "shajarat",
+      "text": "شجرة",
+      "letters": [
+        "sheen",
+        "jeem",
+        "raa",
+        "taa_marbuta"
+      ],
+      "flags": [
+        {
+          "char": "ة",
+          "flag": "taa_marbuta",
+          "index": 3
+        }
+      ],
+      "hasBlocking": false
+    },
+    {
+      "id": "shamaa",
+      "text": "شمعة",
+      "letters": [
+        "sheen",
+        "meem",
+        "ayn",
+        "taa_marbuta"
+      ],
+      "flags": [
+        {
+          "char": "ة",
+          "flag": "taa_marbuta",
+          "index": 3
+        }
+      ],
+      "hasBlocking": false
+    },
+    {
+      "id": "baydat",
+      "text": "بيضة",
+      "letters": [
+        "baa",
+        "yaa",
+        "daad",
+        "taa_marbuta"
+      ],
+      "flags": [
+        {
+          "char": "ة",
+          "flag": "taa_marbuta",
+          "index": 3
+        }
+      ],
+      "hasBlocking": false
+    },
+    {
+      "id": "nazhaarat",
+      "text": "نظارة",
+      "letters": [
+        "noon",
+        "zhaa",
+        "alif",
+        "raa",
+        "taa_marbuta"
+      ],
+      "flags": [
+        {
+          "char": "ة",
+          "flag": "taa_marbuta",
+          "index": 4
+        }
+      ],
+      "hasBlocking": false
+    },
+    {
+      "id": "ghaymat",
+      "text": "غيمة",
+      "letters": [
+        "ghayn",
+        "yaa",
+        "meem",
+        "taa_marbuta"
+      ],
+      "flags": [
+        {
+          "char": "ة",
+          "flag": "taa_marbuta",
+          "index": 3
+        }
+      ],
+      "hasBlocking": false
+    },
+    {
+      "id": "faraashat",
+      "text": "فراشة",
+      "letters": [
+        "faa",
+        "raa",
+        "alif",
+        "sheen",
+        "taa_marbuta"
+      ],
+      "flags": [
+        {
+          "char": "ة",
+          "flag": "taa_marbuta",
+          "index": 4
+        }
+      ],
+      "hasBlocking": false
+    },
+    {
+      "id": "qittat",
+      "text": "قطة",
+      "letters": [
+        "qaaf",
+        "taa_h",
+        "taa_marbuta"
+      ],
+      "flags": [
+        {
+          "char": "ة",
+          "flag": "taa_marbuta",
+          "index": 2
+        }
+      ],
+      "hasBlocking": false
+    },
+    {
+      "id": "luaba",
+      "text": "لعبة",
+      "letters": [
+        "laam",
+        "ayn",
+        "baa",
+        "taa_marbuta"
+      ],
+      "flags": [
+        {
+          "char": "ة",
+          "flag": "taa_marbuta",
+          "index": 3
+        }
+      ],
+      "hasBlocking": false
+    },
+    {
+      "id": "madrasat",
+      "text": "مدرسة",
+      "letters": [
+        "meem",
+        "daal",
+        "raa",
+        "seen",
+        "taa_marbuta"
+      ],
+      "flags": [
+        {
+          "char": "ة",
+          "flag": "taa_marbuta",
+          "index": 4
+        }
+      ],
+      "hasBlocking": false
+    },
+    {
+      "id": "najmat",
+      "text": "نجمة",
+      "letters": [
+        "noon",
+        "jeem",
+        "meem",
+        "taa_marbuta"
+      ],
+      "flags": [
+        {
+          "char": "ة",
+          "flag": "taa_marbuta",
+          "index": 3
+        }
+      ],
+      "hasBlocking": false
+    },
+    {
+      "id": "nahlat",
+      "text": "نحلة",
+      "letters": [
+        "noon",
+        "haa_c",
+        "laam",
+        "taa_marbuta"
+      ],
+      "flags": [
+        {
+          "char": "ة",
+          "flag": "taa_marbuta",
+          "index": 3
+        }
+      ],
+      "hasBlocking": false
+    },
+    {
+      "id": "wardat",
+      "text": "وردة",
+      "letters": [
+        "waaw",
+        "raa",
+        "daal",
+        "taa_marbuta"
+      ],
+      "flags": [
+        {
+          "char": "ة",
+          "flag": "taa_marbuta",
+          "index": 3
+        }
+      ],
+      "hasBlocking": false
+    },
+    {
+      "id": "yamaamat",
+      "text": "يمامة",
+      "letters": [
+        "yaa",
+        "meem",
+        "alif",
+        "meem",
+        "taa_marbuta"
+      ],
+      "flags": [
+        {
+          "char": "ة",
+          "flag": "taa_marbuta",
+          "index": 4
+        }
+      ],
+      "hasBlocking": false
+    }
+  ],
+  "words": [
+    {
+      "id": "asad",
+      "text": "أسد",
+      "audio": "word.asad",
+      "image": "img.asad",
+      "gloss": {
+        "en": "lion"
+      },
+      "letters": [
+        "alif",
+        "seen",
+        "daal"
+      ],
+      "source": "existing in assets/curriculum/words.json",
+      "focusLetter": "alif",
+      "signedOff": false
+    },
+    {
+      "id": "umm",
+      "text": "أم",
+      "audio": "word.umm",
+      "image": "img.umm",
+      "gloss": {
+        "en": "mother"
+      },
+      "letters": [
+        "alif",
+        "meem"
+      ],
+      "source": "existing in assets/curriculum/words.json",
+      "focusLetter": "alif",
+      "signedOff": false
+    },
+    {
+      "id": "arnab",
+      "text": "أرنب",
+      "audio": "word.arnab",
+      "image": "img.arnab",
+      "gloss": {
+        "en": "rabbit"
+      },
+      "letters": [
+        "alif",
+        "raa",
+        "noon",
+        "baa"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "alif",
+      "signedOff": false
+    },
+    {
+      "id": "baab",
+      "text": "باب",
+      "audio": "word.baab",
+      "image": "img.baab",
+      "gloss": {
+        "en": "door"
+      },
+      "letters": [
+        "baa",
+        "alif",
+        "baa"
+      ],
+      "source": "existing in assets/curriculum/words.json",
+      "focusLetter": "baa",
+      "signedOff": false
+    },
+    {
+      "id": "bayt",
+      "text": "بيت",
+      "audio": "word.bayt",
+      "image": "img.bayt",
+      "gloss": {
+        "en": "house"
+      },
+      "letters": [
+        "baa",
+        "yaa",
+        "taa"
+      ],
+      "source": "existing in assets/curriculum/words.json",
+      "focusLetter": "baa",
+      "signedOff": false
+    },
+    {
+      "id": "kalb",
+      "text": "كلب",
+      "audio": "word.kalb",
+      "image": "img.kalb",
+      "gloss": {
+        "en": "dog"
+      },
+      "letters": [
+        "kaaf",
+        "laam",
+        "baa"
+      ],
+      "source": "owner-mother worksheet (أ-ب-ت-ث.docx, via docs/curriculum/baa-family-authoring-sketch.md)",
+      "focusLetter": "baa",
+      "signedOff": false
+    },
+    {
+      "id": "dubb",
+      "text": "دب",
+      "audio": "word.dubb",
+      "image": "img.dubb",
+      "gloss": {
+        "en": "bear"
+      },
+      "letters": [
+        "daal",
+        "baa"
+      ],
+      "source": "owner-mother worksheet (أ-ب-ت-ث.docx, via docs/curriculum/baa-family-authoring-sketch.md)",
+      "focusLetter": "baa",
+      "signedOff": false
+    },
+    {
+      "id": "taaj",
+      "text": "تاج",
+      "audio": "word.taaj",
+      "image": "img.taaj",
+      "gloss": {
+        "en": "crown"
+      },
+      "letters": [
+        "taa",
+        "alif",
+        "jeem"
+      ],
+      "source": "existing in assets/curriculum/words.json",
+      "focusLetter": "taa",
+      "signedOff": false
+    },
+    {
+      "id": "tuut",
+      "text": "توت",
+      "audio": "word.tuut",
+      "image": "img.tuut",
+      "gloss": {
+        "en": "berries"
+      },
+      "letters": [
+        "taa",
+        "waaw",
+        "taa"
+      ],
+      "source": "existing in assets/curriculum/words.json",
+      "focusLetter": "taa",
+      "signedOff": false
+    },
+    {
+      "id": "bint",
+      "text": "بنت",
+      "audio": "word.bint",
+      "image": "img.bint",
+      "gloss": {
+        "en": "girl"
+      },
+      "letters": [
+        "baa",
+        "noon",
+        "taa"
+      ],
+      "source": "owner-mother worksheet (أ-ب-ت-ث.docx, via docs/curriculum/baa-family-authoring-sketch.md)",
+      "focusLetter": "taa",
+      "signedOff": false
+    },
+    {
+      "id": "tuffah",
+      "text": "تفاح",
+      "audio": "word.tuffah",
+      "image": "img.tuffah",
+      "gloss": {
+        "en": "apple"
+      },
+      "letters": [
+        "taa",
+        "faa",
+        "alif",
+        "haa_c"
+      ],
+      "source": "docs/curriculum/drafts/thaa-jeem-haa-DRAFT.md (drafted, awaiting mother)",
+      "focusLetter": "taa",
+      "signedOff": false
+    },
+    {
+      "id": "thalab",
+      "text": "ثعلب",
+      "audio": "word.thalab",
+      "image": "img.thalab",
+      "gloss": {
+        "en": "fox"
+      },
+      "letters": [
+        "thaa",
+        "ayn",
+        "laam",
+        "baa"
+      ],
+      "source": "owner-mother worksheet (أ-ب-ت-ث.docx, via docs/curriculum/baa-family-authoring-sketch.md)",
+      "focusLetter": "thaa",
+      "signedOff": false
+    },
+    {
+      "id": "thalj",
+      "text": "ثلج",
+      "audio": "word.thalj",
+      "image": "img.thalj",
+      "gloss": {
+        "en": "snow"
+      },
+      "letters": [
+        "thaa",
+        "laam",
+        "jeem"
+      ],
+      "source": "owner-mother worksheet (أ-ب-ت-ث.docx, via docs/curriculum/baa-family-authoring-sketch.md)",
+      "focusLetter": "thaa",
+      "signedOff": false
+    },
+    {
+      "id": "thawm",
+      "text": "ثوم",
+      "audio": "word.thawm",
+      "image": "img.thawm",
+      "gloss": {
+        "en": "garlic"
+      },
+      "letters": [
+        "thaa",
+        "waaw",
+        "meem"
+      ],
+      "source": "owner-mother worksheet (أ-ب-ت-ث.docx, via docs/curriculum/baa-family-authoring-sketch.md)",
+      "focusLetter": "thaa",
+      "signedOff": false
+    },
+    {
+      "id": "muthallath",
+      "text": "مثلث",
+      "audio": "word.muthallath",
+      "image": "img.muthallath",
+      "gloss": {
+        "en": "triangle"
+      },
+      "letters": [
+        "meem",
+        "thaa",
+        "laam",
+        "thaa"
+      ],
+      "source": "owner-mother worksheet (أ-ب-ت-ث.docx, via docs/curriculum/baa-family-authoring-sketch.md)",
+      "focusLetter": "thaa",
+      "signedOff": false
+    },
+    {
+      "id": "jamal",
+      "text": "جمل",
+      "audio": "word.jamal",
+      "image": "img.jamal",
+      "gloss": {
+        "en": "camel"
+      },
+      "letters": [
+        "jeem",
+        "meem",
+        "laam"
+      ],
+      "source": "docs/curriculum/drafts/thaa-jeem-haa-DRAFT.md (drafted, awaiting mother)",
+      "focusLetter": "jeem",
+      "signedOff": false
+    },
+    {
+      "id": "jabal",
+      "text": "جبل",
+      "audio": "word.jabal",
+      "image": "img.jabal",
+      "gloss": {
+        "en": "mountain"
+      },
+      "letters": [
+        "jeem",
+        "baa",
+        "laam"
+      ],
+      "source": "docs/curriculum/drafts/thaa-jeem-haa-DRAFT.md (drafted, awaiting mother)",
+      "focusLetter": "jeem",
+      "signedOff": false
+    },
+    {
+      "id": "jazar",
+      "text": "جزر",
+      "audio": "word.jazar",
+      "image": "img.jazar",
+      "gloss": {
+        "en": "carrots"
+      },
+      "letters": [
+        "jeem",
+        "zaay",
+        "raa"
+      ],
+      "source": "docs/curriculum/drafts/thaa-jeem-haa-DRAFT.md (drafted, awaiting mother)",
+      "focusLetter": "jeem",
+      "signedOff": false
+    },
+    {
+      "id": "dajaja",
+      "text": "دجاجة",
+      "audio": "word.dajaja",
+      "image": "img.dajaja",
+      "gloss": {
+        "en": "hen"
+      },
+      "letters": [
+        "daal",
+        "jeem",
+        "alif",
+        "jeem",
+        "taa_marbuta"
+      ],
+      "source": "docs/curriculum/drafts/thaa-jeem-haa-DRAFT.md (drafted, awaiting mother)",
+      "focusLetter": "jeem",
+      "signedOff": false
+    },
+    {
+      "id": "hisaan",
+      "text": "حصان",
+      "audio": "word.hisaan",
+      "image": "img.hisaan",
+      "gloss": {
+        "en": "horse"
+      },
+      "letters": [
+        "haa_c",
+        "saad",
+        "alif",
+        "noon"
+      ],
+      "source": "docs/curriculum/drafts/thaa-jeem-haa-DRAFT.md (drafted, awaiting mother)",
+      "focusLetter": "haa_c",
+      "signedOff": false
+    },
+    {
+      "id": "hoot",
+      "text": "حوت",
+      "audio": "word.hoot",
+      "image": "img.hoot",
+      "gloss": {
+        "en": "whale"
+      },
+      "letters": [
+        "haa_c",
+        "waaw",
+        "taa"
+      ],
+      "source": "docs/curriculum/drafts/thaa-jeem-haa-DRAFT.md (drafted, awaiting mother)",
+      "focusLetter": "haa_c",
+      "signedOff": false
+    },
+    {
+      "id": "haliib",
+      "text": "حليب",
+      "audio": "word.haliib",
+      "image": "img.haliib",
+      "gloss": {
+        "en": "milk"
+      },
+      "letters": [
+        "haa_c",
+        "laam",
+        "yaa",
+        "baa"
+      ],
+      "source": "existing in assets/curriculum/words.json",
+      "focusLetter": "haa_c",
+      "signedOff": false
+    },
+    {
+      "id": "miftaah",
+      "text": "مفتاح",
+      "audio": "word.miftaah",
+      "image": "img.miftaah",
+      "gloss": {
+        "en": "key"
+      },
+      "letters": [
+        "meem",
+        "faa",
+        "taa",
+        "alif",
+        "haa_c"
+      ],
+      "source": "docs/curriculum/drafts/thaa-jeem-haa-DRAFT.md (drafted, awaiting mother)",
+      "focusLetter": "haa_c",
+      "signedOff": false
+    },
+    {
+      "id": "khubz",
+      "text": "خبز",
+      "audio": "word.khubz",
+      "image": "img.khubz",
+      "gloss": {
+        "en": "bread"
+      },
+      "letters": [
+        "khaa",
+        "baa",
+        "zaay"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "khaa",
+      "signedOff": false
+    },
+    {
+      "id": "kharuuf",
+      "text": "خروف",
+      "audio": "word.kharuuf",
+      "image": "img.kharuuf",
+      "gloss": {
+        "en": "sheep"
+      },
+      "letters": [
+        "khaa",
+        "raa",
+        "waaw",
+        "faa"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "khaa",
+      "signedOff": false
+    },
+    {
+      "id": "khaymat",
+      "text": "خيمة",
+      "audio": "word.khaymat",
+      "image": "img.khaymat",
+      "gloss": {
+        "en": "tent"
+      },
+      "letters": [
+        "khaa",
+        "yaa",
+        "meem",
+        "taa_marbuta"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "khaa",
+      "signedOff": false
+    },
+    {
+      "id": "diik",
+      "text": "ديك",
+      "audio": "word.diik",
+      "image": "img.diik",
+      "gloss": {
+        "en": "rooster"
+      },
+      "letters": [
+        "daal",
+        "yaa",
+        "kaaf"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "daal",
+      "signedOff": false
+    },
+    {
+      "id": "dulaab",
+      "text": "دولاب",
+      "audio": "word.dulaab",
+      "image": "img.dulaab",
+      "gloss": {
+        "en": "cupboard"
+      },
+      "letters": [
+        "daal",
+        "waaw",
+        "laam",
+        "alif",
+        "baa"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "daal",
+      "signedOff": false
+    },
+    {
+      "id": "daftar",
+      "text": "دفتر",
+      "audio": "word.daftar",
+      "image": "img.daftar",
+      "gloss": {
+        "en": "notebook"
+      },
+      "letters": [
+        "daal",
+        "faa",
+        "taa",
+        "raa"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "daal",
+      "signedOff": false
+    },
+    {
+      "id": "dhib",
+      "text": "ذئب",
+      "audio": "word.dhib",
+      "image": "img.dhib",
+      "gloss": {
+        "en": "wolf"
+      },
+      "letters": [
+        "dhaal",
+        "yaa",
+        "baa"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "dhaal",
+      "signedOff": false
+    },
+    {
+      "id": "dhurat",
+      "text": "ذرة",
+      "audio": "word.dhurat",
+      "image": "img.dhurat",
+      "gloss": {
+        "en": "corn"
+      },
+      "letters": [
+        "dhaal",
+        "raa",
+        "taa_marbuta"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "dhaal",
+      "signedOff": false
+    },
+    {
+      "id": "dhahab",
+      "text": "ذهب",
+      "audio": "word.dhahab",
+      "image": "img.dhahab",
+      "gloss": {
+        "en": "gold"
+      },
+      "letters": [
+        "dhaal",
+        "haa_f",
+        "baa"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "dhaal",
+      "signedOff": false
+    },
+    {
+      "id": "rummaan",
+      "text": "رمان",
+      "audio": "word.rummaan",
+      "image": "img.rummaan",
+      "gloss": {
+        "en": "pomegranate"
+      },
+      "letters": [
+        "raa",
+        "meem",
+        "alif",
+        "noon"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "raa",
+      "signedOff": false
+    },
+    {
+      "id": "riishat",
+      "text": "ريشة",
+      "audio": "word.riishat",
+      "image": "img.riishat",
+      "gloss": {
+        "en": "feather"
+      },
+      "letters": [
+        "raa",
+        "yaa",
+        "sheen",
+        "taa_marbuta"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "raa",
+      "signedOff": false
+    },
+    {
+      "id": "ward",
+      "text": "ورد",
+      "audio": "word.ward",
+      "image": "img.ward",
+      "gloss": {
+        "en": "roses"
+      },
+      "letters": [
+        "waaw",
+        "raa",
+        "daal"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "raa",
+      "signedOff": false
+    },
+    {
+      "id": "zahrat",
+      "text": "زهرة",
+      "audio": "word.zahrat",
+      "image": "img.zahrat",
+      "gloss": {
+        "en": "flower"
+      },
+      "letters": [
+        "zaay",
+        "haa_f",
+        "raa",
+        "taa_marbuta"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "zaay",
+      "signedOff": false
+    },
+    {
+      "id": "zaraafat",
+      "text": "زرافة",
+      "audio": "word.zaraafat",
+      "image": "img.zaraafat",
+      "gloss": {
+        "en": "giraffe"
+      },
+      "letters": [
+        "zaay",
+        "raa",
+        "alif",
+        "faa",
+        "taa_marbuta"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "zaay",
+      "signedOff": false
+    },
+    {
+      "id": "mawz",
+      "text": "موز",
+      "audio": "word.mawz",
+      "image": "img.mawz",
+      "gloss": {
+        "en": "banana"
+      },
+      "letters": [
+        "meem",
+        "waaw",
+        "zaay"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "zaay",
+      "signedOff": false
+    },
+    {
+      "id": "samak",
+      "text": "سمك",
+      "audio": "word.samak",
+      "image": "img.samak",
+      "gloss": {
+        "en": "fish"
+      },
+      "letters": [
+        "seen",
+        "meem",
+        "kaaf"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "seen",
+      "signedOff": false
+    },
+    {
+      "id": "sayyaarat",
+      "text": "سيارة",
+      "audio": "word.sayyaarat",
+      "image": "img.sayyaarat",
+      "gloss": {
+        "en": "car"
+      },
+      "letters": [
+        "seen",
+        "yaa",
+        "alif",
+        "raa",
+        "taa_marbuta"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "seen",
+      "signedOff": false
+    },
+    {
+      "id": "sullam",
+      "text": "سلم",
+      "audio": "word.sullam",
+      "image": "img.sullam",
+      "gloss": {
+        "en": "ladder"
+      },
+      "letters": [
+        "seen",
+        "laam",
+        "meem"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "seen",
+      "signedOff": false
+    },
+    {
+      "id": "shams",
+      "text": "شمس",
+      "audio": "word.shams",
+      "image": "img.shams",
+      "gloss": {
+        "en": "sun"
+      },
+      "letters": [
+        "sheen",
+        "meem",
+        "seen"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "sheen",
+      "signedOff": false
+    },
+    {
+      "id": "shajarat",
+      "text": "شجرة",
+      "audio": "word.shajarat",
+      "image": "img.shajarat",
+      "gloss": {
+        "en": "tree"
+      },
+      "letters": [
+        "sheen",
+        "jeem",
+        "raa",
+        "taa_marbuta"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "sheen",
+      "signedOff": false
+    },
+    {
+      "id": "shamaa",
+      "text": "شمعة",
+      "audio": "word.shamaa",
+      "image": "img.shamaa",
+      "gloss": {
+        "en": "candle"
+      },
+      "letters": [
+        "sheen",
+        "meem",
+        "ayn",
+        "taa_marbuta"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "sheen",
+      "signedOff": false
+    },
+    {
+      "id": "saqr",
+      "text": "صقر",
+      "audio": "word.saqr",
+      "image": "img.saqr",
+      "gloss": {
+        "en": "falcon"
+      },
+      "letters": [
+        "saad",
+        "qaaf",
+        "raa"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "saad",
+      "signedOff": false
+    },
+    {
+      "id": "sahn",
+      "text": "صحن",
+      "audio": "word.sahn",
+      "image": "img.sahn",
+      "gloss": {
+        "en": "plate"
+      },
+      "letters": [
+        "saad",
+        "haa_c",
+        "noon"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "saad",
+      "signedOff": false
+    },
+    {
+      "id": "usfuur",
+      "text": "عصفور",
+      "audio": "word.usfuur",
+      "image": "img.usfuur",
+      "gloss": {
+        "en": "sparrow"
+      },
+      "letters": [
+        "ayn",
+        "saad",
+        "faa",
+        "waaw",
+        "raa"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "saad",
+      "signedOff": false
+    },
+    {
+      "id": "difdaa",
+      "text": "ضفدع",
+      "audio": "word.difdaa",
+      "image": "img.difdaa",
+      "gloss": {
+        "en": "frog"
+      },
+      "letters": [
+        "daad",
+        "faa",
+        "daal",
+        "ayn"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "daad",
+      "signedOff": false
+    },
+    {
+      "id": "baydat",
+      "text": "بيضة",
+      "audio": "word.baydat",
+      "image": "img.baydat",
+      "gloss": {
+        "en": "egg"
+      },
+      "letters": [
+        "baa",
+        "yaa",
+        "daad",
+        "taa_marbuta"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "daad",
+      "signedOff": false
+    },
+    {
+      "id": "dabaab",
+      "text": "ضباب",
+      "audio": "word.dabaab",
+      "image": "img.dabaab",
+      "gloss": {
+        "en": "fog"
+      },
+      "letters": [
+        "daad",
+        "baa",
+        "alif",
+        "baa"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "daad",
+      "signedOff": false
+    },
+    {
+      "id": "tabl",
+      "text": "طبل",
+      "audio": "word.tabl",
+      "image": "img.tabl",
+      "gloss": {
+        "en": "drum"
+      },
+      "letters": [
+        "taa_h",
+        "baa",
+        "laam"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "taa_h",
+      "signedOff": false
+    },
+    {
+      "id": "qitt",
+      "text": "قط",
+      "audio": "word.qitt",
+      "image": "img.qitt",
+      "gloss": {
+        "en": "cat"
+      },
+      "letters": [
+        "qaaf",
+        "taa_h"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "taa_h",
+      "signedOff": false
+    },
+    {
+      "id": "batiikh",
+      "text": "بطيخ",
+      "audio": "word.batiikh",
+      "image": "img.batiikh",
+      "gloss": {
+        "en": "watermelon"
+      },
+      "letters": [
+        "baa",
+        "taa_h",
+        "yaa",
+        "khaa"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "taa_h",
+      "signedOff": false
+    },
+    {
+      "id": "zharf",
+      "text": "ظرف",
+      "audio": "word.zharf",
+      "image": "img.zharf",
+      "gloss": {
+        "en": "envelope"
+      },
+      "letters": [
+        "zhaa",
+        "raa",
+        "faa"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "zhaa",
+      "signedOff": false
+    },
+    {
+      "id": "zhufr",
+      "text": "ظفر",
+      "audio": "word.zhufr",
+      "image": "img.zhufr",
+      "gloss": {
+        "en": "fingernail"
+      },
+      "letters": [
+        "zhaa",
+        "faa",
+        "raa"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "zhaa",
+      "signedOff": false
+    },
+    {
+      "id": "nazhaarat",
+      "text": "نظارة",
+      "audio": "word.nazhaarat",
+      "image": "img.nazhaarat",
+      "gloss": {
+        "en": "glasses"
+      },
+      "letters": [
+        "noon",
+        "zhaa",
+        "alif",
+        "raa",
+        "taa_marbuta"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "zhaa",
+      "signedOff": false
+    },
+    {
+      "id": "ayn",
+      "text": "عين",
+      "audio": "word.ayn",
+      "image": "img.ayn",
+      "gloss": {
+        "en": "eye"
+      },
+      "letters": [
+        "ayn",
+        "yaa",
+        "noon"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "ayn",
+      "signedOff": false
+    },
+    {
+      "id": "inab",
+      "text": "عنب",
+      "audio": "word.inab",
+      "image": "img.inab",
+      "gloss": {
+        "en": "grapes"
+      },
+      "letters": [
+        "ayn",
+        "noon",
+        "baa"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "ayn",
+      "signedOff": false
+    },
+    {
+      "id": "asal",
+      "text": "عسل",
+      "audio": "word.asal",
+      "image": "img.asal",
+      "gloss": {
+        "en": "honey"
+      },
+      "letters": [
+        "ayn",
+        "seen",
+        "laam"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "ayn",
+      "signedOff": false
+    },
+    {
+      "id": "ghazaal",
+      "text": "غزال",
+      "audio": "word.ghazaal",
+      "image": "img.ghazaal",
+      "gloss": {
+        "en": "gazelle"
+      },
+      "letters": [
+        "ghayn",
+        "zaay",
+        "alif",
+        "laam"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "ghayn",
+      "signedOff": false
+    },
+    {
+      "id": "ghuraab",
+      "text": "غراب",
+      "audio": "word.ghuraab",
+      "image": "img.ghuraab",
+      "gloss": {
+        "en": "crow"
+      },
+      "letters": [
+        "ghayn",
+        "raa",
+        "alif",
+        "baa"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "ghayn",
+      "signedOff": false
+    },
+    {
+      "id": "ghaymat",
+      "text": "غيمة",
+      "audio": "word.ghaymat",
+      "image": "img.ghaymat",
+      "gloss": {
+        "en": "cloud"
+      },
+      "letters": [
+        "ghayn",
+        "yaa",
+        "meem",
+        "taa_marbuta"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "ghayn",
+      "signedOff": false
+    },
+    {
+      "id": "fiil",
+      "text": "فيل",
+      "audio": "word.fiil",
+      "image": "img.fiil",
+      "gloss": {
+        "en": "elephant"
+      },
+      "letters": [
+        "faa",
+        "yaa",
+        "laam"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "faa",
+      "signedOff": false
+    },
+    {
+      "id": "faraashat",
+      "text": "فراشة",
+      "audio": "word.faraashat",
+      "image": "img.faraashat",
+      "gloss": {
+        "en": "butterfly"
+      },
+      "letters": [
+        "faa",
+        "raa",
+        "alif",
+        "sheen",
+        "taa_marbuta"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "faa",
+      "signedOff": false
+    },
+    {
+      "id": "fam",
+      "text": "فم",
+      "audio": "word.fam",
+      "image": "img.fam",
+      "gloss": {
+        "en": "mouth"
+      },
+      "letters": [
+        "faa",
+        "meem"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "faa",
+      "signedOff": false
+    },
+    {
+      "id": "qalam",
+      "text": "قلم",
+      "audio": "word.qalam",
+      "image": "img.qalam",
+      "gloss": {
+        "en": "pen"
+      },
+      "letters": [
+        "qaaf",
+        "laam",
+        "meem"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "qaaf",
+      "signedOff": false
+    },
+    {
+      "id": "qamar",
+      "text": "قمر",
+      "audio": "word.qamar",
+      "image": "img.qamar",
+      "gloss": {
+        "en": "moon"
+      },
+      "letters": [
+        "qaaf",
+        "meem",
+        "raa"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "qaaf",
+      "signedOff": false
+    },
+    {
+      "id": "qittat",
+      "text": "قطة",
+      "audio": "word.qittat",
+      "image": "img.qittat",
+      "gloss": {
+        "en": "cat"
+      },
+      "letters": [
+        "qaaf",
+        "taa_h",
+        "taa_marbuta"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "qaaf",
+      "signedOff": false
+    },
+    {
+      "id": "kitaab",
+      "text": "كتاب",
+      "audio": "word.kitaab",
+      "image": "img.kitaab",
+      "gloss": {
+        "en": "book"
+      },
+      "letters": [
+        "kaaf",
+        "taa",
+        "alif",
+        "baa"
+      ],
+      "source": "owner-mother worksheet (أ-ب-ت-ث.docx, via docs/curriculum/baa-family-authoring-sketch.md)",
+      "focusLetter": "kaaf",
+      "signedOff": false
+    },
+    {
+      "id": "kuub",
+      "text": "كوب",
+      "audio": "word.kuub",
+      "image": "img.kuub",
+      "gloss": {
+        "en": "cup"
+      },
+      "letters": [
+        "kaaf",
+        "waaw",
+        "baa"
+      ],
+      "source": "owner-mother worksheet (أ-ب-ت-ث.docx, via docs/curriculum/baa-family-authoring-sketch.md)",
+      "focusLetter": "kaaf",
+      "signedOff": false
+    },
+    {
+      "id": "kursii",
+      "text": "كرسي",
+      "audio": "word.kursii",
+      "image": "img.kursii",
+      "gloss": {
+        "en": "chair"
+      },
+      "letters": [
+        "kaaf",
+        "raa",
+        "seen",
+        "yaa"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "kaaf",
+      "signedOff": false
+    },
+    {
+      "id": "laymuun",
+      "text": "ليمون",
+      "audio": "word.laymuun",
+      "image": "img.laymuun",
+      "gloss": {
+        "en": "lemon"
+      },
+      "letters": [
+        "laam",
+        "yaa",
+        "meem",
+        "waaw",
+        "noon"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "laam",
+      "signedOff": false
+    },
+    {
+      "id": "luaba",
+      "text": "لعبة",
+      "audio": "word.luaba",
+      "image": "img.luaba",
+      "gloss": {
+        "en": "toy"
+      },
+      "letters": [
+        "laam",
+        "ayn",
+        "baa",
+        "taa_marbuta"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "laam",
+      "signedOff": false
+    },
+    {
+      "id": "laban",
+      "text": "لبن",
+      "audio": "word.laban",
+      "image": "img.laban",
+      "gloss": {
+        "en": "yoghurt"
+      },
+      "letters": [
+        "laam",
+        "baa",
+        "noon"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "laam",
+      "signedOff": false
+    },
+    {
+      "id": "malik",
+      "text": "ملك",
+      "audio": "word.malik",
+      "image": "img.malik",
+      "gloss": {
+        "en": "king"
+      },
+      "letters": [
+        "meem",
+        "laam",
+        "kaaf"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "meem",
+      "signedOff": false
+    },
+    {
+      "id": "madrasat",
+      "text": "مدرسة",
+      "audio": "word.madrasat",
+      "image": "img.madrasat",
+      "gloss": {
+        "en": "school"
+      },
+      "letters": [
+        "meem",
+        "daal",
+        "raa",
+        "seen",
+        "taa_marbuta"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "meem",
+      "signedOff": false
+    },
+    {
+      "id": "markib",
+      "text": "مركب",
+      "audio": "word.markib",
+      "image": "img.markib",
+      "gloss": {
+        "en": "boat"
+      },
+      "letters": [
+        "meem",
+        "raa",
+        "kaaf",
+        "baa"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "meem",
+      "signedOff": false
+    },
+    {
+      "id": "najmat",
+      "text": "نجمة",
+      "audio": "word.najmat",
+      "image": "img.najmat",
+      "gloss": {
+        "en": "star"
+      },
+      "letters": [
+        "noon",
+        "jeem",
+        "meem",
+        "taa_marbuta"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "noon",
+      "signedOff": false
+    },
+    {
+      "id": "nimr",
+      "text": "نمر",
+      "audio": "word.nimr",
+      "image": "img.nimr",
+      "gloss": {
+        "en": "tiger"
+      },
+      "letters": [
+        "noon",
+        "meem",
+        "raa"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "noon",
+      "signedOff": false
+    },
+    {
+      "id": "nahlat",
+      "text": "نحلة",
+      "audio": "word.nahlat",
+      "image": "img.nahlat",
+      "gloss": {
+        "en": "bee"
+      },
+      "letters": [
+        "noon",
+        "haa_c",
+        "laam",
+        "taa_marbuta"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "noon",
+      "signedOff": false
+    },
+    {
+      "id": "hilaal",
+      "text": "هلال",
+      "audio": "word.hilaal",
+      "image": "img.hilaal",
+      "gloss": {
+        "en": "crescent"
+      },
+      "letters": [
+        "haa_f",
+        "laam",
+        "alif",
+        "laam"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "haa_f",
+      "signedOff": false
+    },
+    {
+      "id": "hudhud",
+      "text": "هدهد",
+      "audio": "word.hudhud",
+      "image": "img.hudhud",
+      "gloss": {
+        "en": "hoopoe"
+      },
+      "letters": [
+        "haa_f",
+        "daal",
+        "haa_f",
+        "daal"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "haa_f",
+      "signedOff": false
+    },
+    {
+      "id": "haram",
+      "text": "هرم",
+      "audio": "word.haram",
+      "image": "img.haram",
+      "gloss": {
+        "en": "pyramid"
+      },
+      "letters": [
+        "haa_f",
+        "raa",
+        "meem"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "haa_f",
+      "signedOff": false
+    },
+    {
+      "id": "wardat",
+      "text": "وردة",
+      "audio": "word.wardat",
+      "image": "img.wardat",
+      "gloss": {
+        "en": "rose"
+      },
+      "letters": [
+        "waaw",
+        "raa",
+        "daal",
+        "taa_marbuta"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "waaw",
+      "signedOff": false
+    },
+    {
+      "id": "walad",
+      "text": "ولد",
+      "audio": "word.walad",
+      "image": "img.walad",
+      "gloss": {
+        "en": "boy"
+      },
+      "letters": [
+        "waaw",
+        "laam",
+        "daal"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "waaw",
+      "signedOff": false
+    },
+    {
+      "id": "wajh",
+      "text": "وجه",
+      "audio": "word.wajh",
+      "image": "img.wajh",
+      "gloss": {
+        "en": "face"
+      },
+      "letters": [
+        "waaw",
+        "jeem",
+        "haa_f"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "waaw",
+      "signedOff": false
+    },
+    {
+      "id": "yad",
+      "text": "يد",
+      "audio": "word.yad",
+      "image": "img.yad",
+      "gloss": {
+        "en": "hand"
+      },
+      "letters": [
+        "yaa",
+        "daal"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "yaa",
+      "signedOff": false
+    },
+    {
+      "id": "yamaamat",
+      "text": "يمامة",
+      "audio": "word.yamaamat",
+      "image": "img.yamaamat",
+      "gloss": {
+        "en": "dove"
+      },
+      "letters": [
+        "yaa",
+        "meem",
+        "alif",
+        "meem",
+        "taa_marbuta"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "yaa",
+      "signedOff": false
+    },
+    {
+      "id": "yaasamiin",
+      "text": "ياسمين",
+      "audio": "word.yaasamiin",
+      "image": "img.yaasamiin",
+      "gloss": {
+        "en": "jasmine"
+      },
+      "letters": [
+        "yaa",
+        "alif",
+        "seen",
+        "meem",
+        "yaa",
+        "noon"
+      ],
+      "source": "model-suggested (common grade-1 near-environment vocabulary) — awaiting mother's review",
+      "focusLetter": "yaa",
+      "signedOff": false
+    }
+  ]
+}
