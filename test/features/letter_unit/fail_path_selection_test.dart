@@ -132,7 +132,8 @@ Future<LetterUnitController> _pumpStarted(WidgetTester tester) async {
       overrides: [
         appDatabaseProvider.overrideWithValue(db),
         graphPositionRepositoryProvider.overrideWithValue(_SeededPositionRepo()),
-        curriculumGraphProvider.overrideWith((ref) async => _loadGraph()),
+        curriculumGraphProvider
+            .overrideWith((ref, letterId) async => _loadGraph()),
         childModelProvider.overrideWith((ref) async => ChildModelSnapshot.empty()),
         tutorBrainFactoryProvider
             .overrideWithValue((Map<String, String> feedback) => _LineOnlyBrain()),

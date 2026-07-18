@@ -204,7 +204,8 @@ Future<void> _pumpScreen(WidgetTester tester) async {
       overrides: [
         appDatabaseProvider.overrideWithValue(db),
         graphPositionRepositoryProvider.overrideWithValue(_SeededPositionRepo()),
-        curriculumGraphProvider.overrideWith((ref) async => _loadGraph()),
+        curriculumGraphProvider
+            .overrideWith((ref, letterId) async => _loadGraph()),
         childModelProvider.overrideWith((ref) async => ChildModelSnapshot.empty()),
         letterUnitDataProvider('baa').overrideWith((ref) async => _baaData()),
         audioPlayerProvider.overrideWithValue(_CapturingAudioPlayer()),

@@ -422,7 +422,7 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
       // child finishes their FIRST attempt — the coach can then propose the next
       // exercise on the very first "Next". A no-op read that just starts the
       // keepAlive FutureProvider; harmless for non-agent letters.
-      ref.read(curriculumGraphProvider);
+      ref.read(curriculumGraphProvider(widget.letter.id));
       // Clear any stale agent line from a prior exercise.
       ref.read(tutorLineProvider.notifier).clear();
       // Clear the stale Teacher's Eye insight too (demo chrome).
@@ -701,7 +701,7 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
   /// the controller has no position yet, so it degrades cleanly (e.g. a standalone
   /// widget-test scaffold with no controller).
   List<String> _legalNextExerciseIds() {
-    final graph = ref.read(curriculumGraphProvider).asData?.value;
+    final graph = ref.read(curriculumGraphProvider(widget.letter.id)).asData?.value;
     if (graph == null) return const [];
     final pos = ref.read(letterUnitControllerProvider(widget.letter.id));
     return [
@@ -844,7 +844,7 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
     // Hold a LIVE listener on the graph: a one-shot read (initState) does not
     // keep an unlistened FutureProvider resolved on-device, so
     // _legalNextExerciseIds() saw null and the agent never received candidates.
-    ref.watch(curriculumGraphProvider);
+    ref.watch(curriculumGraphProvider(widget.letter.id));
     // The tutor-owned coaching line (the WORDS channel). On the agent path it is
     // the ONLY source of feedback words for both the bubble and the bottom bar.
     final agentLine = ref.watch(tutorLineProvider);

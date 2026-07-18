@@ -259,7 +259,7 @@ class LetterUnitController extends Notifier<LetterUnitState> {
     var restoreSelection = false;
     if (savedCursor != null && savedCursor.trim().isNotEmpty) {
       try {
-        final graph = await ref.read(curriculumGraphProvider.future);
+        final graph = await ref.read(curriculumGraphProvider(_letterId).future);
         restoreSelection = graph.isAuthored(savedCursor);
       } catch (_) {
         restoreSelection = false; // graph unavailable → no resume, never a crash.
@@ -352,7 +352,7 @@ class LetterUnitController extends Notifier<LetterUnitState> {
       passed: result.passed,
       weakestCriterion: result.weakestCriterion,
     ));
-    final graph = ref.read(curriculumGraphProvider).asData?.value;
+    final graph = ref.read(curriculumGraphProvider(_letterId)).asData?.value;
     if (graph == null) {
       _pendingNarrow = null;
       return const [];
@@ -430,7 +430,7 @@ class LetterUnitController extends Notifier<LetterUnitState> {
     if (state.total == 0) return null; // not started (bare scaffold) — no-op.
     final CurriculumGraph graph;
     try {
-      graph = await ref.read(curriculumGraphProvider.future);
+      graph = await ref.read(curriculumGraphProvider(_letterId).future);
     } catch (_) {
       return null; // graph not loaded — never crash the practice path.
     }
@@ -511,7 +511,7 @@ class LetterUnitController extends Notifier<LetterUnitState> {
   Future<void> markNodeCleared(String exerciseId) async {
     final CurriculumGraph graph;
     try {
-      graph = await ref.read(curriculumGraphProvider.future);
+      graph = await ref.read(curriculumGraphProvider(_letterId).future);
     } catch (_) {
       return; // graph not loaded — skip silently, never crash.
     }
@@ -568,7 +568,7 @@ class LetterUnitController extends Notifier<LetterUnitState> {
     final CurriculumGraph graph;
     final Map<String, int> reps;
     try {
-      graph = await ref.read(curriculumGraphProvider.future);
+      graph = await ref.read(curriculumGraphProvider(_letterId).future);
       reps = await ref
           .read(appDatabaseProvider)
           .exerciseCleanRepsFor(_letterId, childProfileId: _childProfileId);
@@ -614,23 +614,35 @@ class LetterUnitController extends Notifier<LetterUnitState> {
   /// ids like `baa.writeWord.door`. Only ids whose clean-reps the scaffold
   /// actually increments belong here.
   ///
-  /// INTERIM: this set is baa-specific. A later phase should derive it from the
-  /// unit config so it stays in sync automatically. For now it is explicit and
-  /// correct for the live baa graph. Mirror any change in
+  /// PER-LETTER GUARD (quick task 260718-il4, Stage 1 of all-letters-live — owner
+  /// amendment 1): the scoped 8-id set is a DOCUMENTED baa LEGACY EXCEPTION. It is
+  /// returned ONLY when `_letterId == 'baa'`. For ANY other letter (thaa, and the
+  /// Stage-2 letters to come) this returns `const {}` so `recordMasteryIfMet`
+  /// falls back to the FULL-graph `isMasteryMet` over THAT letter's OWN essential
+  /// nodes — never `isMasteryMetForPresented` against baa ids (which would compare
+  /// a thaa graph against baa exercise ids and mis-gate the star). The graph is
+  /// the single source of the star bar for every non-baa letter.
+  ///
+  /// INTERIM (baa only): this set is baa-specific. A later phase should derive the
+  /// baa presented set from the unit config so it stays in sync automatically. For
+  /// now it is explicit and correct for the live baa graph. Mirror any change in
   /// `seeded_demo_state.dart`'s `_presentedEssentials`.
-  Set<String> _presentedExerciseIds() => const {
-        'baa.teachCard.meet',
-        'baa.traceLetter.isolated',
-        'baa.traceLetter.initial',
-        'baa.traceLetter.medial',
-        // Owner amendment 2026-07-12: the final form is a live essential node
-        // (FormsSection presents + scores it) — without it the star fired while
-        // an essential node sat at 0 reps (19 review CR-02).
-        'baa.traceLetter.final',
-        'baa.connectWord.baab',
-        'baa.writeWord.dictation',
-        'baa.writeLetter.fromSound',
-      };
+  Set<String> _presentedExerciseIds() {
+    if (_letterId != 'baa') return const {};
+    return const {
+      'baa.teachCard.meet',
+      'baa.traceLetter.isolated',
+      'baa.traceLetter.initial',
+      'baa.traceLetter.medial',
+      // Owner amendment 2026-07-12: the final form is a live essential node
+      // (FormsSection presents + scores it) — without it the star fired while
+      // an essential node sat at 0 reps (19 review CR-02).
+      'baa.traceLetter.final',
+      'baa.connectWord.baab',
+      'baa.writeWord.dictation',
+      'baa.writeLetter.fromSound',
+    };
+  }
 
   /// The smallest essential clean-rep count the child has banked (a real,
   /// non-zero progress value to record — never the old cleanReps:0).

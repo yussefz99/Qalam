@@ -60,7 +60,7 @@ ProviderContainer _container({
   final container = ProviderContainer(overrides: [
     appDatabaseProvider.overrideWithValue(db),
     graphPositionRepositoryProvider.overrideWithValue(posRepo),
-    curriculumGraphProvider.overrideWith((ref) async {
+    curriculumGraphProvider.overrideWith((ref, letterId) async {
       if (graphFails) throw StateError('graph unavailable');
       return _loadGraph();
     }),

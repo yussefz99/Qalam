@@ -150,7 +150,7 @@ Future<void> _mount(
         appDatabaseProvider.overrideWithValue(db),
         graphPositionRepositoryProvider
             .overrideWithValue(DriftGraphPositionRepository(db)),
-        curriculumGraphProvider.overrideWith((ref) async => graph),
+        curriculumGraphProvider.overrideWith((ref, letterId) async => graph),
         childModelProvider
             .overrideWith((ref) async => ChildModelSnapshot.empty()),
         letterUnitDataProvider('baa').overrideWith((ref) async => _baaData()),

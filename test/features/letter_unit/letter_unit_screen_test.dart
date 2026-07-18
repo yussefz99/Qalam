@@ -162,7 +162,8 @@ Future<({_FakeProgressRepository progress, AppDatabase db})> _pump(
             .overrideWithValue(_FakeGraphPositionRepository()),
         // The mastery gate reads the single-source graph; load it off disk so the
         // test is hermetic (no rootBundle dependence).
-        curriculumGraphProvider.overrideWith((ref) async => _loadGraph()),
+        curriculumGraphProvider
+            .overrideWith((ref, letterId) async => _loadGraph()),
         letterUnitDataProvider('baa').overrideWith((ref) async => _baaData()),
       ],
       child: const MaterialApp(

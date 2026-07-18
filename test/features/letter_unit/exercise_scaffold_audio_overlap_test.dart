@@ -161,7 +161,8 @@ Future<({_SpyCoachSpeaker tts, List<String> clips})> _pumpNode(
       overrides: [
         appDatabaseProvider.overrideWithValue(db),
         graphPositionRepositoryProvider.overrideWithValue(_NullPositionRepo()),
-        curriculumGraphProvider.overrideWith((ref) async => _loadGraph()),
+        curriculumGraphProvider
+            .overrideWith((ref, letterId) async => _loadGraph()),
         childModelProvider
             .overrideWith((ref) async => ChildModelSnapshot.empty()),
         ttsCoachSpeakerProvider.overrideWithValue(spy),

@@ -37,20 +37,33 @@ import '../curriculum/selection_policy.dart';
 import 'tutor_decision.dart';
 import 'tutor_facts.dart';
 
-/// The bundled single-source curriculum-graph asset (the SAME file the server's
-/// G5/G6 rail derives its copy from — D-04, single source of truth).
-const String kCurriculumGraphAsset = 'assets/curriculum/curriculum_graph.json';
+/// The per-letter curriculum-graph asset path (quick task 260718-il4, Stage 1 of
+/// all-letters-live). Each live letter has its OWN graph under
+/// `assets/curriculum/graphs/<letterId>.json` — so the walker / controller /
+/// selection rail work for ANY letter, never a silent baa default.
+///
+/// NOTE (Stage-1 duplication): the server's `generate.py` and the baa lint still
+/// read `assets/curriculum/curriculum_graph.json`; `graphs/baa.json` is a
+/// byte-parity copy of it, kept in sync by `graph_asset_parity_test.dart` until
+/// Stage 2 unifies the server. This provider reads the per-letter copy.
+String kCurriculumGraphAssetFor(String letterId) =>
+    'assets/curriculum/graphs/$letterId.json';
 
-/// Loads + parses the single-source curriculum graph once (keepAlive, mirroring
-/// `appDatabaseProvider`). The parser ([CurriculumGraph.fromJson]) is pure — the
-/// `rootBundle` read lives HERE (the loader), never inside the pure layer.
+/// Loads + parses the per-letter curriculum graph once per letterId (keepAlive,
+/// mirroring `appDatabaseProvider`). A [FutureProvider.family] keyed by letterId:
+/// `curriculumGraphProvider('baa')` loads `graphs/baa.json`,
+/// `curriculumGraphProvider('thaa')` loads `graphs/thaa.json` — the two are
+/// DISTINCT graphs (never a shared baa default). The parser
+/// ([CurriculumGraph.fromJson]) is pure — the `rootBundle` read lives HERE (the
+/// loader), never inside the pure layer.
 ///
 /// A `Future`-returning provider (Pitfall 6: never a bare `StreamProvider.future`,
-/// which hangs under Riverpod 3). Read it with `ref.watch(curriculumGraphProvider.future)`
-/// or via `.when(...)`.
-final curriculumGraphProvider = FutureProvider<CurriculumGraph>((ref) async {
+/// which hangs under Riverpod 3). Read it with
+/// `ref.watch(curriculumGraphProvider(letterId).future)` or via `.when(...)`.
+final curriculumGraphProvider =
+    FutureProvider.family<CurriculumGraph, String>((ref, letterId) async {
   ref.keepAlive();
-  final raw = await rootBundle.loadString(kCurriculumGraphAsset);
+  final raw = await rootBundle.loadString(kCurriculumGraphAssetFor(letterId));
   final decoded = json.decode(raw) as Map<String, Object?>;
   return CurriculumGraph.fromJson(decoded);
 });
@@ -177,16 +190,18 @@ String authoredWhyLine(List<String> whyFacts) {
 }
 
 /// THE single SELECTION switch point (DYN-02) — the sibling of
-/// `tutorBrainFactoryProvider`. Exposes the [ExerciseSelector] the baa unit reads
-/// to choose what comes next. KeepAlive mirrors `appDatabaseProvider` /
-/// `tutorBrainFactoryProvider`.
+/// `tutorBrainFactoryProvider`. Exposes the [ExerciseSelector] a letter's unit
+/// reads to choose what comes next. A [Provider.family] keyed by letterId (Stage
+/// 1 of all-letters-live) so each letter's selector rails on its OWN graph.
+/// KeepAlive mirrors `appDatabaseProvider` / `tutorBrainFactoryProvider`.
 ///
-/// It depends on [curriculumGraphProvider]; while the graph loads it yields a
-/// [_PendingSelector] (a calm no-op that returns null — the unit shows the
-/// "preparing" state, never a crash). Once loaded it is a [RouterExerciseSelector]
-/// over the parsed graph.
-final exerciseSelectorProvider = Provider<ExerciseSelector>((ref) {
-  final graphAsync = ref.watch(curriculumGraphProvider);
+/// It depends on `curriculumGraphProvider(letterId)`; while the graph loads it
+/// yields a [_PendingSelector] (a calm no-op that returns null — the unit shows
+/// the "preparing" state, never a crash). Once loaded it is a
+/// [RouterExerciseSelector] over the parsed per-letter graph.
+final exerciseSelectorProvider =
+    Provider.family<ExerciseSelector, String>((ref, letterId) {
+  final graphAsync = ref.watch(curriculumGraphProvider(letterId));
   return graphAsync.maybeWhen(
     data: RouterExerciseSelector.new,
     orElse: () => const _PendingSelector(),

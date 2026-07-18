@@ -338,7 +338,7 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
   /// index so the dots track where the child is, even though the content is now
   /// selection-driven. Enrichment / drill nodes leave the ribbon where it is.
   void _followRibbon(String exerciseId) {
-    final graph = ref.read(curriculumGraphProvider).asData?.value;
+    final graph = ref.read(curriculumGraphProvider(_letterId)).asData?.value;
     if (graph == null) return;
     final section = _sectionForCompetency(graph.competencyOf(exerciseId));
     if (section != null) {

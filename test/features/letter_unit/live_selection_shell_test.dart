@@ -174,7 +174,7 @@ Future<void> _pumpAndEnterTrace(
       overrides: [
         appDatabaseProvider.overrideWithValue(db),
         graphPositionRepositoryProvider.overrideWithValue(_SeededPositionRepo()),
-        curriculumGraphProvider.overrideWith((ref) async => graph),
+        curriculumGraphProvider.overrideWith((ref, letterId) async => graph),
         childModelProvider.overrideWith((ref) async => ChildModelSnapshot.empty()),
         letterUnitDataProvider('baa').overrideWith((ref) async => _baaData()),
         audioPlayerProvider.overrideWithValue(_CapturingAudioPlayer()),

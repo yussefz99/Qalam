@@ -129,6 +129,10 @@ flutter:
     - assets/audio/
     - assets/avatars/
     - assets/curriculum/
+    # A bare directory entry does NOT bundle subdirectories, so the per-letter
+    # graphs/ dir must be listed explicitly (quick task 260718-il4, Stage 1) —
+    # otherwise rootBundle reads of graphs/<letter>.json fail at runtime.
+    - assets/curriculum/graphs/
     - assets/fonts/
     - assets/icons/
     - assets/images/

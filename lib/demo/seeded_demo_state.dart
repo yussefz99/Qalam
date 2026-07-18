@@ -26,9 +26,11 @@
 import '../data/app_database.dart';
 import '../data/graph_position_repository.dart';
 
-/// The single-source curriculum-graph asset the seed's hero moment rides (the
-/// SAME file the app + walker rail on — D-04).
-const String kSeedDemoGraphAsset = 'assets/curriculum/curriculum_graph.json';
+/// The per-letter curriculum-graph asset the seed's hero moment rides. The demo
+/// stays baa-scoped, so it reads the migrated per-letter baa copy
+/// (`graphs/baa.json`) — a byte-parity copy of `curriculum_graph.json`, the same
+/// graph the provider now loads per-letter (quick task 260718-il4, Stage 1).
+const String kSeedDemoGraphAsset = 'assets/curriculum/graphs/baa.json';
 
 /// The letter the demo seeds.
 const String kSeedDemoLetterId = 'baa';

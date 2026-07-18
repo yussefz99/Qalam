@@ -59,7 +59,8 @@ void main() {
         appDatabaseProvider.overrideWithValue(db),
         graphPositionRepositoryProvider
             .overrideWithValue(DriftGraphPositionRepository(db)),
-        curriculumGraphProvider.overrideWith((ref) async => _loadGraph()),
+        curriculumGraphProvider
+            .overrideWith((ref, letterId) async => _loadGraph()),
         // No Firebase in a unit test — an empty compiled-profile snapshot.
         childModelProvider
             .overrideWith((ref) async => ChildModelSnapshot.empty()),
