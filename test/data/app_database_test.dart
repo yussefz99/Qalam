@@ -576,4 +576,102 @@ void main() {
       await again.close();
     },
   );
+
+  // ---------------------------------------------------------------------------
+  // 19 review WR-06 — a NEW case (the case above is untouched): the migration
+  // test above reshapes six tables to v6 but leaves `letter_criterion_evidence`
+  // as onCreate built it (already v7, child_profile_id present), so its
+  // `alreadyKeyed` probe short-circuits and the production TableMigration
+  // recreate + Constant<int> backfill for the offline evidence queue NEVER ran
+  // under test — one of the five adopted tables shipped untested. This case
+  // seeds the exact v6 evidence DDL + one accrued row and drives the REAL
+  // 6→7 recreate: the row must survive, adopted under the current profile, and
+  // a fresh profile's `unsyncedEvidence` must read clean.
+  // ---------------------------------------------------------------------------
+  test(
+    'migration v6→v7: the letter_criterion_evidence queue is re-keyed — an '
+    'accrued offline evidence row survives adopted under the current profile '
+    'and a fresh profile reads clean (WR-06 / D-14 / D-16)',
+    () async {
+      final dir = await Directory.systemTemp.createTemp('qalam_v7_evidence');
+      final file = File('${dir.path}${Platform.pathSeparator}qalam.db');
+      addTearDown(() => dir.delete(recursive: true));
+
+      // ── Seed a genuine v6-era evidence queue in raw SQL ────────────────────
+      // Reshape ONLY child_profiles (the adoption source) + the evidence table
+      // to the EXACT v6 schema; the other tables stay as onCreate built them
+      // (their alreadyKeyed probes short-circuit — the case above covers their
+      // recreate branch in the other direction).
+      final seed = AppDatabase(NativeDatabase(file));
+      for (final t in const ['letter_criterion_evidence', 'child_profiles']) {
+        await seed.customStatement('DROP TABLE IF EXISTS $t;');
+      }
+      await seed.customStatement(
+        'CREATE TABLE "child_profiles" ("id" INTEGER NOT NULL PRIMARY KEY '
+        'AUTOINCREMENT, "nickname_id" TEXT NOT NULL, "avatar_id" TEXT NOT NULL, '
+        '"grade" TEXT NOT NULL, "starting_lesson_id" TEXT NOT NULL, '
+        '"created_at" INTEGER NOT NULL)',
+      );
+      // EXACT v6 evidence DDL — surrogate autoincrement PK, NO child_profile_id
+      // (the column the 6→7 TableMigration recreate must add + backfill).
+      await seed.customStatement(
+        'CREATE TABLE "letter_criterion_evidence" ("id" INTEGER NOT NULL '
+        'PRIMARY KEY AUTOINCREMENT, "letter_id" TEXT NOT NULL, '
+        '"criterion" TEXT NOT NULL, '
+        '"passed" INTEGER NOT NULL CHECK ("passed" IN (0, 1)), '
+        '"source" TEXT NOT NULL, "created_at" INTEGER NOT NULL)',
+      );
+      await seed.customStatement(
+        "INSERT INTO child_profiles (nickname_id, avatar_id, grade, "
+        "starting_lesson_id, created_at) "
+        "VALUES ('nick_moon', 'avatar_2', 'kg', 'lesson_01', 0)",
+      );
+      // ONE accrued (not-yet-synced) offline evidence row — the D-14 queue the
+      // nightly digest drains. Losing it on upgrade = lost child evidence.
+      await seed.customStatement(
+        "INSERT INTO letter_criterion_evidence (letter_id, criterion, passed, "
+        "source, created_at) VALUES ('baa', 'dot', 0, 'letter', 0)",
+      );
+      await seed.customStatement('PRAGMA user_version = 6;');
+      await seed.close();
+
+      // ── Reopen → the REAL onUpgrade(6→7) evidence recreate + backfill runs ──
+      final migrated = AppDatabase(NativeDatabase(file));
+
+      final profileRows = await migrated
+          .customSelect('SELECT id FROM child_profiles LIMIT 1;')
+          .get();
+      final profileA = profileRows.single.read<int>('id');
+      final profileB = profileA + 1; // an id with NO rows → clean/fresh
+
+      // (a) The row SURVIVES the TableMigration recreate, adopted under the
+      // current profile (D-16) — asserted through the TYPED accessor the
+      // nightly digest actually reads (unsyncedEvidence).
+      final adopted =
+          await migrated.unsyncedEvidence(childProfileId: profileA);
+      expect(adopted, hasLength(1),
+          reason: 'the accrued evidence row is adopted, not dropped (D-16)');
+      expect(adopted.single.letterId, 'baa');
+      expect(adopted.single.criterion, 'dot',
+          reason: 'the criterion payload survives the recreate-and-copy');
+      expect(adopted.single.passed, isFalse);
+      expect(adopted.single.source, 'letter');
+      expect(adopted.single.childProfileId, profileA,
+          reason: 'child_profile_id is backfilled from the single existing '
+              'profile (the Constant<int> columnTransformer)');
+
+      // (b) The cross-profile-leak invariant (T-19-01): a fresh profile's
+      // evidence queue reads CLEAN — never the prior child's rows.
+      expect(await migrated.unsyncedEvidence(childProfileId: profileB), isEmpty,
+          reason: 'a fresh profile never inherits accrued evidence');
+      await migrated.close();
+
+      // (c) idempotence — a second open (from == 7) changes nothing.
+      final again = AppDatabase(NativeDatabase(file));
+      expect(await again.unsyncedEvidence(childProfileId: profileA),
+          hasLength(1),
+          reason: 'a second restart must change nothing (idempotence)');
+      await again.close();
+    },
+  );
 }
