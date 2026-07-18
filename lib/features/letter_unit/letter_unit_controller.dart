@@ -236,6 +236,21 @@ class LetterUnitController extends Notifier<LetterUnitState> {
     } catch (_) {
       _childProfileId = kUnassignedChildProfileId;
     }
+    // 0a) 260718-nft: WARM the per-letter curriculum graph UNCONDITIONALLY, so the
+    // scaffold's synchronous `.asData?.value` reads ([_isGraphRailed],
+    // [beginSelection], [_legalNextExerciseIds]) see the loaded graph on the child's
+    // FIRST attempt of a first visit. Before this, the graph future was awaited ONLY
+    // when a saved cursor existed (step 1b) — so a first visit read `.asData` as null
+    // and the whole session raced to the STATIC section fallback even for a promoted
+    // graph letter (owner on-device thaa test, 2026-07-18). GUARDED + never-throw: a
+    // missing graph asset (alif/taa) load-fails harmlessly here → `.asData` stays
+    // null → those letters degrade to the static flow exactly as before, no crash.
+    try {
+      await ref.read(curriculumGraphProvider(letterId).future);
+    } catch (_) {
+      // No graph for this letter (or a load failure) — the graph-railed reads see
+      // null and the letter keeps the static flow. Never crash the unit-open path.
+    }
     // 1) Read the durable graph position from Drift (Pitfall 6: a Future read).
     repo.GraphPosition? saved;
     try {

@@ -438,6 +438,26 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
   /// selection in [_onResult] (Phase 14-17 coaching was scoped to baa).
   bool get _isAgentPath => widget.letter.id == 'baa';
 
+  /// Quick task 260718-nft: whether this letter is GRAPH-RAILED — i.e. its
+  /// per-letter curriculum graph has LOADED (`curriculumGraphProvider(letterId)`
+  /// has data). This is a SEPARATE axis from [_isAgentPath] (which stays baa-only
+  /// for the server/agent legs). Graph-driven SELECTION — [beginSelection] /
+  /// walker-driven next-question / cursor sync — runs under THIS for ANY graph
+  /// letter (baa AND thaa AND every future promoted letter), so the offline
+  /// [CurriculumGraphWalker] supplies the next node instead of the static section
+  /// walk. The gate was conflated with [_isAgentPath] (== 'baa') before, which
+  /// silently trapped every non-baa letter on the OLD static section order even
+  /// though its graph was live (owner on-device thaa test, 2026-07-18).
+  ///
+  /// A synchronous `.asData?.value` read (never a blocking `.future`) — mirrors
+  /// [_legalNextExerciseIds] / [LetterUnitController.beginSelection]. Letters with
+  /// NO graph asset (alif, taa today) load-fail → `.asData` is null → this is
+  /// false → they degrade EXACTLY as before: the static flow, no crash. The
+  /// controller start() warm ([LetterUnitController.start]) resolves the future
+  /// before the first attempt so this read is not racing to null on a first visit.
+  bool get _isGraphRailed =>
+      ref.read(curriculumGraphProvider(widget.letter.id)).asData?.value != null;
+
   @override
   void initState() {
     super.initState();
@@ -571,18 +591,22 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
     }
     _recordAttempt(section, result.passed, result.mistakeId);
 
-    // 18-07: BEGIN the feedback moment. On the baa/agent path, when this exercise
-    // maps to a real graph node, the controller records the attempt in the
-    // session-scoped store (0b), invokes SelectionPolicy.narrow ONCE, and returns
-    // the policy-legal candidates — threaded into the coach FACTS below so the
-    // coach proposes FROM the policy-legal set (not a raw isLegalSelection sweep).
-    // The controller owns the arc/profile/session context that survives scaffold
-    // key swaps (audit finding 1.4).
+    // 18-07 / 260718-nft: BEGIN the feedback moment. For ANY GRAPH-RAILED letter
+    // (baa AND thaa AND every future promoted letter — [_isGraphRailed], NOT the
+    // baa-only [_isAgentPath]), when this exercise maps to a real graph node, the
+    // controller records the attempt in the session-scoped store (0b), invokes
+    // SelectionPolicy.narrow ONCE, and returns the policy-legal candidates —
+    // threaded into the coach FACTS below so the coach proposes FROM the
+    // policy-legal set (not a raw isLegalSelection sweep). The controller owns the
+    // arc/profile/session context that survives scaffold key swaps (audit finding
+    // 1.4). Splitting this off [_isAgentPath] is the fix for the owner's on-device
+    // thaa bug: the walker never ran for a non-baa graph letter, so it fell back
+    // to the static section walk even though its graph was live (2026-07-18).
     final controller =
         ref.read(letterUnitControllerProvider(widget.letter.id).notifier);
     final unitState = ref.read(letterUnitControllerProvider(widget.letter.id));
     final graphId = widget.graphExerciseId;
-    final bool selectionBegan = _isAgentPath && graphId != null;
+    final bool selectionBegan = _isGraphRailed && graphId != null;
     final candidates = selectionBegan
         ? controller.beginSelection(result, graphId,
             recentMistakes: List<String>.of(_recentMistakes))
@@ -653,7 +677,16 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
     // the D-02 step-down guarantee degraded to retry-in-place). This also sets
     // the controller's `nextReady` future for THIS moment immediately, so the
     // pass-CTA awaits the fresh pick, never a stale prior one.
-    if (_isAgentPath && graphId != null) {
+    //
+    // 260718-nft: gated on [_isGraphRailed] (any graph letter), NOT the baa-only
+    // [_isAgentPath]. This is the OTHER half of the owner's thaa fix: without it
+    // the controller never flips `selectionActive`, `_nextReady` stays null, and
+    // the screen's `_advance` never enters the presenter — so a non-baa letter
+    // stayed on the static section walk. For a non-agent letter `decisionFuture`
+    // is the AuthoredFallbackBrain's `PresentActivity` (plan == null), so
+    // RouterExerciseSelector falls straight to the offline CurriculumGraphWalker —
+    // graph-driven selection with zero server call, exactly the offline floor.
+    if (_isGraphRailed && graphId != null) {
       unawaited(controller.selectNextWhenDecided(facts, decisionFuture));
     }
 
