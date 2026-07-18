@@ -4,7 +4,7 @@ milestone: v2.0
 milestone_name: — AI Tutor
 status: verifying
 stopped_at: Completed 19-06-PLAN.md (all 6 plans done; phase ready for verification)
-last_updated: "2026-07-18T07:47:09.108Z"
+last_updated: "2026-07-18T09:03:39.896Z"
 progress:
   total_phases: 29
   completed_phases: 16
@@ -24,8 +24,8 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 
 ## Current Position
 
-Phase: 19 (Question presentation overhaul — every question self-explanatory on screen) — EXECUTING
-Plan: 6 of 6
+Phase: 20
+Plan: Not started
 Status: Phase complete — ready for verification
 Next: Resume with either (a) `/gsd:verify-work 18` re-run against the 18-UAT.md gaps to formally re-test each of T2/T3/T5/T6/T7 on the deployed build and close that UAT session, or (b) go straight to the ORIGINAL phase-close plan 18-11-PLAN.md (separate from this gap-closure round) — its Task 2 (device cost/latency measurement) could piggyback on the current iPad session; Task 3 (mother's sign-off on kArcEntryFailStreak/kArcMaxAttempts/EMA constants/micro-drill copy/selection gold set) is still fully open and required before the phase verifier can flip R1/R4/R5/R6/R7/R8/R9. Phase 18 is NOT complete until 18-11 lands.
 PriorNext: 18-07 (live-path wiring) confirmed genuinely done in the prior session (the earlier "18-07 done" note had been an inaccurate narrative — only a plan-amendment commit existed until that pass landed real source wiring). 18-08/18-09 (server WHY grounding + nightly compiler) executed before 18-07 since the server/eval legs don't depend on client wiring.
@@ -34,7 +34,7 @@ PriorNext: 18-07 (live-path wiring) confirmed genuinely done in the prior sessio
 
 **Velocity:**
 
-- Total plans completed: 52 of 34 (only 04-06 deferred/human-gated)
+- Total plans completed: 58 of 34 (only 04-06 deferred/human-gated)
 - Phases complete: 7 of 13 tracked (1, 2, 02.1, 02.1.1, 3, 03.1, 5); Phase 4 in progress (5/6)
 - Average duration: — min
 - Total execution time: 0.0 hours
@@ -51,6 +51,7 @@ PriorNext: 18-07 (live-path wiring) confirmed genuinely done in the prior sessio
 | 06.1 | 5 | - | - |
 | 11 | 3 | - | - |
 | 15 | 8 | - | - |
+| 19 | 6 | - | - |
 
 **Recent Trend:**
 

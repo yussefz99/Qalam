@@ -1075,7 +1075,7 @@ is DROPPED from this milestone's scope (owner, 2026-07-16).
 | 16. BUILD — presence + voice + eval gate + demo-harden | 3/6 | In Progress (re-scope: eval-trust legs survive; demo-harden moot) |  |
 | 17. BUILD — stroke-aware coaching (on-device geo-diff → coach) | 10/10 | Complete   | 2026-07-06 |
 | 18. BUILD — the living tutor (per-child dynamic exercise selection) | 15/16 | In Progress|  |
-| 19. Question presentation overhaul | 6/6 | Complete   | 2026-07-18 |
+| 19. Question presentation overhaul | 6/6 | Complete    | 2026-07-18 |
 | 20. Curriculum graph + pipeline for all 28 letters | 0/TBD | Not started | - |
 | 21. Letter content at scale (mother-signed batches) | 0/TBD | Not started | - |
 | 22. Cross-letter selection + next-day planner | 0/TBD | Not started | - |
