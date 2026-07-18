@@ -528,8 +528,8 @@ class LetterUnitController extends Notifier<LetterUnitState> {
   /// NOTHING. Idempotent (the star is information, recorded at most once). Never
   /// reads a server response (ADR-014 trust boundary).
   ///
-  /// INTERIM (T5): the 6-section baa unit surfaces only a subset (~7) of the
-  /// graph's 15 essential nodes. The scoped condition `isMasteryMetForPresented`
+  /// INTERIM (T5): the 6-section baa unit surfaces only a subset (8) of the
+  /// live graph's essential nodes. The scoped condition `isMasteryMetForPresented`
   /// evaluates over the intersection of `graph.essentialNodes` and the exercises
   /// the baa unit actually presents and records. The star fires when the child
   /// genuinely completes the presented essential exercises — not blocked by
@@ -549,10 +549,11 @@ class LetterUnitController extends Notifier<LetterUnitState> {
       return false; // can't evaluate → never grant the star off a guess.
     }
     // T5 (INTERIM): scope the mastery gate to the exercises the unit presents.
-    // The baa unit surfaces baa.teachCard.meet, baa.traceLetter.isolated,
-    // baa.traceLetter.initial, baa.traceLetter.medial, baa.connectWord.baab,
-    // baa.writeWord.dictation, and baa.writeLetter.fromSound — 7 of 15 essential
-    // nodes. The star reflects mastery of what is taught here; the other 8
+    // The baa unit surfaces baa.teachCard.meet, all four baa.traceLetter forms
+    // (isolated/initial/medial/final — the owner's 2026-07-12 amendment made
+    // the final form essential), baa.connectWord.baab, baa.writeWord.dictation,
+    // and baa.writeLetter.fromSound — 8 of the live graph's essential nodes.
+    // The star reflects mastery of what is taught here; the remaining
     // essential nodes belong to a later content-coverage expansion.
     final presented = _presentedExerciseIds();
     final masteryMet = presented.isNotEmpty
@@ -585,12 +586,17 @@ class LetterUnitController extends Notifier<LetterUnitState> {
   ///
   /// INTERIM: this set is baa-specific. A later phase should derive it from the
   /// unit config so it stays in sync automatically. For now it is explicit and
-  /// correct for the signed baa graph.
+  /// correct for the live baa graph. Mirror any change in
+  /// `seeded_demo_state.dart`'s `_presentedEssentials`.
   Set<String> _presentedExerciseIds() => const {
         'baa.teachCard.meet',
         'baa.traceLetter.isolated',
         'baa.traceLetter.initial',
         'baa.traceLetter.medial',
+        // Owner amendment 2026-07-12: the final form is a live essential node
+        // (FormsSection presents + scores it) — without it the star fired while
+        // an essential node sat at 0 reps (19 review CR-02).
+        'baa.traceLetter.final',
         'baa.connectWord.baab',
         'baa.writeWord.dictation',
         'baa.writeLetter.fromSound',

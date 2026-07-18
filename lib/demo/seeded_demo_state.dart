@@ -53,6 +53,10 @@ const List<String> _presentedEssentials = [
   'baa.traceLetter.isolated',
   'baa.traceLetter.initial',
   'baa.traceLetter.medial',
+  // Owner amendment 2026-07-12: the final form is a live essential node the
+  // unit presents (19 review CR-02). Banked at threshold like the others so
+  // the demo star still hinges on the wobble form only.
+  'baa.traceLetter.final',
   'baa.connectWord.baab',
   'baa.writeWord.dictation', // the wobble form — seeded BELOW threshold.
   'baa.writeLetter.fromSound',

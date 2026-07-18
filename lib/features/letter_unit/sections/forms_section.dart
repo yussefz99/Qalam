@@ -93,11 +93,12 @@ class FormsSection extends ConsumerStatefulWidget {
   final FormsSectionStrings strings;
 
   /// Called with the canonical graph node id on a clean scored pass for each
-  /// form scaffold (T2/T3). Only fired for nodes in the graph:
+  /// form scaffold (T2/T3). Fired for every form's node — all live graph nodes
+  /// since the owner's 2026-07-12 amendment added the final form:
   ///   • baa.traceLetter.initial  — initial form
   ///   • baa.traceLetter.medial   — medial form
+  ///   • baa.traceLetter.final    — final form (essential, owner amendment)
   ///   • baa.connectWord.baab     — the join stage
-  /// baa.traceLetter.final is NOT in the signed graph → null for that form.
   final void Function(String graphExerciseId)? onGraphNodePassed;
 
   @override
@@ -237,14 +238,14 @@ class FormsSectionState extends ConsumerState<FormsSection> {
     // including its own Clear / Next CTAs and the PromptHeader Play (the single
     // audio affordance — a separate overlaid Listen card used to cover the CTAs;
     // owner bug #4).
-    // T2: map each form to its canonical graph node id. baa.traceLetter.final is
-    // NOT in the signed graph (15 nodes), so that form passes null — no rep
-    // recording for it. initial + medial ARE in the graph.
-    final graphId = switch (step.form) {
-      'initial' => step.exercise.id, // baa.traceLetter.initial
-      'medial' => step.exercise.id,  // baa.traceLetter.medial
-      _ => null,                     // final: not a signed graph node
-    };
+    // T2: map each form to its canonical graph node id. ALL THREE in-word forms
+    // are live graph nodes — the owner's 2026-07-12 amendment added
+    // baa.traceLetter.final to positionalForms (essential, minCleanReps 3) so
+    // the child traces all four forms before production tasks, and 19-05
+    // shipped the graph with it (17 nodes). A clean pass on ANY form here must
+    // reach incrementExerciseCleanReps / markNodeCleared (19 review CR-02 —
+    // the old `final → null` mapping silently discarded real child progress).
+    final graphId = step.exercise.id;
     return ExerciseScaffold(
       // A key per form so the scaffold/controller reset cleanly on switch.
       key: ValueKey<String>('formScaffold:${step.form}'),
@@ -254,7 +255,7 @@ class FormsSectionState extends ConsumerState<FormsSection> {
       onNext: () => _onFormPassed(step.form),
       onAudioTap: _play,
       graphExerciseId: graphId,
-      onGraphNodePassed: graphId != null ? widget.onGraphNodePassed : null,
+      onGraphNodePassed: widget.onGraphNodePassed,
     );
   }
 
