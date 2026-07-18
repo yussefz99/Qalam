@@ -609,7 +609,28 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
     final TutorBrain brain = _isAgentPath
         ? ref.read(tutorBrainFactoryProvider)(feedback)
         : AuthoredFallbackBrain(feedback: feedback);
-    brain.next(facts).then((decision) {
+    final decisionFuture = brain.next(facts);
+
+    // 18-07 (CLOSES the Phase-15 dead wire) + 19 review WR-04: the coach's
+    // TutorDecision is threaded into the selection so the agent's (policy-legal)
+    // pick is what the child ACTUALLY gets next. Runs on pass AND fail (a fail
+    // enters the arc / remediation); the pick + arc persist ride THIS same
+    // /coach round-trip. The controller re-checks legality (accept iff candidate
+    // AND graph-legal, else the walker) so an illegal proposal never reaches the
+    // child (R5). Handed to the CONTROLLER synchronously at verdict (WR-04):
+    // the controller deliberately outlives scaffold key swaps (audit finding
+    // 1.4), so the arc advance/persist must never ride the scaffold's `mounted`
+    // flag — a fast "Try again"/"Next" tap epoch-remounts this scaffold before
+    // a slow coach call resolves, and the old mounted-gated continuation then
+    // silently dropped the whole selection moment (no arc advance, no persist —
+    // the D-02 step-down guarantee degraded to retry-in-place). This also sets
+    // the controller's `nextReady` future for THIS moment immediately, so the
+    // pass-CTA awaits the fresh pick, never a stale prior one.
+    if (_isAgentPath && graphId != null) {
+      unawaited(controller.selectNextWhenDecided(facts, decisionFuture));
+    }
+
+    decisionFuture.then((decision) {
       if (!mounted) return;
       final line = _lineOf(decision);
 
@@ -619,16 +640,8 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
       ref.read(tutorLineProvider.notifier).set(line.isNotEmpty ? line : null);
       markLatency(LatencySegment.lineRendered);
 
-      // 18-07: CLOSE THE PHASE-15 DEAD WIRE. The coach's TutorDecision is handed to
-      // the controller and threaded into the selection so the agent's (policy-legal)
-      // pick is what the child ACTUALLY gets next — not merely displayed in the demo
-      // strip. Runs on pass AND fail (a fail enters the arc / remediation); the pick
-      // + arc persist ride THIS same /coach round-trip (no new network call). The
-      // controller re-checks legality (accept iff candidate AND graph-legal, else
-      // the walker) so an illegal proposal never reaches the child (R5).
-      if (_isAgentPath && graphId != null) {
-        unawaited(controller.selectNext(facts, decision: decision));
-      }
+      // (The selection continuation runs on the CONTROLLER — see
+      // selectNextWhenDecided above the mounted gate, 19 review WR-04.)
 
       // DEMO "Teacher's Eye": merge the agent's next-exercise pick + rationale
       // into the insight (keeps the criteria/diff already published at verdict).

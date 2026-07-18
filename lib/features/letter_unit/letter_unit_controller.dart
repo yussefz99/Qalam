@@ -399,6 +399,33 @@ class LetterUnitController extends Notifier<LetterUnitState> {
     return future;
   }
 
+  /// 19 review WR-04: the verdict-time selection continuation, owned by the
+  /// CONTROLLER — never gated on the presenting scaffold's `mounted` flag or
+  /// its lifetime. The scaffold calls this SYNCHRONOUSLY at the scored moment
+  /// with the in-flight coach future, so:
+  ///   • [_nextReady] is set IMMEDIATELY — a fast "Try again"/"Next exercise"
+  ///     tap awaits THIS moment's pick, never a stale prior future; and
+  ///   • the continuation (arc advance + D-12 persist + cursor swap) runs on
+  ///     the controller even when the 18-12 epoch remount disposes the
+  ///     scaffold before a slow coach call resolves — the D-02 "fail the same
+  ///     criterion twice → the very next card steps down" guarantee (owner
+  ///     directive 2026-07-12) no longer degrades to retry-in-place under
+  ///     fast taps + coach latency.
+  /// A failed coach call degrades to the walker/policy path (no decision) so
+  /// [_nextReady] always completes — never a dangling rejected future under
+  /// the pass-CTA's await.
+  Future<String?> selectNextWhenDecided(
+    TutorFacts facts,
+    Future<TutorDecision> decision,
+  ) {
+    final future = decision.then<String?>(
+      (d) => _selectNext(facts, decision: d),
+      onError: (Object _) => _selectNext(facts),
+    );
+    _nextReady = future;
+    return future;
+  }
+
   Future<String?> _selectNext(TutorFacts facts, {TutorDecision? decision}) async {
     if (state.total == 0) return null; // not started (bare scaffold) — no-op.
     final CurriculumGraph graph;
