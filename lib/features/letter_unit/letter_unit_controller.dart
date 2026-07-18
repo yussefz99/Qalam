@@ -564,7 +564,10 @@ class LetterUnitController extends Notifier<LetterUnitState> {
     try {
       // The recorded cleanReps is the essential-core minimum the child actually
       // met — never the cleanReps:0 navigation write the old bug stamped.
-      final met = _essentialFloor(graph, reps);
+      // Scoped to the SAME presented set the gate used (19 review WR-01): a
+      // floor over ALL essential nodes reads 0 off the unpresented ones and
+      // stamps "Mastered · 0 clean reps" on the parent dashboard.
+      final met = _essentialFloor(graph, reps, presented);
       await ref.read(progressRepositoryProvider).recordMastery(
             childProfileId: _childProfileId,
             letterId: _letterId,
@@ -604,17 +607,26 @@ class LetterUnitController extends Notifier<LetterUnitState> {
 
   /// The smallest essential clean-rep count the child has banked (a real,
   /// non-zero progress value to record — never the old cleanReps:0).
-  int _essentialFloor(CurriculumGraph graph, Map<String, int> reps) {
-    var min = 0;
-    var first = true;
+  ///
+  /// Scoped to [presented] — the SAME set the scoped mastery gate evaluated
+  /// (19 review WR-01): unpresented essential nodes sit at 0 reps by design,
+  /// so an unscoped floor was 0 on every scoped-mastery star. An empty
+  /// [presented] (the full-graph `isMasteryMet` fallback) floors over ALL
+  /// essential nodes, matching the gate that fired.
+  int _essentialFloor(
+    CurriculumGraph graph,
+    Map<String, int> reps,
+    Set<String> presented,
+  ) {
+    int? min;
     for (final node in graph.essentialNodes) {
-      final r = reps[node.exerciseId] ?? 0;
-      if (first || r < min) {
-        min = r;
-        first = false;
+      if (presented.isNotEmpty && !presented.contains(node.exerciseId)) {
+        continue;
       }
+      final r = reps[node.exerciseId] ?? 0;
+      if (min == null || r < min) min = r;
     }
-    return min;
+    return min ?? 0;
   }
 
   /// Persist the current graph position to Drift (the durable resume cursor).
