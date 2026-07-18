@@ -511,7 +511,7 @@
         },
         {
           "kind": "text",
-          "text": "با_",
+          "text": "با_letter_",
           "gaps": [
             {
               "kind": "letter",
