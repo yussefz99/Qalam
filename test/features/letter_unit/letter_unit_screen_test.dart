@@ -261,6 +261,10 @@ void main() {
       'baa.traceLetter.isolated',
       'baa.traceLetter.initial',
       'baa.traceLetter.medial',
+      // Owner amendment 2026-07-12 (19 review CR-02): the final form is a live
+      // essential node in the presented mastery core — the star must not fire
+      // without it, so the "every essential at reps" seed must include it.
+      'baa.traceLetter.final',
       'baa.writeLetter.fromSound',
       'baa.writeLetter.fromPicture',
       'baa.writeLetter.writeForm',
