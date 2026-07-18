@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
 status: verifying
-stopped_at: Quick 260718-l12 complete — thaa scorer fixed (strokes merged + Firestore re-seeded) + never-silent feedback; iPad rebuild next; Stage 2 awaiting owner go
+stopped_at: Quick 260718-nft complete — walker for all graph letters + taa/thaa bowl fix (prod re-seeded); iPad rebuild next; Stage 2 awaiting owner go
 last_updated: "2026-07-18T10:48:21.148Z"
 progress:
   total_phases: 29
@@ -317,6 +317,7 @@ None yet.
 | 260629-nle | Add iOS FirebaseOptions block so app boots on iPad (owner-authorized iOS-enabling for demo/testing — scoped extension of Android-only) | 2026-06-29 | 05109e9 | [260629-nle-add-ios-firebaseoptions-block-so-app-boo](./quick/260629-nle-add-ios-firebaseoptions-block-so-app-boo/) |
 | 260718-il4 | Stage 1 all-letters-live: reusable letter-promotion script (thaa promoted signedOff:false — 19 exercises, generated 6-section unit, graphs/thaa.json), curriculumGraphProvider → FutureProvider.family per letterId, per-letter mastery guard (baa 8-id set = documented legacy exception; other letters rail on their OWN graph via isMasteryMet), thaa Journey reachability, baa graph-asset parity guard, learned-letters lint coverage (enforced-when-signed / acknowledged-when-unsigned + coverage assertion), live-path thaa test via presentGraphExercise. 10 reaching-ahead thaa cards listed for the mother's packet. Stage 2 (24 letters + server data + deploy) NOT started | 2026-07-18 | 50bcf12, 44fdd96, ff77467, c2f0d93 | [260718-il4-stage-1-all-letters-live-multi-letter-gr](./quick/260718-il4-stage-1-all-letters-live-multi-letter-gr/) |
 | 260718-l12 | Fix thaa always-wrong + silent fail feedback (owner device bug): surgical contextualForms merge for alif/baa/taa/thaa from owner-corrected stroke data (signedOff kept, alif commonMistakes flagged not taken), owner-authorized prod Firestore letters re-seed (device reads letters Firestore-first; June-14 seed had NO thaa contextualForms — verified via REST readback post-seed), warm kGenericTryAgain feedback floor in both resolvers (a scorer FAIL is never silent), per-mistake fail lines for all 18 graded thaa exercises (signedOff:false, for the mother's packet). 915 pass / 7 known-only fail | 2026-07-18 | d4a08bc, cfd74c2 | [260718-l12-fix-thaa-always-wrong-silent-fail-feedba](./quick/260718-l12-fix-thaa-always-wrong-silent-fail-feedba/) |
+| 260718-nft | Walker for ALL letters for good + taa/thaa bowl (owner-directed, fresh-context agents): split the conflated _isAgentPath gate — server/agent legs stay baa-only, NEW _isGraphRailed axis drives beginSelection/walker/cursor-sync for every letter with a graph (13 use sites audited); start() warms the per-letter graph (cold-race fix); thaa_walker_progression_test pins pass→walker-next + fail→remediation through the live apply path. taa/thaa isolated body := baa's 12-pt bowl (dots/forms/signedOff untouched, queued for mother), re-seeded prod Firestore + readback. 924 pass / 7 known-only fail | 2026-07-18 | 05834b9, 6640cc6 | [260718-nft-walker-for-all-letters-for-good-taa-thaa](./quick/260718-nft-walker-for-all-letters-for-good-taa-thaa/) |
 
 ## Deferred Items
 
@@ -329,5 +330,5 @@ Items acknowledged and carried forward from previous milestone close:
 ## Session Continuity
 
 Last session: 2026-07-18 (Stage 1 + thaa device-bug fix)
-Stopped at: Quick 260718-l12 COMPLETE — thaa scorer fix (contextualForms merge + prod Firestore re-seed) + never-silent feedback floor; iPad rebuild+install next, then owner re-tests thaa. Stage 2 (24 letters + server) NOT started, awaiting owner go.
+Stopped at: Quick 260718-nft COMPLETE — walker un-gated for ALL graph letters (server/agent legs stay baa-only) + taa/thaa isolated bowl = baa's bowl (re-seeded prod, readback verified); iPad rebuild+install, owner re-tests thaa progression + taa/thaa isolated traces. Stage 2 (24 letters + server) NOT started, awaiting owner go.
 Resume files: .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-02-PLAN.md (next — cross-letter labels + baa micro-drill set), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-03-PLAN.md (EMA + Drift v6), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-01-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
