@@ -26,11 +26,13 @@ class ArcStateRepository {
   const ArcStateRepository(this._db);
   final AppDatabase _db;
 
-  /// The persisted arc for [letterId], or null if none. Maps the raw Drift
-  /// `ArcStateRow` into the pure [ArcState]; the un-persisted `failStreak` /
-  /// `attempts` counters default to 0 (re-accumulated in-session).
-  Future<ArcState?> getArc(String letterId) async {
-    final row = await _db.getArcStateRow(letterId);
+  /// The persisted arc for [letterId] under [childProfileId], or null if none
+  /// (ADR-018 — a fresh profile never resumes the prior child's arc). Maps the
+  /// raw Drift `ArcStateRow` into the pure [ArcState]; the un-persisted
+  /// `failStreak` / `attempts` counters default to 0 (re-accumulated in-session).
+  Future<ArcState?> getArc(String letterId,
+      {required int childProfileId}) async {
+    final row = await _db.getArcStateRow(letterId, childProfileId: childProfileId);
     if (row == null) return null;
     return ArcState(
       active: row.active,
@@ -40,9 +42,13 @@ class ArcStateRepository {
     );
   }
 
-  /// Write (or overwrite) the arc for [letterId]. Persists only the observable
-  /// resume cursor (`active` / `step` / `targetCriterion` / `exerciseToRetry`).
-  Future<void> setArc(String letterId, ArcState arc) => _db.setArcStateRow(
+  /// Write (or overwrite) the arc for [letterId] under [childProfileId]
+  /// (ADR-018). Persists only the observable resume cursor (`active` / `step` /
+  /// `targetCriterion` / `exerciseToRetry`).
+  Future<void> setArc(String letterId, ArcState arc,
+          {required int childProfileId}) =>
+      _db.setArcStateRow(
+        childProfileId: childProfileId,
         letterId: letterId,
         active: arc.active,
         step: arc.step,

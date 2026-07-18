@@ -19,6 +19,11 @@ import 'package:qalam/data/app_database.dart';
 import 'package:qalam/data/drift_progress_repository.dart';
 import 'package:qalam/data/progress_repository.dart';
 
+// ADR-018 (19-06): every progress read/write is keyed by the in-file child id.
+// These tests seed no ChildProfile, so a fixed local id keeps writes+reads
+// consistent within each test.
+const int _childA = 1;
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -34,20 +39,21 @@ void main() {
 
       final db1 = AppDatabase(shared.executor);
       final repo1 = DriftProgressRepository(db1);
-      await repo1.recordMastery(letterId: 'alif', cleanReps: 3);
+      await repo1.recordMastery(
+          childProfileId: _childA, letterId: 'alif', cleanReps: 3);
 
       // Confirm before restart.
-      expect(await repo1.isMastered('alif'), isTrue);
-      expect(await db1.cleanRepsFor('alif'), 3);
+      expect(await repo1.isMastered('alif', childProfileId: _childA), isTrue);
+      expect(await db1.cleanRepsFor('alif', childProfileId: _childA), 3);
       await db1.close(); // injected executor stays open (P1 contract)
 
       // "Restart": fresh AppDatabase over the same underlying store.
       final db2 = AppDatabase(shared.executor);
       final repo2 = DriftProgressRepository(db2);
 
-      expect(await repo2.isMastered('alif'), isTrue,
+      expect(await repo2.isMastered('alif', childProfileId: _childA), isTrue,
           reason: 'mastery must survive simulated restart');
-      expect(await db2.cleanRepsFor('alif'), 3,
+      expect(await db2.cleanRepsFor('alif', childProfileId: _childA), 3,
           reason: 'cleanReps must survive simulated restart');
       await db2.close();
     },
@@ -65,10 +71,11 @@ void main() {
 
       // This must NOT throw "no such table: letter_mastery".
       await expectLater(
-        () => repo.recordMastery(letterId: 'baa', cleanReps: 1),
+        () => repo.recordMastery(
+            childProfileId: _childA, letterId: 'baa', cleanReps: 1),
         returnsNormally,
       );
-      expect(await repo.isMastered('baa'), isTrue);
+      expect(await repo.isMastered('baa', childProfileId: _childA), isTrue);
       await db.close();
     },
   );
@@ -96,7 +103,8 @@ void main() {
 
       // Write mastery (letter_mastery table — new in v2).
       final repo1 = DriftProgressRepository(db1);
-      await repo1.recordMastery(letterId: 'alif', cleanReps: 3);
+      await repo1.recordMastery(
+          childProfileId: _childA, letterId: 'alif', cleanReps: 3);
       await db1.close();
 
       // Simulated restart: re-open and assert both rows survive.
@@ -109,7 +117,7 @@ void main() {
         reason: 'app_settings rows must survive the v1→v2 migration',
       );
       expect(
-        await repo2.isMastered('alif'),
+        await repo2.isMastered('alif', childProfileId: _childA),
         isTrue,
         reason: 'letter_mastery rows must survive simulated restart',
       );
@@ -118,23 +126,34 @@ void main() {
   );
 
   // ---------------------------------------------------------------------------
-  // Test 4 (Plan 06-02): the repository delegates the new rep-persistence API
-  // to AppDatabase — setCleanReps/getCleanReps roundtrip through the interface.
+  // Test 4 (Plan 06-02 → D-15 fold 19-04 → ADR-018 keying 19-06): the repository
+  // delegates the folded per-letter rep-persistence API to AppDatabase —
+  // setLetterCleanReps/letterCleanReps roundtrip through the interface, keyed by
+  // childProfileId. (The legacy setCleanReps/getCleanReps were removed with the
+  // LetterReps table in 19-06.)
   // ---------------------------------------------------------------------------
   test(
-    'setCleanReps roundtrips through the repository (D-10 delegation)',
+    'setLetterCleanReps roundtrips through the repository, keyed by child '
+    '(D-10 fold / ADR-018)',
     () async {
       final shared = DatabaseConnection(NativeDatabase.memory());
       final db = AppDatabase(shared.executor);
       final ProgressRepository repo = DriftProgressRepository(db);
 
-      await repo.setCleanReps(letterId: 'baa', cleanReps: 2);
-      expect(await repo.getCleanReps('baa'), 2,
+      await repo.setLetterCleanReps(
+          childProfileId: _childA, letterId: 'baa', cleanReps: 2);
+      expect(await repo.letterCleanReps('baa', childProfileId: _childA), 2,
           reason: 'the repository must delegate rep persistence to the DB');
 
-      await repo.setCleanReps(letterId: 'baa', cleanReps: 0);
-      expect(await repo.getCleanReps('baa'), 0,
+      await repo.setLetterCleanReps(
+          childProfileId: _childA, letterId: 'baa', cleanReps: 0);
+      expect(await repo.letterCleanReps('baa', childProfileId: _childA), 0,
           reason: 'overwrite-to-0 must pass through the repository unchanged');
+
+      // ADR-018: a DIFFERENT child never reads the first child's counter.
+      const childB = 2;
+      expect(await repo.letterCleanReps('baa', childProfileId: childB), 0,
+          reason: 'a fresh profile reads clean (per-child keying)');
 
       await db.close();
     },

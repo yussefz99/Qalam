@@ -23,6 +23,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../data/app_database.dart';
 import '../data/curriculum_repository.dart';
 import '../data/drift_progress_repository.dart';
 import '../models/lesson.dart';
@@ -63,15 +64,39 @@ Future<T> _bindDriftStream<T>(
   return completer.future;
 }
 
+/// Resolve the active in-file child id (ADR-018 / D-13) for the live progress
+/// streams, defensively (T-05-07 degradation pattern already used by
+/// [progressionProvider] below): a missing profile, a read error, OR a profile
+/// read that never completes (platform-channel hang in headless test envs)
+/// degrades to [kUnassignedChildProfileId] — the ribbon/unlock streams never
+/// hang or error out. The `ref.watch` dependency stays live so the streams
+/// re-key automatically if the profile resolves later. A LOCAL int, never a
+/// wire field.
+Future<int> _resolveChildProfileId(Ref ref) async {
+  try {
+    final profile = await ref
+        .watch(childProfileProvider.future)
+        .timeout(const Duration(seconds: 3));
+    return profile?.id ?? kUnassignedChildProfileId;
+  } catch (_) {
+    return kUnassignedChildProfileId;
+  }
+}
+
 class _MasteredLetterIdsNotifier extends AsyncNotifier<Set<String>> {
   @override
-  Future<Set<String>> build() => _bindDriftStream(
-        ref,
-        // Through the ProgressRepository seam (not appDatabaseProvider
-        // directly) so widget tests can fake the streams without a database.
-        ref.watch(progressRepositoryProvider).watchMasteredLetterIds(),
-        (value) => state = value,
-      );
+  Future<Set<String>> build() async {
+    final childProfileId = await _resolveChildProfileId(ref);
+    return _bindDriftStream(
+      ref,
+      // Through the ProgressRepository seam (not appDatabaseProvider
+      // directly) so widget tests can fake the streams without a database.
+      ref
+          .watch(progressRepositoryProvider)
+          .watchMasteredLetterIds(childProfileId: childProfileId),
+      (value) => state = value,
+    );
+  }
 }
 
 /// The set of mastered letter ids, live from the LetterMastery table.
@@ -90,16 +115,22 @@ class _CleanRepsNotifier extends AsyncNotifier<int> {
   final String letterId;
 
   @override
-  Future<int> build() => _bindDriftStream(
-        ref,
-        // D-15 fold (19-04): the folded LetterExerciseReps MAX aggregate
-        // replaces the legacy LetterReps `watchCleanReps`. Still through the
-        // ProgressRepository seam (not appDatabaseProvider directly) so widget
-        // tests can fake the stream without a database, and STILL via
-        // `_bindDriftStream` — never a bare StreamProvider.future (Pitfall 5).
-        ref.watch(progressRepositoryProvider).watchLetterCleanReps(letterId),
-        (value) => state = value,
-      );
+  Future<int> build() async {
+    final childProfileId = await _resolveChildProfileId(ref);
+    return _bindDriftStream(
+      ref,
+      // D-15 fold (19-04): the folded LetterExerciseReps MAX aggregate
+      // replaces the legacy LetterReps `watchCleanReps`. Still through the
+      // ProgressRepository seam (not appDatabaseProvider directly) so widget
+      // tests can fake the stream without a database, and STILL via
+      // `_bindDriftStream` — never a bare StreamProvider.future (Pitfall 5).
+      // Re-keyed by childProfileId in 19-06 (ADR-018).
+      ref
+          .watch(progressRepositoryProvider)
+          .watchLetterCleanReps(letterId, childProfileId: childProfileId),
+      (value) => state = value,
+    );
+  }
 }
 
 /// The banked partial clean-rep count for one letter (D-10), live from the

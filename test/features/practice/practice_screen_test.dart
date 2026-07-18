@@ -90,38 +90,32 @@ const String _lessonsJson = '''
 class _FakeProgressRepository implements ProgressRepository {
   @override
   Future<void> recordMastery({
+    required int childProfileId,
     required String letterId,
     required int cleanReps,
   }) async {}
 
   @override
-  Future<bool> isMastered(String letterId) async => false;
+  Future<bool> isMastered(String letterId, {required int childProfileId}) async =>
+      false;
 
   @override
-  Future<void> setCleanReps({
-    required String letterId,
-    required int cleanReps,
-  }) async {}
-
-  @override
-  Future<int> getCleanReps(String letterId) async => 0;
-
-  @override
-  Stream<Set<String>> watchMasteredLetterIds() =>
+  Stream<Set<String>> watchMasteredLetterIds({required int childProfileId}) =>
       Stream.value(const <String>{});
 
+  // D-15 fold (19-04) / ADR-018 keying (19-06): folded aggregate accessors.
   @override
-  Stream<int> watchCleanReps(String letterId) => Stream.value(0);
-
-  // D-15 fold (19-04): folded aggregate accessors — no persisted reps here.
-  @override
-  Future<int> letterCleanReps(String letterId) async => 0;
+  Future<int> letterCleanReps(String letterId, {required int childProfileId}) async =>
+      0;
 
   @override
-  Stream<int> watchLetterCleanReps(String letterId) => Stream.value(0);
+  Stream<int> watchLetterCleanReps(String letterId,
+          {required int childProfileId}) =>
+      Stream.value(0);
 
   @override
   Future<void> setLetterCleanReps({
+    required int childProfileId,
     required String letterId,
     required int cleanReps,
   }) async {}
@@ -214,6 +208,7 @@ class _StatefulProgressRepository implements ProgressRepository {
 
   @override
   Future<void> recordMastery({
+    required int childProfileId,
     required String letterId,
     required int cleanReps,
   }) async {
@@ -222,38 +217,29 @@ class _StatefulProgressRepository implements ProgressRepository {
   }
 
   @override
-  Future<bool> isMastered(String letterId) async => _mastered.contains(letterId);
+  Future<bool> isMastered(String letterId, {required int childProfileId}) async =>
+      _mastered.contains(letterId);
 
   @override
-  Future<void> setCleanReps({
-    required String letterId,
-    required int cleanReps,
-  }) async {
-    _reps[letterId] = cleanReps;
-  }
-
-  @override
-  Future<int> getCleanReps(String letterId) async => _reps[letterId] ?? 0;
-
-  @override
-  Stream<Set<String>> watchMasteredLetterIds() async* {
+  Stream<Set<String>> watchMasteredLetterIds({required int childProfileId}) async* {
     yield Set<String>.from(_mastered);
     yield* _masteredCtrl.stream;
   }
 
+  // D-15 fold (19-04) / ADR-018 keying (19-06): folded aggregate accessors share
+  // the SAME `_reps` store.
   @override
-  Stream<int> watchCleanReps(String letterId) => Stream.value(_reps[letterId] ?? 0);
+  Future<int> letterCleanReps(String letterId, {required int childProfileId}) async =>
+      _reps[letterId] ?? 0;
 
-  // D-15 fold (19-04): folded aggregate accessors share the SAME `_reps` store.
   @override
-  Future<int> letterCleanReps(String letterId) async => _reps[letterId] ?? 0;
-
-  @override
-  Stream<int> watchLetterCleanReps(String letterId) =>
+  Stream<int> watchLetterCleanReps(String letterId,
+          {required int childProfileId}) =>
       Stream.value(_reps[letterId] ?? 0);
 
   @override
   Future<void> setLetterCleanReps({
+    required int childProfileId,
     required String letterId,
     required int cleanReps,
   }) async {
@@ -530,7 +516,7 @@ void main() {
       (tester) async {
         final repo = _StatefulProgressRepository();
         // alif already mastered → today is lesson_02 (baa, the last lesson).
-        await repo.recordMastery(letterId: 'alif', cleanReps: 1);
+        await repo.recordMastery(childProfileId: 0, letterId: 'alif', cleanReps: 1);
         final container = makeContainer(repo);
         addTearDown(container.dispose);
 

@@ -35,38 +35,32 @@ class _MockModelManager extends Mock
 class _FakeProgressRepository implements ProgressRepository {
   @override
   Future<void> recordMastery({
+    required int childProfileId,
     required String letterId,
     required int cleanReps,
   }) async {}
 
   @override
-  Future<bool> isMastered(String letterId) async => false;
+  Future<bool> isMastered(String letterId, {required int childProfileId}) async =>
+      false;
 
   @override
-  Future<void> setCleanReps({
-    required String letterId,
-    required int cleanReps,
-  }) async {}
-
-  @override
-  Future<int> getCleanReps(String letterId) async => 0;
-
-  @override
-  Stream<Set<String>> watchMasteredLetterIds() =>
+  Stream<Set<String>> watchMasteredLetterIds({required int childProfileId}) =>
       Stream.value(const <String>{});
 
+  // D-15 fold (19-04) / ADR-018 keying (19-06): folded aggregate accessors.
   @override
-  Stream<int> watchCleanReps(String letterId) => Stream.value(0);
-
-  // D-15 fold (19-04): folded aggregate accessors — no persisted reps here.
-  @override
-  Future<int> letterCleanReps(String letterId) async => 0;
+  Future<int> letterCleanReps(String letterId, {required int childProfileId}) async =>
+      0;
 
   @override
-  Stream<int> watchLetterCleanReps(String letterId) => Stream.value(0);
+  Stream<int> watchLetterCleanReps(String letterId,
+          {required int childProfileId}) =>
+      Stream.value(0);
 
   @override
   Future<void> setLetterCleanReps({
+    required int childProfileId,
     required String letterId,
     required int cleanReps,
   }) async {}

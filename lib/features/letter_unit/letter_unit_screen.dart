@@ -267,9 +267,13 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
     final controller =
         ref.read(letterUnitControllerProvider(_letterId).notifier);
 
-    // 1) Increment the Drift clean-rep count (T2).
+    // 1) Increment the Drift clean-rep count (T2), keyed by the in-file child
+    // the controller resolved at start() (ADR-018). Read the CACHED id — never an
+    // inline childProfileProvider.future read on this scored-feedback path
+    // (Pitfall 4).
     db
         .incrementExerciseCleanReps(
+          childProfileId: controller.childProfileId(),
           letterId: _letterId,
           exerciseId: graphExerciseId,
         )

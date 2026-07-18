@@ -203,7 +203,8 @@ void main() {
     expect(before!.id, 'lesson_01');
 
     // The pass. Nothing else — no provider is touched after this line.
-    await db.recordMastery(letterId: 'alif', cleanReps: 3);
+    // childProfileId 1 matches the overridden profile (ADR-018 keying).
+    await db.recordMastery(childProfileId: 1, letterId: 'alif', cleanReps: 3);
 
     final after = await _todayWhen(container, (l) => l?.id == 'lesson_02');
     expect(after!.id, 'lesson_02',
@@ -236,7 +237,7 @@ void main() {
         reason: 'today starts AT the profile entry point (D-06)');
 
     // Master the skipped earlier letter (alif = lesson_01's letter).
-    await db.recordMastery(letterId: 'alif', cleanReps: 3);
+    await db.recordMastery(childProfileId: 1, letterId: 'alif', cleanReps: 3);
 
     // Wait until the recomputation has consumed the new mastery set, then
     // assert today did NOT march backward or forward.
@@ -269,13 +270,19 @@ void main() {
     // The ribbon now reads the LetterExerciseReps MAX aggregate, NOT the legacy
     // LetterReps counter — so the seed is a per-exercise write.
     await db.setExerciseCleanReps(
-        letterId: 'baa', exerciseId: 'baa.traceLetter.isolated', cleanReps: 2);
+        childProfileId: 1,
+        letterId: 'baa',
+        exerciseId: 'baa.traceLetter.isolated',
+        cleanReps: 2);
     expect(await _repsWhen(container, 'baa', 2), 2,
         reason: 'the family stream must emit the aggregate clean-rep count');
 
     // Overwrite semantics: a new write to the same exercise replaces the count.
     await db.setExerciseCleanReps(
-        letterId: 'baa', exerciseId: 'baa.traceLetter.isolated', cleanReps: 3);
+        childProfileId: 1,
+        letterId: 'baa',
+        exerciseId: 'baa.traceLetter.isolated',
+        cleanReps: 3);
     expect(await _repsWhen(container, 'baa', 3), 3,
         reason: 'an overwrite must surface through the same aggregate stream');
   });
@@ -287,7 +294,7 @@ void main() {
     final lessons = await curriculum.getLessons();
     for (final lesson in lessons) {
       for (final item in lesson.items.where((i) => i.type == 'letter')) {
-        await db.recordMastery(letterId: item.ref, cleanReps: 3);
+        await db.recordMastery(childProfileId: 1, letterId: item.ref, cleanReps: 3);
       }
     }
 

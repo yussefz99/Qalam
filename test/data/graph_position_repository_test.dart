@@ -40,6 +40,7 @@ void main() {
       final repo1 = DriftGraphPositionRepository(db1);
       await repo1.setPosition(
         const GraphPosition(
+          childProfileId: 1,
           letterId: 'baa',
           currentExerciseId: 'baa.writeWord.copy',
           clearedCompetencies: ['recognize', 'positionalForms'],
@@ -54,13 +55,16 @@ void main() {
       final db2 = AppDatabase(exec2);
       final repo2 = DriftGraphPositionRepository(db2);
 
-      final restored = await repo2.getPosition('baa');
+      final restored = await repo2.getPosition('baa', childProfileId: 1);
       expect(restored, isNotNull, reason: 'the graph position must survive an app restart');
       expect(restored!.currentExerciseId, 'baa.writeWord.copy');
       expect(restored.clearedCompetencies, ['recognize', 'positionalForms'],
           reason: 'cleared competencies must persist (JSON-encoded list round-trips)');
       expect(restored.clearedTiers, ['manqul', 'manzur'],
           reason: 'cleared tiers must persist across the restart');
+      // ADR-018: a DIFFERENT profile reads null — it never inherits the cursor.
+      expect(await repo2.getPosition('baa', childProfileId: 2), isNull,
+          reason: 'a fresh profile never reads the prior child cursor');
       await db2.close();
       await exec2.close();
     },
@@ -72,7 +76,7 @@ void main() {
     final db = AppDatabase(shared.executor);
     final repo = DriftGraphPositionRepository(db);
 
-    expect(await repo.getPosition('baa'), isNull,
+    expect(await repo.getPosition('baa', childProfileId: 1), isNull,
         reason: 'an unstarted letter has no position — start at the graph root');
     await db.close();
   });

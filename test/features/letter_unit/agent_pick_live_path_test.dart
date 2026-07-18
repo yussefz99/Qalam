@@ -80,6 +80,7 @@ class _PickBrain implements TutorBrain {
 /// cleared (so the positionalForms alternatives are legal candidates).
 class _SeededPositionRepo implements GraphPositionRepository {
   GraphPosition _pos = const GraphPosition(
+    childProfileId: 0,
     letterId: 'baa',
     currentExerciseId: _current,
     clearedCompetencies: ['recognize'],
@@ -87,7 +88,9 @@ class _SeededPositionRepo implements GraphPositionRepository {
   );
 
   @override
-  Future<GraphPosition?> getPosition(String letterId) async => _pos;
+  Future<GraphPosition?> getPosition(String letterId,
+          {required int childProfileId}) async =>
+      _pos;
 
   @override
   Future<void> setPosition(GraphPosition position) async => _pos = position;

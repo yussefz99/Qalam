@@ -35,6 +35,7 @@ import '../data/app_database.dart';
 import '../data/curriculum_repository.dart';
 import '../features/parent/parent_progress.dart';
 import 'auth_providers.dart';
+import 'profile_providers.dart';
 
 // Re-export the read-only dashboard view models so the Wave-0 RED contract can
 // reach `ParentProgress` / `ParentLetterRow` through `parent_providers.dart`
@@ -117,12 +118,24 @@ final parentProgressProvider = FutureProvider<ParentProgress>((ref) async {
   final db = ref.watch(appDatabaseProvider);
   final curriculum = ref.watch(curriculumRepositoryProvider);
 
-  final masteredRows = await db.allMastered();
+  // ADR-018: the dashboard reads only THIS child's rows. Resolve the in-file
+  // child id (best-effort; a null/missing profile degrades to the unassigned
+  // sentinel so the dashboard renders empty rather than another child's rows).
+  int childProfileId;
+  try {
+    final profile = await ref.watch(childProfileProvider.future);
+    childProfileId = profile?.id ?? kUnassignedChildProfileId;
+  } catch (_) {
+    childProfileId = kUnassignedChildProfileId;
+  }
+
+  final masteredRows = await db.allMastered(childProfileId: childProfileId);
   final mastered = {for (final m in masteredRows) m.letterId: m};
   // D-15 fold (19-04): the in-progress list now reads the LetterExerciseReps
   // MAX aggregate (letterId → aggregate clean-reps) instead of the legacy
   // LetterReps `allInProgress()` — LetterReps is off the live read path.
-  final inProgress = await db.allInProgressByExerciseReps();
+  final inProgress =
+      await db.allInProgressByExerciseReps(childProfileId: childProfileId);
 
   final letters = await curriculum.getLetters(); // sorted by introOrder
 

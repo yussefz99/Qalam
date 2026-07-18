@@ -89,6 +89,13 @@ Future<void> seedDemoState(
   GraphPositionRepository positionRepo, {
   required AppDatabase db,
 }) async {
+  // ADR-018: seed the CURRENT in-file child (the demo boots one profile). Resolve
+  // its id from the db (the unassigned sentinel when none exists yet) so the seed
+  // writes exactly the rows the live unit — reading under the SAME child — resumes
+  // on. Only non-PII graph state (ids/counts) is written (GROUND-02).
+  final profile = await db.getProfile();
+  final childProfileId = profile?.id ?? kUnassignedChildProfileId;
+
   // 1) Bank the per-exercise clean reps (write-through, idempotent overwrite).
   //    Every presented essential is at the threshold except the wobble form,
   //    which is parked one short so finishing it earns the one quiet star.
@@ -97,6 +104,7 @@ Future<void> seedDemoState(
         ? _wobbleSeedReps
         : _masteryThreshold;
     await db.setExerciseCleanReps(
+      childProfileId: childProfileId,
       letterId: kSeedDemoLetterId,
       exerciseId: exerciseId,
       cleanReps: reps,
@@ -106,7 +114,8 @@ Future<void> seedDemoState(
   // 2) Park the durable resume cursor on the wobble form with the prereq
   //    competencies + lower tiers cleared (legal wobble + reachable remediation).
   await positionRepo.setPosition(
-    const GraphPosition(
+    GraphPosition(
+      childProfileId: childProfileId,
       letterId: kSeedDemoLetterId,
       currentExerciseId: kSeedDemoWobbleExerciseId,
       clearedCompetencies: _seededClearedCompetencies,

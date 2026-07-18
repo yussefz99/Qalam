@@ -188,6 +188,7 @@ void main() {
     // (currentExerciseId null → selectionActive false), then DRIVE a scored pass
     // so the selector advances + PERSISTS a real forward-node cursor to Drift.
     await DriftGraphPositionRepository(db).setPosition(const GraphPosition(
+      childProfileId: 0,
       letterId: 'baa',
       currentExerciseId: null,
       clearedCompetencies: ['recognize'],
@@ -205,7 +206,8 @@ void main() {
     await tester.pumpAndSettle(); // brain resolves → selectNext persists the cursor
 
     // The durable cursor is now a real mid-unit graph node.
-    final saved = await DriftGraphPositionRepository(db).getPosition('baa');
+    final saved =
+        await DriftGraphPositionRepository(db).getPosition('baa', childProfileId: 0);
     final resumedId = saved?.currentExerciseId;
     expect(resumedId, isNotNull,
         reason: 'the session advanced + persisted a cursor');

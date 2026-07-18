@@ -21,34 +21,28 @@ class DriftProgressRepository implements ProgressRepository {
 
   @override
   Future<void> recordMastery({
+    required int childProfileId,
     required String letterId,
     required int cleanReps,
   }) =>
-      _db.recordMastery(letterId: letterId, cleanReps: cleanReps);
+      _db.recordMastery(
+        childProfileId: childProfileId,
+        letterId: letterId,
+        cleanReps: cleanReps,
+      );
 
   @override
-  Future<bool> isMastered(String letterId) => _db.isMastered(letterId);
+  Future<bool> isMastered(String letterId, {required int childProfileId}) =>
+      _db.isMastered(letterId, childProfileId: childProfileId);
 
   @override
-  Future<void> setCleanReps({
-    required String letterId,
-    required int cleanReps,
-  }) =>
-      _db.setCleanReps(letterId: letterId, cleanReps: cleanReps);
-
-  @override
-  Future<int> getCleanReps(String letterId) => _db.getCleanReps(letterId);
-
-  @override
-  Stream<Set<String>> watchMasteredLetterIds() => _db.watchMasteredLetterIds();
-
-  @override
-  Stream<int> watchCleanReps(String letterId) => _db.watchCleanReps(letterId);
+  Stream<Set<String>> watchMasteredLetterIds({required int childProfileId}) =>
+      _db.watchMasteredLetterIds(childProfileId: childProfileId);
 
   // ---------------------------------------------------------------------------
   // D-15 FOLD (Plan 19-04): delegate the folded per-letter aggregate to the
-  // LetterExerciseReps accessors on [AppDatabase]. The legacy LetterReps
-  // delegations above stay until 19-06 drops the table.
+  // LetterExerciseReps accessors on [AppDatabase]. Re-keyed by childProfileId
+  // in 19-06 (ADR-018).
   // ---------------------------------------------------------------------------
 
   /// The synthetic LetterExerciseReps exercise id under which the legacy
@@ -62,18 +56,22 @@ class DriftProgressRepository implements ProgressRepository {
   static const String wholeLetterExerciseId = '__whole_letter__';
 
   @override
-  Future<int> letterCleanReps(String letterId) => _db.letterCleanReps(letterId);
+  Future<int> letterCleanReps(String letterId, {required int childProfileId}) =>
+      _db.letterCleanReps(letterId, childProfileId: childProfileId);
 
   @override
-  Stream<int> watchLetterCleanReps(String letterId) =>
-      _db.watchLetterCleanReps(letterId);
+  Stream<int> watchLetterCleanReps(String letterId,
+          {required int childProfileId}) =>
+      _db.watchLetterCleanReps(letterId, childProfileId: childProfileId);
 
   @override
   Future<void> setLetterCleanReps({
+    required int childProfileId,
     required String letterId,
     required int cleanReps,
   }) =>
       _db.setExerciseCleanReps(
+        childProfileId: childProfileId,
         letterId: letterId,
         exerciseId: wholeLetterExerciseId,
         cleanReps: cleanReps,

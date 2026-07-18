@@ -36,6 +36,7 @@ import '../../curriculum/selection_policy.dart';
 import '../../data/app_database.dart';
 import '../../data/drift_progress_repository.dart';
 import '../../data/graph_position_repository.dart' as repo;
+import '../../providers/profile_providers.dart';
 import '../../tutor/child_model_providers.dart';
 import '../../tutor/exercise_selector_provider.dart';
 import '../../tutor/tutor_decision.dart';
@@ -127,6 +128,21 @@ class LetterUnitController extends Notifier<LetterUnitState> {
 
   late String _letterId = _argLetterId;
 
+  /// The in-file child this unit belongs to (ADR-018 / D-13 / Pitfall 4). Cached
+  /// ONCE at [start] from `childProfileProvider` — NEVER re-read inline on the
+  /// scored-feedback hot path (an async FutureProvider read mid-feedback would
+  /// stall the pass CTA). Every keyed DB write/read in this controller uses this
+  /// cached value. Defaults to [kUnassignedChildProfileId] until [start] resolves
+  /// the real id (a child never scores before [start] runs). It is a LOCAL int;
+  /// it NEVER enters TutorFacts / the coach payload (the ADR-017 wire boundary).
+  int _childProfileId = kUnassignedChildProfileId;
+
+  /// The cached in-file child id (ADR-018) — read by the screen's scored-feedback
+  /// write path (`_onNodePassed`) so the per-exercise clean-rep increment keys by
+  /// the SAME child the controller resolved at [start], with no inline
+  /// FutureProvider read on the hot path (Pitfall 4).
+  int childProfileId() => _childProfileId;
+
   // ── 18-07: the two-timescale selection context (survives scaffold key swaps) ──
 
   /// The criterion-tagged, session-scoped attempt store (0b) — the
@@ -208,10 +224,24 @@ class LetterUnitController extends Notifier<LetterUnitState> {
     int? resumeSection,
   }) async {
     _letterId = letterId;
+    // 0) Resolve the in-file child ONCE (ADR-018 / Pitfall 4). A best-effort read
+    // of the single child profile; a null/missing profile (fresh install before
+    // onboarding, or a headless widget test) degrades to the unassigned sentinel.
+    // This is the ONLY childProfileProvider read in the controller — every keyed
+    // DB call below uses the cached [_childProfileId], never an inline async read
+    // on the scored-feedback hot path.
+    try {
+      final profile = await ref.read(childProfileProvider.future);
+      _childProfileId = profile?.id ?? kUnassignedChildProfileId;
+    } catch (_) {
+      _childProfileId = kUnassignedChildProfileId;
+    }
     // 1) Read the durable graph position from Drift (Pitfall 6: a Future read).
     repo.GraphPosition? saved;
     try {
-      saved = await ref.read(repo.graphPositionRepositoryProvider).getPosition(letterId);
+      saved = await ref
+          .read(repo.graphPositionRepositoryProvider)
+          .getPosition(letterId, childProfileId: _childProfileId);
     } catch (_) {
       saved = null; // a read failure degrades to a clean start (never crashes).
     }
@@ -267,7 +297,9 @@ class LetterUnitController extends Notifier<LetterUnitState> {
   /// never a crash, never a false struggle. Fire-and-forget from [start].
   Future<void> _loadSelectionContext(String letterId) async {
     try {
-      _sessionArc = await ref.read(arcStateRepositoryProvider).getArc(letterId);
+      _sessionArc = await ref
+          .read(arcStateRepositoryProvider)
+          .getArc(letterId, childProfileId: _childProfileId);
     } catch (_) {
       _sessionArc = null;
     }
@@ -432,7 +464,9 @@ class LetterUnitController extends Notifier<LetterUnitState> {
   /// local write just means the arc restarts warm on the next entry.
   Future<void> _persistArc(ArcState arc) async {
     try {
-      await ref.read(arcStateRepositoryProvider).setArc(_letterId, arc);
+      await ref
+          .read(arcStateRepositoryProvider)
+          .setArc(_letterId, arc, childProfileId: _childProfileId);
     } catch (_) {
       // A failed local persist must never crash selection (resume degrades warm).
     }
@@ -463,6 +497,7 @@ class LetterUnitController extends Notifier<LetterUnitState> {
     int reps;
     try {
       reps = await ref.read(appDatabaseProvider).getExerciseCleanReps(
+            childProfileId: _childProfileId,
             letterId: _letterId,
             exerciseId: exerciseId,
           );
@@ -507,7 +542,9 @@ class LetterUnitController extends Notifier<LetterUnitState> {
     final Map<String, int> reps;
     try {
       graph = await ref.read(curriculumGraphProvider.future);
-      reps = await ref.read(appDatabaseProvider).exerciseCleanRepsFor(_letterId);
+      reps = await ref
+          .read(appDatabaseProvider)
+          .exerciseCleanRepsFor(_letterId, childProfileId: _childProfileId);
     } catch (_) {
       return false; // can't evaluate → never grant the star off a guess.
     }
@@ -528,6 +565,7 @@ class LetterUnitController extends Notifier<LetterUnitState> {
       // met — never the cleanReps:0 navigation write the old bug stamped.
       final met = _essentialFloor(graph, reps);
       await ref.read(progressRepositoryProvider).recordMastery(
+            childProfileId: _childProfileId,
             letterId: _letterId,
             cleanReps: met,
           );
@@ -578,6 +616,7 @@ class LetterUnitController extends Notifier<LetterUnitState> {
     try {
       await ref.read(repo.graphPositionRepositoryProvider).setPosition(
             repo.GraphPosition(
+              childProfileId: _childProfileId,
               letterId: _letterId,
               currentExerciseId: state.currentExerciseId,
               clearedCompetencies: state.clearedCompetencies,

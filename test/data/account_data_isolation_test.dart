@@ -35,21 +35,23 @@ void main() {
       final pin = PinService();
 
       await pin.setPin(accountA, '1234');
-      await accountA.createProfile(
+      final childA = await accountA.createProfile(
         nicknameId: 'nick_star',
         avatarId: 'avatar_1',
         grade: 'kg',
         startingLessonId: 'lesson_01',
       );
-      await accountA.recordMastery(letterId: 'alif', cleanReps: 3);
+      await accountA.recordMastery(
+          childProfileId: childA, letterId: 'alif', cleanReps: 3);
 
       expect(await pin.isPinSet(accountA), isTrue);
       expect(await accountA.hasProfile(), isTrue);
-      expect(await accountA.isMastered('alif'), isTrue);
+      expect(await accountA.isMastered('alif', childProfileId: childA), isTrue);
 
       expect(await pin.isPinSet(accountB), isFalse);
       expect(await accountB.hasProfile(), isFalse);
-      expect(await accountB.isMastered('alif'), isFalse);
+      // The other account's DB file has no rows at all — different file, D-17.
+      expect(await accountB.isMastered('alif', childProfileId: childA), isFalse);
     },
   );
 }

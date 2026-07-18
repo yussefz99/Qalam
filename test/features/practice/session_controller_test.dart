@@ -89,6 +89,7 @@ class _FakeProgressRepository implements ProgressRepository {
 
   @override
   Future<void> recordMastery({
+    required int childProfileId,
     required String letterId,
     required int cleanReps,
   }) async {
@@ -96,41 +97,30 @@ class _FakeProgressRepository implements ProgressRepository {
   }
 
   @override
-  Future<bool> isMastered(String letterId) async => false;
+  Future<bool> isMastered(String letterId, {required int childProfileId}) async =>
+      false;
 
   final Map<String, int> reps = {};
 
   @override
-  Future<void> setCleanReps({
-    required String letterId,
-    required int cleanReps,
-  }) async {
-    reps[letterId] = cleanReps;
-  }
-
-  @override
-  Future<int> getCleanReps(String letterId) async => reps[letterId] ?? 0;
-
-  @override
-  Stream<Set<String>> watchMasteredLetterIds() =>
+  Stream<Set<String>> watchMasteredLetterIds({required int childProfileId}) =>
       Stream.value(const <String>{});
 
+  // D-15 fold (19-04) / ADR-018 keying (19-06): the folded aggregate accessors
+  // share the SAME `reps` store, so the write-through / seed assertions below
+  // are behavior-identical after the practice provider re-points onto them.
   @override
-  Stream<int> watchCleanReps(String letterId) =>
-      Stream.value(reps[letterId] ?? 0);
-
-  // D-15 fold (19-04): the folded aggregate accessors share the SAME `reps`
-  // store, so the write-through / seed assertions below are behavior-identical
-  // after the practice provider re-points onto them.
-  @override
-  Future<int> letterCleanReps(String letterId) async => reps[letterId] ?? 0;
+  Future<int> letterCleanReps(String letterId, {required int childProfileId}) async =>
+      reps[letterId] ?? 0;
 
   @override
-  Stream<int> watchLetterCleanReps(String letterId) =>
+  Stream<int> watchLetterCleanReps(String letterId,
+          {required int childProfileId}) =>
       Stream.value(reps[letterId] ?? 0);
 
   @override
   Future<void> setLetterCleanReps({
+    required int childProfileId,
     required String letterId,
     required int cleanReps,
   }) async {
@@ -141,24 +131,12 @@ class _FakeProgressRepository implements ProgressRepository {
 /// A repository whose persistence ALWAYS fails — proves the best-effort
 /// try/swallow contract (a storage failure must never interrupt the session).
 class _ThrowingProgressRepository extends _FakeProgressRepository {
-  @override
-  Future<void> setCleanReps({
-    required String letterId,
-    required int cleanReps,
-  }) async {
-    throw StateError('disk full');
-  }
-
-  @override
-  Future<int> getCleanReps(String letterId) async {
-    throw StateError('disk full');
-  }
-
   // The practice provider reads/writes the folded accessors after 19-04 — make
-  // THOSE throw too so the "persistence failures are swallowed" test still
+  // THOSE throw so the "persistence failures are swallowed" test still
   // exercises a failing read + write.
   @override
   Future<void> setLetterCleanReps({
+    required int childProfileId,
     required String letterId,
     required int cleanReps,
   }) async {
@@ -166,7 +144,7 @@ class _ThrowingProgressRepository extends _FakeProgressRepository {
   }
 
   @override
-  Future<int> letterCleanReps(String letterId) async {
+  Future<int> letterCleanReps(String letterId, {required int childProfileId}) async {
     throw StateError('disk full');
   }
 }

@@ -70,24 +70,17 @@ class _FakeProgressRepository implements ProgressRepository {
 
   @override
   Future<void> recordMastery({
+    required int childProfileId,
     required String letterId,
     required int cleanReps,
   }) async {}
 
   @override
-  Future<bool> isMastered(String letterId) async => mastered.contains(letterId);
+  Future<bool> isMastered(String letterId, {required int childProfileId}) async =>
+      mastered.contains(letterId);
 
   @override
-  Future<void> setCleanReps({
-    required String letterId,
-    required int cleanReps,
-  }) async {}
-
-  @override
-  Future<int> getCleanReps(String letterId) async => reps[letterId] ?? 0;
-
-  @override
-  Stream<Set<String>> watchMasteredLetterIds() {
+  Stream<Set<String>> watchMasteredLetterIds({required int childProfileId}) {
     if (hang) return _never.stream;
     if (masteredError) {
       return Stream<Set<String>>.error(StateError('boom'));
@@ -95,21 +88,16 @@ class _FakeProgressRepository implements ProgressRepository {
     return Stream<Set<String>>.value(mastered);
   }
 
+  // D-15 fold (19-04) / ADR-018 keying (19-06): the home ink-fill ribbon points
+  // onto the folded aggregate — mirror the SAME repsController/reps seam so the
+  // live-update test still drives it after the re-point.
   @override
-  Stream<int> watchCleanReps(String letterId) {
-    final controller = repsController;
-    if (controller != null) return controller.stream;
-    return Stream<int>.value(reps[letterId] ?? 0);
-  }
-
-  // D-15 fold (19-04): the home ink-fill ribbon re-points onto the folded
-  // aggregate — mirror the SAME repsController/reps seam so the live-update
-  // test still drives it after the re-point.
-  @override
-  Future<int> letterCleanReps(String letterId) async => reps[letterId] ?? 0;
+  Future<int> letterCleanReps(String letterId, {required int childProfileId}) async =>
+      reps[letterId] ?? 0;
 
   @override
-  Stream<int> watchLetterCleanReps(String letterId) {
+  Stream<int> watchLetterCleanReps(String letterId,
+      {required int childProfileId}) {
     final controller = repsController;
     if (controller != null) return controller.stream;
     return Stream<int>.value(reps[letterId] ?? 0);
@@ -117,6 +105,7 @@ class _FakeProgressRepository implements ProgressRepository {
 
   @override
   Future<void> setLetterCleanReps({
+    required int childProfileId,
     required String letterId,
     required int cleanReps,
   }) async {}

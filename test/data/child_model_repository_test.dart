@@ -117,7 +117,7 @@ void main() {
     test('an entered arc round-trips its observable resume cursor', () async {
       final repo = ArcStateRepository(db);
 
-      expect(await repo.getArc('baa'), isNull,
+      expect(await repo.getArc('baa', childProfileId: 1), isNull,
           reason: 'no stored arc reads as null (clean default)');
 
       await repo.setArc(
@@ -127,9 +127,10 @@ void main() {
           exerciseToRetry: 'baa.writeWord.copy',
           failStreak: 2,
         ).toStepDown(),
+        childProfileId: 1,
       );
 
-      final restored = await repo.getArc('baa');
+      final restored = await repo.getArc('baa', childProfileId: 1);
       expect(restored, isNotNull);
       expect(restored!.active, isTrue);
       expect(restored.step, 'stepDown');
@@ -145,12 +146,12 @@ void main() {
       final repo = EvidenceRepository(db);
 
       // dot: 2 pass / 1 fail; shape: 1 fail — appended in order.
-      await db.appendEvidence(letterId: 'baa', criterion: 'dot', passed: true, source: 'letter');
-      await db.appendEvidence(letterId: 'baa', criterion: 'dot', passed: true, source: 'letter');
-      await db.appendEvidence(letterId: 'baa', criterion: 'dot', passed: false, source: 'letter');
-      await db.appendEvidence(letterId: 'baa', criterion: 'shape', passed: false, source: 'word');
+      await db.appendEvidence(childProfileId: 1, letterId: 'baa', criterion: 'dot', passed: true, source: 'letter');
+      await db.appendEvidence(childProfileId: 1, letterId: 'baa', criterion: 'dot', passed: true, source: 'letter');
+      await db.appendEvidence(childProfileId: 1, letterId: 'baa', criterion: 'dot', passed: false, source: 'letter');
+      await db.appendEvidence(childProfileId: 1, letterId: 'baa', criterion: 'shape', passed: false, source: 'word');
 
-      final digest = await repo.pendingDigest();
+      final digest = await repo.pendingDigest(childProfileId: 1);
 
       expect(digest.rows, hasLength(2));
       final dotRow = digest.rows.firstWhere((r) => r['criterion'] == 'dot');
@@ -164,7 +165,7 @@ void main() {
 
       // Rollup cap: after the digest syncs, the synced rows are cleared.
       await repo.clearSynced(digest.sourceIds);
-      final drained = await repo.pendingDigest();
+      final drained = await repo.pendingDigest(childProfileId: 1);
       expect(drained.isEmpty, isTrue,
           reason: 'cleared evidence caps on-device growth (T-18-03-03)');
     });

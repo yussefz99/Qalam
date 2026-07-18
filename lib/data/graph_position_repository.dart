@@ -29,11 +29,17 @@ part 'graph_position_repository.g.dart';
 /// primitive-typed and there is no circular import between the repo and the DB.
 class GraphPosition {
   const GraphPosition({
+    required this.childProfileId,
     required this.letterId,
     required this.currentExerciseId,
     this.clearedCompetencies = const [],
     this.clearedTiers = const [],
   });
+
+  /// The in-file child this position belongs to (ADR-018 / D-13) — a LOCAL int
+  /// (`ChildProfiles.id`) that keys the durable cursor so a fresh profile never
+  /// reads the prior child's resume position. NEVER a wire field.
+  final int childProfileId;
 
   /// The letter family this position belongs to (e.g. `baa`).
   final String letterId;
@@ -52,10 +58,14 @@ class GraphPosition {
 /// Reads/writes the durable [GraphPosition] for a letter. A letter the child has
 /// never started reads as null (clean default — start at the graph root).
 abstract class GraphPositionRepository {
-  /// The persisted position for [letterId], or null if never started.
-  Future<GraphPosition?> getPosition(String letterId);
+  /// The persisted position for [letterId] under [childProfileId], or null if
+  /// this child has never started it (ADR-018 — a fresh profile reads null even
+  /// when a prior profile has a cursor for the letter).
+  Future<GraphPosition?> getPosition(String letterId,
+      {required int childProfileId});
 
-  /// Write (or overwrite) the position.
+  /// Write (or overwrite) the position. The [GraphPosition.childProfileId] keys
+  /// the write (ADR-018).
   Future<void> setPosition(GraphPosition position);
 }
 
@@ -69,10 +79,12 @@ class DriftGraphPositionRepository implements GraphPositionRepository {
   final AppDatabase _db;
 
   @override
-  Future<GraphPosition?> getPosition(String letterId) async {
-    final row = await _db.getPosition(letterId);
+  Future<GraphPosition?> getPosition(String letterId,
+      {required int childProfileId}) async {
+    final row = await _db.getPosition(letterId, childProfileId: childProfileId);
     if (row == null) return null;
     return GraphPosition(
+      childProfileId: row.childProfileId,
       letterId: row.letterId,
       currentExerciseId: row.currentExerciseId,
       clearedCompetencies: _decodeStringList(row.clearedCompetencies),
@@ -82,6 +94,7 @@ class DriftGraphPositionRepository implements GraphPositionRepository {
 
   @override
   Future<void> setPosition(GraphPosition position) => _db.setPosition(
+        childProfileId: position.childProfileId,
         letterId: position.letterId,
         currentExerciseId: position.currentExerciseId,
         clearedCompetencies: position.clearedCompetencies,

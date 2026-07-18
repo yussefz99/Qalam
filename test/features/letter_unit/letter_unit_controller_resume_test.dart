@@ -44,7 +44,9 @@ class _StubPositionRepo implements GraphPositionRepository {
   _StubPositionRepo(this._pos);
   GraphPosition? _pos;
   @override
-  Future<GraphPosition?> getPosition(String letterId) async => _pos;
+  Future<GraphPosition?> getPosition(String letterId,
+          {required int childProfileId}) async =>
+      _pos;
   @override
   Future<void> setPosition(GraphPosition position) async => _pos = position;
 }
@@ -77,6 +79,7 @@ void main() {
       '(the screen re-enters presenter mode on that exact node)', () async {
     final container = _container(
       posRepo: _StubPositionRepo(const GraphPosition(
+        childProfileId: 0,
         letterId: 'baa',
         currentExerciseId: 'baa.traceLetter.medial', // a real authored node
         clearedCompetencies: ['recognize'],
@@ -99,6 +102,7 @@ void main() {
       'child still uses the legacy walk (no false resume)', () async {
     final container = _container(
       posRepo: _StubPositionRepo(const GraphPosition(
+        childProfileId: 0,
         letterId: 'baa',
         currentExerciseId: null, // graph root — never entered a node
       )),
@@ -119,6 +123,7 @@ void main() {
       () async {
     final container = _container(
       posRepo: _StubPositionRepo(const GraphPosition(
+        childProfileId: 0,
         letterId: 'baa',
         currentExerciseId: 'baa.NOT_A_REAL_NODE',
         clearedCompetencies: ['recognize'],
@@ -151,6 +156,7 @@ void main() {
     final container = _container(
       graphFails: true,
       posRepo: _StubPositionRepo(const GraphPosition(
+        childProfileId: 0,
         letterId: 'baa',
         currentExerciseId: 'baa.traceLetter.medial',
         clearedCompetencies: ['recognize'],

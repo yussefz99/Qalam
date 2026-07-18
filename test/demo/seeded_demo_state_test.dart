@@ -62,10 +62,15 @@ void main() {
     await db.close();
   });
 
+  // The seed resolves the in-file child from db.getProfile(); these tests create
+  // no profile, so it defaults to the unassigned sentinel (ADR-018 / D-16). The
+  // read-back below keys by the SAME id.
+  const seededChild = kUnassignedChildProfileId;
+
   test('(a) seedDemoState places the child on the wobble form mid-unit', () async {
     await seedDemoState(repo, db: db);
 
-    final pos = await repo.getPosition(kSeedDemoLetterId);
+    final pos = await repo.getPosition(kSeedDemoLetterId, childProfileId: seededChild);
     expect(pos, isNotNull, reason: 'the seed must write a graph position');
     expect(pos!.currentExerciseId, kSeedDemoWobbleExerciseId,
         reason: 'the cursor must sit on the wobble form so the next fail fires '
@@ -82,13 +87,13 @@ void main() {
   test('(b) seedDemoState is idempotent — re-running resets to the same state',
       () async {
     await seedDemoState(repo, db: db);
-    final first = await repo.getPosition(kSeedDemoLetterId);
-    final firstReps = await db.exerciseCleanRepsFor(kSeedDemoLetterId);
+    final first = await repo.getPosition(kSeedDemoLetterId, childProfileId: seededChild);
+    final firstReps = await db.exerciseCleanRepsFor(kSeedDemoLetterId, childProfileId: seededChild);
 
     // Re-run: the demo must reset to the SAME reliable starting state.
     await seedDemoState(repo, db: db);
-    final second = await repo.getPosition(kSeedDemoLetterId);
-    final secondReps = await db.exerciseCleanRepsFor(kSeedDemoLetterId);
+    final second = await repo.getPosition(kSeedDemoLetterId, childProfileId: seededChild);
+    final secondReps = await db.exerciseCleanRepsFor(kSeedDemoLetterId, childProfileId: seededChild);
 
     expect(second!.currentExerciseId, first!.currentExerciseId);
     expect(second.clearedCompetencies, first.clearedCompetencies);
@@ -102,7 +107,7 @@ void main() {
     await seedDemoState(repo, db: db);
 
     final graph = await _loadGraph();
-    final reps = await db.exerciseCleanRepsFor(kSeedDemoLetterId);
+    final reps = await db.exerciseCleanRepsFor(kSeedDemoLetterId, childProfileId: seededChild);
 
     expect(
       isMasteryMetForPresented(graph, reps, _presentedBaaEssentials),
@@ -129,7 +134,7 @@ void main() {
     await seedDemoState(repo, db: db);
 
     final graph = await _loadGraph();
-    final pos = await repo.getPosition(kSeedDemoLetterId);
+    final pos = await repo.getPosition(kSeedDemoLetterId, childProfileId: seededChild);
 
     // remediateOneTier is the backward move the walker takes on a fail.
     final remediated = graph.remediateOneTier(pos!.currentExerciseId!);

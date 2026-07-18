@@ -16,8 +16,10 @@ import 'dart:math' as math;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../core/scoring/scoring_models.dart';
+import '../data/app_database.dart';
 import '../data/curriculum_repository.dart';
 import '../data/drift_progress_repository.dart';
+import 'profile_providers.dart';
 
 part 'practice_providers.g.dart';
 
@@ -114,6 +116,13 @@ class PracticeSessionController extends _$PracticeSessionController {
   /// never stroke data (T-06-01).
   String? _letterId;
 
+  /// The in-file child this session belongs to (ADR-018 / D-13), cached ONCE by
+  /// [_loadLetter] from `childProfileProvider`. Every keyed progress write below
+  /// uses it so a fresh profile never inherits the prior child's /practice
+  /// counter. Defaults to [kUnassignedChildProfileId] until the load resolves. A
+  /// LOCAL int — never a wire field (the ADR-017 boundary).
+  int _childProfileId = kUnassignedChildProfileId;
+
   @override
   PracticeState build(String lessonId) {
     // Load the lesson to get cleanRepsToAdvance for the letter.
@@ -148,6 +157,17 @@ class PracticeSessionController extends _$PracticeSessionController {
 
     _letterId = letterItem.ref;
 
+    // ADR-018: resolve the in-file child ONCE (best-effort; a null/missing
+    // profile degrades to the unassigned sentinel). Every keyed progress write
+    // below uses this cached id — a fresh profile never inherits the prior
+    // child's /practice counter.
+    try {
+      final profile = await ref.read(childProfileProvider.future);
+      _childProfileId = profile?.id ?? kUnassignedChildProfileId;
+    } catch (_) {
+      _childProfileId = kUnassignedChildProfileId;
+    }
+
     // D-19: the ramp is DATA — per-lesson override, else the lessons.json
     // file-level default. An empty override is treated as absent (defensive,
     // T-06-07: the owner's mother edits this by hand).
@@ -164,7 +184,7 @@ class PracticeSessionController extends _$PracticeSessionController {
     try {
       persisted = await ref
           .read(progressRepositoryProvider)
-          .letterCleanReps(_letterId!);
+          .letterCleanReps(_letterId!, childProfileId: _childProfileId);
     } catch (_) {
       // Swallow — start the sitting at 0.
     }
@@ -203,9 +223,11 @@ class PracticeSessionController extends _$PracticeSessionController {
     final letterId = _letterId;
     if (letterId == null) return; // load not finished — nothing to address
     try {
-      await ref
-          .read(progressRepositoryProvider)
-          .setLetterCleanReps(letterId: letterId, cleanReps: cleanReps);
+      await ref.read(progressRepositoryProvider).setLetterCleanReps(
+            childProfileId: _childProfileId,
+            letterId: letterId,
+            cleanReps: cleanReps,
+          );
     } catch (_) {
       // Swallow — the in-memory session continues.
     }
@@ -338,6 +360,7 @@ class PracticeSessionController extends _$PracticeSessionController {
 
     final progressRepo = ref.read(progressRepositoryProvider);
     await progressRepo.recordMastery(
+      childProfileId: _childProfileId,
       letterId: letterItem.ref,
       cleanReps: cleanReps,
     );

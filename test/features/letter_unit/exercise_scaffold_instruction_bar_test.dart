@@ -76,7 +76,9 @@ class _SpyCoachSpeaker implements CoachSpeaker {
 /// on Firebase / a real repo in this render-only test.
 class _NullPositionRepo implements GraphPositionRepository {
   @override
-  Future<GraphPosition?> getPosition(String letterId) async => null;
+  Future<GraphPosition?> getPosition(String letterId,
+          {required int childProfileId}) async =>
+      null;
 
   @override
   Future<void> setPosition(GraphPosition position) async {}
