@@ -101,16 +101,26 @@ void main() {
 
       // Phase 8 demo: baa (19) + taa (19) + alif (10) + baa micro-drills (3, Plan 18-02)
       // + the 19-05 micro-drill re-add config (dc45ba6) = 52.
-      expect(exercises, hasLength(52));
+      // + quick task 260718-il4 (Stage 1 all-letters-live): thaa (19, promoted
+      //   from the 18.1 drafts, ALL signedOff:false pending the mother's packet)
+      //   = 71.
+      expect(exercises, hasLength(71));
       expect(exercises, everyElement(isA<Exercise>()));
-      // Signed-off invariant, pinned as an exact unsigned set so drift cannot
-      // grow silently. Unsigned today: the 19-05 kitaab→baab rewrite (D-11,
-      // pending the mother's 19-REVIEW-PACKET.md sign-off) plus the documented
-      // pre-existing alif/baa-final signedOff drift (alif-reference cluster,
-      // pending mother sign-off — see deferred-items). Micro-drills are carved
-      // out separately (18-11 HUMAN-UAT gate).
+      // Signed-off invariant for the SIGNED-demo core (baa/taa/alif), pinned as
+      // an exact unsigned set so drift cannot grow silently. thaa is EXCLUDED
+      // here: Stage 1 (260718-il4) promoted it WHOLLY unsigned by owner lock
+      // (the mother reviews it via the 18.1 packets), so all 19 thaa configs are
+      // signedOff:false BY DESIGN — they are not "drift" in the demo core. The
+      // learned-letters lint + graph_asset_parity guard cover thaa; this guard
+      // stays scoped to the baa/taa/alif set it was tuned for. Unsigned in that
+      // core: the 19-05 kitaab→baab rewrite (D-11, pending sign-off) plus the
+      // documented pre-existing alif/baa-final signedOff drift (alif-reference
+      // cluster). Micro-drills are carved out separately (18-11 HUMAN-UAT gate).
       final unsignedCore = exercises
-          .where((e) => e.type != 'microDrill' && e.signedOff != true)
+          .where((e) =>
+              e.type != 'microDrill' &&
+              e.signedOff != true &&
+              !e.id.startsWith('thaa.'))
           .map((e) => e.id)
           .toSet();
       expect(
