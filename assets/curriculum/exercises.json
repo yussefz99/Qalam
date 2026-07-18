@@ -2196,6 +2196,783 @@
         "strokeOrder"
       ],
       "spotlightZone": "start"
+    },
+    {
+      "id": "thaa.teachCard.meet",
+      "type": "teachCard",
+      "skill": "comprehension",
+      "_note": "SUPPORT section: teaches only, no write surface.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "This card just teaches — the sound and the shapes."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.thaa"
+        },
+        {
+          "kind": "image",
+          "imageId": "img.thalab",
+          "caption": "ثعلب · fox"
+        },
+        {
+          "kind": "forms",
+          "char": "ث",
+          "forms": [
+            "isolated",
+            "initial",
+            "medial",
+            "final"
+          ]
+        }
+      ],
+      "surface": null,
+      "expected": null,
+      "check": null,
+      "feedback": null,
+      "signedOff": false,
+      "letters": [
+        "thaa"
+      ],
+      "criteria": []
+    },
+    {
+      "id": "thaa.traceLetter.isolated",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Trace Thaa — isolated form."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.thaa"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "isolated",
+        "demo": true
+      },
+      "expected": {
+        "glyph": {
+          "char": "ث",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "أحسنت — nicely traced."
+      },
+      "signedOff": false,
+      "letters": [
+        "thaa"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
+    },
+    {
+      "id": "thaa.traceLetter.initial",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Trace Thaa — initial form."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.thaa"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "initial",
+        "demo": false
+      },
+      "expected": {
+        "glyph": {
+          "char": "ث",
+          "form": "initial"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "أحسنت — nicely traced."
+      },
+      "signedOff": false,
+      "letters": [
+        "thaa"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
+    },
+    {
+      "id": "thaa.traceLetter.medial",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Trace Thaa — medial form."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.thaa"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "medial",
+        "demo": false
+      },
+      "expected": {
+        "glyph": {
+          "char": "ث",
+          "form": "medial"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "أحسنت — nicely traced."
+      },
+      "signedOff": false,
+      "letters": [
+        "thaa"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
+    },
+    {
+      "id": "thaa.writeLetter.fromSound",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen, then write the letter the word starts with."
+        },
+        {
+          "kind": "audio",
+          "audioId": "word.thalab"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ث",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongLetter": "Listen again — which letter makes that sound?"
+      },
+      "signedOff": false,
+      "letters": [
+        "thaa"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
+    },
+    {
+      "id": "thaa.writeLetter.fromPicture",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the letter this picture's word starts with."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.thalj",
+          "caption": "ثلج"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ث",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongLetter": "Listen again — which letter makes that sound?"
+      },
+      "signedOff": false,
+      "letters": [
+        "thaa"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
+    },
+    {
+      "id": "thaa.writeLetter.writeForm",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write Thaa in its isolated form."
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ث",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!"
+      },
+      "signedOff": false,
+      "letters": [
+        "thaa"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
+    },
+    {
+      "id": "thaa.writeWord.dictation",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen and write the whole word."
+        },
+        {
+          "kind": "audio",
+          "audioId": "word.thalab"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "ثعلب"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "ثعلب — from memory. Real writing! أحسنت!",
+        "incomplete": "Look again and write all of its letters."
+      },
+      "signedOff": false,
+      "letters": [
+        "thaa",
+        "ayn",
+        "laam",
+        "baa"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
+    },
+    {
+      "id": "thaa.writeWord.copy",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Copy the word."
+        },
+        {
+          "kind": "text",
+          "text": "ثلج"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "ثلج"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "ثلج — neatly done. أحسنت!"
+      },
+      "signedOff": false,
+      "letters": [
+        "thaa",
+        "laam",
+        "jeem"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
+    },
+    {
+      "id": "thaa.writeWord.picture",
+      "type": "writeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the word for the picture."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.thalab",
+          "caption": "ثعلب"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "ثعلب"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "ثعلب — from memory. أحسنت!"
+      },
+      "signedOff": false,
+      "letters": [
+        "thaa",
+        "ayn",
+        "laam",
+        "baa"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
+    },
+    {
+      "id": "thaa.connectWord.thalab",
+      "type": "connectWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Join the letters into one connected word."
+        },
+        {
+          "kind": "text",
+          "text": "ث  ع  ل  ب"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "ثعلب"
+        }
+      },
+      "check": "sequence+joinContinuity",
+      "feedback": {
+        "pass": "ثعلب — joined beautifully. أحسنت!",
+        "lifted": "Keep the letters joined — one flowing word, no lifts."
+      },
+      "signedOff": false,
+      "letters": [
+        "thaa",
+        "ayn",
+        "laam",
+        "baa"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
+    },
+    {
+      "id": "thaa.connectWord.thalj",
+      "type": "connectWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Join the letters into one connected word."
+        },
+        {
+          "kind": "text",
+          "text": "ث  ل  ج"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "ثلج"
+        }
+      },
+      "check": "sequence+joinContinuity",
+      "feedback": {
+        "pass": "ثلج — joined beautifully. أحسنت!"
+      },
+      "signedOff": false,
+      "letters": [
+        "thaa",
+        "laam",
+        "jeem"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
+    },
+    {
+      "id": "thaa.completeWord.middle",
+      "type": "completeWord",
+      "skill": "spelling",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Fill in the missing Thaa to finish the word."
+        },
+        {
+          "kind": "text",
+          "text": "ثوم"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "word": {
+          "text": "ثوم"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "Complete! ثوم. أحسنت!"
+      },
+      "signedOff": false,
+      "letters": [
+        "thaa",
+        "waaw",
+        "meem"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
+    },
+    {
+      "id": "thaa.transformWord.dual",
+      "type": "transformWord",
+      "skill": "grammar",
+      "_review": "DUAL — regular sound dual (+ان) is a best-effort DRAFT; confirm with the mother.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "One becomes two. Write the dual of ثعلب."
+        },
+        {
+          "kind": "rule",
+          "label": "Dual · مثنى"
+        },
+        {
+          "kind": "text",
+          "text": "ثعلب"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "ثعلبان"
+        }
+      },
+      "check": "sequence+transformRule",
+      "feedback": {
+        "pass": "ثعلبان — أحسنت!"
+      },
+      "signedOff": false,
+      "letters": [
+        "thaa",
+        "ayn",
+        "laam",
+        "baa",
+        "alif",
+        "noon"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
+    },
+    {
+      "id": "thaa.transformWord.plural",
+      "type": "transformWord",
+      "skill": "grammar",
+      "_review": "PLURAL — NEEDS THE MOTHER (broken plurals are irregular). Placeholder expected.",
+      "_todo": "owner-mother: correct plural form",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the plural of ثعلب."
+        },
+        {
+          "kind": "rule",
+          "label": "Plural · جمع"
+        },
+        {
+          "kind": "text",
+          "text": "ثعلب"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": null,
+      "check": "sequence+transformRule",
+      "feedback": null,
+      "signedOff": false,
+      "letters": [
+        "thaa"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
+    },
+    {
+      "id": "thaa.transformWord.opposite",
+      "type": "transformWord",
+      "skill": "grammar",
+      "_review": "OPPOSITE — NEEDS THE MOTHER (choose an age-right antonym pair).",
+      "_todo": "owner-mother: choose opposite pair",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the opposite."
+        },
+        {
+          "kind": "rule",
+          "label": "Opposite · ضد"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": null,
+      "check": "sequence+transformRule",
+      "feedback": null,
+      "signedOff": false,
+      "letters": [
+        "thaa"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
+    },
+    {
+      "id": "thaa.fillBlank.adjective",
+      "type": "fillBlank",
+      "skill": "vocabulary",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the word that completes the sentence."
+        },
+        {
+          "kind": "text",
+          "text": "ثعلب"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "word"
+      },
+      "expected": {
+        "word": {
+          "text": "ثعلب"
+        }
+      },
+      "check": "sequence",
+      "feedback": {
+        "pass": "Yes! أحسنت!"
+      },
+      "signedOff": false,
+      "letters": [
+        "thaa",
+        "ayn",
+        "laam",
+        "baa"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
+    },
+    {
+      "id": "thaa.buildSentence.hear",
+      "type": "buildSentence",
+      "skill": "syntax",
+      "_review": "SENTENCE — adjective is a DRAFT placeholder (كبير). Confirm sentence + audio with the mother.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Listen to the sentence, then write it in order."
+        },
+        {
+          "kind": "audio",
+          "audioId": "sentence.thaa-draft"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "sentence"
+      },
+      "expected": {
+        "words": [
+          "الْثعلب",
+          "كَبير"
+        ]
+      },
+      "check": "order+sequence",
+      "feedback": {
+        "pass": "الْثعلب كَبير — a whole sentence! أحسنت!"
+      },
+      "signedOff": false,
+      "letters": [
+        "alif",
+        "laam",
+        "thaa",
+        "ayn",
+        "baa",
+        "kaaf",
+        "yaa",
+        "raa"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
+    },
+    {
+      "id": "thaa.buildSentence.picture",
+      "type": "buildSentence",
+      "skill": "syntax",
+      "_review": "SENTENCE — adjective is a DRAFT placeholder. Confirm with the mother.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the sentence for the picture, word by word."
+        },
+        {
+          "kind": "image",
+          "imageId": "img.thalab",
+          "caption": "ثعلب"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "sentence"
+      },
+      "expected": {
+        "words": [
+          "الْثعلب",
+          "جَميل"
+        ]
+      },
+      "check": "order+sequence",
+      "feedback": {
+        "pass": "الْثعلب جَميل — أحسنت!"
+      },
+      "signedOff": false,
+      "letters": [
+        "alif",
+        "laam",
+        "thaa",
+        "ayn",
+        "baa",
+        "jeem",
+        "meem",
+        "yaa"
+      ],
+      "criteria": [
+        "present",
+        "correct",
+        "dot"
+      ]
     }
   ]
 }

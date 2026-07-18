@@ -155,6 +155,59 @@
           "exercises": []
         }
       ]
+    },
+    {
+      "letterId": "thaa",
+      "sections": [
+        {
+          "id": "meet",
+          "exercises": [
+            "thaa.teachCard.meet"
+          ]
+        },
+        {
+          "id": "watchTrace",
+          "exercises": [
+            "thaa.traceLetter.isolated",
+            "thaa.traceLetter.initial",
+            "thaa.traceLetter.medial"
+          ]
+        },
+        {
+          "id": "forms",
+          "exercises": [
+            "thaa.writeLetter.fromSound",
+            "thaa.writeLetter.fromPicture",
+            "thaa.writeLetter.writeForm"
+          ]
+        },
+        {
+          "id": "words",
+          "exercises": [
+            "thaa.writeWord.dictation",
+            "thaa.writeWord.copy",
+            "thaa.writeWord.picture",
+            "thaa.connectWord.thalab",
+            "thaa.connectWord.thalj",
+            "thaa.completeWord.middle"
+          ]
+        },
+        {
+          "id": "listenWrite",
+          "exercises": [
+            "thaa.transformWord.dual",
+            "thaa.transformWord.plural",
+            "thaa.transformWord.opposite",
+            "thaa.fillBlank.adjective",
+            "thaa.buildSentence.hear",
+            "thaa.buildSentence.picture"
+          ]
+        },
+        {
+          "id": "mastery",
+          "exercises": []
+        }
+      ]
     }
   ]
 }
