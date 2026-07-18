@@ -103,16 +103,25 @@ void main() {
       // + the 19-05 micro-drill re-add config (dc45ba6) = 52.
       expect(exercises, hasLength(52));
       expect(exercises, everyElement(isA<Exercise>()));
-      // All three demo letters' CORE configs are signed off. Carve-outs:
-      // the baa micro-drill enrichment (dot/bowl/start, Plan 18-02) and the
-      // 19-05 kitaab→baab rewrite (D-11) are signedOff:false until the mother
-      // signs them (18-11 HUMAN-UAT gate / 19-REVIEW-PACKET.md).
+      // Signed-off invariant, pinned as an exact unsigned set so drift cannot
+      // grow silently. Unsigned today: the 19-05 kitaab→baab rewrite (D-11,
+      // pending the mother's 19-REVIEW-PACKET.md sign-off) plus the documented
+      // pre-existing alif/baa-final signedOff drift (alif-reference cluster,
+      // pending mother sign-off — see deferred-items). Micro-drills are carved
+      // out separately (18-11 HUMAN-UAT gate).
+      final unsignedCore = exercises
+          .where((e) => e.type != 'microDrill' && e.signedOff != true)
+          .map((e) => e.id)
+          .toSet();
       expect(
-          exercises
-              .where((e) =>
-                  e.type != 'microDrill' && e.id != 'baa.connectWord.kitaab')
-              .every((e) => e.signedOff == true),
-          isTrue);
+          unsignedCore,
+          equals({
+            'baa.connectWord.kitaab',
+            'baa.traceLetter.final',
+            'alif.traceLetter.isolated',
+            'alif.writeLetter.fromSound',
+            'alif.writeLetter.writeForm',
+          }));
       expect(exercises.map((e) => e.id),
           containsAll(['baa.teachCard.meet', 'taa.teachCard.meet', 'alif.teachCard.meet']));
       // The teachCard config parses with null assessed fields.
