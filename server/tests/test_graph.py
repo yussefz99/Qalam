@@ -195,9 +195,48 @@ def test_is_authored_rejects_fabricated_and_empty():
     assert is_authored("   ") is False
 
 
-def test_authored_set_has_19_baa_exercises():
+def test_authored_set_mirrors_live_graph_nodes():
+    """G4 rails exactly what the live graph rails (19 review WR-05).
+
+    The membership set is DERIVED from the graph's baa.* node ids, so the coach can
+    propose every live node (incl. the 19-05 restored micro-drills + the final-form
+    trace + the rewritten kitaab) and nothing else (the six D-19 gated ids are out).
+    A structural assertion — never a magic count that silently rots when the graph
+    changes (the old `== 19` did exactly that).
+    """
+    import json
+    import pathlib
+
+    graph_path = (
+        pathlib.Path(__file__).resolve().parent.parent
+        / "app"
+        / "curriculum_data"
+        / "curriculum_graph.json"
+    )
+    graph = json.loads(graph_path.read_text(encoding="utf-8"))
+    node_ids = {
+        str(n["exerciseId"])
+        for n in graph.get("nodes", [])
+        if str(n.get("exerciseId", "")).startswith("baa.")
+    }
     baa_exercises = {i for i in AUTHORED_BAA_IDS if i.startswith("baa.")}
-    assert len(baa_exercises) == 19
+    assert baa_exercises == node_ids
+    # The 19-05 dispositions hold: restored ids in, gated ids out.
+    assert {
+        "baa.microDrill.dot",
+        "baa.microDrill.bowl",
+        "baa.microDrill.start",
+        "baa.traceLetter.final",
+        "baa.connectWord.kitaab",
+    } <= baa_exercises
+    assert baa_exercises.isdisjoint({
+        "baa.buildSentence.hear",
+        "baa.buildSentence.picture",
+        "baa.fillBlank.adjective",
+        "baa.transformWord.dual",
+        "baa.transformWord.plural",
+        "baa.transformWord.opposite",
+    })
 
 
 # --- the bounded structured retry (2 retries then raise) ----------------------------------

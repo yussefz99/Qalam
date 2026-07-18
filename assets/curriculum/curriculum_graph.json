@@ -1,7 +1,7 @@
 {
   "_meta": {
     "title": "baa curriculum graph — competency + difficulty tier + prerequisites (PROVISIONAL DRAFT)",
-    "source": "docs/curriculum/national-curriculum-grade1.md (grade-1 competencies + the منقول→منظور→غير منظور إملاء lattice + the §'What this means for Qalam' section-order chain). Node id set mirrors server/app/curriculum_data/baa_authored_ids.json (the 19 signed baa.* exercise ids).",
+    "source": "docs/curriculum/national-curriculum-grade1.md (grade-1 competencies + the منقول→منظور→غير منظور إملاء lattice + the §'What this means for Qalam' section-order chain). This node id set is the SOURCE for server/app/curriculum_data/baa_authored_ids.json (the 17 live baa.* graph node ids — the G4 membership rail derives FROM these nodes; 19 review WR-05).",
     "regenerate": "cd server && uv run python -m app.curriculum_data.generate",
     "sign_off": "Owner-mother signs at the TIER level (D-05): she confirms the baa-config→competency mapping, the 70/30 essential/enrichment split, and the per-skill clean-reps. signedOff stays false until then — Claude DRAFTED this; she REVIEWS and signs (mirror the AUTHORED_BAA_IDS gate). Plan 15-07 owns the flip to true.",
     "microDrills": "Plan 18-02 adds baa.microDrill.{dot,bowl,start} as ADDITIVE enrichment nodes (competency 'microDrill', essential:false, criterion-tagged dot/shape/strokeOrder). They never gate the star (D-06). Their CONTENT ships signedOff:false at the EXERCISE level (assets/curriculum/exercises.json); the file-level signedOff:true is the owner-mother's 15-07 tier-structure sign-off, unchanged. The drill copy is signed at the 18-11 HUMAN-UAT gate.",

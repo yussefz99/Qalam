@@ -7,7 +7,8 @@ Run from the server directory with the repo checked out:
 It reads the canonical, owner-signed Flutter assets and rewrites the server's read-only copies:
 
   * `baa_authored_ids.json` (the G4 membership set) from `assets/curriculum/units.json`
-    (the baa section ids) and `assets/curriculum/exercises.json` (every `baa.`-prefixed id);
+    (the baa section ids) and `assets/curriculum/curriculum_graph.json` (every `baa.*`
+    graph NODE id — 19 review WR-05: G4 rails exactly what the live graph rails);
   * `curriculum_graph.json` (the G5/G6 graph rail — Plan 15-02) from
     `assets/curriculum/curriculum_graph.json`, filtered to the `baa.*` nodes.
 
@@ -51,24 +52,29 @@ def regenerate() -> dict:
 
     baa_unit = next(u for u in units["units"] if u["letterId"] == "baa")
     section_ids = [s["id"] for s in baa_unit["sections"]]
-    # AUTHORED_BAA_IDS is the SIGNED baa reference set the agent's G4 gate honors, so it
-    # carries only SIGNED baa exercises. Plan 18-02 adds baa.microDrill.* enrichment as
-    # signedOff:false content — it is DELIBERATELY excluded here until the owner-mother
-    # signs the drill copy at the 18-11 HUMAN-UAT gate, at which point (signedOff:true)
-    # it auto-joins this set with no generator change. The micro-drill NODES still ship in
-    # the derived graph copy (below); only the G4 signed-reference set waits for sign-off.
+    # AUTHORED_BAA_IDS is the G4 MEMBERSHIP RAIL: the coach may propose exactly the ids
+    # the LIVE curriculum graph rails (19 review WR-05). Deriving from the graph's node
+    # set keeps G4 in lockstep with the G5/G6 graph rail: the 19-05 restore
+    # (baa.microDrill.*, baa.traceLetter.final) and the rewritten kitaab are proposable,
+    # while the six D-19 gated ids (removed from the graph) are rejected. The earlier
+    # signedOff-filter derivation drifted the moment 19-05 gated signed cards OUT of the
+    # graph and restored unsigned ones INTO it — the server then rejected every
+    # micro-drill proposal while accepting six unreachable ids. Content-level sign-off is
+    # tracked per exercise (`signedOff` flags + the mother's 19-REVIEW-PACKET gate), not
+    # by this membership set.
+    graph = json.loads(_GRAPH.read_text(encoding="utf-8"))
     exercise_ids = sorted(
-        e["id"]
-        for e in exercises["exercises"]
-        if e["id"].startswith("baa.") and e.get("signedOff") is True
+        str(n["exerciseId"])
+        for n in graph.get("nodes", [])
+        if str(n.get("exerciseId", "")).startswith("baa.")
     )
 
     payload = {
         "_meta": {
-            "title": "Canonical baa authored id set — transcribed verbatim from the owner-signed seed.",
-            "source": "assets/curriculum/units.json (baa sections) + assets/curriculum/exercises.json (baa.* exercise ids).",
+            "title": "Canonical baa authored id set — the G4 membership rail, derived from the live curriculum graph.",
+            "source": "assets/curriculum/units.json (baa sections) + assets/curriculum/curriculum_graph.json (baa.* graph node ids — 19 review WR-05).",
             "regenerate": "cd server && uv run python -m app.curriculum_data.generate",
-            "sign_off": "Owner / owner-mother must confirm this id set matches the signed curriculum (14-02 SUMMARY).",
+            "sign_off": "Owner / owner-mother must confirm this id set matches the signed curriculum (14-02 SUMMARY); content-level sign-off is tracked per exercise (signedOff flags + the 19-REVIEW-PACKET gate).",
         },
         "letterId": "baa",
         "section_ids": section_ids,

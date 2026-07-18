@@ -1,9 +1,9 @@
 {
   "_meta": {
-    "title": "Canonical baa authored id set — transcribed verbatim from the owner-signed seed.",
-    "source": "assets/curriculum/units.json (baa sections) + assets/curriculum/exercises.json (baa.* exercise ids).",
+    "title": "Canonical baa authored id set — the G4 membership rail, derived from the live curriculum graph.",
+    "source": "assets/curriculum/units.json (baa sections) + assets/curriculum/curriculum_graph.json (baa.* graph node ids — 19 review WR-05).",
     "regenerate": "cd server && uv run python -m app.curriculum_data.generate",
-    "sign_off": "Owner / owner-mother must confirm this id set matches the signed curriculum (14-02 SUMMARY)."
+    "sign_off": "Owner / owner-mother must confirm this id set matches the signed curriculum (14-02 SUMMARY); content-level sign-off is tracked per exercise (signedOff flags + the 19-REVIEW-PACKET gate)."
   },
   "letterId": "baa",
   "section_ids": [
@@ -15,18 +15,17 @@
     "mastery"
   ],
   "exercise_ids": [
-    "baa.buildSentence.hear",
-    "baa.buildSentence.picture",
     "baa.completeWord.middle",
     "baa.connectWord.baab",
-    "baa.fillBlank.adjective",
+    "baa.connectWord.kitaab",
+    "baa.microDrill.bowl",
+    "baa.microDrill.dot",
+    "baa.microDrill.start",
     "baa.teachCard.meet",
+    "baa.traceLetter.final",
     "baa.traceLetter.initial",
     "baa.traceLetter.isolated",
     "baa.traceLetter.medial",
-    "baa.transformWord.dual",
-    "baa.transformWord.opposite",
-    "baa.transformWord.plural",
     "baa.writeLetter.fromPicture",
     "baa.writeLetter.fromSound",
     "baa.writeLetter.writeForm",
