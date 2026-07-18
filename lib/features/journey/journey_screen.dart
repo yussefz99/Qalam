@@ -73,6 +73,13 @@ Offset _nodePosition(int index) {
   return Offset(x, y);
 }
 
+/// The letters with a FULL live Letter Unit — reachable directly from the Journey
+/// map (their node opens `/unit?letter=<id>`), never grinding the S1-09 unlock
+/// chain. ONE source of truth read by both the `tappable` predicate and the onTap
+/// route in [_JourneyScreenState._buildNode]. thaa joined alif/baa/taa in Stage 1
+/// of all-letters-live (quick task 260718-il4); Stage 2 promotes the remaining 24.
+const Set<String> _fullUnitLetters = {'alif', 'baa', 'taa', 'thaa'};
+
 // ── JourneyScreen ─────────────────────────────────────────────────────────────
 
 /// The Journey Map screen — the winding-path progress view for all 28 letters.
@@ -394,15 +401,17 @@ class _JourneyScreenState extends ConsumerState<JourneyScreen>
     final lessonId = snapshot.lessonIdByLetterId[letter.id];
     final unlocked =
         lessonId != null && snapshot.unlockedLessonIds.contains(lessonId);
-    // Phase 8 demo: the first three letters (alif/baa/taa) have full Letter
-    // Units and are always reachable, so the demo can open any of them directly
-    // without grinding the unlock chain. (Other letters keep the S1-09 gate.)
-    const demoLetters = {'alif', 'baa', 'taa'};
+    // The letters with FULL live Letter Units — always reachable, so any of them
+    // opens directly without grinding the unlock chain. (Every OTHER letter keeps
+    // the S1-09 unlock gate unchanged.) thaa joins alif/baa/taa in Stage 1 of
+    // all-letters-live (quick task 260718-il4) — its unit is live via the promoted
+    // graphs/thaa.json + units.json entry. ONE source of truth for both the
+    // `tappable` predicate and the onTap route below.
     final tappable = lessonId != null &&
         (state == JourneyNodeState.complete ||
             state == JourneyNodeState.current ||
             (state == JourneyNodeState.future && unlocked) ||
-            demoLetters.contains(letter.id));
+            _fullUnitLetters.contains(letter.id));
     // D-15: only the highlighted node's badge gets the settle animation —
     // and only when it actually started (complete-node allowlist).
     final settling = _settleStarted && letter.id == widget.highlightId;
@@ -415,12 +424,13 @@ class _JourneyScreenState extends ConsumerState<JourneyScreen>
         state: state,
         starSettleScale: settling ? _settleScale : null,
         starSettleOpacity: settling ? _settleOpacity : null,
-        // Phase 8 demo: the first three letters (alif/baa/taa) open their full
-        // Letter Units; every other letter keeps the existing `/practice?lesson=`
-        // path until its unit is built. Deep-link reuse (SC#5).
+        // The full-unit letters (alif/baa/taa/thaa) open their own Letter Unit;
+        // every other letter keeps the existing `/practice?lesson=` path until its
+        // unit is built. Deep-link reuse (SC#5). Same `_fullUnitLetters` set the
+        // `tappable` predicate reads, so a thaa node opens /unit?letter=thaa.
         onTap: tappable
             ? () => context.go(
-                  const {'alif', 'baa', 'taa'}.contains(letter.id)
+                  _fullUnitLetters.contains(letter.id)
                       ? '/unit?letter=${letter.id}'
                       : '/practice?lesson=$lessonId',
                 )

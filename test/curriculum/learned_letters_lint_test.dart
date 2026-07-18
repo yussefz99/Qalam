@@ -1,25 +1,29 @@
 // Phase 19-01 (Wave 0) — QP-07 / D-12 RED contract: the learned-letters lint.
+// EXTENDED for quick task 260718-il4 (Stage 1 all-letters-live) to cover EVERY
+// live letter unit, not just baa — so a newly promoted letter can never slip
+// through unlinted.
 //
 // D-12 (locked, THE authoring rule Phases 20–21 inherit): a unit's cards may use
-// only letters introduced up to and including that unit. The baa unit's learned
-// set is {alif, baa} (letters.json `introOrder` ≤ 2 — the app's pedagogical lesson
-// order, A2, NOT the classical ابجد list). Every LIVE baa-unit card's `letters`
-// array must be a subset of the learned set.
+// only letters introduced up to and including that unit. A unit's learned set is
+// {letters with introOrder ≤ that unit's introOrder} (letters.json `introOrder` —
+// the app's pedagogical lesson order, A2, NOT the classical ابجد list). Every LIVE
+// unit card's `letters` array must be a subset of the learned set.
 //
-// INTENTIONALLY RED today: seven baa cards demand unlearned letters and are still
-// live nodes in curriculum_graph.json —
-//   baa.connectWord.kitaab (kaaf,taa) · baa.transformWord.dual (noon) ·
-//   baa.transformWord.plural (waaw) · baa.transformWord.opposite (saad,ghayn,yaa,
-//   raa) · baa.fillBlank.adjective (kaaf,yaa,raa) · baa.buildSentence.hear /
-//   .picture (laam,kaaf,yaa,raa).
+// TWO DISPOSITIONS by the graph's `signedOff` flag (owner-locked, 260718-il4):
+//   • signedOff:true  (baa) — ENFORCED. The tuned subset rule + the owner-approved
+//     exception allowlist stand exactly as-is. Any live card demanding an unlearned
+//     letter that is NOT owner-approved FAILS the build. (Do not weaken baa.)
+//   • signedOff:false (thaa, and future draft-promoted letters) — ACKNOWLEDGED, not
+//     enforced. The content is pending the mother's review (18.1 packets), so it is
+//     NOT yet held to the learned-letters bar. We assert only NON-VACUITY (≥1 live
+//     node) and SURFACE the reaching-ahead cards via `printOnFailure` — an explicit,
+//     documented acknowledgement, NOT a build failure and NOT a silent skip. When
+//     the mother signs the letter, its graph flips signedOff:true and it
+//     auto-enforces here with zero test edits.
 //
-// 19-05 greens this per D-09 — each offending card is either:
-//   • REWRITTEN to an alif+baa-only word (its `letters` becomes ⊆ {alif,baa}), or
-//   • GATED (D-19: removed from the baa graph, filed for the letter's own unit in
-//     Phase 20/21) — which drops it from the live-node set this lint scopes over.
-// The lint is disposition-agnostic: the graph-membership + subset rule self-greens
-// for BOTH paths, with zero test edits. Ships `signedOff:false`; the mother's
-// packet (D-10) decides rewrite-vs-gate per card.
+// COVERAGE (260718-il4): every discovered per-letter graph asset (graphs/*.json +
+// the baa curriculum_graph.json) MUST be visited by this lint — the guard against
+// the exact "a new letter slips through unlinted" failure the owner directive names.
 
 import 'dart:convert';
 import 'dart:io';
@@ -29,20 +33,75 @@ import 'package:flutter_test/flutter_test.dart';
 Map<String, dynamic> _loadJson(String path) =>
     jsonDecode(File(path).readAsStringSync()) as Map<String, dynamic>;
 
+/// A live unit graph the lint scopes over: its letterId, its live node ids, and
+/// whether the owner-mother has signed it (drives enforced-vs-acknowledged).
+class _UnitGraph {
+  _UnitGraph({
+    required this.letterId,
+    required this.signedOff,
+    required this.liveNodeIds,
+    required this.sourcePath,
+  });
+  final String letterId;
+  final bool signedOff;
+  final Set<String> liveNodeIds;
+  final String sourcePath;
+}
+
+/// Enumerate every LIVE unit graph: the baa `curriculum_graph.json` (kept for the
+/// server this stage) + every per-letter `graphs/<letter>.json`. graphs/baa.json
+/// is a byte-parity copy of curriculum_graph.json (parity-guarded separately), so
+/// baa is deduped to the single canonical source here.
+List<_UnitGraph> _discoverUnitGraphs() {
+  final graphs = <String, _UnitGraph>{};
+
+  void add(String path) {
+    final g = _loadJson(path);
+    final letterId = g['letterId'] as String;
+    final signedOff = (g['signedOff'] as bool?) ?? false;
+    final nodeIds = (g['nodes'] as List)
+        .cast<Map<String, dynamic>>()
+        .map((n) => n['exerciseId'] as String)
+        .toSet();
+    // Prefer the canonical curriculum_graph.json for baa (the server's source);
+    // its byte-parity graphs/baa.json copy is deduped away.
+    graphs.putIfAbsent(
+      letterId,
+      () => _UnitGraph(
+        letterId: letterId,
+        signedOff: signedOff,
+        liveNodeIds: nodeIds,
+        sourcePath: path,
+      ),
+    );
+  }
+
+  // 1) The canonical baa graph the server + this lint's baa leg read.
+  add('assets/curriculum/curriculum_graph.json');
+  // 2) Every per-letter graph asset (graphs/*.json). baa is deduped to (1).
+  final graphsDir = Directory('assets/curriculum/graphs');
+  final files = graphsDir
+      .listSync()
+      .whereType<File>()
+      .where((f) => f.path.endsWith('.json'))
+      .toList()
+    ..sort((a, b) => a.path.compareTo(b.path));
+  for (final f in files) {
+    add(f.path);
+  }
+  return graphs.values.toList();
+}
+
 void main() {
-  test('every LIVE baa-unit card uses only learned letters (alif+baa) — '
-      'QP-07 / D-12', () {
+  test('every LIVE unit card obeys the learned-letters bar — QP-07 / D-12 '
+      '(enforced when signed, acknowledged when unsigned; full coverage)', () {
     final exercises =
         (_loadJson('assets/curriculum/exercises.json')['exercises'] as List)
             .cast<Map<String, dynamic>>();
+    final exercisesById = {for (final e in exercises) e['id'] as String: e};
     final letters =
         (_loadJson('assets/curriculum/letters.json')['letters'] as List)
             .cast<Map<String, dynamic>>();
-    final liveNodeIds =
-        (_loadJson('assets/curriculum/curriculum_graph.json')['nodes'] as List)
-            .cast<Map<String, dynamic>>()
-            .map((n) => n['exerciseId'] as String)
-            .toSet();
 
     // Rank every letter by its pedagogical intro order (A2 — alif=1, baa=2 …).
     final introOrder = <String, int>{
@@ -50,37 +109,12 @@ void main() {
         l['id'] as String: (l['introOrder'] as num).toInt(),
     };
 
-    // The baa unit teaches through introOrder 2 → learned = {alif, baa}.
-    const unitLetter = 'baa';
-    final unitIntroOrder = introOrder[unitLetter]!; // 2
-    final learned = introOrder.entries
-        .where((e) => e.value <= unitIntroOrder)
-        .map((e) => e.key)
-        .toSet();
-    expect(learned, containsAll(<String>['alif', 'baa']),
-        reason: 'the baa unit learned-set must include alif + baa');
-    expect(learned, isNot(contains('taa')),
-        reason: 'taa (introOrder 3) is not yet learned at the baa unit');
-
-    // Only LIVE baa-unit graph nodes are linted. A card GATED to a later unit
-    // (D-19: removed from curriculum_graph.json) is out of scope, exactly as a
-    // rewritten card (letters ⊆ learned) becomes compliant.
-    final unitCards = exercises.where((e) {
-      final id = e['id'] as String;
-      return id.startsWith('$unitLetter.') && liveNodeIds.contains(id);
-    }).toList();
-
-    // Non-vacuity: the baa unit must actually have live cards to lint.
-    expect(unitCards, isNotEmpty,
-        reason: 'the baa unit must have ≥1 live graph node to lint');
-
-    // Owner-approved exceptions (device UAT, 2026-07-18): these 6 cards were
-    // gated by 19-05 (D-19) and RESTORED by explicit owner decision — the owner
-    // judged them "perfect and really impressive" on device; the reworked
-    // presentation (instruction bar + audio + images) carries the unlearned
-    // letters. Exact allowlist: any OTHER live card demanding unlearned
-    // letters still fails this lint.
-    const ownerApprovedExceptions = <String>{
+    // Owner-approved exceptions for the SIGNED baa unit (device UAT, 2026-07-18):
+    // these 6 cards were gated by 19-05 (D-19) and RESTORED by explicit owner
+    // decision — judged "perfect and really impressive" on device; the reworked
+    // presentation carries the unlearned letters. Exact allowlist; any OTHER live
+    // baa card demanding unlearned letters still fails.
+    const baaOwnerApprovedExceptions = <String>{
       'baa.buildSentence.hear',
       'baa.buildSentence.picture',
       'baa.fillBlank.adjective',
@@ -89,29 +123,104 @@ void main() {
       'baa.transformWord.opposite',
     };
 
-    final violations = <String, List<String>>{};
-    for (final e in unitCards) {
-      final id = e['id'] as String;
-      if (ownerApprovedExceptions.contains(id)) continue;
+    List<String> unlearnedFor(String id, int unitIntroOrder) {
+      final e = exercisesById[id];
+      if (e == null) return const [];
       final cardLetters =
           ((e['letters'] as List<dynamic>?) ?? const []).cast<String>();
-      final unlearned = cardLetters
+      return cardLetters
           .where((l) => (introOrder[l] ?? 1 << 30) > unitIntroOrder)
           .toList();
-      if (unlearned.isNotEmpty) violations[id] = unlearned;
     }
 
-    expect(violations, isEmpty,
-        reason: 'these live baa-unit cards demand letters not yet learned '
-            '(introOrder > $unitIntroOrder) and are NOT on the owner-approved '
-            'exception list. Each must be REWRITTEN to learned letters, GATED '
-            'out of the baa graph, or explicitly owner-approved: $violations');
+    final discovered = _discoverUnitGraphs();
+    expect(discovered, isNotEmpty,
+        reason: 'no live unit graphs discovered — the lint would vacuously pass');
 
-    // The exception list must not rot: every listed id is a live node.
-    for (final id in ownerApprovedExceptions) {
-      expect(liveNodeIds, contains(id),
-          reason: 'owner-approved exception $id is no longer a live node — '
-              'remove it from the exception list');
+    final visited = <String>{};
+
+    for (final unit in discovered) {
+      visited.add(unit.letterId);
+      final unitIntroOrder = introOrder[unit.letterId];
+      expect(unitIntroOrder, isNotNull,
+          reason: '${unit.letterId} has no introOrder in letters.json');
+
+      // The unit's live cards (live graph node ⇒ its exercises.json entry).
+      final unitCards =
+          unit.liveNodeIds.where(exercisesById.containsKey).toList()..sort();
+
+      // NON-VACUITY (both dispositions): a live unit must actually have cards.
+      expect(unitCards, isNotEmpty,
+          reason: '${unit.letterId} unit must have ≥1 live graph node to lint');
+
+      if (unit.signedOff) {
+        // ── ENFORCED (signed) — the tuned baa assertion, unchanged. ──
+        final learned = introOrder.entries
+            .where((e) => e.value <= unitIntroOrder!)
+            .map((e) => e.key)
+            .toSet();
+        // Baa-specific sanity pins preserved from the original contract.
+        if (unit.letterId == 'baa') {
+          expect(learned, containsAll(<String>['alif', 'baa']),
+              reason: 'the baa unit learned-set must include alif + baa');
+          expect(learned, isNot(contains('taa')),
+              reason: 'taa (introOrder 3) is not yet learned at the baa unit');
+        }
+        final exceptions = unit.letterId == 'baa'
+            ? baaOwnerApprovedExceptions
+            : const <String>{};
+        final violations = <String, List<String>>{};
+        for (final id in unitCards) {
+          if (exceptions.contains(id)) continue;
+          final unlearned = unlearnedFor(id, unitIntroOrder!);
+          if (unlearned.isNotEmpty) violations[id] = unlearned;
+        }
+        expect(violations, isEmpty,
+            reason: 'these live ${unit.letterId}-unit cards demand letters not '
+                'yet learned (introOrder > $unitIntroOrder) and are NOT '
+                'owner-approved. Each must be REWRITTEN to learned letters, GATED '
+                'out of the graph, or explicitly owner-approved: $violations');
+        // The exception list must not rot: every listed id is a live node.
+        for (final id in exceptions) {
+          expect(unit.liveNodeIds, contains(id),
+              reason: 'owner-approved exception $id is no longer a live node — '
+                  'remove it from the exception list');
+        }
+      } else {
+        // ── ACKNOWLEDGED (unsigned) — surface reaching-ahead, never fail. ──
+        // The content is pending the mother's review (18.1 packet); it is not yet
+        // held to the bar. Surface any reaching-ahead card as a documented
+        // acknowledgement so the mother's packet lists exactly which cards demand
+        // letters beyond this unit's learned set. NOT a failure, NOT a silent skip.
+        final reachingAhead = <String, List<String>>{};
+        for (final id in unitCards) {
+          final unlearned = unlearnedFor(id, unitIntroOrder!);
+          if (unlearned.isNotEmpty) reachingAhead[id] = unlearned;
+        }
+        if (reachingAhead.isEmpty) {
+          printOnFailure('[learned-letters] ${unit.letterId} '
+              '(signedOff:false): all live cards within learned set '
+              '(introOrder ≤ $unitIntroOrder).');
+        } else {
+          printOnFailure('[learned-letters] ${unit.letterId} '
+              '(signedOff:false, ACKNOWLEDGED — mother\'s packet review): '
+              '${reachingAhead.length} reaching-ahead card(s) demand letters '
+              'beyond introOrder $unitIntroOrder — $reachingAhead. These stay '
+              'LIVE with an owner-approved-style exception until the mother '
+              'signs the letter (then it auto-enforces).');
+        }
+      }
     }
+
+    // ── COVERAGE (260718-il4): every discovered graph asset was visited. ──
+    final discoveredLetters = discovered.map((u) => u.letterId).toSet();
+    expect(visited, equals(discoveredLetters),
+        reason: 'a live unit graph was discovered but not linted — a newly '
+            'promoted letter must never slip through unlinted. Discovered: '
+            '$discoveredLetters, visited: $visited');
+    // Explicitly assert the two Stage-1 live letters are both covered.
+    expect(visited, containsAll(<String>['baa', 'thaa']),
+        reason: 'both live Stage-1 letters (baa signed, thaa unsigned) must be '
+            'covered by this lint');
   });
 }

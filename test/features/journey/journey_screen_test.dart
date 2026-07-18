@@ -273,15 +273,20 @@ void main() {
           reason: 'a complete first-3 node replays ITS OWN Letter Unit.');
     });
 
-    testWidgets('current node tap → today\'s lesson (Test 5)',
+    testWidgets('current thaa node tap → its Letter Unit (Stage 1) (Test 5)',
         (WidgetTester tester) async {
       await _pumpJourney(tester, _build(snapshot: scenario()));
 
       expect(_nodeWidget(tester, 'ث').state, JourneyNodeState.current);
       await _tapNode(tester, 'ث');
 
-      expect(find.text('Practice lesson_04'), findsOneWidget,
-          reason: 'the current node must open today\'s lesson.');
+      // Stage 1 all-letters-live (quick task 260718-il4): thaa now has a FULL
+      // live Letter Unit, so its Journey node opens /unit?letter=thaa (like
+      // alif/baa/taa) rather than the generic /practice?lesson= path it used
+      // before its unit existed.
+      expect(find.text('Unit thaa'), findsOneWidget,
+          reason: 'the thaa node opens its own Letter Unit now that Stage 1 '
+              'promoted it (was Practice lesson_04 before the unit existed).');
     });
 
     testWidgets(
