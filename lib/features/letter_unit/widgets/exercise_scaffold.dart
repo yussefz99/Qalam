@@ -433,17 +433,45 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
       // child can write — a question never opens as a bare canvas). Display-only:
       // the speaker swallows platform errors, an 8s cap releases a stalled hold,
       // and the tests' NoopTtsCoachSpeaker completes instantly (no hold observed).
-      _speakInstructionThenRelease();
+      _speakInstructionThenRelease(mountAutoSpeak: true);
     });
   }
 
-  void _speakInstructionThenRelease() {
+  /// The listen-and-write shape: the LONE visual stimulus is an [AudioPart],
+  /// which PromptHeader renders as the hero "sound to write" card that
+  /// AUTO-PLAYS the clip once on mount (D-07). Mirrors PromptHeader's
+  /// hero-card condition exactly (visuals == [AudioPart]).
+  bool get _autoPlayingHeroAudio {
+    final visuals = widget.exercise.prompt
+        .where((p) => p is! SayPart)
+        .toList(growable: false);
+    return visuals.length == 1 && visuals.first is AudioPart;
+  }
+
+  void _speakInstructionThenRelease({bool mountAutoSpeak = false}) {
     final speaker = ref.read(ttsCoachSpeakerProvider);
     final sayLine = widget.exercise.prompt
         .whereType<SayPart>()
         .map((p) => p.line.trim())
         .firstWhere((l) => l.isNotEmpty, orElse: () => '');
     if (sayLine.isEmpty || _isTeachCard) {
+      unawaited(speaker.stop());
+      return;
+    }
+    // 19 review WR-03: on a lone-audio-stimulus MOUNT ([say, audio] — e.g.
+    // baa.writeWord.dictation) the hero audio card already auto-plays the
+    // clip in this same frame (PromptHeader D-07). Speaking the say line on
+    // top plays two audio streams at once — on the one exercise type where
+    // hearing the word clearly IS the question (the Phase-07 double-Hear
+    // device bug is the precedent). The clip is the audible instruction; the
+    // say line stays as the instruction bar's TEXT (readable with sound off,
+    // D-01) and as its tap-to-re-hear reinforcement — a deliberate bar tap
+    // still speaks it (mountAutoSpeak false). Scoped to a WIRED audio seam
+    // (`onAudioTap != null`): with no seam the auto-play is a no-op, so the
+    // say line is the only audible instruction and must still speak. Verify
+    // overlap fixes on DEVICE, not only in widget tests: the two channels are
+    // mocked separately here.
+    if (mountAutoSpeak && widget.onAudioTap != null && _autoPlayingHeroAudio) {
       unawaited(speaker.stop());
       return;
     }
