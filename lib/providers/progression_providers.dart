@@ -175,3 +175,19 @@ final progressionProvider = FutureProvider<ProgressionSnapshot>((ref) async {
 final todayLessonProvider = FutureProvider<Lesson?>(
   (ref) async => (await ref.watch(progressionProvider.future)).today,
 );
+
+/// The letter ids with live Letter Unit content (a `units` entry in Firestore
+/// or the bundled seed) — THE data-driven routing source for Home + Journey
+/// (finalization Lane A / owner mandate: adding a letter is a DATA operation;
+/// no `{'alif','baa','taa'}`-style literals anywhere in routing). A letter in
+/// this set opens `/unit?letter=<id>`; every other letter keeps the
+/// `/practice?lesson=` path. Defensive: any load failure degrades to the empty
+/// set → the caller keeps the /practice path (never a crash, never a dead
+/// route to a unit that cannot load).
+final unitLetterIdsProvider = FutureProvider<Set<String>>((ref) async {
+  try {
+    return await ref.watch(curriculumRepositoryProvider).getUnitLetterIds();
+  } catch (_) {
+    return const <String>{};
+  }
+});

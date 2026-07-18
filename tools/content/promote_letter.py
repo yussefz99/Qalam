@@ -35,6 +35,18 @@ And a one-shot ``--migrate-baa`` mode:
       provider's per-letter copy, kept in sync by the parity test in Task 3).
       curriculum_graph.json is NEVER deleted or edited.
 
+And a ``--graph-only`` mode (finalization Lane A):
+
+  python -m content.promote_letter --graph-only taa
+
+  (g) PROMOTE ONLY the draft GRAPH for a letter whose exercises/unit are already
+      live and must NOT be replaced. taa is the motivating case: its 19 live
+      exercises are AUTHORED AND SIGNED (signedOff:true, the mother's content),
+      while 18.1 shipped a draft graph (03-taa.graph.json) whose node ids match
+      those live exercise ids exactly — so the graph promotes verbatim (forced
+      signedOff:false, same as every promoted artifact) and the signed exercise
+      content stays byte-identical. Idempotent like every other mode.
+
 Content posture (owner-locked): ALL promoted content ships ``signedOff:false`` —
 the owner's mother reviews it via the 18.1 review packets before it is trusted.
 Micro-drills NEVER enter any graph (the drafts carry none — kept that way).
@@ -295,6 +307,47 @@ def migrate_baa() -> None:
     print("promote_letter: migrated baa -> graphs/baa.json (parity copy)")
 
 
+def promote_graph_only(letter: str) -> None:
+    """(g) Promote ONLY the draft graph for [letter] — exercises.json and
+    units.json are NOT touched. For letters whose exercise content is already
+    live (and possibly signed) but whose per-letter graph asset is missing.
+    Forces signedOff:false on the graph (content posture), verbatim otherwise.
+    Guards that every graph node id has a live exercise config, so the
+    presenter can always resolve what the walker selects."""
+    gr_draft_path = _locate_one(DRAFT_GRAPH_GLOB, letter, "graph")
+    with open(gr_draft_path, encoding="utf-8") as fh:
+        gr_draft = json.load(fh)
+    if gr_draft.get("letterId") != letter:
+        raise SystemExit(
+            f"promote_letter: graph draft letterId "
+            f"{gr_draft.get('letterId')!r} != --graph-only {letter!r}"
+        )
+
+    # Node-id ↔ live-exercise guard: every graph node must resolve to a LIVE
+    # exercise config (this mode exists precisely because the exercises are
+    # already live — a dangling node id would present as a fallback card).
+    live_ids = {e["id"] for e in _load_json(LIVE_EXERCISES)["exercises"]}
+    dangling = [
+        n["exerciseId"] for n in gr_draft.get("nodes", [])
+        if n.get("exerciseId") not in live_ids
+    ]
+    if dangling:
+        raise SystemExit(
+            f"promote_letter: --graph-only {letter}: graph nodes with NO live "
+            f"exercise config: {dangling}. Promote the exercises first (full "
+            f"--letter mode) or fix the draft graph."
+        )
+
+    graph = dict(gr_draft)
+    graph["signedOff"] = False  # content posture: the graph is unsigned.
+    _write_json(os.path.join(GRAPHS_DIR, f"{letter}.json"), graph)
+    print(
+        f"promote_letter: promoted GRAPH ONLY for {letter} -> "
+        f"graphs/{letter}.json ({len(gr_draft.get('nodes', []))} nodes, "
+        f"exercises/units untouched)"
+    )
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="promote_letter",
@@ -308,10 +361,19 @@ def main(argv: list[str] | None = None) -> int:
         "--migrate-baa", action="store_true",
         help="write graphs/baa.json as a parity copy of curriculum_graph.json",
     )
+    group.add_argument(
+        "--graph-only",
+        metavar="LETTER",
+        help="promote ONLY the draft graph for LETTER (exercises/units already "
+             "live and untouched — e.g. taa, whose 19 signed exercises must "
+             "not be replaced)",
+    )
     args = parser.parse_args(argv)
 
     if args.migrate_baa:
         migrate_baa()
+    elif args.graph_only:
+        promote_graph_only(args.graph_only)
     else:
         promote_letter(args.letter)
     return 0

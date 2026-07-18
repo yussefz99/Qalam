@@ -116,6 +116,12 @@ void main() {
       // core: the 19-05 kitaab→baab rewrite (D-11, pending sign-off) plus the
       // documented pre-existing alif/baa-final signedOff drift (alif-reference
       // cluster). Micro-drills are carved out separately (18-11 HUMAN-UAT gate).
+      // WIDENED by finalization Lane B (e4cadeb, 2026-07-18): the content-
+      // integrity pass re-pointed missing art (تاج→تفاح), reworded feedback
+      // lines that referenced absent pictures, and wired the alif copy/
+      // dictation cards to real audio — every touched config was HONESTLY
+      // flipped signedOff:false pending the mother's re-confirmation (each
+      // carries an inline `_review` note naming the exact change).
       final unsignedCore = exercises
           .where((e) =>
               e.type != 'microDrill' &&
@@ -131,6 +137,16 @@ void main() {
             'alif.traceLetter.isolated',
             'alif.writeLetter.fromSound',
             'alif.writeLetter.writeForm',
+            // Lane B content-integrity flips (pending mother re-confirmation):
+            'alif.teachCard.meet',
+            'alif.writeWord.copy',
+            'alif.writeWord.dictation',
+            'taa.teachCard.meet',
+            'taa.writeLetter.fromPicture',
+            'taa.writeWord.copy',
+            'taa.writeWord.dictation',
+            'taa.writeWord.picture',
+            'taa.buildSentence.picture',
           }));
       expect(exercises.map((e) => e.id),
           containsAll(['baa.teachCard.meet', 'taa.teachCard.meet', 'alif.teachCard.meet']));

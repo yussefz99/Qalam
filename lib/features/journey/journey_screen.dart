@@ -73,12 +73,14 @@ Offset _nodePosition(int index) {
   return Offset(x, y);
 }
 
-/// The letters with a FULL live Letter Unit — reachable directly from the Journey
-/// map (their node opens `/unit?letter=<id>`), never grinding the S1-09 unlock
-/// chain. ONE source of truth read by both the `tappable` predicate and the onTap
-/// route in [_JourneyScreenState._buildNode]. thaa joined alif/baa/taa in Stage 1
-/// of all-letters-live (quick task 260718-il4); Stage 2 promotes the remaining 24.
-const Set<String> _fullUnitLetters = {'alif', 'baa', 'taa', 'thaa'};
+// NOTE (finalization Lane A): the old `_fullUnitLetters = {'alif','baa','taa',
+// 'thaa'}` literal is GONE (owner mandate: adding a letter is a DATA operation).
+// Which letters open a Letter Unit now comes from [unitLetterIdsProvider] (the
+// `units` data, Firestore-first with the bundled seed), and REACHABILITY is the
+// standard S1-09 unlock chain — the lesson catalog's `unlock.requires` ladder,
+// which follows letters.json `introOrder` by construction (lesson_NN holds the
+// introOrder-NN letter and requires lesson_NN-1). Mastering a letter unlocks
+// the next letter BY introOrder; nothing is hardcoded reachable.
 
 // ── JourneyScreen ─────────────────────────────────────────────────────────────
 
@@ -168,6 +170,10 @@ class _JourneyScreenState extends ConsumerState<JourneyScreen>
     // on error — no throw.
     final letters = ref.watch(journeyLettersProvider).value;
     final snapshot = ref.watch(progressionProvider).value;
+    // Lane A: the letters with live unit content — the DATA-driven /unit route
+    // source. Loading/error degrade to the empty set (the /practice path).
+    final unitLetters =
+        ref.watch(unitLetterIdsProvider).value ?? const <String>{};
 
     // Quiet loading/degradation: parchment, no spinner, no error surface to
     // the child (V5 degradation — the providers self-heal when data lands).
@@ -267,7 +273,14 @@ class _JourneyScreenState extends ConsumerState<JourneyScreen>
 
             // ── 28 letter nodes ─────────────────────────────────────────────
             for (var i = 0; i < nodes.length; i++) ...[
-              _buildNode(context, i, nodes[i], snapshot, currentLetterId),
+              _buildNode(
+                context,
+                i,
+                nodes[i],
+                snapshot,
+                currentLetterId,
+                unitLetters,
+              ),
             ],
 
             // ── Level 1 Quiz checkpoint (D-19) ──────────────────────────────
@@ -391,6 +404,7 @@ class _JourneyScreenState extends ConsumerState<JourneyScreen>
     Letter letter,
     ProgressionSnapshot snapshot,
     String currentLetterId,
+    Set<String> unitLetters,
   ) {
     final pos = _nodePosition(index);
     final state = JourneyNodeState.compute(
@@ -401,17 +415,16 @@ class _JourneyScreenState extends ConsumerState<JourneyScreen>
     final lessonId = snapshot.lessonIdByLetterId[letter.id];
     final unlocked =
         lessonId != null && snapshot.unlockedLessonIds.contains(lessonId);
-    // The letters with FULL live Letter Units — always reachable, so any of them
-    // opens directly without grinding the unlock chain. (Every OTHER letter keeps
-    // the S1-09 unlock gate unchanged.) thaa joins alif/baa/taa in Stage 1 of
-    // all-letters-live (quick task 260718-il4) — its unit is live via the promoted
-    // graphs/thaa.json + units.json entry. ONE source of truth for both the
-    // `tappable` predicate and the onTap route below.
+    // Lane A: EVERY letter is gated by the standard S1-09 unlock chain
+    // (complete / current / skipped-but-unlocked). The old always-reachable
+    // `_fullUnitLetters` bypass is gone — unlock ORDERING is the lesson
+    // catalog's `unlock.requires` ladder, which follows letters.json
+    // `introOrder` by construction: mastering a letter unlocks the next
+    // letter by introOrder, never a hardcoded sequence.
     final tappable = lessonId != null &&
         (state == JourneyNodeState.complete ||
             state == JourneyNodeState.current ||
-            (state == JourneyNodeState.future && unlocked) ||
-            _fullUnitLetters.contains(letter.id));
+            (state == JourneyNodeState.future && unlocked));
     // D-15: only the highlighted node's badge gets the settle animation —
     // and only when it actually started (complete-node allowlist).
     final settling = _settleStarted && letter.id == widget.highlightId;
@@ -424,13 +437,14 @@ class _JourneyScreenState extends ConsumerState<JourneyScreen>
         state: state,
         starSettleScale: settling ? _settleScale : null,
         starSettleOpacity: settling ? _settleOpacity : null,
-        // The full-unit letters (alif/baa/taa/thaa) open their own Letter Unit;
-        // every other letter keeps the existing `/practice?lesson=` path until its
-        // unit is built. Deep-link reuse (SC#5). Same `_fullUnitLetters` set the
-        // `tappable` predicate reads, so a thaa node opens /unit?letter=thaa.
+        // Lane A: DATA-driven destination — a letter with live unit content
+        // (units.json / Firestore `units`, via [unitLetterIdsProvider]) opens
+        // its own Letter Unit; every other letter keeps the
+        // `/practice?lesson=` path until its unit data lands. Deep-link reuse
+        // (SC#5). No letter-id literals (owner mandate).
         onTap: tappable
             ? () => context.go(
-                  _fullUnitLetters.contains(letter.id)
+                  unitLetters.contains(letter.id)
                       ? '/unit?letter=${letter.id}'
                       : '/practice?lesson=$lessonId',
                 )

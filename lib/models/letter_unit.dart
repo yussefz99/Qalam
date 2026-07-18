@@ -33,15 +33,32 @@ class LetterUnit {
   final String letterId;
   final List<UnitSection> sections;
 
-  const LetterUnit({required this.letterId, this.sections = const []});
+  /// The exercise ids this unit's UI actually presents AND records clean-reps
+  /// for — the DATA declaration the scoped mastery gate derives from
+  /// (finalization Lane A: the presented set comes from the unit CONFIG, never
+  /// a letter-id literal in code). EMPTY (the default, and what the promotion
+  /// pipeline emits) means "no scoped subset" — the mastery gate falls back to
+  /// the FULL-graph `isMasteryMet` over the letter's own essential nodes. Only
+  /// baa declares a subset today (its legacy 6-section shell surfaces 8 of the
+  /// 16 graph essentials); a new letter needs NO code change and NO declaration.
+  final List<String> presentedEssentials;
+
+  const LetterUnit({
+    required this.letterId,
+    this.sections = const [],
+    this.presentedEssentials = const [],
+  });
 
   factory LetterUnit.fromJson(Map<String, dynamic> json) {
     final rawSections = json['sections'] as List<dynamic>? ?? const [];
+    final rawPresented =
+        json['presentedEssentials'] as List<dynamic>? ?? const [];
     return LetterUnit(
       letterId: json['letterId'] as String,
       sections: rawSections
           .map((s) => UnitSection.fromJson(s as Map<String, dynamic>))
           .toList(),
+      presentedEssentials: rawPresented.whereType<String>().toList(),
     );
   }
 }

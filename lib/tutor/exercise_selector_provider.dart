@@ -34,6 +34,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../curriculum/curriculum_graph.dart';
 import '../curriculum/curriculum_graph_walker.dart';
 import '../curriculum/selection_policy.dart';
+import '../data/curriculum_repository.dart';
 import 'tutor_decision.dart';
 import 'tutor_facts.dart';
 
@@ -51,11 +52,19 @@ String kCurriculumGraphAssetFor(String letterId) =>
 
 /// Loads + parses the per-letter curriculum graph once per letterId (keepAlive,
 /// mirroring `appDatabaseProvider`). A [FutureProvider.family] keyed by letterId:
-/// `curriculumGraphProvider('baa')` loads `graphs/baa.json`,
-/// `curriculumGraphProvider('thaa')` loads `graphs/thaa.json` — the two are
-/// DISTINCT graphs (never a shared baa default). The parser
-/// ([CurriculumGraph.fromJson]) is pure — the `rootBundle` read lives HERE (the
-/// loader), never inside the pure layer.
+/// `curriculumGraphProvider('baa')` loads baa's graph,
+/// `curriculumGraphProvider('thaa')` loads thaa's — the two are DISTINCT graphs
+/// (never a shared baa default). The parser ([CurriculumGraph.fromJson]) is
+/// pure — the I/O lives HERE (the loader), never inside the pure layer.
+///
+/// CONTENT RESOLUTION ORDER (finalization Lane A — mirrors the
+/// letters/exercises/units repository pattern, D-01/D-02):
+///   1. Firestore `graphs/<letterId>` doc (via [CurriculumRepository.getGraphJson])
+///   2. the bundled `assets/curriculum/graphs/<letterId>.json` asset fallback.
+/// This is what makes "add a letter by only touching the database" true for the
+/// progression rail: seeding a graph doc brings a letter live with NO rebuild.
+/// A letter with neither source still load-fails harmlessly (the unit degrades
+/// to the static flow — the established never-crash posture).
 ///
 /// A `Future`-returning provider (Pitfall 6: never a bare `StreamProvider.future`,
 /// which hangs under Riverpod 3). Read it with
@@ -63,6 +72,11 @@ String kCurriculumGraphAssetFor(String letterId) =>
 final curriculumGraphProvider =
     FutureProvider.family<CurriculumGraph, String>((ref, letterId) async {
   ref.keepAlive();
+  // 1) Firestore-first (never throws; null → fall through to the bundle).
+  final fromFirestore =
+      await ref.watch(curriculumRepositoryProvider).getGraphJson(letterId);
+  if (fromFirestore != null) return CurriculumGraph.fromJson(fromFirestore);
+  // 2) Bundled-asset fallback (cold first run / offline / unseeded letter).
   final raw = await rootBundle.loadString(kCurriculumGraphAssetFor(letterId));
   final decoded = json.decode(raw) as Map<String, Object?>;
   return CurriculumGraph.fromJson(decoded);

@@ -3,11 +3,22 @@
     "title": "Letter Unit baa (ب) — bundled-seed LetterUnit (Schema v2 #8)",
     "source": "Section ordering per docs/design/prototypes/letter-unit-baa/SCHEMA-BINDINGS.md §B and SCHEMA-V2.md §2 LetterUnit.",
     "sections": "meet · watchTrace · forms · words · listenWrite · mastery (fixed order). The 6th 'mastery' section is the quiet unit star — no separate exercise config (anti-gamification: one star at true mastery).",
-    "fallbackRole": "Bundled-seed fallback read by CurriculumRepository.getUnit(letterId) when Firestore is empty."
+    "fallbackRole": "Bundled-seed fallback read by CurriculumRepository.getUnit(letterId) when Firestore is empty.",
+    "presentedEssentials": "OPTIONAL per-unit declaration (finalization Lane A): the graph-node ids the unit's UI actually presents AND records — the scoped mastery gate derives from THIS data (∩ the graph's essential core), never a letter literal in code. ABSENT/empty = the full-graph isMasteryMet over the letter's own essentials (what the promotion pipeline emits). Only baa declares a subset: its legacy 6-section shell surfaces 8 of the 16 graph essentials (incl. traceLetter.final — owner amendment 2026-07-12, 19 review CR-02)."
   },
   "units": [
     {
       "letterId": "baa",
+      "presentedEssentials": [
+        "baa.teachCard.meet",
+        "baa.traceLetter.isolated",
+        "baa.traceLetter.initial",
+        "baa.traceLetter.medial",
+        "baa.traceLetter.final",
+        "baa.connectWord.baab",
+        "baa.writeWord.dictation",
+        "baa.writeLetter.fromSound"
+      ],
       "sections": [
         {
           "id": "meet",

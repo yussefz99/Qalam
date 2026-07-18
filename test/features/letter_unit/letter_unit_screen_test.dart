@@ -25,6 +25,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:qalam/curriculum/curriculum_graph.dart';
 import 'package:qalam/data/app_database.dart';
+import 'package:qalam/data/curriculum_repository.dart';
 import 'package:qalam/data/drift_progress_repository.dart';
 import 'package:qalam/data/graph_position_repository.dart';
 import 'package:qalam/data/progress_repository.dart';
@@ -85,6 +86,19 @@ class _FakeProgressRepository implements ProgressRepository {
           {required int childProfileId,
           required String letterId,
           required int cleanReps}) async {}
+}
+
+/// Hermetic stand-in for the mastery gate's unit-config read (Lane A:
+/// `_presentedExerciseIds` → `getUnit`). The REAL repo would hit
+/// `rootBundle.loadString(units.json)`, which stalls forever in any
+/// testWidgets after the first in a process (see
+/// mastery_progression_harness.dart). Returning null exercises the documented
+/// degradation: no declared subset → the FULL-graph essential check — which
+/// Test 5's banked reps satisfy. The presented-subset semantics are pinned
+/// with real units.json data by the letter_generic_mastery_progression tests.
+class _StubCurriculumRepository extends CurriculumRepository {
+  @override
+  Future<LetterUnit?> getUnit(String letterId) async => null;
 }
 
 /// An in-memory fake of the durable resume cursor — round-trips the position so
@@ -164,6 +178,10 @@ Future<({_FakeProgressRepository progress, AppDatabase db})> _pump(
         // test is hermetic (no rootBundle dependence).
         curriculumGraphProvider
             .overrideWith((ref, letterId) async => _loadGraph()),
+        // ...and its unit-config read (presented-essentials subset) is stubbed
+        // for the same hermeticity — null → the full-graph gate (see the stub).
+        curriculumRepositoryProvider
+            .overrideWithValue(_StubCurriculumRepository()),
         letterUnitDataProvider('baa').overrideWith((ref) async => _baaData()),
       ],
       child: const MaterialApp(
@@ -208,8 +226,13 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    // The final section is Mastery — the one quiet star celebration.
-    expect(find.byType(MasterySection), findsOneWidget);
+    // The final section is Mastery — but with ZERO clean reps NO row was
+    // written, so the shell renders the honest "not yet" state, never the
+    // star (finalization Lane A: child-visible state == persisted state).
+    expect(
+        find.byKey(const ValueKey('section:masteryNotYet')), findsOneWidget);
+    expect(find.byType(MasterySection), findsNothing,
+        reason: 'the star renders ONLY off a confirmed persisted mastery row');
     expect(find.byType(MeetSection), findsNothing);
   });
 
@@ -226,9 +249,13 @@ void main() {
     container.read(letterUnitControllerProvider('baa').notifier).goTo(5);
     await tester.pumpAndSettle();
 
-    // The Mastery section is shown (navigation works) …
-    expect(find.byType(MasterySection), findsOneWidget);
-    // … but the star is NOT granted off navigation: with unmet essential reps,
+    // The Mastery section is reached (navigation works) — but with unmet reps
+    // it shows the honest "not yet" state, NOT the star (Lane A: the
+    // celebration reflects the actual write outcome)…
+    expect(
+        find.byKey(const ValueKey('section:masteryNotYet')), findsOneWidget);
+    expect(find.byType(MasterySection), findsNothing);
+    // … and the star is NOT granted off navigation: with unmet essential reps,
     // recordMastery is never called (the deleted cleanReps:0 auto-write).
     expect(progress.mastered, isNot(contains('baa')),
         reason: 'the star must be gated on isMasteryMet, never on navigation '
@@ -239,11 +266,13 @@ void main() {
       (tester) async {
     await _pump(tester);
 
-    // Tap dot 5 (Mastery) — the shell jumps there.
+    // Tap dot 5 (Mastery) — the shell jumps there. With zero reps the honest
+    // "not yet" state renders (never a star off mere navigation — Lane A).
     await tester.tap(find.byKey(const ValueKey('unitRibbonDot:5')));
     await tester.pumpAndSettle();
 
-    expect(find.byType(MasterySection), findsOneWidget);
+    expect(
+        find.byKey(const ValueKey('section:masteryNotYet')), findsOneWidget);
   });
 
   testWidgets(

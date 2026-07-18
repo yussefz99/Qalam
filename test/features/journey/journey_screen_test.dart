@@ -108,6 +108,12 @@ Widget _build({required ProgressionSnapshot snapshot, String? highlight}) {
     overrides: [
       curriculumRepositoryProvider.overrideWithValue(_curriculum),
       progressionProvider.overrideWith((ref) async => snapshot),
+      // Lane A: routing is DATA-driven (unitLetterIdsProvider — the letters
+      // with live unit content). The `.fromStrings` repo has no Schema-v2
+      // seed, so supply the shipped unit set explicitly: these four letters
+      // carry units.json entries in the real bundle.
+      unitLetterIdsProvider
+          .overrideWith((ref) async => const {'alif', 'baa', 'taa', 'thaa'}),
     ],
     child: MaterialApp.router(routerConfig: router),
   );

@@ -46,10 +46,13 @@ const String kSeedDemoWobbleExerciseId = 'baa.writeWord.dictation';
 const int _masteryThreshold = 3;
 const int _wobbleSeedReps = 2;
 
-/// The presented-essential exercises the baa unit scores (mirrors
-/// `LetterUnitController._presentedExerciseIds`). The seed banks each of these at
-/// the mastery threshold EXCEPT the wobble form, which is parked one short — so
-/// the star stays unearned until the child finishes the wobble form on stage.
+/// The presented-essential exercises the baa unit scores (mirrors the baa
+/// unit's `presentedEssentials` DATA declaration in
+/// `assets/curriculum/units.json` — the mastery gate derives its scoped set
+/// from that config since finalization Lane A; keep the two lists identical).
+/// The seed banks each of these at the mastery threshold EXCEPT the wobble
+/// form, which is parked one short — so the star stays unearned until the
+/// child finishes the wobble form on stage.
 const List<String> _presentedEssentials = [
   'baa.teachCard.meet',
   'baa.traceLetter.isolated',

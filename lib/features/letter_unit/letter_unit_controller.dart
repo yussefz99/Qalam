@@ -25,10 +25,12 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/exercise_engine/check_result.dart';
 import '../../curriculum/curriculum_graph.dart';
+import '../../data/curriculum_repository.dart';
 import '../../curriculum/curriculum_graph_walker.dart' show GraphPosition;
 import '../../curriculum/mastery_condition.dart'
     show isMasteryMet, isMasteryMetForPresented;
@@ -56,6 +58,7 @@ class LetterUnitState {
     this.clearedTiers = const [],
     this.masteryRecorded = false,
     this.selectionActive = false,
+    this.masteryEvaluationFailed = false,
   });
 
   /// The current section index (0-based; 0 = Meet … total-1 = Mastery).
@@ -87,6 +90,14 @@ class LetterUnitState {
   /// `_section(index)` walk), and the section ribbon FOLLOWS the presented node.
   final bool selectionActive;
 
+  /// True when the LAST mastery evaluation could not run (graph or reps
+  /// unreadable — e.g. a missing graph for this letter). The SURFACED degraded
+  /// state (finalization Lane A): the old `catch (_) { return false; }` hid a
+  /// missing graph forever, which read on-device as a permanent silent freeze.
+  /// The screen renders the honest "not yet" state off this; it never grants
+  /// the star (fail-safe).
+  final bool masteryEvaluationFailed;
+
   /// True when the child is on the final (Mastery) section.
   bool get atMastery => total > 0 && index == total - 1;
 
@@ -99,6 +110,7 @@ class LetterUnitState {
     List<String>? clearedTiers,
     bool? masteryRecorded,
     bool? selectionActive,
+    bool? masteryEvaluationFailed,
   }) {
     return LetterUnitState(
       index: index ?? this.index,
@@ -109,6 +121,8 @@ class LetterUnitState {
       clearedTiers: clearedTiers ?? this.clearedTiers,
       masteryRecorded: masteryRecorded ?? this.masteryRecorded,
       selectionActive: selectionActive ?? this.selectionActive,
+      masteryEvaluationFailed:
+          masteryEvaluationFailed ?? this.masteryEvaluationFailed,
     );
   }
 
@@ -247,9 +261,17 @@ class LetterUnitController extends Notifier<LetterUnitState> {
     // null → those letters degrade to the static flow exactly as before, no crash.
     try {
       await ref.read(curriculumGraphProvider(letterId).future);
-    } catch (_) {
+    } catch (e) {
       // No graph for this letter (or a load failure) — the graph-railed reads see
-      // null and the letter keeps the static flow. Never crash the unit-open path.
+      // null and the letter keeps the static flow. Never crash the unit-open path,
+      // but say so LOUDLY (finalization Lane A): a silently-missing graph is the
+      // exact failure that froze alif/taa progression on device with no log.
+      debugPrint(
+        '[LetterUnit] no curriculum graph for "$letterId" '
+        '(Firestore doc + bundled asset both unavailable): $e — '
+        'this letter degrades to the static section flow and CANNOT record '
+        'graph mastery until a graph is seeded.',
+      );
     }
     // 1) Read the durable graph position from Drift (Pitfall 6: a Future read).
     repo.GraphPosition? saved;
@@ -570,14 +592,13 @@ class LetterUnitController extends Notifier<LetterUnitState> {
   /// NOTHING. Idempotent (the star is information, recorded at most once). Never
   /// reads a server response (ADR-014 trust boundary).
   ///
-  /// INTERIM (T5): the 6-section baa unit surfaces only a subset (8) of the
-  /// live graph's essential nodes. The scoped condition `isMasteryMetForPresented`
-  /// evaluates over the intersection of `graph.essentialNodes` and the exercises
-  /// the baa unit actually presents and records. The star fires when the child
-  /// genuinely completes the presented essential exercises — not blocked by
-  /// essential nodes the current UI never exercises. Surfacing the remaining
-  /// essential exercises is a content-coverage task for the owner/mother and a
-  /// later phase. The original `isMasteryMet` semantics are not modified.
+  /// LETTER-GENERIC (finalization Lane A — owner mandate: no letter-id literal
+  /// in logic). The scoped presented set is DERIVED per-letter from the unit
+  /// CONFIG ∩ the graph's essential core ([_presentedExerciseIds]); a unit with
+  /// no declared subset falls back to the FULL-graph `isMasteryMet` over that
+  /// letter's OWN essential nodes. A failed evaluation is LOUD (debugPrint) and
+  /// SURFACED (`state.masteryEvaluationFailed`) — never a silent freeze — and
+  /// fail-safe (the star is never granted off a guess).
   Future<bool> recordMasteryIfMet() async {
     if (state.masteryRecorded) return true;
     final CurriculumGraph graph;
@@ -587,20 +608,29 @@ class LetterUnitController extends Notifier<LetterUnitState> {
       reps = await ref
           .read(appDatabaseProvider)
           .exerciseCleanRepsFor(_letterId, childProfileId: _childProfileId);
-    } catch (_) {
-      return false; // can't evaluate → never grant the star off a guess.
+    } catch (e) {
+      // Fail-safe: never grant the star off a guess — but say so LOUDLY and
+      // surface the degraded state (Lane A kills the old silent `catch (_)`
+      // that hid a missing graph forever = the invisible on-device freeze).
+      debugPrint(
+        '[LetterUnit] mastery gate for "$_letterId" could not evaluate '
+        '(graph or clean-reps unreadable): $e — the star stays locked; '
+        'seed graphs/$_letterId to Firestore or bundle the asset.',
+      );
+      state = state.copyWith(masteryEvaluationFailed: true);
+      return false;
     }
-    // T5 (INTERIM): scope the mastery gate to the exercises the unit presents.
-    // The baa unit surfaces baa.teachCard.meet, all four baa.traceLetter forms
-    // (isolated/initial/medial/final — the owner's 2026-07-12 amendment made
-    // the final form essential), baa.connectWord.baab, baa.writeWord.dictation,
-    // and baa.writeLetter.fromSound — 8 of the live graph's essential nodes.
-    // The star reflects mastery of what is taught here; the remaining
-    // essential nodes belong to a later content-coverage expansion.
-    final presented = _presentedExerciseIds();
+    // Scope the mastery gate to the exercises the unit DECLARES it presents
+    // (its `presentedEssentials` config ∩ the graph's essential core). Empty →
+    // the full-graph check over this letter's own essentials.
+    final presented = await _presentedExerciseIds(graph);
     final masteryMet = presented.isNotEmpty
         ? isMasteryMetForPresented(graph, reps, presented)
         : isMasteryMet(graph, reps); // fallback: if no presented set, full check.
+    // The evaluation ran — clear any earlier surfaced failure (self-healing).
+    if (state.masteryEvaluationFailed) {
+      state = state.copyWith(masteryEvaluationFailed: false);
+    }
     if (!masteryMet) return false;
     state = state.copyWith(masteryRecorded: true);
     try {
@@ -615,48 +645,53 @@ class LetterUnitController extends Notifier<LetterUnitState> {
             letterId: _letterId,
             cleanReps: met,
           );
-    } catch (_) {
-      // A failed LOCAL write must never crash the celebration — the child still
-      // sees their star; the mastery row can be re-recorded on re-entry.
+    } catch (e) {
+      // A failed LOCAL write must never crash the unit — but it is LOUD, and
+      // the caller (the screen) shows the honest "not yet" state instead of a
+      // star that persisted nothing (Lane A: child-visible state never
+      // diverges from persisted state). Re-entry re-attempts the write.
+      debugPrint(
+        '[LetterUnit] mastery for "$_letterId" was MET but the local write '
+        'failed: $e — no star until the row persists (retried on re-entry).',
+      );
       state = state.copyWith(masteryRecorded: false);
       return false;
     }
     return true;
   }
 
-  /// The exercise ids this unit's 6 sections actually present and score (T5
-  /// scoped mastery). These are the GRAPH node ids — never the synthetic per-word
-  /// ids like `baa.writeWord.door`. Only ids whose clean-reps the scaffold
-  /// actually increments belong here.
+  /// The exercise ids this unit actually presents and scores, DERIVED from live
+  /// data (finalization Lane A — replaces the hardcoded baa 8-id set): the unit
+  /// config's `presentedEssentials` declaration intersected with the graph's
+  /// essential core. These are GRAPH node ids — never the synthetic per-word
+  /// ids like `baa.writeWord.door`.
   ///
-  /// PER-LETTER GUARD (quick task 260718-il4, Stage 1 of all-letters-live — owner
-  /// amendment 1): the scoped 8-id set is a DOCUMENTED baa LEGACY EXCEPTION. It is
-  /// returned ONLY when `_letterId == 'baa'`. For ANY other letter (thaa, and the
-  /// Stage-2 letters to come) this returns `const {}` so `recordMasteryIfMet`
-  /// falls back to the FULL-graph `isMasteryMet` over THAT letter's OWN essential
-  /// nodes — never `isMasteryMetForPresented` against baa ids (which would compare
-  /// a thaa graph against baa exercise ids and mis-gate the star). The graph is
-  /// the single source of the star bar for every non-baa letter.
-  ///
-  /// INTERIM (baa only): this set is baa-specific. A later phase should derive the
-  /// baa presented set from the unit config so it stays in sync automatically. For
-  /// now it is explicit and correct for the live baa graph. Mirror any change in
-  /// `seeded_demo_state.dart`'s `_presentedEssentials`.
-  Set<String> _presentedExerciseIds() {
-    if (_letterId != 'baa') return const {};
-    return const {
-      'baa.teachCard.meet',
-      'baa.traceLetter.isolated',
-      'baa.traceLetter.initial',
-      'baa.traceLetter.medial',
-      // Owner amendment 2026-07-12: the final form is a live essential node
-      // (FormsSection presents + scores it) — without it the star fired while
-      // an essential node sat at 0 reps (19 review CR-02).
-      'baa.traceLetter.final',
-      'baa.connectWord.baab',
-      'baa.writeWord.dictation',
-      'baa.writeLetter.fromSound',
-    };
+  /// Empty when the unit declares no subset (the promotion pipeline emits
+  /// none), when the unit is missing, or when the read fails — all of which
+  /// fall back to the FULL-graph `isMasteryMet` over this letter's own
+  /// essential nodes (the 260718-il4 owner-amendment behavior for every
+  /// non-legacy letter). Only baa's units.json entry declares a subset today
+  /// (its legacy 6-section shell surfaces 8 of the 16 graph essentials);
+  /// `seeded_demo_state.dart`'s `_presentedEssentials` mirrors that DATA
+  /// declaration, not this code.
+  Future<Set<String>> _presentedExerciseIds(CurriculumGraph graph) async {
+    List<String> declared;
+    try {
+      final unit =
+          await ref.read(curriculumRepositoryProvider).getUnit(_letterId);
+      declared = unit?.presentedEssentials ?? const [];
+    } catch (e) {
+      // A unit-config read failure degrades to the full-graph gate (stricter,
+      // never looser) — loud, not silent.
+      debugPrint(
+        '[LetterUnit] could not read the unit config for "$_letterId" '
+        '($e) — mastery falls back to the full-graph essential check.',
+      );
+      declared = const [];
+    }
+    if (declared.isEmpty) return const {};
+    final essentials = {for (final n in graph.essentialNodes) n.exerciseId};
+    return declared.where(essentials.contains).toSet();
   }
 
   /// The smallest essential clean-rep count the child has banked (a real,

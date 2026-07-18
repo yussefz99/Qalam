@@ -730,6 +730,13 @@ class _TodaysLessonCardReader extends ConsumerWidget {
                   loading: () => 0,
                   error: (_, _) => 0,
                 );
+            // Lane A: DATA-driven routing — a letter with live unit content
+            // opens its Letter Unit; every other letter keeps the /practice
+            // path. No letter-id literals (owner mandate: adding a letter is a
+            // database operation). Loading/error degrade to the empty set →
+            // the /practice path (safe, never a dead unit route).
+            final Set<String> unitLetters =
+                ref.watch(unitLetterIdsProvider).value ?? const <String>{};
             final int total = data.letter.cleanRepsToAdvance;
             final double fraction = total <= 0
                 ? 1.0
@@ -747,13 +754,13 @@ class _TodaysLessonCardReader extends ConsumerWidget {
               glyphSemantics:
                   l10n?.homeInkFillSemantics(reps, total) ??
                   '$reps of $total clean reps',
-              // Plan 07-06: baa has a full 6-section Letter Unit, so its
-              // today-card opens `/unit?letter=baa` instead of the thin
-              // `/practice` loop. Every OTHER letter keeps its existing
-              // `/practice?lesson=` path until its unit is built — alif's
-              // start is untouched. (Deep-link reuse, SC#5.)
-              // Phase 8 demo: the first three letters have full Letter Units.
-              route: const {'alif', 'baa', 'taa'}.contains(data.letter.id)
+              // Plan 07-06 route split, made DATA-DRIVEN in the finalization
+              // Lane A: a letter whose id has live unit content (units.json /
+              // Firestore `units`) opens `/unit?letter=<id>`; every other
+              // letter keeps its `/practice?lesson=` path until its unit data
+              // lands. (Deep-link reuse, SC#5. The old hardcoded
+              // {'alif','baa','taa'} set is gone — owner mandate.)
+              route: unitLetters.contains(data.letter.id)
                   ? '/unit?letter=${data.letter.id}'
                   : '/practice?lesson=${data.lessonId}',
               isResume: reps > 0,

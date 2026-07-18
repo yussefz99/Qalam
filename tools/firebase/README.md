@@ -11,6 +11,7 @@ D-14 (console-edit operating policy), and D-16 (Firestore Native, Spark tier).
 |------|---------|
 | `point_codec.py` | Shared `{x,y}`⇄`[x,y]` point transform (Plan 02). Imported by both scripts so the seed, export, and Dart read path agree (D-06). |
 | `seed_firestore.py` | `letters.json` + `lessons.json` → Firestore `letters` / `lessons` collections + `meta/toleranceRamp`. **Idempotent by doc id** (uses `set()`, never `add()`). |
+| `seed_curriculum_v2.py` | `graphs/<letter>.json` + `exercises.json` + `units.json` → Firestore `graphs` / `exercises` / `units` collections (finalization Lane A — the app resolves these Firestore-first with the bundled assets as fallback, so seeding a letter here brings it live with **no rebuild**). `--letter <id>` for one letter, `--all` for every letter with a graph asset. Same idempotent `doc(id).set()` posture; validates against Firestore's no-nested-arrays rule before any write. |
 | `export_firestore.py` | Firestore → refreshed `assets/curriculum/letters.json` + `lessons.json`. The inverse of the seed. |
 | `test_roundtrip.py` | Proves seed→export is lossless against the source JSON **without** needing a live Firestore or the service-account key — runs in CI. |
 | `requirements.txt` | Pins `firebase-admin>=6.5.0`. |
@@ -57,6 +58,9 @@ privilege). It is a secret.
 ```bash
 # 1. Seed the curriculum into Firestore (idempotent — safe to re-run).
 python tools/firebase/seed_firestore.py
+
+# 1b. Seed the v2 progression content (graphs/exercises/units — Lane A).
+python tools/firebase/seed_curriculum_v2.py --all      # or --letter <id>
 
 # 2. Export Firestore back into the bundled snapshot.
 python tools/firebase/export_firestore.py

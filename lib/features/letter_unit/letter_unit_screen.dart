@@ -193,6 +193,14 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
   /// dead CTA that only a force-quit could escape.
   int _presentEpoch = 0;
 
+  /// The REAL outcome of the mastery write (finalization Lane A): null while
+  /// the evaluation runs, true iff `recordMasteryIfMet` actually PERSISTED the
+  /// mastery row, false when the condition is unmet or the write failed. The
+  /// Mastery section renders the star ONLY off `true` — child-visible state can
+  /// never diverge from persisted state (the old unconditional celebration is
+  /// exactly why "home stuck on alif" read as a display bug).
+  bool? _masteryWritten;
+
   @override
   void initState() {
     super.initState();
@@ -244,8 +252,21 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
   /// it never grants the star for merely navigating there; a clicked-through unit
   /// with unmet essential reps records NOTHING. Replaces the deleted
   /// `state.atMastery → recordMastery(cleanReps:0)` auto-write.
+  ///
+  /// Lane A: the RESULT is consumed — the celebration renders off the actual
+  /// write outcome, never unconditionally. setState only on a CHANGED outcome
+  /// (this fires post-frame on every Mastery build; recordMasteryIfMet is
+  /// idempotent, so re-fires converge and self-heal — a child who practices
+  /// more and returns flips false → true naturally).
   void _recordMasteryIfMet() {
-    ref.read(letterUnitControllerProvider(_letterId).notifier).recordMasteryIfMet();
+    ref
+        .read(letterUnitControllerProvider(_letterId).notifier)
+        .recordMasteryIfMet()
+        .then((written) {
+      if (mounted && _masteryWritten != written) {
+        setState(() => _masteryWritten = written);
+      }
+    });
   }
 
   /// T2 + T1 scoring chokepoint — called by a section when it reports a clean pass
@@ -498,6 +519,22 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) _recordMasteryIfMet();
         });
+        // Lane A: the celebration renders ONLY off a CONFIRMED persisted write
+        // (`_masteryWritten == true`). Unmet reps, a failed evaluation, or a
+        // failed local write all render the honest "not yet" state instead —
+        // the child never sees a star the database does not hold, so Home /
+        // Journey can never silently disagree with what the child just saw.
+        if (_masteryWritten != true) {
+          return _MasteryNotYet(
+            key: const ValueKey('section:masteryNotYet'),
+            letter: letter,
+            // Still evaluating (null) → keep the copy quiet; confirmed unmet
+            // (false) → the warm, specific keep-practicing guidance.
+            evaluating: _masteryWritten == null,
+            onKeepPracticing: _back,
+            onExit: _exit,
+          );
+        }
         return MasterySection(
           key: const ValueKey('section:mastery'),
           letter: letter,
@@ -852,6 +889,77 @@ class _Preparing extends StatelessWidget {
         label,
         style: QalamTextStyles.body.copyWith(color: QalamTokens.fgMuted),
         textAlign: TextAlign.center,
+      ),
+    );
+  }
+}
+
+/// The honest Mastery state when NO mastery row was persisted (finalization
+/// Lane A): unmet essential reps, a failed evaluation (e.g. no graph), or a
+/// failed local write. NO star renders here — the star is information, and the
+/// database does not hold it yet — so the child-visible state can never
+/// diverge from Home / Journey. The copy is the tutor's voice: warm, calm,
+/// specific, never "Oops" (CLAUDE.md).
+class _MasteryNotYet extends StatelessWidget {
+  const _MasteryNotYet({
+    super.key,
+    required this.letter,
+    required this.evaluating,
+    required this.onKeepPracticing,
+    required this.onExit,
+  });
+
+  /// The letter this unit teaches — named in the guidance (specific feedback).
+  final Letter letter;
+
+  /// True while the mastery evaluation is still running (a fast local read);
+  /// the copy stays quiet so nothing flashes a false verdict.
+  final bool evaluating;
+
+  /// "Keep practicing" — steps back into the unit's practice sections.
+  final VoidCallback onKeepPracticing;
+
+  /// "Back Home" — the calm ghost exit.
+  final VoidCallback onExit;
+
+  @override
+  Widget build(BuildContext context) {
+    if (evaluating) {
+      // One quiet frame while the local evaluation resolves — no verdict yet.
+      return const Center(child: SizedBox.shrink());
+    }
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 480),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Almost there.',
+              style: QalamTextStyles.heading,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Your ${letter.name.display} needs a few more clean tries. '
+              'The star comes when every exercise is truly yours.',
+              style: QalamTextStyles.body.copyWith(color: QalamTokens.fgMuted),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            FilledButton(
+              key: const ValueKey('masteryNotYet:keepPracticing'),
+              onPressed: onKeepPracticing,
+              child: const Text('Keep practicing'),
+            ),
+            const SizedBox(height: 8),
+            TextButton(
+              key: const ValueKey('masteryNotYet:backHome'),
+              onPressed: onExit,
+              child: const Text('Back Home'),
+            ),
+          ],
+        ),
       ),
     );
   }

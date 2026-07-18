@@ -337,6 +337,16 @@ class CurriculumRepository {
     }
   }
 
+  /// The letter ids that have live Letter Unit content (a `units` entry in
+  /// Firestore or the bundled seed) — THE data-driven routing source
+  /// (finalization Lane A): Home + Journey route a letter to `/unit` iff its id
+  /// is in this set, never off a hardcoded letter list. Adding a letter to the
+  /// database is all it takes to route it to the full unit.
+  Future<Set<String>> getUnitLetterIds() async {
+    final units = await _getUnits();
+    return {for (final u in units) u.letterId};
+  }
+
   Future<List<LetterUnit>> _getUnits() async {
     final cached = _units;
     if (cached != null) return cached;
@@ -353,6 +363,42 @@ class CurriculumRepository {
       fromJson: LetterUnit.fromJson,
     );
     return _units = loaded;
+  }
+
+  // Per-letter graph JSON cache (Firestore-first read, finalization Lane A).
+  // `containsKey` distinguishes "checked, absent" (cached null → bundled asset
+  // wins without re-hitting the network) from "never checked".
+  final Map<String, Map<String, Object?>?> _graphJsonByLetter = {};
+
+  /// The raw curriculum-GRAPH document for [letterId] — Firestore-first
+  /// (collection `graphs`, doc id == letterId), or null when the doc is
+  /// absent/empty/unreachable so the caller falls back to the bundled
+  /// `assets/curriculum/graphs/<letterId>.json` asset. This mirrors the
+  /// letters/exercises/units content-resolution order (D-01/D-02) and is what
+  /// makes "add a letter by only touching the database" true for the
+  /// progression rail: a graph seeded to Firestore is live with NO rebuild.
+  ///
+  /// Graph JSON is Firestore-legal as-is (no nested arrays — competencies /
+  /// tiers / nodes are maps and flat string lists), so no point codec applies.
+  /// Never throws; the `.fromStrings` JSON-override test mode stays
+  /// network-free and returns null (bundle/fake data wins).
+  Future<Map<String, Object?>?> getGraphJson(String letterId) async {
+    if (_lettersJsonOverride != null) return null; // JSON-override test mode.
+    if (_graphJsonByLetter.containsKey(letterId)) {
+      return _graphJsonByLetter[letterId];
+    }
+    Map<String, Object?>? out;
+    try {
+      final doc = await _firestore.collection('graphs').doc(letterId).get();
+      final data = doc.data();
+      if (doc.exists && data != null && data.isNotEmpty) {
+        out = Map<String, Object?>.from(data);
+      }
+    } catch (_) {
+      // network/permission/cold-first-run → the bundled asset wins.
+      out = null;
+    }
+    return _graphJsonByLetter[letterId] = out;
   }
 
   /// Generic Schema v2 collection loader (mirrors

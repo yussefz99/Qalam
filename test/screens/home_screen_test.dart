@@ -27,6 +27,7 @@ import 'package:qalam/data/drift_progress_repository.dart';
 import 'package:qalam/data/progress_repository.dart';
 import 'package:qalam/l10n/app_localizations.dart';
 import 'package:qalam/providers/profile_providers.dart';
+import 'package:qalam/providers/progression_providers.dart';
 import 'package:qalam/screens/home_screen.dart';
 import 'package:qalam/theme/dimens.dart';
 import 'package:qalam/widgets/arabic_text.dart';
@@ -168,6 +169,12 @@ Widget _buildHome({
       progressRepositoryProvider.overrideWithValue(
         progress ?? _FakeProgressRepository(),
       ),
+      // Lane A: the today-card route is DATA-driven (unitLetterIdsProvider —
+      // the letters with live unit content). The `.fromStrings` repo has no
+      // Schema-v2 seed, so supply the shipped unit set explicitly: these four
+      // letters carry units.json entries in the real bundle.
+      unitLetterIdsProvider
+          .overrideWith((ref) async => const {'alif', 'baa', 'taa', 'thaa'}),
     ],
     child: MaterialApp.router(
       routerConfig: router,
