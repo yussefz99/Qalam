@@ -597,7 +597,7 @@ requirements** by design — investigations that tune the deployed system.
 - [x] **Phase 17: BUILD — stroke-aware coaching (on-device geo-diff → coach)** - The coach names the specific geometry of the child's actual attempt via an on-device derived diff; raw strokes never leave the device. (completed 2026-07-06)
 - [x] **Phase 18: BUILD — the living tutor: per-child dynamic exercise selection** - Two-timescale child model, remediation arcs, just-this-part micro-drills, railed to the signed graph. (owner-closed 2026-07-17; 18-11 human gates + UAT device retest deferred — see the phase's deferred-items.md)
 - [ ] **Phase 18.1: Content & audio at scale (INSERTED — partner track)** - Real pronunciation clips through a manifest-driven pipeline, a draft vocabulary bank for all 28 letters, and per-letter sign-off review packets — runs parallel with Phase 19, feeds Phases 20–21.
-- [ ] **Phase 19: Question presentation overhaul** - Every question self-explanatory on screen (persistent instruction, big stimulus, per-type affordance); language cards rewritten with the mother; micro-drills return; per-child position keying fixed.
+- [x] **Phase 19: Question presentation overhaul** - Every question self-explanatory on screen (persistent instruction, big stimulus, per-type affordance); language cards rewritten with the mother; micro-drills return; per-child position keying fixed. (completed 2026-07-18)
 - [ ] **Phase 20: Curriculum graph + authoring pipeline for all 28 letters** - Generalize the baa-only graph to the full alphabet (mother's intro order) + the model-drafts/mother-signs pipeline, proven on the first batch.
 - [ ] **Phase 21: Letter content at scale** - All remaining letters authored as data in mother-signed batches through the Phase-20 pipeline.
 - [ ] **Phase 22: Cross-letter mistake-aware selection + next-day lesson planner** - Selection and remediation reason across letters; the nightly job emits tomorrow's prepared unit (S2-04/S2-05).
@@ -938,7 +938,7 @@ by (childProfileId, letterId) with migration, so a new profile starts fresh.
   4. Two child profiles on one device keep separate graph cursors/arc state (a fresh profile starts at the opening).
 
 **UI hint**: yes
-**Plans:** 5/6 plans executed
+**Plans:** 6/6 plans complete
 Plans:
 
 **Wave 1**
@@ -954,7 +954,7 @@ Plans:
 
 **Wave 3** *(blocked on 19-04)*
 
-- [ ] 19-06-PLAN.md — Per-child keying migration v6→v7 + childProfileId threading + drop LetterReps + ADR-018 (QP-09/QP-10; D-13..D-17/D-20)
+- [x] 19-06-PLAN.md — Per-child keying migration v6→v7 + childProfileId threading + drop LetterReps + ADR-018 (QP-09/QP-10; D-13..D-17/D-20)
 
 #### Phase 20: Curriculum graph and authoring pipeline for all 28 letters
 
@@ -1075,7 +1075,7 @@ is DROPPED from this milestone's scope (owner, 2026-07-16).
 | 16. BUILD — presence + voice + eval gate + demo-harden | 3/6 | In Progress (re-scope: eval-trust legs survive; demo-harden moot) |  |
 | 17. BUILD — stroke-aware coaching (on-device geo-diff → coach) | 10/10 | Complete   | 2026-07-06 |
 | 18. BUILD — the living tutor (per-child dynamic exercise selection) | 15/16 | In Progress|  |
-| 19. Question presentation overhaul | 5/6 | In Progress|  |
+| 19. Question presentation overhaul | 6/6 | Complete   | 2026-07-18 |
 | 20. Curriculum graph + pipeline for all 28 letters | 0/TBD | Not started | - |
 | 21. Letter content at scale (mother-signed batches) | 0/TBD | Not started | - |
 | 22. Cross-letter selection + next-day planner | 0/TBD | Not started | - |

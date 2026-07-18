@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
-status: executing
-stopped_at: Phase 19 UI-SPEC approved (mid plan-phase --chain)
-last_updated: "2026-07-17T22:29:44.504Z"
+status: verifying
+stopped_at: Completed 19-06-PLAN.md (all 6 plans done; phase ready for verification)
+last_updated: "2026-07-18T07:47:09.108Z"
 progress:
   total_phases: 29
-  completed_phases: 15
+  completed_phases: 16
   total_plans: 112
-  completed_plans: 106
-  percent: 52
+  completed_plans: 107
+  percent: 55
 ---
 
 # Project State
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 
 Phase: 19 (Question presentation overhaul — every question self-explanatory on screen) — EXECUTING
 Plan: 6 of 6
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Next: Resume with either (a) `/gsd:verify-work 18` re-run against the 18-UAT.md gaps to formally re-test each of T2/T3/T5/T6/T7 on the deployed build and close that UAT session, or (b) go straight to the ORIGINAL phase-close plan 18-11-PLAN.md (separate from this gap-closure round) — its Task 2 (device cost/latency measurement) could piggyback on the current iPad session; Task 3 (mother's sign-off on kArcEntryFailStreak/kArcMaxAttempts/EMA constants/micro-drill copy/selection gold set) is still fully open and required before the phase verifier can flip R1/R4/R5/R6/R7/R8/R9. Phase 18 is NOT complete until 18-11 lands.
 PriorNext: 18-07 (live-path wiring) confirmed genuinely done in the prior session (the earlier "18-07 done" note had been an inaccurate narrative — only a plan-amendment commit existed until that pass landed real source wiring). 18-08/18-09 (server WHY grounding + nightly compiler) executed before 18-07 since the server/eval legs don't depend on client wiring.
 
@@ -117,6 +117,7 @@ PriorNext: 18-07 (live-path wiring) confirmed genuinely done in the prior sessio
 | Phase 19 P3 | 17min | 2 tasks | 5 files |
 | Phase 19 P04 | 12min | 2 tasks | 14 files |
 | Phase 19 P05 | 14min | 3 tasks | 8 files |
+| Phase 19 P06 | 30min | 3 tasks | 33 files |
 
 ## Accumulated Context
 
@@ -282,6 +283,8 @@ Recent decisions affecting current work:
 - [Phase 19]: [19-04] Aggregation rule = MAX across a letter's LetterExerciseReps rows (DB-computable, no graph dep); behavior-identical to old LetterReps for the single-row /practice path. Display/resume indicator only — isMasteryMet over essential nodes stays the star gate. Practice provider write-through banks a synthetic __whole_letter__ exercise id. — MAX chosen over essential-floor because essential-node set lives in lib/curriculum, not the DB layer; keeps the accessor a clean data-layer read.
 - [Phase 19]: [19-05] Learned-letters lint GREEN (QP-07): 6 unlearned-letter baa cards gated (nodes removed, configs dormant + refiled for Phase 20/21); baa.connectWord.kitaab rewritten كتاب->باب (alif+baa, signedOff:false); lint self-greens with ZERO test edits.
 - [Phase 19]: [19-05] Micro-drills restored to the live graph (QP-08/D-18): 3 baa.microDrill.{dot,bowl,start} nodes re-added; microdrill_selection now sourced from the live graph. curriculum_graph_test reconciled to 17 nodes/3 microDrills (Rule 1). Server copies re-derived via generate.py; the 4 alif_reference failures are pre-existing/out-of-scope.
+- [Phase ?]: [19-06] Per-child keying migration (ADR-018): 5 progress tables re-keyed by (childProfileId, letterId) in one v6->v7 TableMigration recreate+backfill; LetterCriterionEvidence carries childProfileId as a filtered column (A3); ChildProfileMirror stays uid-keyed (D-17); LetterReps dropped (D-15). Fresh profile reads clean — profile-resume leak closed.
+- [Phase ?]: [19-06] childProfileId cached ONCE in LetterUnitController.start() (Pitfall 4) + threaded through repos; it is a client-local int, absent from lib/tutor/ / TutorFacts / coach payload (ADR-017 wire boundary; non-PII guards green).
 
 ### Pending Todos
 
@@ -322,6 +325,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-17T22:29:17.522Z
-Stopped at: Phase 19 UI-SPEC approved (mid plan-phase --chain)
+Last session: 2026-07-18T07:47:09.102Z
+Stopped at: Completed 19-06-PLAN.md (all 6 plans done; phase ready for verification)
 Resume files: .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-02-PLAN.md (next — cross-letter labels + baa micro-drill set), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-03-PLAN.md (EMA + Drift v6), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-01-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)

@@ -49,6 +49,33 @@ touches only the baa graph (`curriculum_graph.json`), the baa `kitaab` card
 repeatedly lists `alif-reference` as a known out-of-scope failure. Not this
 plan's to fix; do NOT re-bake the golden.
 
+## Pre-existing test failures (out of scope for 19-06)
+
+The **exercise-count drift** — two `test/` cases expect **51** bundled baa+taa+alif
+exercise configs but the shipped `assets/curriculum/exercises.json` now has **52**:
+
+- **`test/data/curriculum_repository_v2_test.dart`** — "getExercises() returns the
+  bundled baa+taa+alif configs as Exercises" → `Expected length 51, Actual 52`.
+- **`test/curriculum/all_letters_validation_test.dart`** — same `51 vs 52` length
+  assertion (in addition to the alif `signedOff` case already logged under 19-05).
+
+**Verified NOT caused by 19-06 (2026-07-18):** 19-06 threads `childProfileId`
+through the data/repository/controller layer + regenerates `practice_providers.g.dart`
+only — it touches **zero** curriculum files. `git diff --name-only HEAD --
+assets/curriculum/ lib/curriculum/` over the 19-06 working tree is **empty**. The
+`52` count is the committed state at HEAD (the 19-05 micro-drill re-add,
+`dc45ba6`, added a config). These are curriculum-data/asset assertions owned by a
+curriculum plan / the phase verifier, not the keying migration. Do NOT touch
+`exercises.json` here (curriculum content is the owner's-mother domain).
+
+**Note (not a deferral): `test/spike_genui/durable_layers_unchanged_test.dart`** —
+the Phase-11 throwaway spike guard runs `git diff --quiet HEAD -- lib/features/letter_unit/`
+(a *working-tree* check). It goes RED while 19-06 Task 3's edits to
+`letter_unit_controller.dart` / `letter_unit_screen.dart` are UNCOMMITTED, and
+returns GREEN automatically once the task commit lands those edits into HEAD (the
+diff over the sacred paths is then empty). Not a regression — an artifact of an
+in-flight working tree.
+
 ## Wave-0 RED tests greened by later Wave-2 plans (expected RED at 19-02)
 
 - **`copy_stimulus_test.dart`** (QP-03) — RED by missing `CopyStimulus`; greened
