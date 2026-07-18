@@ -104,7 +104,9 @@ void main() {
       // + quick task 260718-il4 (Stage 1 all-letters-live): thaa (19, promoted
       //   from the 18.1 drafts, ALL signedOff:false pending the mother's packet)
       //   = 71.
-      expect(exercises, hasLength(71));
+      // + finalization 2026-07-19: alif.writeLetter.fromPicture (the owner's
+      //   alif shrink — "what does أسد start with", draft, signedOff:false) = 72.
+      expect(exercises, hasLength(72));
       expect(exercises, everyElement(isA<Exercise>()));
       // Signed-off invariant for the SIGNED-demo core (baa/taa/alif), pinned as
       // an exact unsigned set so drift cannot grow silently. thaa is EXCLUDED
@@ -137,6 +139,8 @@ void main() {
             'alif.traceLetter.isolated',
             'alif.writeLetter.fromSound',
             'alif.writeLetter.writeForm',
+            // Finalization 2026-07-19: the new draft card of the alif shrink:
+            'alif.writeLetter.fromPicture',
             // Lane B content-integrity flips (pending mother re-confirmation):
             'alif.teachCard.meet',
             'alif.writeWord.copy',

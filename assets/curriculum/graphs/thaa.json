@@ -29,13 +29,6 @@
       ]
     },
     {
-      "id": "fluentReading",
-      "essential": true,
-      "prerequisites": [
-        "copyWrite"
-      ]
-    },
-    {
       "id": "wordBuilding",
       "essential": false,
       "prerequisites": [
@@ -156,18 +149,6 @@
       "exerciseId": "thaa.fillBlank.adjective",
       "competency": "wordBuilding",
       "tier": null,
-      "minCleanReps": 1
-    },
-    {
-      "exerciseId": "thaa.buildSentence.hear",
-      "competency": "fluentReading",
-      "tier": "ghayrManzur",
-      "minCleanReps": 1
-    },
-    {
-      "exerciseId": "thaa.buildSentence.picture",
-      "competency": "fluentReading",
-      "tier": "manzur",
       "minCleanReps": 1
     }
   ]

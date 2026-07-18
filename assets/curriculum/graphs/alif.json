@@ -20,27 +20,6 @@
       "prerequisites": [
         "recognize"
       ]
-    },
-    {
-      "id": "copyWrite",
-      "essential": true,
-      "prerequisites": [
-        "positionalForms"
-      ]
-    },
-    {
-      "id": "wordBuilding",
-      "essential": false,
-      "prerequisites": [
-        "copyWrite"
-      ]
-    },
-    {
-      "id": "grammarTransform",
-      "essential": false,
-      "prerequisites": [
-        "copyWrite"
-      ]
     }
   ],
   "tiers": [
@@ -74,32 +53,8 @@
       "minCleanReps": 1
     },
     {
-      "exerciseId": "alif.writeWord.dictation",
-      "competency": "copyWrite",
-      "tier": "ghayrManzur",
-      "minCleanReps": 1
-    },
-    {
-      "exerciseId": "alif.writeWord.copy",
-      "competency": "copyWrite",
-      "tier": "manzur",
-      "minCleanReps": 1
-    },
-    {
-      "exerciseId": "alif.writeWord.picture",
-      "competency": "copyWrite",
-      "tier": "manzur",
-      "minCleanReps": 1
-    },
-    {
-      "exerciseId": "alif.connectWord.baab",
-      "competency": "copyWrite",
-      "tier": "manqul",
-      "minCleanReps": 1
-    },
-    {
-      "exerciseId": "alif.transformWord.dual",
-      "competency": "grammarTransform",
+      "exerciseId": "alif.writeLetter.fromPicture",
+      "competency": "positionalForms",
       "tier": null,
       "minCleanReps": 1
     }

@@ -59,9 +59,7 @@
             "baa.transformWord.dual",
             "baa.transformWord.plural",
             "baa.transformWord.opposite",
-            "baa.fillBlank.adjective",
-            "baa.buildSentence.hear",
-            "baa.buildSentence.picture"
+            "baa.fillBlank.adjective"
           ]
         },
         {
@@ -112,9 +110,7 @@
             "taa.transformWord.dual",
             "taa.transformWord.plural",
             "taa.transformWord.opposite",
-            "taa.fillBlank.adjective",
-            "taa.buildSentence.hear",
-            "taa.buildSentence.picture"
+            "taa.fillBlank.adjective"
           ]
         },
         {
@@ -142,22 +138,8 @@
           "id": "forms",
           "exercises": [
             "alif.writeLetter.fromSound",
-            "alif.writeLetter.writeForm"
-          ]
-        },
-        {
-          "id": "words",
-          "exercises": [
-            "alif.writeWord.dictation",
-            "alif.writeWord.copy",
-            "alif.writeWord.picture",
-            "alif.connectWord.baab"
-          ]
-        },
-        {
-          "id": "listenWrite",
-          "exercises": [
-            "alif.transformWord.dual"
+            "alif.writeLetter.writeForm",
+            "alif.writeLetter.fromPicture"
           ]
         },
         {
@@ -208,9 +190,7 @@
             "thaa.transformWord.dual",
             "thaa.transformWord.plural",
             "thaa.transformWord.opposite",
-            "thaa.fillBlank.adjective",
-            "thaa.buildSentence.hear",
-            "thaa.buildSentence.picture"
+            "thaa.fillBlank.adjective"
           ]
         },
         {

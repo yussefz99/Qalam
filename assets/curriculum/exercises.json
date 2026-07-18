@@ -2088,6 +2088,40 @@
       ]
     },
     {
+      "id": "alif.writeLetter.fromPicture",
+      "type": "writeLetter",
+      "skill": "recall",
+      "_review": "NEW DRAFT (owner-directed alif shrink, 2026-07-19): alif is now letter-level only — hear it, trace it, write its form, and name what a word STARTS with (أسد + the lion art). Modeled on taa.writeLetter.fromPicture. Mother confirms wording + art.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write the letter this picture's word starts with."
+        },
+        {
+          "kind": "image",
+          "imageId": "assets/images/img.lion.webp",
+          "caption": "أسد"
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ا",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — أسد starts with ا. أحسنت!",
+        "wrongLetter": "Listen: أَسَد — ah… it starts with alif. Write ا.",
+        "unclear": "Almost — draw alif tall and straight, top to bottom."
+      },
+      "signedOff": false
+    },
+    {
       "id": "baa.microDrill.dot",
       "type": "microDrill",
       "skill": "formation",

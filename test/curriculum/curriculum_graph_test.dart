@@ -41,9 +41,14 @@ void main() {
     //   • the 6 gated cards are RESTORED — the owner judged them "perfect" on device;
     //     they carry an owner-approved exception in learned_letters_lint_test.dart.
     // Net: the original 20 live nodes (14 core incl. traceLetter.final + 6 restored), no drills.
-    expect(graph.nodes.length, 20,
-        reason: '14 core baa.* nodes (incl. traceLetter.final) + the 6 owner-restored '
-            'cards; micro-drills removed (owner device UAT 2026-07-18)');
+    // MINUS the 2 buildSentence nodes (owner device decision 2026-07-19: the
+    // sentence surface presents an empty canvas with nothing to work from, and
+    // the sentences demand letters far beyond baa — removed from unit + graph;
+    // the mother re-confirms alongside the demo-weight rep counts). Net: 18.
+    expect(graph.nodes.length, 18,
+        reason: '14 core baa.* nodes (incl. traceLetter.final) + 4 of the 6 '
+            'owner-restored cards (both buildSentence cards removed 2026-07-19); '
+            'micro-drills removed (owner device UAT 2026-07-18)');
     final microDrills =
         graph.nodes.where((n) => n.competency == 'microDrill').toList();
     expect(microDrills, isEmpty,

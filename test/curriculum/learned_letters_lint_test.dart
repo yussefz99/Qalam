@@ -110,13 +110,14 @@ void main() {
     };
 
     // Owner-approved exceptions for the SIGNED baa unit (device UAT, 2026-07-18):
-    // these 6 cards were gated by 19-05 (D-19) and RESTORED by explicit owner
+    // these cards were gated by 19-05 (D-19) and RESTORED by explicit owner
     // decision — judged "perfect and really impressive" on device; the reworked
     // presentation carries the unlearned letters. Exact allowlist; any OTHER live
     // baa card demanding unlearned letters still fails.
+    // 2026-07-19: both buildSentence cards REMOVED from the live unit (owner
+    // device decision — empty-canvas surface + sentence letters far beyond baa),
+    // so their allowlist entries are gone too; 4 exceptions remain.
     const baaOwnerApprovedExceptions = <String>{
-      'baa.buildSentence.hear',
-      'baa.buildSentence.picture',
       'baa.fillBlank.adjective',
       'baa.transformWord.dual',
       'baa.transformWord.plural',
