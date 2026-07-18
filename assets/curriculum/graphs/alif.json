@@ -66,43 +66,43 @@
       "exerciseId": "alif.traceLetter.isolated",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "alif.writeLetter.fromSound",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "alif.writeLetter.writeForm",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "alif.writeWord.dictation",
       "competency": "copyWrite",
       "tier": "ghayrManzur",
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "alif.writeWord.copy",
       "competency": "copyWrite",
       "tier": "manzur",
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "alif.writeWord.picture",
       "competency": "copyWrite",
       "tier": "manzur",
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "alif.connectWord.baab",
       "competency": "copyWrite",
       "tier": "manqul",
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "alif.transformWord.dual",

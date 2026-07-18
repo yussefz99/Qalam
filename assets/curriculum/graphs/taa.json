@@ -66,73 +66,73 @@
       "exerciseId": "taa.traceLetter.isolated",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "taa.traceLetter.initial",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "taa.traceLetter.medial",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "taa.writeLetter.fromSound",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "taa.writeLetter.fromPicture",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "taa.writeLetter.writeForm",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "taa.writeWord.dictation",
       "competency": "copyWrite",
       "tier": "ghayrManzur",
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "taa.writeWord.copy",
       "competency": "copyWrite",
       "tier": "manzur",
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "taa.writeWord.picture",
       "competency": "copyWrite",
       "tier": "manzur",
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "taa.connectWord.taaj",
       "competency": "copyWrite",
       "tier": "manqul",
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "taa.connectWord.bayt",
       "competency": "copyWrite",
       "tier": "manqul",
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "taa.completeWord.middle",
       "competency": "copyWrite",
       "tier": "manqul",
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "taa.transformWord.dual",

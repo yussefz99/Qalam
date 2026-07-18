@@ -66,73 +66,73 @@
       "exerciseId": "thaa.traceLetter.isolated",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "thaa.traceLetter.initial",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "thaa.traceLetter.medial",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "thaa.writeLetter.fromSound",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "thaa.writeLetter.fromPicture",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "thaa.writeLetter.writeForm",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "thaa.writeWord.dictation",
       "competency": "copyWrite",
       "tier": "ghayrManzur",
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "thaa.writeWord.copy",
       "competency": "copyWrite",
       "tier": "manzur",
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "thaa.writeWord.picture",
       "competency": "copyWrite",
       "tier": "manzur",
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "thaa.connectWord.thalab",
       "competency": "copyWrite",
       "tier": "manqul",
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "thaa.connectWord.thalj",
       "competency": "copyWrite",
       "tier": "manqul",
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "thaa.completeWord.middle",
       "competency": "copyWrite",
       "tier": "manqul",
-      "minCleanReps": 3
+      "minCleanReps": 1
     },
     {
       "exerciseId": "thaa.transformWord.dual",
