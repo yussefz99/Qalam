@@ -30,14 +30,14 @@ result: [pending]
 
 ### 5. Owner-authorized server redeploy
 expected: The re-derived server curriculum_data (WR-05 — G4 gate now accepts restored micro-drills + final trace + kitaab, rejects the 6 gated ids) is deployed to the tutor server. Committed but NOT deployed — each prod deploy needs fresh explicit owner wording.
-result: [pending]
+result: PASSED 2026-07-18 — owner authorized in-session ("Deploy now"); rev qalam-tutor-00028-bzr serving 100%; /health 200, /coach unauthenticated 401.
 
 ## Summary
 
 total: 5
-passed: 0
+passed: 1
 issues: 0
-pending: 5
+pending: 4
 skipped: 0
 blocked: 0
 
