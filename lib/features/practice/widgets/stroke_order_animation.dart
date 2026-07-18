@@ -26,6 +26,7 @@ import 'dart:ui' show PathMetric;
 import 'package:flutter/material.dart';
 
 import '../../../models/letter.dart';
+import 'guide_geometry.dart';
 import '../../../theme/colors.dart';
 import '../../../theme/dimens.dart';
 
@@ -304,8 +305,10 @@ class _AnimationPainter extends CustomPainter {
     return path;
   }
 
-  Offset _scale(List<double> p, Size size) =>
-      Offset(p[0] * size.width, p[1] * size.height);
+  // UNIFORM centered scale via the shared helper — NEVER a per-axis stretch,
+  // so the demo pen animates exactly along the dotted guide the child traces
+  // (the taa/thaa trace-unpassable root cause; see guide_geometry.dart).
+  Offset _scale(List<double> p, Size size) => scaleNormalizedPoint(p, size);
 
   // Gold ring start-dot — identical visual treatment to stroke_canvas.dart.
   void _paintStartDot(Canvas canvas, List<double> normalizedPoint, Size size) {

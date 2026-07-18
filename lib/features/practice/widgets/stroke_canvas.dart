@@ -31,6 +31,7 @@ import 'package:flutter/material.dart';
 
 import '../../../config/debug_flags.dart';
 import '../../../models/letter.dart';
+import 'guide_geometry.dart';
 import '../../../theme/colors.dart';
 import '../../../theme/dimens.dart';
 
@@ -405,9 +406,10 @@ class _CanvasPainter extends CustomPainter {
   }
 
   // Scale a normalized [0..1, 0..1] point to canvas pixel coordinates.
-  Offset _scale(List<double> normalizedPoint, Size size) {
-    return Offset(normalizedPoint[0] * size.width, normalizedPoint[1] * size.height);
-  }
+  // UNIFORM centered scale via the shared helper — NEVER a per-axis stretch
+  // (the taa/thaa trace-unpassable root cause; see guide_geometry.dart).
+  Offset _scale(List<double> normalizedPoint, Size size) =>
+      scaleNormalizedPoint(normalizedPoint, size);
 
   // Draw the guide as a dashed/dotted line using PathMetrics.
   void _paintDottedPath(Canvas canvas, Path path) {
