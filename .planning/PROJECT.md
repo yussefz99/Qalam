@@ -218,4 +218,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-21 after starting milestone v2.0 (AI Tutor — Technion build)*
+*Last updated: 2026-07-18 after Phase 19 complete (question-presentation overhaul: self-explanatory questions, learned-letters-only cards, micro-drills restored, per-child (childProfileId, letterId) keying with v6→v7 migration; device UAT + mother's card sign-off tracked in 19-HUMAN-UAT.md)*
