@@ -155,6 +155,33 @@ class ExerciseScaffoldStrings {
 /// Copywriting Contract). A vector asset, coloured ink-teal at the call site.
 const String _kNibGlyphAsset = 'assets/icons/qalam-nib.svg';
 
+/// Resolve the authored FLOOR line for a scored [result] over an exercise's
+/// [feedback] map — a PURE mirror of `AuthoredFallbackBrain._resolveLine`
+/// (kept byte-identical by construction):
+///   • pass            → feedback['pass'] (or '' — nothing specific to celebrate)
+///   • miss (known id) → feedback[mistakeId]
+///   • miss (unknown)  → the first non-'pass' authored line, else the warm
+///     [kGenericTryAgain] floor (NEVER '' on a fail — the silent-fail fix,
+///     260718-l12; both resolvers share the one constant so the shown/spoken
+///     text stays identical). An authored per-mistake line always wins over the
+///     floor (the floor is only the terminal else).
+///
+/// Extracted to a top-level pure function so it is unit-testable without a widget
+/// pump (the `@visibleForTesting` seam the plan asks for), while the private
+/// `_floorLineFor` stays the widget-side call site.
+@visibleForTesting
+String resolveFloorLine(Map<String, String>? feedback, CheckResult result) {
+  final fb = feedback ?? const <String, String>{};
+  if (result.passed) return fb['pass'] ?? '';
+  final id = result.mistakeId;
+  final direct = id != null ? fb[id] : null;
+  if (direct != null) return direct;
+  for (final entry in fb.entries) {
+    if (entry.key != 'pass') return entry.value;
+  }
+  return kGenericTryAgain;
+}
+
 /// The leading glyph + short child-readable line the instruction bar shows for
 /// an exercise (19-02, D-02). Exactly one of [icon] / [svgAsset] is non-null:
 /// [svgAsset] carries the brand nib glyph (traceLetter); [icon] is a Material
@@ -801,25 +828,12 @@ class _ExerciseScaffoldState extends ConsumerState<ExerciseScaffold> {
         _ => '',
       };
 
-  /// The authored FLOOR line for [result] — a mirror of
-  /// `AuthoredFallbackBrain._resolveLine` over the active exercise's feedback:
-  ///   • pass            → feedback['pass']
-  ///   • miss (known id) → feedback[mistakeId]
-  ///   • miss (unknown)  → the first non-'pass' authored line
-  /// Used to VOICE the offline floor when no agent line is present (D-04), so the
-  /// spoken text matches the verdict-side authored line the bubble shows. Empty
-  /// only when nothing is authored at all (then there is nothing to speak).
-  String _floorLineFor(CheckResult result) {
-    final feedback = widget.exercise.feedback ?? const <String, String>{};
-    if (result.passed) return feedback['pass'] ?? '';
-    final id = result.mistakeId;
-    final direct = id != null ? feedback[id] : null;
-    if (direct != null) return direct;
-    for (final entry in feedback.entries) {
-      if (entry.key != 'pass') return entry.value;
-    }
-    return '';
-  }
+  /// The authored FLOOR line for [result] — delegates to the pure
+  /// [resolveFloorLine] seam over the active exercise's feedback. Used to VOICE
+  /// the offline floor when no agent line is present (D-04), so the spoken text
+  /// matches the verdict-side authored line the bubble shows.
+  String _floorLineFor(CheckResult result) =>
+      resolveFloorLine(widget.exercise.feedback, result);
 
   /// Clear the child's ink AND reset the mascot/feedback — the Clear / Try-again
   /// CTAs. (Previously only the controller reset, so the drawing stayed put.)

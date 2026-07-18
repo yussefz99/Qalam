@@ -14,6 +14,20 @@ import 'tutor_brain.dart';
 import 'tutor_decision.dart';
 import 'tutor_facts.dart';
 
+/// The warm, calm, tutor-voice FLOOR line — spoken and shown when a scorer FAIL
+/// resolves NO authored per-mistake line (an empty/pass-only feedback map, or an
+/// unmatched mistakeId). It replaces the old silent `''` so a fail is NEVER
+/// wordless — never an empty bubble, never a silent voice (quick fix 260718-l12:
+/// the "silent fail" bug). It is the terminal else ONLY: an authored per-mistake
+/// line (e.g. baa's `shallowBowl`) always wins over this floor.
+///
+/// Voice: 5–10yo, specific-where-it-can-be, no "Oops" (CLAUDE.md — the tutor's
+/// voice). Lives here (pure lib/tutor, no Flutter import) so BOTH the offline
+/// brain and the verdict/voice side ([ExerciseScaffold._floorLineFor], which
+/// already imports this file) share one constant without a layering violation.
+const String kGenericTryAgain =
+    "Not quite yet — let's try that again, a little slower.";
+
 /// The guaranteed-degrade [TutorBrain]. Construct it with the active exercise's
 /// signed-off `feedback` map; it speaks one grounded line per [next] call.
 class AuthoredFallbackBrain implements TutorBrain {
@@ -34,8 +48,10 @@ class AuthoredFallbackBrain implements TutorBrain {
   /// Mirror of `ExerciseController.applyResult`'s resolution, kept deterministic:
   ///   • pass            → feedback['pass']
   ///   • miss (known id) → feedback[mistakeId]
-  ///   • miss (unknown)  → the first non-'pass' authored line (the floor)
-  /// Empty only when nothing is authored at all (then there is nothing to say).
+  ///   • miss (unknown)  → the first non-'pass' authored line, else the warm
+  ///     [kGenericTryAgain] floor (NEVER '' — the silent-fail fix, 260718-l12).
+  /// A pass with no authored praise still yields '' (there is nothing to
+  /// celebrate specifically); a FAIL always speaks at least the floor.
   String _resolveLine(TutorFacts facts) {
     if (facts.passed) return feedback['pass'] ?? '';
     final id = facts.mistakeId;
@@ -44,11 +60,13 @@ class AuthoredFallbackBrain implements TutorBrain {
   }
 
   /// The first non-'pass' authored line — so a miss with an unmatched id still
-  /// shows AUTHORED copy, never a generic "try again". Empty if none authored.
+  /// shows AUTHORED copy. When NOTHING non-'pass' is authored, return the warm
+  /// [kGenericTryAgain] floor instead of '' so a fail is never silent
+  /// (260718-l12: the "silent fail" bug — an empty line rendered/spoke nothing).
   String _firstMiss() {
     for (final entry in feedback.entries) {
       if (entry.key != 'pass') return entry.value;
     }
-    return '';
+    return kGenericTryAgain;
   }
 }

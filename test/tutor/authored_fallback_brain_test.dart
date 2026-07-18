@@ -68,8 +68,11 @@ void main() {
     expect(_feedback.values.contains(line), isTrue);
   });
 
-  test('with no authored feedback at all → an empty-but-safe decision (no throw)',
+  test('with no authored feedback at all → a FAIL speaks the warm floor (never silent)',
       () async {
+    // 260718-l12 silent-fail fix: the old contract ("nothing authored → nothing
+    // to say") let a scorer FAIL pass in total silence — the on-device bug the
+    // owner hit on thaa. A FAIL now always resolves at least kGenericTryAgain.
     final empty = AuthoredFallbackBrain(feedback: const {});
     final facts = buildTutorFacts(
       letterId: 'baa',
@@ -77,6 +80,6 @@ void main() {
       result: const CheckResult.fail('shallowBowl'),
     );
     final decision = await empty.next(facts);
-    expect(_lineOf(decision), isEmpty); // nothing authored → nothing to say
+    expect(_lineOf(decision), kGenericTryAgain); // fail → warm floor, never ''
   });
 }

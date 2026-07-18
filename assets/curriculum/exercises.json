@@ -2265,7 +2265,10 @@
       },
       "check": "glyph",
       "feedback": {
-        "pass": "أحسنت — nicely traced."
+        "pass": "أحسنت — nicely traced.",
+        "shallowBowl": "Give the tooth a fuller curve — try again, a little slower.",
+        "noDot": "Now add thaa's three dots, sitting together just above.",
+        "dotMisplaced": "Keep the three dots close and even, right above the tooth."
       },
       "signedOff": false,
       "letters": [
@@ -2307,7 +2310,10 @@
       },
       "check": "glyph",
       "feedback": {
-        "pass": "أحسنت — nicely traced."
+        "pass": "أحسنت — nicely traced.",
+        "shallowBowl": "Give the tooth a fuller curve — try again, a little slower.",
+        "noDot": "Now add thaa's three dots, sitting together just above.",
+        "dotMisplaced": "Keep the three dots close and even, right above the tooth."
       },
       "signedOff": false,
       "letters": [
@@ -2349,7 +2355,10 @@
       },
       "check": "glyph",
       "feedback": {
-        "pass": "أحسنت — nicely traced."
+        "pass": "أحسنت — nicely traced.",
+        "shallowBowl": "Give the tooth a fuller curve — try again, a little slower.",
+        "noDot": "Now add thaa's three dots, sitting together just above.",
+        "dotMisplaced": "Keep the three dots close and even, right above the tooth."
       },
       "signedOff": false,
       "letters": [
@@ -2390,7 +2399,8 @@
       "check": "glyph+positionalForm",
       "feedback": {
         "pass": "Yes — that's it. أحسنت!",
-        "wrongLetter": "Listen again — which letter makes that sound?"
+        "wrongLetter": "That's taa — thaa has THREE dots. Listen again and add all three.",
+        "wrongForm": "Check the form — at the start, thaa reaches forward. Try again."
       },
       "signedOff": false,
       "letters": [
@@ -2432,7 +2442,8 @@
       "check": "glyph+positionalForm",
       "feedback": {
         "pass": "Yes — that's it. أحسنت!",
-        "wrongLetter": "Listen again — which letter makes that sound?"
+        "wrongLetter": "That's taa — thaa has THREE dots. Look at the picture's word and add all three.",
+        "wrongForm": "Check the form — at the start, thaa reaches forward. Try again."
       },
       "signedOff": false,
       "letters": [
@@ -2468,7 +2479,9 @@
       },
       "check": "glyph+positionalForm",
       "feedback": {
-        "pass": "Yes — that's it. أحسنت!"
+        "pass": "Yes — that's it. أحسنت!",
+        "wrongForm": "Check the form — thaa in its isolated shape. Try again.",
+        "shallowBowl": "Give the tooth a fuller curve, then the three dots on top."
       },
       "signedOff": false,
       "letters": [
@@ -2508,6 +2521,7 @@
       "check": "sequence",
       "feedback": {
         "pass": "ثعلب — from memory. Real writing! أحسنت!",
+        "missingDot": "One of your thaa's is missing a dot — it needs all three.",
         "incomplete": "Look again and write all of its letters."
       },
       "signedOff": false,
@@ -2548,7 +2562,9 @@
       },
       "check": "sequence",
       "feedback": {
-        "pass": "ثلج — neatly done. أحسنت!"
+        "pass": "ثلج — neatly done. أحسنت!",
+        "missingDot": "One of your thaa's is missing a dot — it needs all three.",
+        "incomplete": "Good start — now copy the whole word."
       },
       "signedOff": false,
       "letters": [
@@ -2588,7 +2604,9 @@
       },
       "check": "sequence",
       "feedback": {
-        "pass": "ثعلب — from memory. أحسنت!"
+        "pass": "ثعلب — from memory. أحسنت!",
+        "missingDot": "One of your thaa's is missing a dot — it needs all three.",
+        "incomplete": "Good start — now finish the whole word."
       },
       "signedOff": false,
       "letters": [
@@ -2629,7 +2647,8 @@
       "check": "sequence+joinContinuity",
       "feedback": {
         "pass": "ثعلب — joined beautifully. أحسنت!",
-        "lifted": "Keep the letters joined — one flowing word, no lifts."
+        "lifted": "Don't lift between the letters — let thaa join across. Try again.",
+        "incomplete": "Good start — now join all of its letters."
       },
       "signedOff": false,
       "letters": [
@@ -2669,7 +2688,9 @@
       },
       "check": "sequence+joinContinuity",
       "feedback": {
-        "pass": "ثلج — joined beautifully. أحسنت!"
+        "pass": "ثلج — joined beautifully. أحسنت!",
+        "lifted": "Don't lift between the letters — let thaa join across. Try again.",
+        "incomplete": "Good start — now join all of its letters."
       },
       "signedOff": false,
       "letters": [
@@ -2708,7 +2729,9 @@
       },
       "check": "sequence",
       "feedback": {
-        "pass": "Complete! ثوم. أحسنت!"
+        "pass": "Complete! ثوم. أحسنت!",
+        "missingDot": "Your thaa needs all three dots, sitting together above.",
+        "incomplete": "Good start — write the missing thaa to finish the word."
       },
       "signedOff": false,
       "letters": [
@@ -2754,7 +2777,9 @@
       },
       "check": "sequence+transformRule",
       "feedback": {
-        "pass": "ثعلبان — أحسنت!"
+        "pass": "ثعلبان — أحسنت!",
+        "missingEnding": "Almost — add the ending that makes it two.",
+        "wrongForm": "Not quite the dual — keep the word, then add the two-ending."
       },
       "signedOff": false,
       "letters": [
@@ -2797,7 +2822,11 @@
       },
       "expected": null,
       "check": "sequence+transformRule",
-      "feedback": null,
+      "feedback": {
+        "pass": "أحسنت!",
+        "missingEnding": "Almost — add the ending that makes it many.",
+        "wrongForm": "Not quite the plural — try that ending again."
+      },
       "signedOff": false,
       "letters": [
         "thaa"
@@ -2830,7 +2859,11 @@
       },
       "expected": null,
       "check": "sequence+transformRule",
-      "feedback": null,
+      "feedback": {
+        "pass": "أحسنت!",
+        "wrongAntonym": "That's not the opposite — think of the word that means the reverse.",
+        "wrongForm": "Close — write the opposite word neatly and try again."
+      },
       "signedOff": false,
       "letters": [
         "thaa"
@@ -2866,7 +2899,9 @@
       },
       "check": "sequence",
       "feedback": {
-        "pass": "Yes! أحسنت!"
+        "pass": "Yes! أحسنت!",
+        "wrongWord": "That's not the word — read it again and pick the thaa word.",
+        "incomplete": "Good start — write the whole word."
       },
       "signedOff": false,
       "letters": [
@@ -2908,7 +2943,9 @@
       },
       "check": "order+sequence",
       "feedback": {
-        "pass": "الْثعلب كَبير — a whole sentence! أحسنت!"
+        "pass": "الْثعلب كَبير — a whole sentence! أحسنت!",
+        "wrongOrder": "Right words — now put them in the right order.",
+        "incomplete": "Almost — write the whole sentence, word by word."
       },
       "signedOff": false,
       "letters": [
@@ -2955,7 +2992,9 @@
       },
       "check": "order+sequence",
       "feedback": {
-        "pass": "الْثعلب جَميل — أحسنت!"
+        "pass": "الْثعلب جَميل — أحسنت!",
+        "wrongOrder": "Right words — now put them in the right order.",
+        "incomplete": "Almost — write the whole sentence, word by word."
       },
       "signedOff": false,
       "letters": [
