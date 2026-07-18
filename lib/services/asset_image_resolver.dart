@@ -54,6 +54,15 @@ class AssetImageResolver {
     'img.duck': '$_imageDir/img.duck.webp',
     'img.big-door': '$_imageDir/img.big-door.webp',
     'img.milk': '$_imageDir/img.milk.webp',
+    // 2026-07-18 finalization push — generated in-style (ILLUSTRATION-STYLE.md)
+    // via the Vertex image model; DRAFTS pending the mother's review.
+    'img.thalab': '$_imageDir/img.thalab.webp', // ثعلب fox — thaa unit
+    'img.thalj': '$_imageDir/img.thalj.webp', // ثلج snow — thaa unit
+    'img.crown': '$_imageDir/img.crown.webp', // تاج crown — taaj vocab
+    'img.berries': '$_imageDir/img.berries.webp', // توت mulberries — tuut vocab
+    'img.house': '$_imageDir/img.house.webp', // بيت house — bayt vocab
+    'img.lion': '$_imageDir/img.lion.webp', // أسد lion — asad vocab
+    'img.mother': '$_imageDir/img.mother.webp', // أم mother — umm vocab
   };
 
   /// Pure resolver: maps an [imageId] to a bundled asset path, or null when

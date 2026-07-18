@@ -144,6 +144,10 @@
     "text": "أم"
   },
   {
+    "id": "word.thalab",
+    "text": "ثعلب"
+  },
+  {
     "id": "sentence.albaab-kabiir",
     "text": "البابُ كبير"
   },
@@ -154,5 +158,9 @@
   {
     "id": "sentence.alasad-kabiir",
     "text": "الأسدُ كبير"
+  },
+  {
+    "id": "sentence.aththalab-kabiir",
+    "text": "الثعلبُ كبير"
   }
 ]

@@ -97,9 +97,11 @@ class AssetLetterAudioPlayer implements LetterAudioPlayer {
     'word.bayt': '$_audioDir/word.bayt.mp3',
     'word.asad': '$_audioDir/word.asad.mp3',
     'word.umm': '$_audioDir/word.umm.mp3',
+    'word.thalab': '$_audioDir/word.thalab.mp3',
     'sentence.albaab-kabiir': '$_audioDir/sentence.albaab-kabiir.mp3',
     'sentence.attaaj-jamiil': '$_audioDir/sentence.attaaj-jamiil.mp3',
     'sentence.alasad-kabiir': '$_audioDir/sentence.alasad-kabiir.mp3',
+    'sentence.aththalab-kabiir': '$_audioDir/sentence.aththalab-kabiir.mp3',
   };
   // END GENERATED
 

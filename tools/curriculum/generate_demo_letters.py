@@ -1,6 +1,15 @@
 #!/usr/bin/env python3
 """Generate full Letter Units for taa (ت) and alif (ا), modeled on signed-off baa.
 
+*** STALE — DO NOT RE-RUN WITHOUT RECONCILING (Lane B, 2026-07-18). ***
+assets/curriculum/exercises.json has since been hand-corrected: image re-points
+(img.crown/img.lion → existing art via raw asset paths), the بيت→تفاح word swap
+in taa.writeWord.picture / taa.buildSentence.picture, feedback modality fixes,
+and signedOff resets. Re-running this script would REVERT all of those (it
+removes-then-re-adds every taa/alif entry with its own authored content,
+including `signedOff: True` flags the mother never actually reviewed).
+Reconcile this script's authored blocks with the live exercises.json first.
+
 Phase 8 (demo-rescoped 2026-06-15): bring the first three letters to baa's bar so
 the Technion demo shows a real, scaling product. taa ≈ baa (boat body + TWO dots
 ABOVE); alif is a non-connector (single vertical stroke, isolated+final only).

@@ -539,7 +539,7 @@
         },
         {
           "kind": "audio",
-          "audioId": "sentence.thaa-draft"
+          "audioId": "sentence.aththalab-kabiir"
         }
       ],
       "surface": {
@@ -548,13 +548,13 @@
       },
       "expected": {
         "words": [
-          "الْثعلب",
-          "كَبير"
+          "الثعلبُ",
+          "كبير"
         ]
       },
       "check": "order+sequence",
       "feedback": {
-        "pass": "الْثعلب كَبير — a whole sentence! أحسنت!"
+        "pass": "الثعلبُ كبير — a whole sentence! أحسنت!"
       },
       "signedOff": false
     },
@@ -580,13 +580,13 @@
       },
       "expected": {
         "words": [
-          "الْثعلب",
-          "جَميل"
+          "الثعلبُ",
+          "جميل"
         ]
       },
       "check": "order+sequence",
       "feedback": {
-        "pass": "الْثعلب جَميل — أحسنت!"
+        "pass": "الثعلبُ جميل — أحسنت!"
       },
       "signedOff": false
     }

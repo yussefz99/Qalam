@@ -43,7 +43,7 @@ generate` (from `tools/`). `python -m audio_pipeline check` fails on any drift.
 | `snd.alif` | `assets/audio/snd.alif.mp3` | alif Letter Unit (Meet / trace) | draft-tts (interim AI voice) |
 | `snd.baa` | `assets/audio/snd.baa.mp3` | baa Letter Unit (Meet / trace / teach card) | draft-tts (interim AI voice) |
 | `snd.taa` | `assets/audio/snd.taa.mp3` | taa Letter Unit (Meet / trace / teach card) | draft-tts (interim AI voice) |
-| `snd.thaa` | `assets/audio/snd.thaa.mp3` | Reserved — thaa unit not authored yet | draft-tts (interim AI voice) |
+| `snd.thaa` | `assets/audio/snd.thaa.mp3` | thaa Letter Unit (Meet / trace) | draft-tts (interim AI voice) |
 | `snd.jeem` | `assets/audio/snd.jeem.mp3` | Reserved — jeem unit not authored yet | draft-tts (interim AI voice) |
 | `snd.haa_c` | `assets/audio/snd.haa_c.mp3` | Reserved — haa unit not authored yet | draft-tts (interim AI voice) |
 | `snd.khaa` | `assets/audio/snd.khaa.mp3` | Reserved — khaa unit not authored yet | draft-tts (interim AI voice) |
@@ -76,9 +76,11 @@ generate` (from `tools/`). `python -m audio_pipeline check` fails on any drift.
 | `word.bayt` | `assets/audio/word.bayt.mp3` | baa/taa vocab | draft-tts (interim AI voice) |
 | `word.asad` | `assets/audio/word.asad.mp3` | alif unit | draft-tts (interim AI voice) |
 | `word.umm` | `assets/audio/word.umm.mp3` | alif unit | draft-tts (interim AI voice) |
+| `word.thalab` | `assets/audio/word.thalab.mp3` | thaa unit (writeLetter fromSound / writeWord dictation) | draft-tts (interim AI voice) |
 | `sentence.albaab-kabiir` | `assets/audio/sentence.albaab-kabiir.mp3` | baa unit (buildSentence hear) | draft-tts (interim AI voice) |
 | `sentence.attaaj-jamiil` | `assets/audio/sentence.attaaj-jamiil.mp3` | taa unit (buildSentence) | draft-tts (interim AI voice) |
 | `sentence.alasad-kabiir` | `assets/audio/sentence.alasad-kabiir.mp3` | alif unit (buildSentence) | draft-tts (interim AI voice) |
+| `sentence.aththalab-kabiir` | `assets/audio/sentence.aththalab-kabiir.mp3` | thaa unit (buildSentence hear) | draft-tts (interim AI voice) |
 <!-- END GENERATED -->
 
 ### Real vs draft-tts — and why the build stays green

@@ -138,15 +138,15 @@ Recomputes each live word's decomposition and compares it to the stored `letters
 | word | gloss | stored letters[] | computed letters[] | match |
 |---|---|---|---|---|
 | باب | door | `['baa', 'alif', 'baa']` | `['baa', 'alif', 'baa']` | ✓ |
-| بطة | duck | `['baa', 'taa_marbuta']` | `['baa', 'taa_h', 'taa_marbuta']` | **✗** |
-| حليب | milk | `['haa', 'laam', 'yaa', 'baa']` | `['haa_c', 'laam', 'yaa', 'baa']` | **✗** |
+| بطة | duck | `['baa', 'taa_h', 'taa_marbuta']` | `['baa', 'taa_h', 'taa_marbuta']` | ✓ |
+| حليب | milk | `['haa_c', 'laam', 'yaa', 'baa']` | `['haa_c', 'laam', 'yaa', 'baa']` | ✓ |
 | تاج | crown | `['taa', 'alif', 'jeem']` | `['taa', 'alif', 'jeem']` | ✓ |
-| توت | berries | `['taa', 'waw', 'taa']` | `['taa', 'waaw', 'taa']` | **✗** |
+| توت | berries | `['taa', 'waaw', 'taa']` | `['taa', 'waaw', 'taa']` | ✓ |
 | بيت | house | `['baa', 'yaa', 'taa']` | `['baa', 'yaa', 'taa']` | ✓ |
 | أسد | lion | `['alif', 'seen', 'daal']` | `['alif', 'seen', 'daal']` | ✓ |
 | أم | mother | `['alif', 'meem']` | `['alif', 'meem']` | ✓ |
 
-**3 mismatch(es).**
+**0 mismatch(es).**
 
 ## 3 · Live `exercises.json` — content demanding unlearned letters
 
@@ -154,8 +154,6 @@ For each exercise, the unit letter is the id prefix (e.g. `baa.…` → baa, int
 
 | exercise | unit (order) | word | unlearned letters (order) |
 |---|---|---|---|
-| `baa.connectWord.kitaab` | baa (2) | ك  ت  ا  ب | taa(3), kaaf(22) |
-| `baa.connectWord.kitaab` | baa (2) | كتاب | taa(3), kaaf(22) |
 | `baa.transformWord.dual` | baa (2) | بابان | noon(25) |
 | `baa.transformWord.plural` | baa (2) | أبواب | waaw(27) |
 | `baa.transformWord.opposite` | baa (2) | كبير | raa(10), kaaf(22), yaa(28) |
@@ -169,7 +167,7 @@ For each exercise, the unit letter is the id prefix (e.g. `baa.…` → baa, int
 | `taa.writeWord.dictation` | taa (3) | تاج | jeem(5) |
 | `taa.writeWord.copy` | taa (3) | توت | waaw(27) |
 | `taa.writeWord.copy` | taa (3) | توت | waaw(27) |
-| `taa.writeWord.picture` | taa (3) | بيت | yaa(28) |
+| `taa.writeWord.picture` | taa (3) | تفاح | haa_c(6), faa(20) |
 | `taa.connectWord.taaj` | taa (3) | ت  ا  ج | jeem(5) |
 | `taa.connectWord.taaj` | taa (3) | تاج | jeem(5) |
 | `taa.connectWord.bayt` | taa (3) | ب  ي  ت | yaa(28) |
@@ -186,8 +184,8 @@ For each exercise, the unit letter is the id prefix (e.g. `baa.…` → baa, int
 | `taa.fillBlank.adjective` | taa (3) | تاج | jeem(5) |
 | `taa.buildSentence.hear` | taa (3) | التاجُ | jeem(5), laam(23) |
 | `taa.buildSentence.hear` | taa (3) | جميل | jeem(5), laam(23), meem(24), yaa(28) |
-| `taa.buildSentence.picture` | taa (3) | البيتُ | laam(23), yaa(28) |
-| `taa.buildSentence.picture` | taa (3) | كبير | raa(10), kaaf(22), yaa(28) |
+| `taa.buildSentence.picture` | taa (3) | التفاحُ | haa_c(6), faa(20), laam(23) |
+| `taa.buildSentence.picture` | taa (3) | جميل | jeem(5), laam(23), meem(24), yaa(28) |
 | `alif.writeWord.dictation` | alif (1) | أسد | daal(8), seen(12) |
 | `alif.writeWord.copy` | alif (1) | أم | meem(24) |
 | `alif.writeWord.copy` | alif (1) | أم | meem(24) |
@@ -198,6 +196,25 @@ For each exercise, the unit letter is the id prefix (e.g. `baa.…` → baa, int
 | `alif.transformWord.dual` | alif (1) | أسدان | daal(8), seen(12), noon(25) |
 | `alif.buildSentence.hear` | alif (1) | الأسدُ | daal(8), seen(12), laam(23) |
 | `alif.buildSentence.hear` | alif (1) | كبير | baa(2), raa(10), kaaf(22), yaa(28) |
+| `thaa.writeWord.dictation` | thaa (4) | ثعلب | ayn(18), laam(23) |
+| `thaa.writeWord.copy` | thaa (4) | ثلج | jeem(5), laam(23) |
+| `thaa.writeWord.copy` | thaa (4) | ثلج | jeem(5), laam(23) |
+| `thaa.writeWord.picture` | thaa (4) | ثعلب | ayn(18), laam(23) |
+| `thaa.connectWord.thalab` | thaa (4) | ث  ع  ل  ب | ayn(18), laam(23) |
+| `thaa.connectWord.thalab` | thaa (4) | ثعلب | ayn(18), laam(23) |
+| `thaa.connectWord.thalj` | thaa (4) | ث  ل  ج | jeem(5), laam(23) |
+| `thaa.connectWord.thalj` | thaa (4) | ثلج | jeem(5), laam(23) |
+| `thaa.completeWord.middle` | thaa (4) | ثوم | meem(24), waaw(27) |
+| `thaa.completeWord.middle` | thaa (4) | ثوم | meem(24), waaw(27) |
+| `thaa.transformWord.dual` | thaa (4) | ثعلب | ayn(18), laam(23) |
+| `thaa.transformWord.dual` | thaa (4) | ثعلبان | ayn(18), laam(23), noon(25) |
+| `thaa.transformWord.plural` | thaa (4) | ثعلب | ayn(18), laam(23) |
+| `thaa.fillBlank.adjective` | thaa (4) | ثعلب | ayn(18), laam(23) |
+| `thaa.fillBlank.adjective` | thaa (4) | ثعلب | ayn(18), laam(23) |
+| `thaa.buildSentence.hear` | thaa (4) | الثعلبُ | ayn(18), laam(23), laam(23) |
+| `thaa.buildSentence.hear` | thaa (4) | كبير | raa(10), kaaf(22), yaa(28) |
+| `thaa.buildSentence.picture` | thaa (4) | الثعلبُ | ayn(18), laam(23), laam(23) |
+| `thaa.buildSentence.picture` | thaa (4) | جميل | jeem(5), laam(23), meem(24), yaa(28) |
 
-**44 exercise/word finding(s).**
+**61 exercise/word finding(s).**
 

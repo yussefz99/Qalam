@@ -864,6 +864,7 @@
       "id": "taa.teachCard.meet",
       "type": "teachCard",
       "skill": "comprehension",
+      "_review": "IMAGE RE-POINT (Lane B 2026-07-18): example word تاج→تفاح — no crown art exists yet, the apple illustration does. تفاح starts with taa. Mother confirms example word + art.",
       "_note": "SUPPORT section: PromptHeader only, no WriteSurface.",
       "prompt": [
         {
@@ -876,8 +877,8 @@
         },
         {
           "kind": "image",
-          "imageId": "img.crown",
-          "caption": "تاج · taaj"
+          "imageId": "assets/images/img.tuffaah.webp",
+          "caption": "تفاح · tuffaah"
         },
         {
           "kind": "forms",
@@ -894,7 +895,7 @@
       "expected": null,
       "check": null,
       "feedback": null,
-      "signedOff": true,
+      "signedOff": false,
       "letters": [
         "taa"
       ],
@@ -1077,6 +1078,7 @@
       "id": "taa.writeLetter.fromPicture",
       "type": "writeLetter",
       "skill": "recall",
+      "_review": "IMAGE RE-POINT (Lane B 2026-07-18): picture word تاج→تفاح (no crown art yet; apple art exists; both start with taa — expected letter unchanged). Mother confirms.",
       "prompt": [
         {
           "kind": "say",
@@ -1084,8 +1086,8 @@
         },
         {
           "kind": "image",
-          "imageId": "img.crown",
-          "caption": "تاج"
+          "imageId": "assets/images/img.tuffaah.webp",
+          "caption": "تفاح"
         }
       ],
       "surface": {
@@ -1103,7 +1105,7 @@
         "pass": "Yes — that's it. أحسنت!",
         "wrongLetter": "Listen again — which letter makes that sound?"
       },
-      "signedOff": true,
+      "signedOff": false,
       "letters": [
         "taa"
       ],
@@ -1156,6 +1158,7 @@
       "id": "taa.writeWord.dictation",
       "type": "writeWord",
       "skill": "spelling",
+      "_review": "FEEDBACK FIX (Lane B 2026-07-18): wrongWord said 'look at the picture' but dictation shows no picture — reworded to listening. Mother confirms.",
       "prompt": [
         {
           "kind": "say",
@@ -1179,9 +1182,9 @@
       "feedback": {
         "pass": "تاج — from memory. Real writing! أحسنت!",
         "incomplete": "Look again and write all of its letters.",
-        "wrongWord": "That's a different word — look at the picture and try again."
+        "wrongWord": "That's a different word — listen again: تاج."
       },
-      "signedOff": true,
+      "signedOff": false,
       "letters": [
         "taa",
         "alif",
@@ -1197,6 +1200,7 @@
       "id": "taa.writeWord.copy",
       "type": "writeWord",
       "skill": "spelling",
+      "_review": "FEEDBACK FIX (Lane B 2026-07-18): lines said 'from memory'/'look at the picture' but copy shows the word and no picture — reworded to the baa copy-card house style. Mother confirms.",
       "prompt": [
         {
           "kind": "say",
@@ -1218,11 +1222,11 @@
       },
       "check": "sequence",
       "feedback": {
-        "pass": "توت — from memory. Real writing! أحسنت!",
+        "pass": "You remembered it — توت. أحسنت!",
         "incomplete": "Look again and write all of its letters.",
-        "wrongWord": "That's a different word — look at the picture and try again."
+        "wrongWord": "That's a different word — look at the word again: توت."
       },
-      "signedOff": true,
+      "signedOff": false,
       "letters": [
         "taa",
         "waaw"
@@ -1237,6 +1241,7 @@
       "id": "taa.writeWord.picture",
       "type": "writeWord",
       "skill": "spelling",
+      "_review": "WORD SWAP (Lane B 2026-07-18): بيت→تفاح — no house art exists, apple art does; تفاح also demands fewer not-yet-taught letters (legal at faa 20 vs yaa 28). بيت still practiced in taa.connectWord.bayt. Mother confirms.",
       "prompt": [
         {
           "kind": "say",
@@ -1244,8 +1249,8 @@
         },
         {
           "kind": "image",
-          "imageId": "img.house",
-          "caption": "بيت"
+          "imageId": "assets/images/img.tuffaah.webp",
+          "caption": "تفاح"
         }
       ],
       "surface": {
@@ -1254,20 +1259,21 @@
       },
       "expected": {
         "word": {
-          "text": "بيت"
+          "text": "تفاح"
         }
       },
       "check": "sequence",
       "feedback": {
-        "pass": "بيت — from memory. Real writing! أحسنت!",
-        "incomplete": "Look again and write all of its letters.",
+        "pass": "تفاح — “apple.” Beautiful.",
+        "incomplete": "That's the right start — finish the whole word, تفاح.",
         "wrongWord": "That's a different word — look at the picture and try again."
       },
-      "signedOff": true,
+      "signedOff": false,
       "letters": [
-        "baa",
-        "yaa",
-        "taa"
+        "taa",
+        "faa",
+        "alif",
+        "haa_c"
       ],
       "criteria": [
         "present",
@@ -1617,6 +1623,7 @@
       "id": "taa.buildSentence.picture",
       "type": "buildSentence",
       "skill": "syntax",
+      "_review": "SENTENCE SWAP (Lane B 2026-07-18): البيتُ كبير→التفاحُ جميل — no house art exists, apple art does; noun starts with taa. Follows the التاجُ جميل pattern. Mother confirms sentence + art.",
       "prompt": [
         {
           "kind": "say",
@@ -1624,8 +1631,8 @@
         },
         {
           "kind": "image",
-          "imageId": "img.house",
-          "caption": "بيت"
+          "imageId": "assets/images/img.tuffaah.webp",
+          "caption": "تفاح"
         }
       ],
       "surface": {
@@ -1634,24 +1641,25 @@
       },
       "expected": {
         "words": [
-          "البيتُ",
-          "كبير"
+          "التفاحُ",
+          "جميل"
         ]
       },
       "check": "order+sequence",
       "feedback": {
-        "pass": "البيتُ كبير — a whole sentence! أحسنت!",
-        "wrongOrder": "Keep the words in order: البيتُ كبير."
+        "pass": "التفاحُ جميل — a whole sentence! أحسنت!",
+        "wrongOrder": "Keep the words in order: التفاحُ جميل."
       },
-      "signedOff": true,
+      "signedOff": false,
       "letters": [
         "alif",
         "laam",
-        "baa",
-        "yaa",
         "taa",
-        "kaaf",
-        "raa"
+        "faa",
+        "haa_c",
+        "jeem",
+        "meem",
+        "yaa"
       ],
       "criteria": [
         "present",
@@ -1663,6 +1671,7 @@
       "id": "alif.teachCard.meet",
       "type": "teachCard",
       "skill": "comprehension",
+      "_review": "IMAGE RE-POINT (Lane B 2026-07-18): example word أسد→أرنب — no lion art exists yet, the rabbit illustration does. أرنب starts with alif. Mother confirms example word + art.",
       "_note": "SUPPORT section: PromptHeader only, no WriteSurface.",
       "prompt": [
         {
@@ -1675,8 +1684,8 @@
         },
         {
           "kind": "image",
-          "imageId": "img.lion",
-          "caption": "أسد · asad"
+          "imageId": "assets/images/img.arnab.webp",
+          "caption": "أرنب · arnab"
         },
         {
           "kind": "forms",
@@ -1693,7 +1702,7 @@
       "expected": null,
       "check": null,
       "feedback": null,
-      "signedOff": true,
+      "signedOff": false,
       "letters": [
         "alif"
       ],
@@ -1828,6 +1837,7 @@
       "id": "alif.writeWord.dictation",
       "type": "writeWord",
       "skill": "spelling",
+      "_review": "FEEDBACK FIX (Lane B 2026-07-18): wrongWord said 'look at the picture' but dictation shows no picture — reworded to listening. Mother confirms.",
       "prompt": [
         {
           "kind": "say",
@@ -1851,9 +1861,9 @@
       "feedback": {
         "pass": "أسد — from memory. Real writing! أحسنت!",
         "incomplete": "Look again and write all of its letters.",
-        "wrongWord": "That's a different word — look at the picture and try again."
+        "wrongWord": "That's a different word — listen again: أسد."
       },
-      "signedOff": true,
+      "signedOff": false,
       "letters": [
         "alif",
         "seen",
@@ -1869,6 +1879,7 @@
       "id": "alif.writeWord.copy",
       "type": "writeWord",
       "skill": "spelling",
+      "_review": "FEEDBACK FIX (Lane B 2026-07-18): lines said 'from memory'/'look at the picture' but copy shows the word and no picture — reworded to the baa copy-card house style. Mother confirms.",
       "prompt": [
         {
           "kind": "say",
@@ -1890,11 +1901,11 @@
       },
       "check": "sequence",
       "feedback": {
-        "pass": "أم — from memory. Real writing! أحسنت!",
+        "pass": "You remembered it — أم. أحسنت!",
         "incomplete": "Look again and write all of its letters.",
-        "wrongWord": "That's a different word — look at the picture and try again."
+        "wrongWord": "That's a different word — look at the word again: أم."
       },
-      "signedOff": true,
+      "signedOff": false,
       "letters": [
         "alif",
         "meem"
@@ -2928,7 +2939,7 @@
         },
         {
           "kind": "audio",
-          "audioId": "sentence.thaa-draft"
+          "audioId": "sentence.aththalab-kabiir"
         }
       ],
       "surface": {
@@ -2937,13 +2948,13 @@
       },
       "expected": {
         "words": [
-          "الْثعلب",
-          "كَبير"
+          "الثعلبُ",
+          "كبير"
         ]
       },
       "check": "order+sequence",
       "feedback": {
-        "pass": "الْثعلب كَبير — a whole sentence! أحسنت!",
+        "pass": "الثعلبُ كبير — a whole sentence! أحسنت!",
         "wrongOrder": "Right words — now put them in the right order.",
         "incomplete": "Almost — write the whole sentence, word by word."
       },
@@ -2986,13 +2997,13 @@
       },
       "expected": {
         "words": [
-          "الْثعلب",
-          "جَميل"
+          "الثعلبُ",
+          "جميل"
         ]
       },
       "check": "order+sequence",
       "feedback": {
-        "pass": "الْثعلب جَميل — أحسنت!",
+        "pass": "الثعلبُ جميل — أحسنت!",
         "wrongOrder": "Right words — now put them in the right order.",
         "incomplete": "Almost — write the whole sentence, word by word."
       },
