@@ -221,21 +221,23 @@ def test_authored_set_mirrors_live_graph_nodes():
     }
     baa_exercises = {i for i in AUTHORED_BAA_IDS if i.startswith("baa.")}
     assert baa_exercises == node_ids
-    # The 19-05 dispositions hold: restored ids in, gated ids out.
+    # Owner device-UAT dispositions (2026-07-18) hold: the 6 once-gated cards are
+    # RESTORED (owner-approved lint exception), micro-drills are OUT again, and
+    # the final-form trace + the rewritten kitaab (بابا) stay in.
     assert {
-        "baa.microDrill.dot",
-        "baa.microDrill.bowl",
-        "baa.microDrill.start",
         "baa.traceLetter.final",
         "baa.connectWord.kitaab",
-    } <= baa_exercises
-    assert baa_exercises.isdisjoint({
         "baa.buildSentence.hear",
         "baa.buildSentence.picture",
         "baa.fillBlank.adjective",
         "baa.transformWord.dual",
         "baa.transformWord.plural",
         "baa.transformWord.opposite",
+    } <= baa_exercises
+    assert baa_exercises.isdisjoint({
+        "baa.microDrill.dot",
+        "baa.microDrill.bowl",
+        "baa.microDrill.start",
     })
 
 

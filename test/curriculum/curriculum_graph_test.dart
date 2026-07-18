@@ -35,21 +35,20 @@ void main() {
         reason: 'owner-mother signed the graph at the tier level (D-05); Plan 15-07 flipped it. '
             'Plan 19-05 (D-18 restore / D-19 gate) adds/removes nodes but does NOT touch her '
             'tier-structure sign-off — new/rewritten CONTENT is signedOff:false at the exercise level.');
-    // Plan 19-05 reshaped the live baa graph:
-    //   • D-18 RESTORED the 3 baa.microDrill.{dot,bowl,start} enrichment nodes (parked 2026-07-12);
-    //   • D-19 GATED (removed) the 6 cards that need unlearned letters —
-    //     baa.buildSentence.{hear,picture}, baa.fillBlank.adjective,
-    //     baa.transformWord.{dual,plural,opposite} — filed for their letters' own units (Phase 20/21).
-    // Net: 20 (pre-19-05) + 3 microDrills − 6 gated = 17 live nodes.
-    // The micro-drill policy stays pinned in microdrill_selection_test.dart, now sourced from
-    // the live graph (its fixture no longer injects the nodes).
-    expect(graph.nodes.length, 17,
-        reason: '14 core baa.* nodes (incl. traceLetter.final) + 3 restored microDrills; '
-            '6 unlearned-letter cards gated out (19-05 D-18/D-19)');
+    // Owner device-UAT decisions (2026-07-18) reversed both 19-05 graph moves:
+    //   • micro-drills are REMOVED again (they interrupted the unit flow on device;
+    //     policy stays pinned in microdrill_selection_test.dart via fixture injection);
+    //   • the 6 gated cards are RESTORED — the owner judged them "perfect" on device;
+    //     they carry an owner-approved exception in learned_letters_lint_test.dart.
+    // Net: the original 20 live nodes (14 core incl. traceLetter.final + 6 restored), no drills.
+    expect(graph.nodes.length, 20,
+        reason: '14 core baa.* nodes (incl. traceLetter.final) + the 6 owner-restored '
+            'cards; micro-drills removed (owner device UAT 2026-07-18)');
     final microDrills =
         graph.nodes.where((n) => n.competency == 'microDrill').toList();
-    expect(microDrills, hasLength(3),
-        reason: 'the 3 baa.microDrill.{dot,bowl,start} nodes are restored to the live graph (19-05 D-18)');
+    expect(microDrills, isEmpty,
+        reason: 'micro-drills are OUT of the live graph (owner device UAT 2026-07-18; '
+            're-add nodes + competency to restore)');
     expect(
       graph.nodes.every((n) => n.exerciseId.startsWith('baa.')),
       isTrue,

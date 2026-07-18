@@ -74,19 +74,44 @@ void main() {
     expect(unitCards, isNotEmpty,
         reason: 'the baa unit must have ≥1 live graph node to lint');
 
+    // Owner-approved exceptions (device UAT, 2026-07-18): these 6 cards were
+    // gated by 19-05 (D-19) and RESTORED by explicit owner decision — the owner
+    // judged them "perfect and really impressive" on device; the reworked
+    // presentation (instruction bar + audio + images) carries the unlearned
+    // letters. Exact allowlist: any OTHER live card demanding unlearned
+    // letters still fails this lint.
+    const ownerApprovedExceptions = <String>{
+      'baa.buildSentence.hear',
+      'baa.buildSentence.picture',
+      'baa.fillBlank.adjective',
+      'baa.transformWord.dual',
+      'baa.transformWord.plural',
+      'baa.transformWord.opposite',
+    };
+
     final violations = <String, List<String>>{};
     for (final e in unitCards) {
+      final id = e['id'] as String;
+      if (ownerApprovedExceptions.contains(id)) continue;
       final cardLetters =
           ((e['letters'] as List<dynamic>?) ?? const []).cast<String>();
       final unlearned = cardLetters
           .where((l) => (introOrder[l] ?? 1 << 30) > unitIntroOrder)
           .toList();
-      if (unlearned.isNotEmpty) violations[e['id'] as String] = unlearned;
+      if (unlearned.isNotEmpty) violations[id] = unlearned;
     }
 
     expect(violations, isEmpty,
         reason: 'these live baa-unit cards demand letters not yet learned '
-            '(introOrder > $unitIntroOrder). Each must be REWRITTEN to alif+baa '
-            'or GATED out of the baa graph (D-09 / D-19) by 19-05: $violations');
+            '(introOrder > $unitIntroOrder) and are NOT on the owner-approved '
+            'exception list. Each must be REWRITTEN to learned letters, GATED '
+            'out of the baa graph, or explicitly owner-approved: $violations');
+
+    // The exception list must not rot: every listed id is a live node.
+    for (final id in ownerApprovedExceptions) {
+      expect(liveNodeIds, contains(id),
+          reason: 'owner-approved exception $id is no longer a live node — '
+              'remove it from the exception list');
+    }
   });
 }

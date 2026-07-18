@@ -14,7 +14,11 @@ updated: 2026-07-18T00:00:00Z
 
 ### 1. Cold-read legibility on a real tablet (sound off)
 expected: Every non-trace question type, read cold from the screen with sound off, tells the child what to do — instruction bar (icon + short text), large stimulus (image / replayable audio card / word-to-copy), and a per-type affordance (gap slot box, copy hide+peek, trace ghost). The spoken line is reinforcement only.
-result: [pending]
+result: ISSUES FOUND 2026-07-18 (owner iPad session) → FIXED same day, re-test pending:
+  (a) micro-drills interrupted the unit flow — owner ordered them OUT of the live graph (reverses D-18; third flip of this feature, see graph _meta.owner_removal_2026_07_18);
+  (b) the 6 D-19-gated cards were missed on device ("perfect and really impressive") — owner ordered ALL 6 RESTORED with an owner-approved learned-letters lint exception (reverses D-19);
+  (c) kitaab card word changed to بابا (dad) — owner's pick from the 19-REVIEW-PACKET alternatives (alif+baa only, no duplicate of baab).
+  Presentation itself (instruction bar / stimulus / affordances) not yet judged — re-test on the rebuilt install.
 
 ### 2. WR-03 — no audio overlap on listen-and-write
 expected: On a listen-and-write question, the hero audio card's clip auto-plays once WITHOUT the spoken instruction talking over it in the same frame; tapping the instruction bar still re-speaks the instruction.

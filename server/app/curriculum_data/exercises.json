@@ -467,11 +467,11 @@
       "prompt": [
         {
           "kind": "say",
-          "line": "Join these into one word — watch baa take its final shape at the end."
+          "line": "Join these letters into one word — baba, dad!"
         },
         {
           "kind": "text",
-          "text": "ب  ا  ب",
+          "text": "ب  ا  ب  ا",
           "loose": true
         }
       ],
@@ -481,13 +481,13 @@
       },
       "expected": {
         "word": {
-          "text": "باب"
+          "text": "بابا"
         }
       },
       "check": "sequence+joinContinuity+positionalForm",
       "feedback": {
-        "pass": "باب — joined, and baa returns in its final shape at the end. أحسنت!",
-        "lifted": "Keep the run connected — let baa's tail return at the end."
+        "pass": "بابا — dad! Two smooth pairs, baa starting each one. أحسنت!",
+        "lifted": "Keep each baa joined to its alif — two connected pairs."
       },
       "signedOff": false,
       "letters": [
@@ -498,7 +498,8 @@
         "present",
         "correct",
         "dot"
-      ]
+      ],
+      "_rewrite_2026_07_18": "Owner pick on device UAT 2026-07-18 (from the 19-REVIEW-PACKET alternatives): the word is بابا (dad) - alif+baa only, no duplicate of baab, and a word the child loves. baa takes its INITIAL shape at the start of each joined pair. Ships signedOff:false pending the mother. Id stays stable (graph node references it)."
     },
     {
       "id": "baa.completeWord.middle",

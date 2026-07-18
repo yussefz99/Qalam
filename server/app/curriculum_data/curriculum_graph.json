@@ -7,7 +7,9 @@
     "microDrills": "Plan 18-02 adds baa.microDrill.{dot,bowl,start} as ADDITIVE enrichment nodes (competency 'microDrill', essential:false, criterion-tagged dot/shape/strokeOrder). They never gate the star (D-06). Their CONTENT ships signedOff:false at the EXERCISE level (assets/curriculum/exercises.json); the file-level signedOff:true is the owner-mother's 15-07 tier-structure sign-off, unchanged. The drill copy is signed at the 18-11 HUMAN-UAT gate.",
     "owner_amendment_2026_07_12": "Owner-directed UAT amendment: (a) baa.traceLetter.final added to positionalForms so the child traces ALL FOUR forms before production tasks ('really saw the letter in all forms'); (b) microDrill nodes + competency were REMOVED from the graph (feature parked). Both pending owner-mother sign-off.",
     "microDrill_restore_19_05": "Plan 19-05 (D-18) RESTORES the 3 authored baa.microDrill.{dot,bowl,start} nodes + the 'microDrill' competency to the live graph, behind the reworked question presentation (19-02 instruction bar + 19-03 stimulus renderers) and the 18-10 SpotlightOverlay. They remain ADDITIVE enrichment (essential:false → never gate the star, D-06); the drill CONTENT stays signedOff:false at the exercise level (its sign-off is the mother's review-packet gate). The file-level signedOff:true (15-07 tier-structure) is unchanged. microdrill_selection_test's fixture no longer needs to inject them — the live graph now supplies them.",
-    "gated_cards_19_05": "Plan 19-05 (D-12/D-19) GATES the 6 baa cards that fundamentally need unlearned letters — baa.buildSentence.{hear,picture}, baa.fillBlank.adjective, baa.transformWord.{dual,plural,opposite} — by REMOVING their nodes from this graph so they are unreachable in the baa unit's cleared set (learned-letters lint QP-07). Their exercise CONFIGS stay dormant in exercises.json (signedOff:true, mother-signed at 15-07) and are filed for the target letter's own unit in Phase 20/21; no cross-unit-prerequisite schema field is added (A6). baa.connectWord.kitaab is REWRITTEN to an alif+baa word (signedOff:false) rather than gated — the mother confirms rewrite-vs-gate in 19-REVIEW-PACKET.md."
+    "gated_cards_19_05": "Plan 19-05 (D-12/D-19) GATES the 6 baa cards that fundamentally need unlearned letters — baa.buildSentence.{hear,picture}, baa.fillBlank.adjective, baa.transformWord.{dual,plural,opposite} — by REMOVING their nodes from this graph so they are unreachable in the baa unit's cleared set (learned-letters lint QP-07). Their exercise CONFIGS stay dormant in exercises.json (signedOff:true, mother-signed at 15-07) and are filed for the target letter's own unit in Phase 20/21; no cross-unit-prerequisite schema field is added (A6). baa.connectWord.kitaab is REWRITTEN to an alif+baa word (signedOff:false) rather than gated — the mother confirms rewrite-vs-gate in 19-REVIEW-PACKET.md.",
+    "owner_removal_2026_07_18": "Owner device-UAT decision 2026-07-18: micro-drills REMOVED from the live graph again (the 19-05/D-18 restore is reversed - drills interrupted the unit flow on device). The 3 authored baa.microDrill.* configs stay dormant in exercises.json; re-add nodes + the 'microDrill' competency to restore. Supersedes microDrill_restore_19_05.",
+    "owner_restore_2026_07_18": "Owner device-UAT decision 2026-07-18: the 6 gated cards (buildSentence.hear/picture, fillBlank.adjective, transformWord.dual/plural/opposite) are RESTORED to the live graph - the owner found them 'perfect and really impressive' on device; they stay despite demanding unlearned letters (owner-approved lint exception; the presentation carries them). Supersedes gated_cards_19_05. kitaab card word is now بابا (dad) per the owner's packet-alternative pick."
   },
   "letterId": "baa",
   "signedOff": true,
@@ -51,11 +53,6 @@
       "prerequisites": [
         "copyWrite"
       ]
-    },
-    {
-      "id": "microDrill",
-      "essential": false,
-      "prerequisites": []
     }
   ],
   "tiers": [
@@ -149,28 +146,40 @@
       "minCleanReps": 3
     },
     {
-      "exerciseId": "baa.microDrill.dot",
-      "competency": "microDrill",
-      "tier": null,
-      "minCleanReps": 1,
-      "criterion": "dot",
-      "essential": false
+      "exerciseId": "baa.buildSentence.hear",
+      "competency": "fluentReading",
+      "tier": "ghayrManzur",
+      "minCleanReps": 1
     },
     {
-      "exerciseId": "baa.microDrill.bowl",
-      "competency": "microDrill",
-      "tier": null,
-      "minCleanReps": 1,
-      "criterion": "shape",
-      "essential": false
+      "exerciseId": "baa.buildSentence.picture",
+      "competency": "fluentReading",
+      "tier": "manzur",
+      "minCleanReps": 1
     },
     {
-      "exerciseId": "baa.microDrill.start",
-      "competency": "microDrill",
+      "exerciseId": "baa.fillBlank.adjective",
+      "competency": "wordBuilding",
       "tier": null,
-      "minCleanReps": 1,
-      "criterion": "strokeOrder",
-      "essential": false
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "baa.transformWord.dual",
+      "competency": "grammarTransform",
+      "tier": null,
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "baa.transformWord.plural",
+      "competency": "grammarTransform",
+      "tier": null,
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "baa.transformWord.opposite",
+      "competency": "grammarTransform",
+      "tier": null,
+      "minCleanReps": 1
     }
   ]
 }
