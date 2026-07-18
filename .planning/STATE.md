@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
 status: verifying
-stopped_at: Quick 260718-il4 complete — thaa live end-to-end; iPad install + owner test next; Stage 2 awaiting owner go
+stopped_at: Quick 260718-l12 complete — thaa scorer fixed (strokes merged + Firestore re-seeded) + never-silent feedback; iPad rebuild next; Stage 2 awaiting owner go
 last_updated: "2026-07-18T10:48:21.148Z"
 progress:
   total_phases: 29
@@ -316,6 +316,7 @@ None yet.
 | 260622-pux | Parent-area UX fixes + 2 crash fixes (device-verified): (1) fix dialog `TextEditingController`-after-dispose crash in BOTH the Forgot-PIN recovery dialog and the Settings edit-learner dialog — controllers were disposed right after `Navigator.pop` while the dialog animated out, so the close frame used a disposed controller (on-device `_dependents.isEmpty` assertion); each dialog now OWNS its controller in a real stateful widget (`_PinRecoveryDialog` / `_EditLearnerDialog`), disposed in `State.dispose` after the route exits. (2) `appDatabaseProvider` scoped to a stable `accountDatabaseId` so a token refresh (reauthenticate) no longer rebuilds/closes the DB. (3) Settings redesign: email-first Account card, ACCOUNT/LEARNER/PARENT sections, wired the inert "Parent Area" row to /parent, removed dead Sound/Hand rows, dropped duplicate AppBar title. (4) PIN-gate back-to-home button (commonBack). 2 regression tests added | 2026-06-22 | e4f217d, 3719e65, ffe8e9d | (no quick dir) |
 | 260629-nle | Add iOS FirebaseOptions block so app boots on iPad (owner-authorized iOS-enabling for demo/testing — scoped extension of Android-only) | 2026-06-29 | 05109e9 | [260629-nle-add-ios-firebaseoptions-block-so-app-boo](./quick/260629-nle-add-ios-firebaseoptions-block-so-app-boo/) |
 | 260718-il4 | Stage 1 all-letters-live: reusable letter-promotion script (thaa promoted signedOff:false — 19 exercises, generated 6-section unit, graphs/thaa.json), curriculumGraphProvider → FutureProvider.family per letterId, per-letter mastery guard (baa 8-id set = documented legacy exception; other letters rail on their OWN graph via isMasteryMet), thaa Journey reachability, baa graph-asset parity guard, learned-letters lint coverage (enforced-when-signed / acknowledged-when-unsigned + coverage assertion), live-path thaa test via presentGraphExercise. 10 reaching-ahead thaa cards listed for the mother's packet. Stage 2 (24 letters + server data + deploy) NOT started | 2026-07-18 | 50bcf12, 44fdd96, ff77467, c2f0d93 | [260718-il4-stage-1-all-letters-live-multi-letter-gr](./quick/260718-il4-stage-1-all-letters-live-multi-letter-gr/) |
+| 260718-l12 | Fix thaa always-wrong + silent fail feedback (owner device bug): surgical contextualForms merge for alif/baa/taa/thaa from owner-corrected stroke data (signedOff kept, alif commonMistakes flagged not taken), owner-authorized prod Firestore letters re-seed (device reads letters Firestore-first; June-14 seed had NO thaa contextualForms — verified via REST readback post-seed), warm kGenericTryAgain feedback floor in both resolvers (a scorer FAIL is never silent), per-mistake fail lines for all 18 graded thaa exercises (signedOff:false, for the mother's packet). 915 pass / 7 known-only fail | 2026-07-18 | d4a08bc, cfd74c2 | [260718-l12-fix-thaa-always-wrong-silent-fail-feedba](./quick/260718-l12-fix-thaa-always-wrong-silent-fail-feedba/) |
 
 ## Deferred Items
 
@@ -327,6 +328,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-18 (Stage 1 execution)
-Stopped at: Quick 260718-il4 COMPLETE — thaa live end-to-end (multi-letter graph provider + reusable promotion script); iPad install next, then owner device test. Stage 2 (24 letters + server) NOT started, awaiting owner go.
+Last session: 2026-07-18 (Stage 1 + thaa device-bug fix)
+Stopped at: Quick 260718-l12 COMPLETE — thaa scorer fix (contextualForms merge + prod Firestore re-seed) + never-silent feedback floor; iPad rebuild+install next, then owner re-tests thaa. Stage 2 (24 letters + server) NOT started, awaiting owner go.
 Resume files: .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-02-PLAN.md (next — cross-letter labels + baa micro-drill set), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-03-PLAN.md (EMA + Drift v6), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-01-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
