@@ -7,10 +7,12 @@
 // StatefulWidget and turns it green with ZERO test edits.
 //
 // The contract (UI-SPEC §4 / D-05): the word shows LARGE (40px Arabic) with an
-// "I'm Ready" button; the child taps "I'm Ready" (or starts the first stroke) to
-// HIDE it; a "Peek" button re-reveals it; a "Hide" toggle returns to hidden.
-// NOTHING vanishes on a timer — every reveal/hide is child-controlled, so recall
-// stays honest. Three states: revealed · hidden · peeking.
+// "I'm Ready" button; the child taps "I'm Ready" to HIDE it; a "Peek" button
+// re-reveals it; a "Hide" toggle returns to hidden. NOTHING vanishes on a timer
+// — every reveal/hide is child-controlled, so recall stays honest. Three
+// states: revealed · hidden · peeking. (Hide is BUTTON-ONLY — the D-05 sketch's
+// hide-on-first-stroke trigger needs a stroke-START capture seam WriteSurface
+// does not expose; deferred to a future phase, 19 review WR-02.)
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
