@@ -1083,7 +1083,15 @@ flips where she confirms; anything she rejects is restored or re-worked to her i
   3. A live-path test seeds an illegal card via the data path and proves the walker never presents it, the star stays reachable, and the guard logs loudly.
   4. The mother's packet covers every owner-directed change since her last sign-off; every verdict is recorded; signedOff flags match her answers exactly; rejected changes are restored or re-worked.
 
-**Plans:** TBD
+**Plans:** 7 plans
+Plans:
+- [ ] 25-01-PLAN.md — L0: the shared learned-letters predicate + audit build-gate (validate.py)
+- [ ] 25-02-PLAN.md — the 34-card triage (re-point/remove) + the new alif.writeLetter.fromPicture draft card
+- [ ] 25-03-PLAN.md — L1: the lint enforces every live letter (signedOff decoupled from enforcement)
+- [ ] 25-04-PLAN.md — L2: the seeder learned-letters refusal + a crafted-fixture test
+- [ ] 25-05-PLAN.md — L3: the runtime guard (skip illegal, star-reachable, loud log) + live-path test [autonomous:false — L3 decision gate]
+- [ ] 25-06-PLAN.md — the mother's packet assembly + baa honest-state flip
+- [ ] 25-07-PLAN.md — the mother's walkthrough + verdict ingestion + conditional server redeploy [autonomous:false — mother verdicts]
 **Research hint:** no — the mechanism is known; the L3 degradation choice is a discuss-phase decision, not research.
 
 #### Phase 26: The finished experience — entry, polish, and the 2.0.1 release
