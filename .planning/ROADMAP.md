@@ -1083,7 +1083,7 @@ flips where she confirms; anything she rejects is restored or re-worked to her i
   3. A live-path test seeds an illegal card via the data path and proves the walker never presents it, the star stays reachable, and the guard logs loudly.
   4. The mother's packet covers every owner-directed change since her last sign-off; every verdict is recorded; signedOff flags match her answers exactly; rejected changes are restored or re-worked.
 
-**Plans:** 5/7 plans executed
+**Plans:** 6/7 plans executed
 Plans:
 
 - [x] 25-01-PLAN.md — L0: the shared learned-letters predicate + audit build-gate (validate.py)
@@ -1091,7 +1091,7 @@ Plans:
 - [x] 25-03-PLAN.md — L1: the lint enforces every live letter (signedOff decoupled from enforcement)
 - [x] 25-04-PLAN.md — L2: the seeder learned-letters refusal + a crafted-fixture test
 - [x] 25-05-PLAN.md — L3: the runtime guard (skip illegal, star-reachable, loud log) + live-path test [autonomous:false — L3 decision gate]
-- [ ] 25-06-PLAN.md — the mother's packet assembly + baa honest-state flip
+- [x] 25-06-PLAN.md — the mother's packet assembly + baa honest-state flip
 - [ ] 25-07-PLAN.md — the mother's walkthrough + verdict ingestion + conditional server redeploy [autonomous:false — mother verdicts]
 
 **Research hint:** no — the mechanism is known; the L3 degradation choice is a discuss-phase decision, not research.
@@ -1239,7 +1239,7 @@ AAB, and the webcourse APK are untouchable — all new work lands on main.
 | 22. Cross-letter selection + next-day planner | - | Superseded → 28 | - |
 | 23. Parent insight dashboard | - | Superseded → 28 | - |
 | 24. Submission readiness | - | Superseded: submission SHIPPED 2026-07-19; residue → 29 | - |
-| 25. Trusted content — seen-letters wall + mother's confirmation | 5/7 | In Progress|  |
+| 25. Trusted content — seen-letters wall + mother's confirmation | 6/7 | In Progress|  |
 | 26. The finished experience — entry, polish, 2.0.1 release | 0/TBD | Not started | - |
 | 27. The whole alphabet — 24 letters in signed batches | 0/TBD | Not started | - |
 | 28. Smart across letters + the parent window | 0/TBD | Not started | - |
