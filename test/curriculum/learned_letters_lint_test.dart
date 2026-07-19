@@ -250,5 +250,26 @@ void main() {
     expect(visited, containsAll(<String>['baa', 'thaa']),
         reason: 'both live Stage-1 letters (baa signed, thaa unsigned) must be '
             'covered by this lint');
+
+    // ── PARITY (the four-layer wall) — the Dart predicate must flag the SAME
+    // reach-ahead that validate.py's does. A crafted {letters:['taa']} card placed
+    // at the baa unit (introOrder 2) must report taa (introOrder 3) as unlearned.
+    // This is behavioral parity with
+    //   tools/content/validate.py::unlearned_letters_for_exercise
+    // which reads the STORED letters[] against introOrder with the identical
+    // `introOrder[l] ?? 1<<30` reach-ahead sentinel (validate.py _UNLEARNED_SENTINEL
+    // = 1<<30). If this ever diverges, the bundle lint (L1) and the seeder (L2)
+    // could refuse DIFFERENT content — the wall's whole thesis is that all four
+    // layers refuse identically. The crafted id is not a live graph node, so it
+    // never touches the enforcement loop above; it exercises `unlearnedFor` directly.
+    exercisesById['__parity.taaAtBaa__'] = <String, dynamic>{
+      'id': '__parity.taaAtBaa__',
+      'letters': <String>['taa'],
+    };
+    expect(unlearnedFor('__parity.taaAtBaa__', introOrder['baa']!),
+        equals(<String>['taa']),
+        reason: 'unlearnedFor must flag taa (introOrder 3) as reach-ahead at the '
+            'baa unit (introOrder 2) — behavioral parity with '
+            'validate.py::unlearned_letters_for_exercise');
   });
 }
