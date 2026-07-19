@@ -61,13 +61,15 @@ SPECIAL_NON_TAUGHT = {"taa_marbuta"}
 # source of truth — L2 (``seed_curriculum_v2.py``) imports the predicate + the two
 # scoping helpers below so the seeder and the audit cannot drift apart.
 
-# Owner-approved (device UAT, 2026-07-18), mother-approval-PENDING baa exceptions
-# (D-09). Mirror of the Dart lint's ``baaOwnerApprovedExceptions``
-# (learned_letters_lint_test.dart). These 4 reach-ahead baa cards are exempt from
-# the build gate + the seeder refusal until the mother confirms / re-points them in
-# the Phase-25 packet — exactly the set L1 exempts, so L0/L1/L2 fail on the SAME
-# cards.
-OWNER_APPROVED_EXCEPTIONS: frozenset[str] = frozenset(
+# Owner-approved, mother-approval-PENDING reach-ahead exceptions — the cards the
+# build gate + the seeder (L2) exempt until the mother rules in the Phase-25 packet
+# (Plan 25-06) / live walkthrough (Plan 25-07). Kept in TWO clearly-separated groups
+# so Plan 25-06 can enumerate each precisely and so their PROVENANCE stays distinct.
+# The public ``OWNER_APPROVED_EXCEPTIONS`` name L2 imports is their union.
+
+# D-09 — the 4 baa cards, owner-approved from DEVICE UAT (2026-07-18). Mirror of the
+# Dart lint's ``baaOwnerApprovedExceptions`` (learned_letters_lint_test.dart).
+_BAA_D09_EXCEPTIONS: frozenset[str] = frozenset(
     {
         "baa.fillBlank.adjective",
         "baa.transformWord.dual",
@@ -75,6 +77,45 @@ OWNER_APPROVED_EXCEPTIONS: frozenset[str] = frozenset(
         "baa.transformWord.opposite",
     }
 )
+
+# D-16 — the taa + thaa reach-ahead word cards, kept LIVE by OWNER DECISION
+# (2026-07-19), mother-verdict PENDING. DISTINCT provenance from the baa D-09 set:
+# these carry the owner's 2026-07-19 call, NOT device-UAT approval. Owner's
+# constraint (verbatim): "I don't want to remove all questions and have each unit
+# have only a few questions — the app is built for kids that know Arabic." taa (unit
+# 3) and thaa (unit 4) have NO in-curriculum learned-set word to re-point to (the
+# draft bank unlocks 0 new words at either unit — باب lands at baa, تاج at jeem), so
+# re-point is impossible and REMOVE would gut both units; heritage learners already
+# know these words aurally. Every id here MUST appear in the mother's packet (Plan
+# 25-06) for her explicit confirm / reject / re-point.
+_TAA_THAA_D16_EXCEPTIONS: frozenset[str] = frozenset(
+    {
+        # taa (unit 3, order 3)
+        "taa.completeWord.middle",
+        "taa.connectWord.bayt",
+        "taa.connectWord.taaj",
+        "taa.fillBlank.adjective",
+        "taa.transformWord.dual",
+        "taa.transformWord.opposite",
+        "taa.transformWord.plural",
+        "taa.writeWord.copy",
+        "taa.writeWord.dictation",
+        "taa.writeWord.picture",
+        # thaa (unit 4, order 4)
+        "thaa.completeWord.middle",
+        "thaa.connectWord.thalab",
+        "thaa.connectWord.thalj",
+        "thaa.fillBlank.adjective",
+        "thaa.transformWord.dual",
+        "thaa.writeWord.copy",
+        "thaa.writeWord.dictation",
+        "thaa.writeWord.picture",
+    }
+)
+
+# The public name L0 (the gate) + L2 (``seed_curriculum_v2.py``) read — the union of
+# both provenance groups, so all four wall layers exempt the SAME cards.
+OWNER_APPROVED_EXCEPTIONS: frozenset[str] = _BAA_D09_EXCEPTIONS | _TAA_THAA_D16_EXCEPTIONS
 
 # A stored letter absent from letters.json ``introOrder`` (e.g. taa_marbuta, a
 # non-taught special form) is treated as reaching ahead — the same sentinel the
@@ -405,35 +446,159 @@ def report_live_exercises(order: dict[str, int]) -> list[str]:
     return lines
 
 
-def run_gate(order: dict[str, int]) -> int:
-    """The build gate (``--gate``): fail the build if any LIVE graph-node card
-    reaches ahead of the learned set OR is unlabeled. Returns the process exit code.
+def _gate_findings(
+    order: dict[str, int]
+) -> tuple[
+    set[str],
+    dict[str, list[tuple[str, int]]],
+    dict[str, list[tuple[str, int]]],
+    dict[str, str],
+]:
+    """Compute the live-node gate results — a pure read used by BOTH the console
+    gate (``run_gate``) and the report section (``_gate_report_section``) so they
+    can never disagree. Returns
+    ``(live_ids, reach_ahead, exempt_reach_ahead, unlabeled)`` where:
 
-    Scoping is exactly L1's: only cards referenced by a live graph node are checked
-    (``live_graph_node_ids``); the ``OWNER_APPROVED_EXCEPTIONS`` (the 4 D-09 baa ids)
-    are exempt. So L0 and L1 fail on the SAME set — the dormant reach-ahead configs
-    and the owner-approved exceptions never trip it. Read-only: nothing is written.
+    - ``reach_ahead`` — live, NON-exempt cards demanding an unlearned letter
+      (these FAIL the gate);
+    - ``exempt_reach_ahead`` — live cards that reach ahead but sit in
+      ``OWNER_APPROVED_EXCEPTIONS`` (surfaced, not failed — the mother's packet lists
+      them);
+    - ``unlabeled`` — live cards with a missing / drifted ``letters[]``.
     """
     exercises = _load(EXERCISES_JSON).get("exercises", [])
     live_ids = live_graph_node_ids()
 
     reach_ahead: dict[str, list[tuple[str, int]]] = {}
+    exempt_reach_ahead: dict[str, list[tuple[str, int]]] = {}
     for ex in exercises:
         ex_id = str(ex.get("id", ""))
         if ex_id not in live_ids:
             continue  # dormant config — referenced by no live node; never gated
-        if ex_id in OWNER_APPROVED_EXCEPTIONS:
-            continue  # D-09 exception — exempt like L1 until the mother rules
         ahead = unlearned_letters_for_exercise(ex, order)
+        if ex_id in OWNER_APPROVED_EXCEPTIONS:
+            if ahead:
+                exempt_reach_ahead[ex_id] = ahead  # owner-approved; surfaced not failed
+            continue
         if ahead:
             reach_ahead[ex_id] = ahead
 
     unlabeled = unlabeled_cards(exercises, live_ids)
+    return live_ids, reach_ahead, exempt_reach_ahead, unlabeled
+
+
+def _provenance(ex_id: str) -> str:
+    """Which owner-approval decision keeps [ex_id] live — for the packet diff."""
+    if ex_id in _BAA_D09_EXCEPTIONS:
+        return "D-09 (device UAT 2026-07-18)"
+    if ex_id in _TAA_THAA_D16_EXCEPTIONS:
+        return "D-16 (owner 2026-07-19)"
+    return "—"
+
+
+def _gate_report_section(
+    live_ids: set[str],
+    reach_ahead: dict[str, list[tuple[str, int]]],
+    exempt_reach_ahead: dict[str, list[tuple[str, int]]],
+    unlabeled: dict[str, str],
+) -> list[str]:
+    """The `## 4 · Build gate` markdown — always written to the report so the owner
+    (and Plan 25-06) can read the exempt cards + the gate verdict without re-running.
+    """
+    findings = len(reach_ahead) + len(unlabeled)
+    lines = ["## 4 · Build gate (`--gate`) — live-node learned-letters check", ""]
+    lines.append(
+        "Scoped to LIVE graph nodes only (dormant configs are never gated). "
+        "Owner-approved exceptions are EXEMPT from the failure but listed in full "
+        "below so the mother's packet (Plan 25-06) can enumerate every reach-ahead "
+        "card kept live and rule on each one."
+    )
+    lines.append("")
+    lines.append(f"- live graph nodes: **{len(live_ids)}**")
+    lines.append(
+        f"- owner-approved exceptions (exempt): **{len(OWNER_APPROVED_EXCEPTIONS)}** "
+        f"= {len(_BAA_D09_EXCEPTIONS)} baa (D-09) + {len(_TAA_THAA_D16_EXCEPTIONS)} "
+        "taa/thaa (D-16)"
+    )
+    lines.append(f"- live-node findings (gate-FAILING): **{findings}**")
+    lines.append("")
+
+    if exempt_reach_ahead:
+        lines.append(
+            "### Owner-approved exceptions kept LIVE (reach-ahead, mother-verdict pending)"
+        )
+        lines.append("")
+        lines.append("| card | unlearned letters (order) | provenance |")
+        lines.append("|---|---|---|")
+        for cid in sorted(exempt_reach_ahead):
+            ahead_txt = ", ".join(
+                f"{l}({o})" for l, o in sorted(exempt_reach_ahead[cid], key=lambda x: x[1])
+            )
+            lines.append(f"| `{cid}` | {ahead_txt} | {_provenance(cid)} |")
+        lines.append("")
+
+    if reach_ahead:
+        lines.append("### Gate-FAILING reach-ahead cards (triage to zero)")
+        lines.append("")
+        for cid in sorted(reach_ahead):
+            ahead_txt = ", ".join(
+                f"{l}({o})" for l, o in sorted(reach_ahead[cid], key=lambda x: x[1])
+            )
+            lines.append(f"- `{cid}`: {ahead_txt}")
+        lines.append("")
+
+    if unlabeled:
+        lines.append("### Gate-FAILING unlabeled / label-drifted cards")
+        lines.append("")
+        for cid in sorted(unlabeled):
+            lines.append(f"- `{cid}`: {unlabeled[cid]}")
+        lines.append("")
+
+    if findings:
+        lines.append(
+            f"**GATE FAIL** — {findings} live-node finding(s) still to triage to zero."
+        )
+    else:
+        lines.append(
+            "**GATE PASS** — every live-node card obeys the learned-letters bar; the "
+            f"{len(OWNER_APPROVED_EXCEPTIONS)} owner-approved exceptions above stay "
+            "live pending the mother's verdict."
+        )
+    lines.append("")
+    return lines
+
+
+def run_gate(order: dict[str, int]) -> int:
+    """The build gate (``--gate``): fail the build if any LIVE graph-node card
+    reaches ahead of the learned set OR is unlabeled. Returns the process exit code.
+
+    Scoping is exactly L1's: only cards referenced by a live graph node are checked
+    (``live_graph_node_ids``); the ``OWNER_APPROVED_EXCEPTIONS`` (4 baa D-09 +
+    18 taa/thaa D-16 ids) are exempt. So L0 and L1 fail on the SAME set — the dormant
+    reach-ahead configs and the owner-approved exceptions never trip it. The exempt
+    reach-ahead cards are printed (not failed) so the packet can enumerate them.
+    Read-only: nothing is written here (the report section is written by ``main``).
+    """
+    live_ids, reach_ahead, exempt_reach_ahead, unlabeled = _gate_findings(order)
 
     print()
     print("── build gate (--gate): LIVE graph nodes only ──")
     print(f"  live graph nodes: {len(live_ids)}")
-    print(f"  owner-approved exceptions (exempt): {len(OWNER_APPROVED_EXCEPTIONS)}")
+    print(
+        f"  owner-approved exceptions (exempt): {len(OWNER_APPROVED_EXCEPTIONS)} "
+        f"= {len(_BAA_D09_EXCEPTIONS)} baa (D-09) + "
+        f"{len(_TAA_THAA_D16_EXCEPTIONS)} taa/thaa (D-16)"
+    )
+    if exempt_reach_ahead:
+        print(
+            f"  {len(exempt_reach_ahead)} live reach-ahead card(s) EXEMPT "
+            "(owner-approved, mother-verdict pending):"
+        )
+        for cid in sorted(exempt_reach_ahead):
+            ahead_txt = ", ".join(
+                f"{l}({o})" for l, o in sorted(exempt_reach_ahead[cid], key=lambda x: x[1])
+            )
+            print(f"    - {cid}: {ahead_txt}  [{_provenance(cid)}]")
     if reach_ahead:
         print(f"  {len(reach_ahead)} live-node card(s) reach ahead of the learned set:")
         for cid in sorted(reach_ahead):
@@ -450,10 +615,13 @@ def run_gate(order: dict[str, int]) -> int:
     if findings:
         print(
             f"  GATE FAIL: {findings} live-node finding(s) — triage to zero "
-            "(see validation_report.md; triage lands in Plan 02)."
+            "(see validation_report.md §4)."
         )
         return 1
-    print("  GATE PASS: every live-node card obeys the learned-letters bar and is labeled.")
+    print(
+        "  GATE PASS: every live-node card obeys the learned-letters bar and is "
+        "labeled (owner-approved exceptions exempt, mother-verdict pending)."
+    )
     return 0
 
 
@@ -491,7 +659,20 @@ def main(argv: list[str] | None = None) -> int:
     live_word_lines = report_live_words(order)
     live_ex_lines = report_live_exercises(order)
 
-    report = "\n".join(header + draft_lines + live_word_lines + live_ex_lines) + "\n"
+    # §4 — the build-gate view (always written, both modes) so the report itself lists
+    # the owner-approved exceptions + the gate verdict. Only ``--gate`` turns findings
+    # into a non-zero EXIT (below); the section is informational in report-only mode.
+    live_ids, reach_ahead, exempt_reach_ahead, unlabeled = _gate_findings(order)
+    gate_lines = _gate_report_section(
+        live_ids, reach_ahead, exempt_reach_ahead, unlabeled
+    )
+
+    report = (
+        "\n".join(
+            header + draft_lines + live_word_lines + live_ex_lines + gate_lines
+        )
+        + "\n"
+    )
     REPORT_MD.write_text(report, encoding="utf-8", newline="\n")
 
     # Console summary.
