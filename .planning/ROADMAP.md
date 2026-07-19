@@ -598,16 +598,16 @@ requirements** by design — investigations that tune the deployed system.
 - [x] **Phase 18: BUILD — the living tutor: per-child dynamic exercise selection** - Two-timescale child model, remediation arcs, just-this-part micro-drills, railed to the signed graph. (owner-closed 2026-07-17; 18-11 human gates + UAT device retest deferred — see the phase's deferred-items.md)
 - [ ] **Phase 18.1: Content & audio at scale (INSERTED — partner track)** - Real pronunciation clips through a manifest-driven pipeline, a draft vocabulary bank for all 28 letters, and per-letter sign-off review packets — runs parallel with Phase 19, feeds Phases 20–21.
 - [x] **Phase 19: Question presentation overhaul** - Every question self-explanatory on screen (persistent instruction, big stimulus, per-type affordance); language cards rewritten with the mother; micro-drills return; per-child position keying fixed. (completed 2026-07-18)
-- [ ] **Phase 20: Curriculum graph + authoring pipeline for all 28 letters** - Generalize the baa-only graph to the full alphabet (mother's intro order) + the model-drafts/mother-signs pipeline, proven on the first batch. *(2026-07-19: largely DELIVERED outside the phase — 18.1 partner track built the pipeline/drafts; finalization Lane A landed per-letter graphs + the letter-generic engine. Residue folds into Phase 21.)*
-- [ ] **Phase 21: Letter content at scale** - All remaining letters authored as data in mother-signed batches through the Phase-20 pipeline. *(Includes un-fencing the tutor server's per-letter data as batches sign.)*
-- [ ] **Phase 22: Cross-letter mistake-aware selection + next-day lesson planner** - Selection and remediation reason across letters; the nightly job emits tomorrow's prepared unit (S2-04/S2-05).
-- [ ] **Phase 23: Parent insight — strengths and struggles dashboard** - The PIN-gated dashboard surfaces the compiled child model per letter/criterion (S2-06; weekly report optional).
-- [ ] **Phase 24: Submission readiness** - Offline + release hardening, verification-debt sweep, and the Technion submission package — the milestone's end state. *(2026-07-19: the Sprint-2 submission itself SHIPPED via the finalization push — v2.0.0+3 on Play production review, release/2.0 frozen, webcourse APK. Offline hardening + debt-sweep residue remains this phase's scope.)*
-- [ ] **Phase 25: Seen-letters enforcement — labels, lint wall, seeding gate (Layers 0–2)** - Every live question provably demands only letters the child has seen: full `letters[]` labels, the lint covers drafts with a shrinking allowlist, and the seeder refuses violating content.
-- [ ] **Phase 26: Mother's re-confirmation — owner-directed content changes return to the source** - The demo-night content decisions (reps=1, sentence-card removals, the alif shrink + new card, Lane B's flips) packaged for the mother; her verdicts ingested and signedOff flags set accordingly.
-- [ ] **Phase 27: Release polish + Android verification debt** - Real Qalam launcher icon, the Android device pass (4-letter walk, fail→retry, v1→v2 update-no-crash), scorer threshold re-tighten, and the two standing tutor-feedback debts — shipped as 2.0.1+4 only after grading.
-- [ ] **Phase 28: Runtime learned-letters guard (Layer 3)** - The walker/selector never presents a question demanding unlearned letters even if bad data ships — defense in depth above the Phase-25 wall.
-- [ ] **Phase 29: Entry & identity — the front-door decision made real** - Resolve the Decided-vs-as-built contradiction (anonymous-suffices vs parent-account-first); align router, sign-out, legal pages, and Play declarations with whichever model the owner picks.
+- [x] **Phase 20: Curriculum graph + authoring pipeline for all 28 letters** - ABSORBED (2026-07-19): delivered outside the phase — 18.1 partner track built the pipeline + drafts; finalization Lane A landed per-letter graphs + the letter-generic engine. Never executed as written; retained for the historical record.
+- [ ] ~~**Phase 21: Letter content at scale**~~ - SUPERSEDED (2026-07-19) → Phase 27 (The whole alphabet).
+- [ ] ~~**Phase 22: Cross-letter mistake-aware selection + next-day lesson planner**~~ - SUPERSEDED (2026-07-19) → Phase 28 (Smart across letters + the parent window).
+- [ ] ~~**Phase 23: Parent insight — strengths and struggles dashboard**~~ - SUPERSEDED (2026-07-19) → Phase 28 (Smart across letters + the parent window).
+- [ ] ~~**Phase 24: Submission readiness**~~ - SUPERSEDED (2026-07-19): the Sprint-2 submission itself SHIPPED via the finalization push (v2.0.0+3 in Play production review, release/2.0 frozen, webcourse APK). The hardening residue → Phase 29 (Hardening + milestone close).
+- [ ] **Phase 25: Trusted content — the seen-letters wall + the mother's confirmation** - Every question provably demands only letters the child has seen (labels → lint wall → seeder gate → runtime guard), and every demo-night content change goes back to the mother for a verdict.
+- [ ] **Phase 26: The finished experience — entry, polish, and the 2.0.1 release** - The front-door identity decision made real, sign-out never strands anyone, the real Qalam icon everywhere, the scorer re-tightened, the two tutor-feedback bugs closed, the Android device pass done — shipped as 2.0.1+4 after grading.
+- [ ] **Phase 27: The whole alphabet — 24 letters in mother-signed batches** - Every remaining letter promoted through the Phase-25 wall in her-signed batches, with the tutor server un-fenced per batch so coaching follows the content.
+- [ ] **Phase 28: Smart across letters + the parent window** - Selection and remediation reason across the full alphabet, the nightly job prepares tomorrow's lesson, and the PIN-gated parent dashboard shows strengths/struggles (S2-04/S2-05/S2-06).
+- [ ] **Phase 29: Hardening + milestone close** - Airplane-mode-proof on a fresh install, the no-PII release audit, the verification-debt ledger at zero, and the final release — the app is genuinely finished.
 
 ### Phase Details
 
@@ -1055,121 +1055,139 @@ v1 Phase 10's intent, pointed at the submission instead of a public release.
 
 **Plans:** TBD
 
-#### Phase 25: Seen-letters enforcement — labels, lint wall, seeding gate (Layers 0–2)
+#### Phase 25: Trusted content — the seen-letters wall + the mother's confirmation
 
-**Goal:** Make the owner's rule — *a question may only demand letters the child has already
-seen* — mechanically enforced instead of aspirational. The 2026-07-19 audit found 34 live
-cards violating it or using unlabeled words, because the lint exempts drafts, baa's
-violations are allowlisted, and Firestore-first content bypasses the bundle lint entirely.
-Three layers close it: **L0** — generate `letters[]` for every word/inflection any exercise
-references (the content validator already decomposes Arabic text; output is a
-mother-reviewable diff). **L1** — the learned-letters lint holds EVERY letter (the
-signedOff exemption is removed); the ~34 violating cards are re-pointed to legal words or
-removed through the promotion pipeline; the baa allowlist shrinks to only mother-approved
-exceptions recorded by id + reason. **L2** — `seed_curriculum_v2.py` refuses to push
-content that violates the bar, closing the Firestore bypass.
-**Mode:** build
+**Goal:** Content becomes something the app can TRUST, mechanically. Two legs. **The wall**
+— the owner's rule (*a question may only demand letters the child has already seen*) is
+enforced at every layer instead of aspirational (the 2026-07-19 audit found 34 live cards
+violating it or using unlabeled words): L0 generate `letters[]` for every word/inflection
+any exercise references (mother-reviewable diff); L1 the learned-letters lint holds EVERY
+letter — draft exemption removed, the 34 cards re-pointed/removed/excepted, the baa
+allowlist reduced to mother-approved exceptions only; L2 `seed_curriculum_v2.py` refuses
+violating content (closes the Firestore-first bypass); L3 the runtime guard — the
+walker/selector never presents an illegal card even if bad data ships (skip vs substitute
+vs tier-down decided with the owner in discuss-phase; the star always stays reachable;
+every firing logged loudly). **The confirmation** — every demo-night owner-directed change
+goes back to the mother as one packet: minCleanReps=1 across all graphs (including baa's
+signed spec), the buildSentence removals (baa/taa/thaa), the alif letter-level shrink + the
+new `alif.writeLetter.fromPicture` draft card, and Lane B's image re-points / feedback
+rewordings (each carries an inline `_review` note). Her verdicts are ingested: signedOff
+flips where she confirms; anything she rejects is restored or re-worked to her instruction.
+**Mode:** build (autonomous:false on every mother verdict + the L3 degradation decision)
 **Depends on:** the finalization content state (landed 2026-07-19)
-**Requirements:** QP-07 / D-12 (extension — the learned-letters bar becomes universal)
+**Requirements:** QP-07 / D-12 (universal), CUR-01 lineage (curriculum authority)
 **Success Criteria** (what must be TRUE):
 
-  1. The audit script reports ZERO unlabeled words: every word/inflection referenced by any live or draft exercise has a `letters[]` entry in words.json.
-  2. `learned_letters_lint_test` covers every letter with no draft exemption, and the allowlist is empty or holds only mother-approved exceptions (id + reason each).
-  3. The 34 audit rows are each resolved — re-pointed, removed, or excepted — with the audit re-run green.
-  4. The seeder rejects a crafted violating fixture (proven by test); nothing can reach prod Firestore that the bundle lint would refuse.
+  1. The audit script reports ZERO unlabeled words and ZERO violating cards; the lint covers every letter with no draft exemption; the allowlist holds only mother-approved exceptions (id + reason each).
+  2. The seeder rejects a crafted violating fixture (proven by test) — nothing can reach prod Firestore that the bundle lint would refuse.
+  3. A live-path test seeds an illegal card via the data path and proves the walker never presents it, the star stays reachable, and the guard logs loudly.
+  4. The mother's packet covers every owner-directed change since her last sign-off; every verdict is recorded; signedOff flags match her answers exactly; rejected changes are restored or re-worked.
 
 **Plans:** TBD
-**Research hint:** no — the mechanism is known; this is disciplined content + guard work.
+**Research hint:** no — the mechanism is known; the L3 degradation choice is a discuss-phase decision, not research.
 
-#### Phase 26: Mother's re-confirmation — owner-directed content changes return to the source
+#### Phase 26: The finished experience — entry, polish, and the 2.0.1 release
 
-**Goal:** The demo night changed signed and draft content under owner direction; the
-curriculum's source of truth is the mother, so every change goes back to her as a
-reviewable packet: minCleanReps=1 across all graphs (including baa's signed spec), the
-buildSentence removals (baa/taa/thaa), the alif letter-level shrink + the new
-`alif.writeLetter.fromPicture` draft card, and Lane B's image re-points / feedback
-rewordings (each already carries an inline `_review` note). Her verdicts are ingested:
-signedOff flags flip where she confirms, and anything she rejects is restored or adjusted.
-**Mode:** build (autonomous:false — every verdict is hers)
-**Depends on:** best after Phase 25's labels (the packet cites exact word/letter data)
-**Requirements:** CUR-01 lineage (curriculum authority)
+**Goal:** The app FEELS finished the moment it opens. **Entry & identity** — resolve the
+Decided-vs-as-built contradiction (the Decided architecture says children never log in and
+anonymous suffices; the live router makes a parent account the front door — discovered
+2026-07-19 when sign-out stranded the owner at /auth). The OWNER decides the entry model;
+then router, sign-out behavior (never strand anyone), the published legal pages, and the
+Play declarations (app access, data safety) all state the same model — zero contradictions.
+**Polish** — the real Qalam adaptive launcher icon on Android + iOS (the app still ships
+the Flutter default; the Play listing already has the store mark), matched to the listing
+art. **Coaching quality** — re-tighten the widened scorer thresholds (tcc/tcw 0.12/0.16 →
+originals, driven by device feel + the mother-labelled calibration set, or explicitly
+re-affirm with reason) and close the two standing tutor-feedback debts (gold exemplars
+copied verbatim; the bottom feedback bar showing the authored line instead of the agent
+line). **Verification** — the Android device pass the submission skipped: alif→thaa walk
+with fail→retry, two-profile isolation spot-check, and the course's v1.x→2.x
+update-must-not-crash check. Ships as **2.0.1+4** — cut ONLY after grading; Play and
+webcourse artifacts move in lockstep or not at all.
+**Mode:** build (autonomous:false on the entry-model decision)
+**Depends on:** Phase 25 (ships its confirmed content); grading freeze for the release cut
+**Requirements:** D-09b/D-09c lineage (child-login ban, anonymous boot), PLAT-01 lineage, Phase-14/17 feedback debt
 **Success Criteria** (what must be TRUE):
 
-  1. One packet enumerates every owner-directed change since her last sign-off, each with its `_review` note, before/after, and a yes/no ask.
-  2. Every verdict is recorded; signedOff flags match her answers exactly (no silent flips either direction).
-  3. Rejected changes are restored or re-worked to her instruction, with tests re-run.
+  1. A recorded owner decision names the entry model; router + sign-out implement exactly it; legal pages and Play forms agree with the code word for word; fresh-install and sign-out verified on device.
+  2. The Qalam mark is the launcher icon on both platforms — no Flutter default anywhere.
+  3. tcc/tcw re-tightened (or re-affirmed) with the decision recorded against calibration data; the tutor's on-screen line is the agent's line and repeated attempts produce non-verbatim coaching.
+  4. The Android pass is green: 4-letter walk incl. fail→retry, profile isolation, and v1→v2 update opens without crashing.
+  5. 2.0.1+4 is live on Play production with the matching APK archived.
 
 **Plans:** TBD
-**Research hint:** no.
+**Research hint:** no — decision + alignment + known fixes.
 
-#### Phase 27: Release polish + Android verification debt
+#### Phase 27: The whole alphabet — 24 letters in mother-signed batches
 
-**Goal:** The next release train (2.0.1+4 — cut ONLY after grading; both Play and webcourse
-artifacts move in lockstep or not at all) carries the visible-polish and verification debt:
-a real Qalam adaptive launcher icon (Android foreground/background + iOS set — the app
-still ships the Flutter default; the Play listing already has the store icon) matched to
-the listing art; the Android device pass the submission skipped (4-letter walk incl.
-fail→retry, two-profile isolation spot-check, and the course's v1.x→2.x
-update-must-not-crash check); the scorer threshold re-tighten (widened tcc/tcw 0.12/0.16
-back toward originals, driven by device feel + the mother-labelled calibration set); and
-the two standing tutor-feedback debts (coach prompt's gold exemplars copied verbatim;
-bottom feedback bar showing the authored line instead of the agent line).
+**Goal:** Every remaining letter goes live as DATA through the Phase-25 wall: drafts
+(18.1 already produced exercises, graphs, packets, and audio for the full alphabet) are
+promoted batch by batch in the mother's intro order via `promote_letter.py`, each batch
+passing the labels/lint/seeder gates by construction, reviewed and signed by the mother
+before it ships live. The tutor server is un-fenced per signed batch (`generate.py` emits
+that batch's data; the D-11 guard widens with it) so live AI coaching follows the content —
+never coaching on unsigned drafts. Journey/home/mastery need NO code: the Lane-A
+letter-generic engine makes each letter a pure data operation (that is the point of it).
+**Mode:** build (autonomous:false on every batch sign-off)
+**Depends on:** Phase 25 (the wall + the confirmation cadence), Phase 26 (a release train exists for bundle updates)
+**Requirements:** absorbs old Phase 21; CUR-01
+**Success Criteria** (what must be TRUE):
+
+  1. All 28 letters have live, lint-clean content; every non-draft letter is mother-signed; any letter still in draft is explicitly marked and excluded from the default journey.
+  2. Each batch entered through the wall: zero violations at promote time, proven by the audit in CI.
+  3. The tutor server serves per-letter data for every signed batch, with baa's behavior regression-guarded at each widening.
+  4. A child can walk the journey from alif through the final signed letter — mastery rows, stars, and unlocks all data-driven, no letter-id literals anywhere.
+
+**Plans:** TBD
+**Research hint:** no — the pipeline exists; this is disciplined batch execution with the mother.
+
+#### Phase 28: Smart across letters + the parent window
+
+**Goal:** With the full alphabet live, the tutor gets its memory and the parents get their
+window. **Cross-letter selection** (S2-04) — selection and remediation reason across
+letters: a child struggling with bowls on taa is remembered from baa; the per-criterion EMA
+child model (built in Phase 18, letter-agnostic by design) drives it. **Next-day planner**
+(S2-05) — the nightly Cloud Run job composes tomorrow's prepared lesson from the child
+model + curriculum position, so opening the app tomorrow starts exactly where it should.
+**Parent window** (S2-06) — the PIN-gated dashboard surfaces the compiled strengths[] /
+struggles[] per letter and criterion, in the same warm, specific voice as the tutor
+(weekly report optional stretch).
 **Mode:** build
-**Depends on:** grading freeze for the release cut; verification legs can run immediately
-**Requirements:** PLAT-01 lineage; Phase-14/17 feedback debt
+**Depends on:** Phase 27 (content breadth to reason across), Phase 18 (the two-timescale child model + nightly compiler)
+**Requirements:** S2-04, S2-05, S2-06 (absorbs old Phases 22 + 23)
 **Success Criteria** (what must be TRUE):
 
-  1. Launcher icon is the Qalam mark on Android and iOS home screens (no Flutter default anywhere), consistent with the Play listing icon.
-  2. A physical-Android (or emulator) pass: alif→thaa walk with fail→retry green, and installing v1.x then updating to 2.x opens without crashing (no-migration acceptable, crash not).
-  3. tcc/tcw are re-tightened with the decision recorded against calibration data, or the widened values are explicitly re-affirmed with reason.
-  4. The tutor's line on screen is the agent's line, and repeated attempts produce non-verbatim coaching (both debts closed with live-path tests).
+  1. A cross-letter struggle provably influences selection (live-path test: struggle seeded on letter A changes what letter B presents, with the WHY line naming it).
+  2. The nightly job emits tomorrow's prepared unit per child; the app opens INTO it; a child with no history gets the sensible default.
+  3. The parent dashboard renders the real compiled model (strengths/struggles per letter/criterion) behind the PIN, readable by a non-technical parent.
+  4. Non-PII posture holds everywhere (payload guards extend to the new surfaces).
+
+**Plans:** TBD
+**Research hint:** yes — light: dashboard information design for non-technical parents (what a parent can act on, not raw EMAs).
+
+#### Phase 29: Hardening + milestone close
+
+**Goal:** The app is genuinely FINISHED: it survives the real world and the debt ledger
+reads zero. A fresh-install airplane-mode walkthrough passes every flow (walker floor +
+AuthoredFallback + the one-time ML Kit model download handled explicitly at onboarding);
+the release build is audited — no child PII, no stroke logging, child data app-private;
+the standing verification/UAT debt ledger (including Phase-16's eval-trust legs: gold-set
+sign-off + judge calibration, and any 18-11 residue: constants sign-off, cost/latency
+close-out) is swept — each item resolved or explicitly waived with a recorded reason; and
+the final release ships with the docs that make the project handover-able (README,
+architecture, ADRs current).
+**Mode:** build
+**Depends on:** Phases 25–28
+**Requirements:** PLAT-01 (v1 carry-over); absorbs old Phase 24's residue
+**Success Criteria** (what must be TRUE):
+
+  1. Fresh install + airplane mode: every flow works or degrades warmly by design (recorded walkthrough).
+  2. Release-build audit: zero child-PII/stroke logging; storage audit recorded.
+  3. The debt ledger reaches zero — every open verification item resolved or waived with reason, including the eval-trust legs.
+  4. The final release is live and the repo docs (README/architecture/ADRs) match what shipped.
 
 **Plans:** TBD
 **Research hint:** no.
-
-#### Phase 28: Runtime learned-letters guard (Layer 3)
-
-**Goal:** Defense in depth above the Phase-25 wall: at selection time, the walker/selector
-never presents a node whose exercise demands unlearned letters (per the child's actual
-progress + `letters[]` labels) — even if bad data ships via a Firestore seed or a future
-draft promotion. Product decisions decided in discuss-phase before build: skip vs
-substitute vs tier-down when a node is illegal; essential-node handling so the star always
-stays reachable; loud logging when the guard fires (never a silent skip).
-**Mode:** build (discuss-phase gate on the product calls)
-**Depends on:** Phase 25 (labels are the ground truth the guard reads)
-**Requirements:** QP-07 / D-12 (runtime leg)
-**Success Criteria** (what must be TRUE):
-
-  1. A live-path test seeds an illegal card (unlearned-letter demand) via the data path and proves the walker never presents it — and the star remains reachable.
-  2. The chosen degradation (skip/substitute/tier-down) is an owner-approved decision recorded in the phase, not a default.
-  3. Every guard firing produces a loud, greppable log naming the card and the missing letters.
-
-**Plans:** TBD
-**Research hint:** no — the design tension (essential nodes vs guard) is a discuss-phase item, not research.
-
-#### Phase 29: Entry & identity — the front-door decision made real
-
-**Goal:** The Decided architecture says children never log in, the boot anonymous identity
-suffices, and parent auth lives only behind the PIN-gated parent area — but the as-built
-router makes a parent account the front door of the whole app ("anonymous deliberately NOT
-sufficient", discovered 2026-07-19 when sign-out stranded the owner at /auth). One of them
-is wrong; the OWNER decides which. Then everything aligns with the chosen model: the router
-gate, sign-out behavior (never strand a child), the published privacy policy + terms, the
-Play data-safety and App-access declarations (test credentials exist today because of the
-wall), and the fresh-install experience. Rides a post-grading release train (with or after
-Phase 27's 2.0.1+4).
-**Mode:** discuss → build (autonomous:false on the decision)
-**Depends on:** grading freeze (any code change re-cuts both artifacts); Phase 27's train
-**Requirements:** D-09b/D-09c lineage (child-login ban, anonymous boot identity)
-**Success Criteria** (what must be TRUE):
-
-  1. A recorded owner decision names the entry model (anonymous-suffices vs account-first) with the child-safety and Play-compliance tradeoffs stated.
-  2. Router, auth service, and sign-out implement exactly that model; signing out never leaves the user stranded without a path back.
-  3. The privacy policy, terms, and Play declarations (app access, data safety) all state the same model — zero contradictions between code, legal pages, and console forms.
-  4. Fresh-install and sign-out flows verified on device.
-
-**Plans:** TBD
-**Research hint:** no — this is a decision + alignment phase.
 
 ### Progress (v2.0)
 
@@ -1186,13 +1204,14 @@ Phase 16's surviving work is the eval-trust legs (gold-set sign-off + judge cali
 re-scope before executing; DEMO-01's demo-harden pressure is moot. Ask-Qalam voice (S2-03)
 is DROPPED from this milestone's scope (owner, 2026-07-16).
 
-**Post-submission arc (added 2026-07-19, after the Sprint-2 Play submission):**
-**25 (seen-letters enforcement — FIRST)** → 26 (mother's re-confirmation; can start in
-parallel once 25's labels exist) → 27 (release polish + Android verification; verification
-legs immediately, the 2.0.1+4 release cut ONLY after grading) → 28 (runtime guard; needs
-25's labels) → 29 (entry & identity; owner decision, rides a post-grading train). Standing
-rule until grading closes: the frozen release/2.0 branch, the submitted AAB, and the
-webcourse APK are untouchable — all new work lands on main.
+**The finishing arc (reorganized 2026-07-19 at the owner's direction — five consolidated
+phases, run strictly one after the other):**
+**25 (Trusted content)** → **26 (The finished experience — ships 2.0.1+4 after grading)**
+→ **27 (The whole alphabet)** → **28 (Smart across letters + the parent window)** →
+**29 (Hardening + milestone close)**. Old Phases 20–24 are absorbed/superseded into this
+arc (annotated above; details retained for the historical record — never execute them as
+written). Standing rule until grading closes: the frozen release/2.0 branch, the submitted
+AAB, and the webcourse APK are untouchable — all new work lands on main.
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -1205,15 +1224,15 @@ webcourse APK are untouchable — all new work lands on main.
 | 17. BUILD — stroke-aware coaching (on-device geo-diff → coach) | 10/10 | Complete   | 2026-07-06 |
 | 18. BUILD — the living tutor (per-child dynamic exercise selection) | 15/16 | In Progress|  |
 | 19. Question presentation overhaul | 6/6 | Complete    | 2026-07-18 |
-| 20. Curriculum graph + pipeline for all 28 letters | 0/TBD | Largely delivered outside the phase (18.1 + finalization Lane A); residue → 21 | - |
-| 21. Letter content at scale (mother-signed batches) | 0/TBD | Not started | - |
-| 22. Cross-letter selection + next-day planner | 0/TBD | Not started | - |
-| 23. Parent insight — strengths/struggles dashboard | 0/TBD | Not started | - |
-| 24. Submission readiness | 0/TBD | Submission SHIPPED 2026-07-19 (finalization push); hardening residue remains | - |
-| 25. Seen-letters enforcement (L0–2: labels, lint, seeder) | 0/TBD | Not started | - |
-| 26. Mother's re-confirmation (demo-night content changes) | 0/TBD | Not started | - |
-| 27. Release polish + Android verification debt (2.0.1+4) | 0/TBD | Not started | - |
-| 28. Runtime learned-letters guard (L3) | 0/TBD | Not started | - |
-| 29. Entry & identity — front-door decision | 0/TBD | Not started | - |
+| 20. Curriculum graph + pipeline for all 28 letters | - | Absorbed (18.1 + finalization Lane A delivered it) | 2026-07-19 |
+| 21. Letter content at scale | - | Superseded → 27 | - |
+| 22. Cross-letter selection + next-day planner | - | Superseded → 28 | - |
+| 23. Parent insight dashboard | - | Superseded → 28 | - |
+| 24. Submission readiness | - | Superseded: submission SHIPPED 2026-07-19; residue → 29 | - |
+| 25. Trusted content — seen-letters wall + mother's confirmation | 0/TBD | Not started | - |
+| 26. The finished experience — entry, polish, 2.0.1 release | 0/TBD | Not started | - |
+| 27. The whole alphabet — 24 letters in signed batches | 0/TBD | Not started | - |
+| 28. Smart across letters + the parent window | 0/TBD | Not started | - |
+| 29. Hardening + milestone close | 0/TBD | Not started | - |
 
 **Coverage:** the 14 original v2.0 requirements map across Phases 14–16; Phase 17 (added 2026-06-30 from the stroke-aware spike) adds STRK-01 / GROUND-04 / EVAL-03. The three spikes (11–13) own no requirements by design. The closing arc (19–24, added 2026-07-16) picks up CUR-01 + PLAT-01 (v1 carry-overs) and S2-04 / S2-05 / S2-06 (S2-10 optional); S2-03 (ask-Qalam voice) is out of scope this milestone. See REQUIREMENTS.md → v2.0 Traceability.

@@ -24,10 +24,10 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 
 ## Current Position
 
-Phase: 25 (post-submission arc 25–29 added 2026-07-19 — see ROADMAP.md)
+Phase: 25 (the finishing arc 25–29, consolidated 2026-07-19 at the owner's direction — five phases run strictly in order; old 20–24 absorbed/superseded — see ROADMAP.md)
 Plan: Not started
 Status: Sprint-2 submission SHIPPED — v2.0.0+3 in Play production review; release/2.0 frozen + pushed; webcourse APK cut from the same commit. NO REBUILDS until grading (all work lands on main).
-Next: (1) Morning status sweep — qalam1481@gmail.com inbox + Play Console review state; confirm the webcourse APK upload. (2) The PRESENTATION (10-min deck + recorded demo on a PHYSICAL Android device — source the device early, sideload the submitted APK if review is still pending). (3) Then `/gsd:plan-phase 25` (seen-letters enforcement L0–2 — the 34-card audit from the 2026-07-19 session is the worklist). Phase 26 (mother's packet) can run in parallel after 25's labels. Phase 18's 18-11 residue (mother sign-offs, cost/latency close) remains open and partially folds into Phase 26.
+Next: (1) Morning status sweep — qalam1481@gmail.com inbox + Play Console review state; confirm the webcourse APK upload. (2) The PRESENTATION (10-min deck + recorded demo on a PHYSICAL Android device — source the device early, sideload the submitted APK if review is still pending). (3) Then `/gsd:plan-phase 25` — Trusted content: the seen-letters wall L0–L3 (the 34-card audit from the 2026-07-19 session is the worklist) + the mother's re-confirmation packet. Then 26 → 27 → 28 → 29 in order. Phase 18's 18-11 residue (constants sign-off, cost/latency close) folds into Phase 25's packet + Phase 29's ledger.
 PriorNext: 18-07 (live-path wiring) confirmed genuinely done in the prior session (the earlier "18-07 done" note had been an inaccurate narrative — only a plan-amendment commit existed until that pass landed real source wiring). 18-08/18-09 (server WHY grounding + nightly compiler) executed before 18-07 since the server/eval legs don't depend on client wiring.
 
 ## Performance Metrics
