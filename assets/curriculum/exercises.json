@@ -1390,8 +1390,10 @@
         "incomplete": "Fill in the missing letter to finish the word."
       },
       "signedOff": true,
+      "_review": "LABEL FIX (D-16, 2026-07-19): letters[] ['taa']→['taa','waaw'] — the truthful deduped decomposition of توت (waaw had been mislabeled away). The exception covers reach-ahead, NEVER a false label. This card is then kept LIVE as an owner-approved exception (reaches ahead: waaw at unit 27), mother's verdict PENDING (Plan 25-06 packet / 25-07 walkthrough).",
       "letters": [
-        "taa"
+        "taa",
+        "waaw"
       ],
       "criteria": [
         "strokeCount",
