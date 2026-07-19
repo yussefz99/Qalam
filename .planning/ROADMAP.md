@@ -1083,11 +1083,11 @@ flips where she confirms; anything she rejects is restored or re-worked to her i
   3. A live-path test seeds an illegal card via the data path and proves the walker never presents it, the star stays reachable, and the guard logs loudly.
   4. The mother's packet covers every owner-directed change since her last sign-off; every verdict is recorded; signedOff flags match her answers exactly; rejected changes are restored or re-worked.
 
-**Plans:** 1/7 plans executed
+**Plans:** 2/7 plans executed
 Plans:
 
 - [x] 25-01-PLAN.md — L0: the shared learned-letters predicate + audit build-gate (validate.py)
-- [ ] 25-02-PLAN.md — the 34-card triage (re-point/remove) + the new alif.writeLetter.fromPicture draft card
+- [x] 25-02-PLAN.md — the 34-card triage (re-point/remove) + the new alif.writeLetter.fromPicture draft card
 - [ ] 25-03-PLAN.md — L1: the lint enforces every live letter (signedOff decoupled from enforcement)
 - [ ] 25-04-PLAN.md — L2: the seeder learned-letters refusal + a crafted-fixture test
 - [ ] 25-05-PLAN.md — L3: the runtime guard (skip illegal, star-reachable, loud log) + live-path test [autonomous:false — L3 decision gate]
@@ -1239,7 +1239,7 @@ AAB, and the webcourse APK are untouchable — all new work lands on main.
 | 22. Cross-letter selection + next-day planner | - | Superseded → 28 | - |
 | 23. Parent insight dashboard | - | Superseded → 28 | - |
 | 24. Submission readiness | - | Superseded: submission SHIPPED 2026-07-19; residue → 29 | - |
-| 25. Trusted content — seen-letters wall + mother's confirmation | 1/7 | In Progress|  |
+| 25. Trusted content — seen-letters wall + mother's confirmation | 2/7 | In Progress|  |
 | 26. The finished experience — entry, polish, 2.0.1 release | 0/TBD | Not started | - |
 | 27. The whole alphabet — 24 letters in signed batches | 0/TBD | Not started | - |
 | 28. Smart across letters + the parent window | 0/TBD | Not started | - |
