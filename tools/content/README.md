@@ -19,8 +19,9 @@ promotes signed words into the live `assets/curriculum/words.json`.
 Run from the `tools/` directory:
 
 ```bash
-python -m content.build_draft   # regenerate words_draft.json
-python -m content.validate      # write validation_report.md + print a summary
+python -m content.build_draft     # regenerate words_draft.json
+python -m content.validate        # write validation_report.md + print a summary
+python -m content.validate --gate # + FAIL the build on live-node findings (criterion 1)
 ```
 
 ## What the validator reports
@@ -34,8 +35,29 @@ python -m content.validate      # write validation_report.md + print a summary
 3. **Live `exercises.json`** — existing content that demands unlearned letters.
 
 The validator is **read-only** against the live curriculum and mutates nothing
-there. It exits non-zero only if the *draft bank itself* has a blocking
-(unmappable) decomposition — live findings are report content, not build errors.
+there. Without `--gate` it exits non-zero only if the *draft bank itself* has a
+blocking (unmappable) decomposition — live findings are report content, not build
+errors.
+
+## The build gate (`--gate`) — the seen-letters wall's L0
+
+`python -m content.validate --gate` is the build gate criterion 1 references
+(Phase 25, D-04..D-09). After regenerating the report it exits **non-zero** when
+any **live graph-node** card either:
+
+- **reaches ahead** — its stored `letters[]` demands a letter whose `introOrder`
+  is later than the card's unit (via `unlearned_letters_for_exercise`), or
+- **is unlabeled** — its `letters[]` is missing/empty or drifts from the
+  decomposition of its display text (via `unlabeled_cards`).
+
+Scoping matches the Dart lint exactly (`live_graph_node_ids` mirrors the lint's
+`liveNodeIds`): **dormant** configs — cards in `exercises.json` referenced by no
+live graph node, e.g. `alif.buildSentence.hear` — are never gated, and the
+`OWNER_APPROVED_EXCEPTIONS` (the 4 D-09 baa ids, pending the mother's ruling) are
+exempt. The seeder (`tools/firebase/seed_curriculum_v2.py`, L2) imports the same
+`unlearned_letters_for_exercise` / `live_graph_node_ids` / `OWNER_APPROVED_EXCEPTIONS`,
+so all four wall layers (L0 audit, L1 lint, L2 seeder, L3 runtime guard) refuse
+identical content. The gate exits 0 once the live worklist is triaged to zero.
 
 ## Decomposition conventions (flagged for the mother, not silently applied)
 

@@ -13,15 +13,25 @@ Two jobs, both read-only against the curriculum:
      (this is where the بطة / توت drift shows up). Goes straight into the Phase 19
      card-rewrite session.
 
-Writes a markdown report and prints a summary. Exits non-zero only if OUR OWN
-draft bank has a blocking (unmappable) decomposition — live findings are report
-content, not build failures (the live files are the owner's to fix).
+Writes a markdown report and prints a summary. Without ``--gate`` it exits
+non-zero only if OUR OWN draft bank has a blocking (unmappable) decomposition —
+live findings are report content, not build failures (the live files are the
+owner's to fix).
 
-Run from ``tools/``:  ``python -m content.validate``
+With ``--gate`` (the Phase-25 build gate, D-04..D-09) it also exits non-zero when
+any LIVE graph-node card reaches ahead of the learned set or is unlabeled. The
+gate + the seeder (L2) share ``unlearned_letters_for_exercise`` /
+``live_graph_node_ids`` / ``OWNER_APPROVED_EXCEPTIONS`` so all four wall layers
+refuse identical content. The report is always regenerated first.
+
+Run from ``tools/``:
+  ``python -m content.validate``          # report-only
+  ``python -m content.validate --gate``   # + fail on live-node findings
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 from pathlib import Path
 
@@ -33,12 +43,43 @@ PKG_DIR = Path(__file__).resolve().parent
 LETTERS_JSON = REPO_ROOT / "assets" / "curriculum" / "letters.json"
 LIVE_WORDS_JSON = REPO_ROOT / "assets" / "curriculum" / "words.json"
 EXERCISES_JSON = REPO_ROOT / "assets" / "curriculum" / "exercises.json"
+GRAPHS_DIR = REPO_ROOT / "assets" / "curriculum" / "graphs"
+CURRICULUM_GRAPH_JSON = REPO_ROOT / "assets" / "curriculum" / "curriculum_graph.json"
 DRAFT_JSON = PKG_DIR / "words_draft.json"
 REPORT_MD = PKG_DIR / "validation_report.md"
 
 # taa_marbuta is used by the app's letters[] but is NOT one of the 28 taught
 # letters, so it can't be gated on an introOrder. We surface it, never guess.
 SPECIAL_NON_TAUGHT = {"taa_marbuta"}
+
+# --------------------------------------------------------------------------- #
+# The seen-letters wall (Phase 25, D-04..D-09) — the ONE definition L0/L1/L2 share
+# --------------------------------------------------------------------------- #
+#
+# The wall's thesis: all four layers (L0 audit here, L1 Dart lint, L2 seeder, L3
+# runtime guard) must refuse the SAME thing. This module is L0 AND the parity
+# source of truth — L2 (``seed_curriculum_v2.py``) imports the predicate + the two
+# scoping helpers below so the seeder and the audit cannot drift apart.
+
+# Owner-approved (device UAT, 2026-07-18), mother-approval-PENDING baa exceptions
+# (D-09). Mirror of the Dart lint's ``baaOwnerApprovedExceptions``
+# (learned_letters_lint_test.dart). These 4 reach-ahead baa cards are exempt from
+# the build gate + the seeder refusal until the mother confirms / re-points them in
+# the Phase-25 packet — exactly the set L1 exempts, so L0/L1/L2 fail on the SAME
+# cards.
+OWNER_APPROVED_EXCEPTIONS: frozenset[str] = frozenset(
+    {
+        "baa.fillBlank.adjective",
+        "baa.transformWord.dual",
+        "baa.transformWord.plural",
+        "baa.transformWord.opposite",
+    }
+)
+
+# A stored letter absent from letters.json ``introOrder`` (e.g. taa_marbuta, a
+# non-taught special form) is treated as reaching ahead — the same sentinel the
+# Dart lint uses (``introOrder[l] ?? 1 << 30``), so the two predicates agree.
+_UNLEARNED_SENTINEL = 1 << 30
 
 
 def _load(path: Path):
@@ -190,8 +231,144 @@ def _arabic_strings_in_exercise(ex: dict) -> list[str]:
     return out
 
 
+# --------------------------------------------------------------------------- #
+# The seen-letters wall — shared predicate + scoping helpers (imported by L2)
+# --------------------------------------------------------------------------- #
+
+def unlearned_letters_for_exercise(
+    ex: dict, order: dict[str, int]
+) -> list[tuple[str, int]]:
+    """Reach-ahead letters in a card's STORED ``letters[]`` — the parity predicate.
+
+    Behavioural mirror of the Dart lint's ``unlearnedFor``
+    (learned_letters_lint_test.dart L127–135): it reads the card's stored
+    ``letters[]`` (NOT a re-decomposition of the display text), so L0/L1/L2 all
+    judge the same input. A letter is *unlearned* for this card's unit when its
+    ``introOrder`` exceeds the unit's ``introOrder`` (unit = the id prefix, e.g.
+    ``baa.x`` → ``baa``). A letter absent from ``order`` (e.g. taa_marbuta, a
+    non-taught special form) is treated as reaching ahead via ``_UNLEARNED_SENTINEL``
+    — the same ``?? 1 << 30`` fallback the Dart lint uses.
+
+    Returns ``[(letter, introOrder), …]`` for every reach-ahead entry; an empty
+    list means the card is legal.
+    """
+    unit = str(ex.get("id", "")).split(".", 1)[0]
+    unit_order = order.get(unit)
+    if unit_order is None:
+        return []
+    out: list[tuple[str, int]] = []
+    for letter in ex.get("letters", []) or []:
+        o = order.get(letter, _UNLEARNED_SENTINEL)
+        if o > unit_order:
+            out.append((letter, o))
+    return out
+
+
+def live_graph_node_ids() -> set[str]:
+    """The set of exercise ids referenced by a LIVE graph node.
+
+    Union of every ``node["exerciseId"]`` across the canonical baa
+    ``curriculum_graph.json`` (the server's source) + every per-letter
+    ``graphs/*.json``. Mirrors the Dart lint's ``_discoverUnitGraphs`` /
+    ``liveNodeIds``; ``graphs/baa.json`` is byte-parity with
+    ``curriculum_graph.json`` so ids naturally dedup through the set.
+
+    The gate + the seeder scope to THIS set only, so the dormant reach-ahead
+    configs in ``exercises.json`` (cards referenced by NO live node — e.g.
+    ``alif.buildSentence.hear``, the buildSentence pairs) never trip the wall,
+    exactly as L1's ``liveNodeIds`` scoping does.
+    """
+    ids: set[str] = set()
+    sources: list[Path] = [CURRICULUM_GRAPH_JSON]
+    if GRAPHS_DIR.is_dir():
+        sources += sorted(GRAPHS_DIR.glob("*.json"))
+    for path in sources:
+        if not path.exists():
+            continue
+        for node in _load(path).get("nodes", []) or []:
+            eid = node.get("exerciseId")
+            if isinstance(eid, str):
+                ids.add(eid)
+    return ids
+
+
+def _text_for_display(ex: dict) -> str | None:
+    """The written text a card's ``letters[]`` should decompose from.
+
+    Mirror of ``promote_letter._text_for`` (the authoring source of truth):
+    ``expected.glyph.char`` → ``expected.word.text`` → ``' '.join(expected.words)``.
+    Returns None for a card with no expected text (teachCard / placeholder).
+    """
+    expected = ex.get("expected")
+    if not isinstance(expected, dict):
+        return None
+    glyph = expected.get("glyph")
+    if isinstance(glyph, dict) and glyph.get("char"):
+        return str(glyph["char"])
+    word = expected.get("word")
+    if isinstance(word, dict) and word.get("text"):
+        return str(word["text"])
+    words = expected.get("words")
+    if isinstance(words, list) and words:
+        return " ".join(str(w) for w in words)
+    return None
+
+
+def _dedup_preserve(items: list[str]) -> list[str]:
+    """First-seen-wins dedup — mirror of ``promote_letter._dedup_preserve``."""
+    seen: set[str] = set()
+    out: list[str] = []
+    for x in items:
+        if x not in seen:
+            seen.add(x)
+            out.append(x)
+    return out
+
+
+def unlabeled_cards(exercises: list[dict], live_ids: set[str]) -> dict[str, str]:
+    """LIVE-node cards that are unlabeled or whose label drifted — criterion 1's
+    "ZERO unlabeled words" leg, scoped to live nodes only.
+
+    A live-node card is flagged when its stored ``letters[]`` is missing/empty, OR
+    (when the card has display text) it diverges from the deduped decomposition of
+    that text — the بطة / توت label-drift the module docstring names. The expected
+    label mirrors ``promote_letter.enrich_exercise``, which stores the *deduped*
+    written skeleton (باب → ``[baa, alif]``); comparing against the deduped form is
+    what separates genuine drift from the normal repeated-letter case. Cards with no
+    display text (teachCard / placeholder) only need a non-empty ``letters[]``.
+
+    Returns ``{exerciseId: reason}``; empty means every live card is labeled.
+    """
+    flagged: dict[str, str] = {}
+    for ex in exercises:
+        ex_id = str(ex.get("id", ""))
+        if ex_id not in live_ids:
+            continue
+        stored = list(ex.get("letters") or [])
+        if not stored:
+            flagged[ex_id] = "letters[] missing/empty"
+            continue
+        text = _text_for_display(ex)
+        if text is None:
+            continue
+        expected = _dedup_preserve(decompose(text).letters)
+        if not expected:
+            continue
+        if stored != expected:
+            flagged[ex_id] = (
+                f"letters[] {stored} != decomposed {expected} (from {text!r})"
+            )
+    return flagged
+
+
 def report_live_exercises(order: dict[str, int]) -> list[str]:
-    """Existing exercises whose content demands letters not yet introduced."""
+    """Existing exercises whose content demands letters not yet introduced.
+
+    NOTE: this section stays a SEPARATE *label-drift* signal — it decomposes the
+    card's DISPLAY text (not the stored ``letters[]``), reproducing the worklist the
+    owner triages from. The build gate (``--gate``) uses the stored-``letters[]``
+    predicate ``unlearned_letters_for_exercise`` + ``unlabeled_cards`` instead.
+    """
     data = _load(EXERCISES_JSON)
     exercises = data.get("exercises", [])
     lines = ["## 3 · Live `exercises.json` — content demanding unlearned letters", ""]
@@ -228,7 +405,77 @@ def report_live_exercises(order: dict[str, int]) -> list[str]:
     return lines
 
 
-def main() -> int:
+def run_gate(order: dict[str, int]) -> int:
+    """The build gate (``--gate``): fail the build if any LIVE graph-node card
+    reaches ahead of the learned set OR is unlabeled. Returns the process exit code.
+
+    Scoping is exactly L1's: only cards referenced by a live graph node are checked
+    (``live_graph_node_ids``); the ``OWNER_APPROVED_EXCEPTIONS`` (the 4 D-09 baa ids)
+    are exempt. So L0 and L1 fail on the SAME set — the dormant reach-ahead configs
+    and the owner-approved exceptions never trip it. Read-only: nothing is written.
+    """
+    exercises = _load(EXERCISES_JSON).get("exercises", [])
+    live_ids = live_graph_node_ids()
+
+    reach_ahead: dict[str, list[tuple[str, int]]] = {}
+    for ex in exercises:
+        ex_id = str(ex.get("id", ""))
+        if ex_id not in live_ids:
+            continue  # dormant config — referenced by no live node; never gated
+        if ex_id in OWNER_APPROVED_EXCEPTIONS:
+            continue  # D-09 exception — exempt like L1 until the mother rules
+        ahead = unlearned_letters_for_exercise(ex, order)
+        if ahead:
+            reach_ahead[ex_id] = ahead
+
+    unlabeled = unlabeled_cards(exercises, live_ids)
+
+    print()
+    print("── build gate (--gate): LIVE graph nodes only ──")
+    print(f"  live graph nodes: {len(live_ids)}")
+    print(f"  owner-approved exceptions (exempt): {len(OWNER_APPROVED_EXCEPTIONS)}")
+    if reach_ahead:
+        print(f"  {len(reach_ahead)} live-node card(s) reach ahead of the learned set:")
+        for cid in sorted(reach_ahead):
+            ahead_txt = ", ".join(
+                f"{l}({o})" for l, o in sorted(reach_ahead[cid], key=lambda x: x[1])
+            )
+            print(f"    - {cid}: {ahead_txt}")
+    if unlabeled:
+        print(f"  {len(unlabeled)} live-node card(s) unlabeled / label-drifted:")
+        for cid in sorted(unlabeled):
+            print(f"    - {cid}: {unlabeled[cid]}")
+
+    findings = len(reach_ahead) + len(unlabeled)
+    if findings:
+        print(
+            f"  GATE FAIL: {findings} live-node finding(s) — triage to zero "
+            "(see validation_report.md; triage lands in Plan 02)."
+        )
+        return 1
+    print("  GATE PASS: every live-node card obeys the learned-letters bar and is labeled.")
+    return 0
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        prog="content.validate",
+        description=(
+            "Letter-legality validator + build gate (read-only against the "
+            "curriculum). Always regenerates validation_report.md."
+        ),
+    )
+    parser.add_argument(
+        "--gate",
+        action="store_true",
+        help=(
+            "Build gate: exit non-zero if any LIVE graph-node card reaches ahead "
+            "(demands an unlearned letter) or is unlabeled. Dormant configs and the "
+            "owner-approved exceptions are exempt. Without it, this stays report-only."
+        ),
+    )
+    args = parser.parse_args(argv)
+
     order = load_intro_order()
 
     header = [
@@ -262,6 +509,11 @@ def main() -> int:
     mismatches = sum(1 for w in live if w.get("letters", []) != decompose(w["text"]).letters)
     print(f"  draft bank: {len(draft)} words, {ahead} reach ahead of their focus letter")
     print(f"  live words.json: {mismatches} stored-vs-computed letters[] mismatch(es)")
+
+    # --gate: after regenerating the report, gate the build on LIVE-node findings.
+    if args.gate:
+        return run_gate(order)
+
     if blocking:
         print(f"  ERROR: {blocking} draft word(s) have a BLOCKING decomposition — fix the bank.")
         return 1
