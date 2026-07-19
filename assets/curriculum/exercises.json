@@ -2119,7 +2119,17 @@
         "wrongLetter": "Listen: أَسَد — ah… it starts with alif. Write ا.",
         "unclear": "Almost — draw alif tall and straight, top to bottom."
       },
-      "signedOff": false
+      "signedOff": false,
+      "letters": [
+        "alif"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
     },
     {
       "id": "baa.microDrill.dot",
