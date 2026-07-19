@@ -13,15 +13,25 @@ Two jobs, both read-only against the curriculum:
      (this is where the بطة / توت drift shows up). Goes straight into the Phase 19
      card-rewrite session.
 
-Writes a markdown report and prints a summary. Exits non-zero only if OUR OWN
-draft bank has a blocking (unmappable) decomposition — live findings are report
-content, not build failures (the live files are the owner's to fix).
+Writes a markdown report and prints a summary. Without ``--gate`` it exits
+non-zero only if OUR OWN draft bank has a blocking (unmappable) decomposition —
+live findings are report content, not build failures (the live files are the
+owner's to fix).
 
-Run from ``tools/``:  ``python -m content.validate``
+With ``--gate`` (the Phase-25 build gate, D-04..D-09) it also exits non-zero when
+any LIVE graph-node card reaches ahead of the learned set or is unlabeled. The
+gate + the seeder (L2) share ``unlearned_letters_for_exercise`` /
+``live_graph_node_ids`` / ``OWNER_APPROVED_EXCEPTIONS`` so all four wall layers
+refuse identical content. The report is always regenerated first.
+
+Run from ``tools/``:
+  ``python -m content.validate``          # report-only
+  ``python -m content.validate --gate``   # + fail on live-node findings
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 from pathlib import Path
 
@@ -395,7 +405,77 @@ def report_live_exercises(order: dict[str, int]) -> list[str]:
     return lines
 
 
-def main() -> int:
+def run_gate(order: dict[str, int]) -> int:
+    """The build gate (``--gate``): fail the build if any LIVE graph-node card
+    reaches ahead of the learned set OR is unlabeled. Returns the process exit code.
+
+    Scoping is exactly L1's: only cards referenced by a live graph node are checked
+    (``live_graph_node_ids``); the ``OWNER_APPROVED_EXCEPTIONS`` (the 4 D-09 baa ids)
+    are exempt. So L0 and L1 fail on the SAME set — the dormant reach-ahead configs
+    and the owner-approved exceptions never trip it. Read-only: nothing is written.
+    """
+    exercises = _load(EXERCISES_JSON).get("exercises", [])
+    live_ids = live_graph_node_ids()
+
+    reach_ahead: dict[str, list[tuple[str, int]]] = {}
+    for ex in exercises:
+        ex_id = str(ex.get("id", ""))
+        if ex_id not in live_ids:
+            continue  # dormant config — referenced by no live node; never gated
+        if ex_id in OWNER_APPROVED_EXCEPTIONS:
+            continue  # D-09 exception — exempt like L1 until the mother rules
+        ahead = unlearned_letters_for_exercise(ex, order)
+        if ahead:
+            reach_ahead[ex_id] = ahead
+
+    unlabeled = unlabeled_cards(exercises, live_ids)
+
+    print()
+    print("── build gate (--gate): LIVE graph nodes only ──")
+    print(f"  live graph nodes: {len(live_ids)}")
+    print(f"  owner-approved exceptions (exempt): {len(OWNER_APPROVED_EXCEPTIONS)}")
+    if reach_ahead:
+        print(f"  {len(reach_ahead)} live-node card(s) reach ahead of the learned set:")
+        for cid in sorted(reach_ahead):
+            ahead_txt = ", ".join(
+                f"{l}({o})" for l, o in sorted(reach_ahead[cid], key=lambda x: x[1])
+            )
+            print(f"    - {cid}: {ahead_txt}")
+    if unlabeled:
+        print(f"  {len(unlabeled)} live-node card(s) unlabeled / label-drifted:")
+        for cid in sorted(unlabeled):
+            print(f"    - {cid}: {unlabeled[cid]}")
+
+    findings = len(reach_ahead) + len(unlabeled)
+    if findings:
+        print(
+            f"  GATE FAIL: {findings} live-node finding(s) — triage to zero "
+            "(see validation_report.md; triage lands in Plan 02)."
+        )
+        return 1
+    print("  GATE PASS: every live-node card obeys the learned-letters bar and is labeled.")
+    return 0
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        prog="content.validate",
+        description=(
+            "Letter-legality validator + build gate (read-only against the "
+            "curriculum). Always regenerates validation_report.md."
+        ),
+    )
+    parser.add_argument(
+        "--gate",
+        action="store_true",
+        help=(
+            "Build gate: exit non-zero if any LIVE graph-node card reaches ahead "
+            "(demands an unlearned letter) or is unlabeled. Dormant configs and the "
+            "owner-approved exceptions are exempt. Without it, this stays report-only."
+        ),
+    )
+    args = parser.parse_args(argv)
+
     order = load_intro_order()
 
     header = [
@@ -429,6 +509,11 @@ def main() -> int:
     mismatches = sum(1 for w in live if w.get("letters", []) != decompose(w["text"]).letters)
     print(f"  draft bank: {len(draft)} words, {ahead} reach ahead of their focus letter")
     print(f"  live words.json: {mismatches} stored-vs-computed letters[] mismatch(es)")
+
+    # --gate: after regenerating the report, gate the build on LIVE-node findings.
+    if args.gate:
+        return run_gate(order)
+
     if blocking:
         print(f"  ERROR: {blocking} draft word(s) have a BLOCKING decomposition — fix the bank.")
         return 1
