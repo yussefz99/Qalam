@@ -92,7 +92,7 @@ class LetterUnitState {
 
   /// True when the LAST mastery evaluation could not run (graph or reps
   /// unreadable — e.g. a missing graph for this letter). The SURFACED degraded
-  /// state (finalization Lane A): the old `catch (_) { return false; }` hid a
+  /// state (finalization Lane A): the old silent swallow-and-return-false hid a
   /// missing graph forever, which read on-device as a permanent silent freeze.
   /// The screen renders the honest "not yet" state off this; it never grants
   /// the star (fail-safe).
@@ -247,7 +247,14 @@ class LetterUnitController extends Notifier<LetterUnitState> {
     try {
       final profile = await ref.read(childProfileProvider.future);
       _childProfileId = profile?.id ?? kUnassignedChildProfileId;
-    } catch (_) {
+    } catch (e) {
+      // D-03 loud-degrade: a missing/unreadable profile (fresh install, headless
+      // test) degrades to the unassigned sentinel — the unit still opens; keyed
+      // writes just key to the sentinel until a real profile resolves.
+      debugPrint(
+        '[LetterUnit] could not resolve the child profile for "$letterId": $e — '
+        'using the unassigned sentinel id (the unit still opens).',
+      );
       _childProfileId = kUnassignedChildProfileId;
     }
     // 0a) 260718-nft: WARM the per-letter curriculum graph UNCONDITIONALLY, so the
@@ -287,8 +294,14 @@ class LetterUnitController extends Notifier<LetterUnitState> {
       saved = await ref
           .read(repo.graphPositionRepositoryProvider)
           .getPosition(letterId, childProfileId: _childProfileId);
-    } catch (_) {
-      saved = null; // a read failure degrades to a clean start (never crashes).
+    } catch (e) {
+      // D-03 loud-degrade: a durable-position read failure degrades to a clean
+      // start (never crashes) — say so, it means resume is lost this open.
+      debugPrint(
+        '[LetterUnit] durable graph position for "$letterId" could not be read: '
+        '$e — starting clean (resume cursor unavailable this open).',
+      );
+      saved = null;
     }
     // 1b) 18-15 (UAT T7): RESTORE selection mode from the durable cursor. The
     // durable cursor is read back correctly above, but `selectionActive` is
@@ -306,8 +319,14 @@ class LetterUnitController extends Notifier<LetterUnitState> {
       try {
         final graph = await ref.read(curriculumGraphProvider(_letterId).future);
         restoreSelection = graph.isAuthored(savedCursor);
-      } catch (_) {
-        restoreSelection = false; // graph unavailable → no resume, never a crash.
+      } catch (e) {
+        // D-03 loud-degrade: the graph could not validate the saved cursor → no
+        // selection resume (never a crash); the child keeps the legacy walk.
+        debugPrint(
+          '[LetterUnit] could not validate the saved cursor "$savedCursor" for '
+          '"$_letterId": $e — no selection resume this open (legacy walk).',
+        );
+        restoreSelection = false;
       }
     }
     // 2) Resolve the resume section. An explicit resumeSection wins; otherwise
@@ -345,7 +364,13 @@ class LetterUnitController extends Notifier<LetterUnitState> {
       _sessionArc = await ref
           .read(arcStateRepositoryProvider)
           .getArc(letterId, childProfileId: _childProfileId);
-    } catch (_) {
+    } catch (e) {
+      // D-03 loud-degrade: no durable arc (no Firebase in a test / cold boot) →
+      // null (no arc in progress); the selection path never waits on this.
+      debugPrint(
+        '[LetterUnit] remediation arc for "$letterId" could not load: $e — '
+        'no arc in progress this session (never a false step-down).',
+      );
       _sessionArc = null;
     }
     try {
@@ -353,7 +378,13 @@ class LetterUnitController extends Notifier<LetterUnitState> {
       // refresh is fired fire-and-forget INSIDE childModelProvider — never awaited
       // here (Req 6 / D-16), so the selection path is never blocked on a round-trip.
       _profileSnapshot = await ref.read(childModelProvider.future);
-    } catch (_) {
+    } catch (e) {
+      // D-03 loud-degrade: no across-session mirror (cold boot / empty) → null
+      // (no across-session signal); the payload simply omits the profile.
+      debugPrint(
+        '[LetterUnit] across-session profile for "$letterId" could not load: $e '
+        '— no across-session signal this session (never a false struggle).',
+      );
       _profileSnapshot = null;
     }
   }
@@ -476,8 +507,15 @@ class LetterUnitController extends Notifier<LetterUnitState> {
     final CurriculumGraph graph;
     try {
       graph = await ref.read(curriculumGraphProvider(_letterId).future);
-    } catch (_) {
-      return null; // graph not loaded — never crash the practice path.
+    } catch (e) {
+      // D-03 loud-degrade (never a silent swallow): the graph could not load, so
+      // this selection is skipped and the unit stays put (never a crash). Say so —
+      // a silently-dropped selection reads on device as a frozen "Next" button.
+      debugPrint(
+        '[LetterUnit] selection for "$_letterId" could not load the graph: $e — '
+        'skipping this selection (the unit stays put, never a crash).',
+      );
+      return null;
     }
     // Select FROM the current graph-node cursor (kept in sync by beginSelection),
     // not the coach's exercise-type label — so this narrow matches beginSelection's
@@ -548,8 +586,13 @@ class LetterUnitController extends Notifier<LetterUnitState> {
       await ref
           .read(arcStateRepositoryProvider)
           .setArc(_letterId, arc, childProfileId: _childProfileId);
-    } catch (_) {
-      // A failed local persist must never crash selection (resume degrades warm).
+    } catch (e) {
+      // D-03 loud-degrade: a failed local arc persist must never crash selection
+      // (resume just restarts the arc warm on the next entry) — but say so.
+      debugPrint(
+        '[LetterUnit] could not persist the remediation arc for "$_letterId": $e '
+        '— the arc restarts warm on the next entry (selection unaffected).',
+      );
     }
   }
 
@@ -566,8 +609,14 @@ class LetterUnitController extends Notifier<LetterUnitState> {
     final CurriculumGraph graph;
     try {
       graph = await ref.read(curriculumGraphProvider(_letterId).future);
-    } catch (_) {
-      return; // graph not loaded — skip silently, never crash.
+    } catch (e) {
+      // D-03 loud-degrade: the graph could not load, so this node-clear is skipped
+      // (the cleared state simply does not grow — never a crash). Say so.
+      debugPrint(
+        '[LetterUnit] node-clear for "$exerciseId" ("$_letterId") could not load '
+        'the graph: $e — skipping the clear (cleared state unchanged, no crash).',
+      );
+      return;
     }
     final node = graph.nodes
         .cast<GraphNode?>()
@@ -582,7 +631,13 @@ class LetterUnitController extends Notifier<LetterUnitState> {
             letterId: _letterId,
             exerciseId: exerciseId,
           );
-    } catch (_) {
+    } catch (e) {
+      // D-03 loud-degrade: the clean-rep read failed, so treat as 0 (the node just
+      // will not clear yet — never a crash, never a false clear). Say so.
+      debugPrint(
+        '[LetterUnit] clean-rep read for "$exerciseId" ("$_letterId") failed: $e '
+        '— treating as 0 reps (the node stays uncleared until the read recovers).',
+      );
       reps = 0;
     }
     if (reps < node.minCleanReps) return; // threshold not yet met — skip.
@@ -627,7 +682,7 @@ class LetterUnitController extends Notifier<LetterUnitState> {
           .exerciseCleanRepsFor(_letterId, childProfileId: _childProfileId);
     } catch (e) {
       // Fail-safe: never grant the star off a guess — but say so LOUDLY and
-      // surface the degraded state (Lane A kills the old silent `catch (_)`
+      // surface the degraded state (Lane A kills the old silent swallow-catch
       // that hid a missing graph forever = the invisible on-device freeze).
       debugPrint(
         '[LetterUnit] mastery gate for "$_letterId" could not evaluate '
@@ -747,9 +802,14 @@ class LetterUnitController extends Notifier<LetterUnitState> {
               clearedTiers: state.clearedTiers,
             ),
           );
-    } catch (_) {
-      // A failed local persist must never crash navigation — resume simply falls
-      // back to the last successfully written position (or the graph root).
+    } catch (e) {
+      // D-03 loud-degrade: a failed local position persist must never crash
+      // navigation — resume falls back to the last written position (or the graph
+      // root) — but say so; a silent persist failure loses the resume cursor.
+      debugPrint(
+        '[LetterUnit] could not persist the graph position for "$_letterId": $e '
+        '— resume falls back to the last written position (navigation unaffected).',
+      );
     }
   }
 
