@@ -584,7 +584,7 @@
         "pass": "بابان — two doors. أحسنت!",
         "missingEnding": "Add the dual ending ـان: بابان."
       },
-      "signedOff": true,
+      "signedOff": false,
       "letters": [
         "baa",
         "alif",
@@ -628,7 +628,7 @@
         "pass": "أبواب — many doors. أحسنت!",
         "wrongForm": "The plural of باب is أبواب. Listen and write it."
       },
-      "signedOff": true,
+      "signedOff": false,
       "letters": [
         "alif",
         "baa",
@@ -672,7 +672,7 @@
         "pass": "صغير — “small.” أحسنت!",
         "wrongAntonym": "The opposite of big is small — صغير."
       },
-      "signedOff": true,
+      "signedOff": false,
       "letters": [
         "saad",
         "ghayn",
@@ -719,7 +719,7 @@
         "pass": "البابُ كبير — you filled it in. أحسنت!",
         "wrongWord": "A describing word fits here — try كبير (“big”)."
       },
-      "signedOff": true,
+      "signedOff": false,
       "letters": [
         "kaaf",
         "baa",

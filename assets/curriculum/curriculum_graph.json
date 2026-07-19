@@ -12,7 +12,7 @@
     "owner_restore_2026_07_18": "Owner device-UAT decision 2026-07-18: the 6 gated cards (buildSentence.hear/picture, fillBlank.adjective, transformWord.dual/plural/opposite) are RESTORED to the live graph - the owner found them 'perfect and really impressive' on device; they stay despite demanding unlearned letters (owner-approved lint exception; the presentation carries them). Supersedes gated_cards_19_05. kitaab card word is now بابا (dad) per the owner's packet-alternative pick."
   },
   "letterId": "baa",
-  "signedOff": true,
+  "signedOff": false,
   "competencies": [
     {
       "id": "recognize",
