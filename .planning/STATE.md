@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
 status: Sprint-2 submission SHIPPED — v2.0.0+3 in Play production review; release/2.0 frozen + pushed; webcourse APK cut from the same commit. NO REBUILDS until grading (all work lands on main).
-stopped_at: Phase 25 context gathered
-last_updated: "2026-07-19T13:55:45.528Z"
+stopped_at: Phase 25 planned — 7 plans committed (25-01..25-07), plan-checker PASS
+last_updated: "2026-07-19T17:30:33.911Z"
 progress:
   total_phases: 34
   completed_phases: 16
@@ -25,9 +25,9 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 ## Current Position
 
 Phase: 25 (the finishing arc 25–29, consolidated 2026-07-19 at the owner's direction — five phases run strictly in order; old 20–24 absorbed/superseded — see ROADMAP.md)
-Plan: Not started
+Plan: PLANNED — 7 plans (25-01..25-07) across 5 waves, committed 0d52e9c/464d976; plan-checker PASS after one revision loop (2 code-verified blockers fixed: live-graph-node scoping of L0 gate/L2 seeder; L3 exception-allowlist parity). Ready for /gsd:execute-phase 25.
 Status: Sprint-2 submission SHIPPED — v2.0.0+3 in Play production review; release/2.0 frozen + pushed; webcourse APK cut from the same commit. NO REBUILDS until grading (all work lands on main).
-Next: (1) Morning status sweep — qalam1481@gmail.com inbox + Play Console review state; confirm the webcourse APK upload. (2) The PRESENTATION (10-min deck + recorded demo on a PHYSICAL Android device — source the device early, sideload the submitted APK if review is still pending). (3) Then `/gsd:plan-phase 25` — Trusted content: the seen-letters wall L0–L3 (the 34-card audit from the 2026-07-19 session is the worklist) + the mother's re-confirmation packet. Then 26 → 27 → 28 → 29 in order. Phase 18's 18-11 residue (constants sign-off, cost/latency close) folds into Phase 25's packet + Phase 29's ledger.
+Next: (1) Morning status sweep — qalam1481@gmail.com inbox + Play Console review state; confirm the webcourse APK upload. (2) The PRESENTATION (10-min deck + recorded demo on a PHYSICAL Android device — source the device early, sideload the submitted APK if review is still pending). (3) `/gsd:execute-phase 25` — the seen-letters wall (Wave 1 L0 audit → Wave 2 34-card triage → Wave 3 {L1 lint, L2 seeder, L3 guard} → Wave 4 packet assembly → Wave 5 mother walkthrough+ingest, autonomous:false). Then 26 → 27 → 28 → 29 in order. Phase 18's 18-11 residue (constants sign-off, cost/latency close) folds into Phase 25's packet + Phase 29's ledger.
 PriorNext: 18-07 (live-path wiring) confirmed genuinely done in the prior session (the earlier "18-07 done" note had been an inaccurate narrative — only a plan-amendment commit existed until that pass landed real source wiring). 18-08/18-09 (server WHY grounding + nightly compiler) executed before 18-07 since the server/eval legs don't depend on client wiring.
 
 ## Performance Metrics
