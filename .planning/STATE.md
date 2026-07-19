@@ -2,11 +2,11 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
-status: verifying
-stopped_at: Quick 260718-nft complete — walker for all graph letters + taa/thaa bowl fix (prod re-seeded); iPad rebuild next; Stage 2 awaiting owner go
-last_updated: "2026-07-18T10:48:21.148Z"
+status: executing
+stopped_at: Sprint-2 SUBMITTED to Play production (v2.0.0+3, in review 2026-07-19 ~03:15); post-submission arc phased as 25-29 — next session starts with the status sweep + presentation, then Phase 25
+last_updated: "2026-07-19T00:45:00.000Z"
 progress:
-  total_phases: 29
+  total_phases: 34
   completed_phases: 16
   total_plans: 112
   completed_plans: 107
@@ -24,10 +24,10 @@ See: .planning/PROJECT.md (updated 2026-05-30)
 
 ## Current Position
 
-Phase: 20
+Phase: 25 (post-submission arc 25–29 added 2026-07-19 — see ROADMAP.md)
 Plan: Not started
-Status: Phase complete — ready for verification
-Next: Resume with either (a) `/gsd:verify-work 18` re-run against the 18-UAT.md gaps to formally re-test each of T2/T3/T5/T6/T7 on the deployed build and close that UAT session, or (b) go straight to the ORIGINAL phase-close plan 18-11-PLAN.md (separate from this gap-closure round) — its Task 2 (device cost/latency measurement) could piggyback on the current iPad session; Task 3 (mother's sign-off on kArcEntryFailStreak/kArcMaxAttempts/EMA constants/micro-drill copy/selection gold set) is still fully open and required before the phase verifier can flip R1/R4/R5/R6/R7/R8/R9. Phase 18 is NOT complete until 18-11 lands.
+Status: Sprint-2 submission SHIPPED — v2.0.0+3 in Play production review; release/2.0 frozen + pushed; webcourse APK cut from the same commit. NO REBUILDS until grading (all work lands on main).
+Next: (1) Morning status sweep — qalam1481@gmail.com inbox + Play Console review state; confirm the webcourse APK upload. (2) The PRESENTATION (10-min deck + recorded demo on a PHYSICAL Android device — source the device early, sideload the submitted APK if review is still pending). (3) Then `/gsd:plan-phase 25` (seen-letters enforcement L0–2 — the 34-card audit from the 2026-07-19 session is the worklist). Phase 26 (mother's packet) can run in parallel after 25's labels. Phase 18's 18-11 residue (mother sign-offs, cost/latency close) remains open and partially folds into Phase 26.
 PriorNext: 18-07 (live-path wiring) confirmed genuinely done in the prior session (the earlier "18-07 done" note had been an inaccurate narrative — only a plan-amendment commit existed until that pass landed real source wiring). 18-08/18-09 (server WHY grounding + nightly compiler) executed before 18-07 since the server/eval legs don't depend on client wiring.
 
 ## Performance Metrics
