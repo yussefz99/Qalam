@@ -33,12 +33,43 @@ PKG_DIR = Path(__file__).resolve().parent
 LETTERS_JSON = REPO_ROOT / "assets" / "curriculum" / "letters.json"
 LIVE_WORDS_JSON = REPO_ROOT / "assets" / "curriculum" / "words.json"
 EXERCISES_JSON = REPO_ROOT / "assets" / "curriculum" / "exercises.json"
+GRAPHS_DIR = REPO_ROOT / "assets" / "curriculum" / "graphs"
+CURRICULUM_GRAPH_JSON = REPO_ROOT / "assets" / "curriculum" / "curriculum_graph.json"
 DRAFT_JSON = PKG_DIR / "words_draft.json"
 REPORT_MD = PKG_DIR / "validation_report.md"
 
 # taa_marbuta is used by the app's letters[] but is NOT one of the 28 taught
 # letters, so it can't be gated on an introOrder. We surface it, never guess.
 SPECIAL_NON_TAUGHT = {"taa_marbuta"}
+
+# --------------------------------------------------------------------------- #
+# The seen-letters wall (Phase 25, D-04..D-09) — the ONE definition L0/L1/L2 share
+# --------------------------------------------------------------------------- #
+#
+# The wall's thesis: all four layers (L0 audit here, L1 Dart lint, L2 seeder, L3
+# runtime guard) must refuse the SAME thing. This module is L0 AND the parity
+# source of truth — L2 (``seed_curriculum_v2.py``) imports the predicate + the two
+# scoping helpers below so the seeder and the audit cannot drift apart.
+
+# Owner-approved (device UAT, 2026-07-18), mother-approval-PENDING baa exceptions
+# (D-09). Mirror of the Dart lint's ``baaOwnerApprovedExceptions``
+# (learned_letters_lint_test.dart). These 4 reach-ahead baa cards are exempt from
+# the build gate + the seeder refusal until the mother confirms / re-points them in
+# the Phase-25 packet — exactly the set L1 exempts, so L0/L1/L2 fail on the SAME
+# cards.
+OWNER_APPROVED_EXCEPTIONS: frozenset[str] = frozenset(
+    {
+        "baa.fillBlank.adjective",
+        "baa.transformWord.dual",
+        "baa.transformWord.plural",
+        "baa.transformWord.opposite",
+    }
+)
+
+# A stored letter absent from letters.json ``introOrder`` (e.g. taa_marbuta, a
+# non-taught special form) is treated as reaching ahead — the same sentinel the
+# Dart lint uses (``introOrder[l] ?? 1 << 30``), so the two predicates agree.
+_UNLEARNED_SENTINEL = 1 << 30
 
 
 def _load(path: Path):
@@ -190,8 +221,144 @@ def _arabic_strings_in_exercise(ex: dict) -> list[str]:
     return out
 
 
+# --------------------------------------------------------------------------- #
+# The seen-letters wall — shared predicate + scoping helpers (imported by L2)
+# --------------------------------------------------------------------------- #
+
+def unlearned_letters_for_exercise(
+    ex: dict, order: dict[str, int]
+) -> list[tuple[str, int]]:
+    """Reach-ahead letters in a card's STORED ``letters[]`` — the parity predicate.
+
+    Behavioural mirror of the Dart lint's ``unlearnedFor``
+    (learned_letters_lint_test.dart L127–135): it reads the card's stored
+    ``letters[]`` (NOT a re-decomposition of the display text), so L0/L1/L2 all
+    judge the same input. A letter is *unlearned* for this card's unit when its
+    ``introOrder`` exceeds the unit's ``introOrder`` (unit = the id prefix, e.g.
+    ``baa.x`` → ``baa``). A letter absent from ``order`` (e.g. taa_marbuta, a
+    non-taught special form) is treated as reaching ahead via ``_UNLEARNED_SENTINEL``
+    — the same ``?? 1 << 30`` fallback the Dart lint uses.
+
+    Returns ``[(letter, introOrder), …]`` for every reach-ahead entry; an empty
+    list means the card is legal.
+    """
+    unit = str(ex.get("id", "")).split(".", 1)[0]
+    unit_order = order.get(unit)
+    if unit_order is None:
+        return []
+    out: list[tuple[str, int]] = []
+    for letter in ex.get("letters", []) or []:
+        o = order.get(letter, _UNLEARNED_SENTINEL)
+        if o > unit_order:
+            out.append((letter, o))
+    return out
+
+
+def live_graph_node_ids() -> set[str]:
+    """The set of exercise ids referenced by a LIVE graph node.
+
+    Union of every ``node["exerciseId"]`` across the canonical baa
+    ``curriculum_graph.json`` (the server's source) + every per-letter
+    ``graphs/*.json``. Mirrors the Dart lint's ``_discoverUnitGraphs`` /
+    ``liveNodeIds``; ``graphs/baa.json`` is byte-parity with
+    ``curriculum_graph.json`` so ids naturally dedup through the set.
+
+    The gate + the seeder scope to THIS set only, so the dormant reach-ahead
+    configs in ``exercises.json`` (cards referenced by NO live node — e.g.
+    ``alif.buildSentence.hear``, the buildSentence pairs) never trip the wall,
+    exactly as L1's ``liveNodeIds`` scoping does.
+    """
+    ids: set[str] = set()
+    sources: list[Path] = [CURRICULUM_GRAPH_JSON]
+    if GRAPHS_DIR.is_dir():
+        sources += sorted(GRAPHS_DIR.glob("*.json"))
+    for path in sources:
+        if not path.exists():
+            continue
+        for node in _load(path).get("nodes", []) or []:
+            eid = node.get("exerciseId")
+            if isinstance(eid, str):
+                ids.add(eid)
+    return ids
+
+
+def _text_for_display(ex: dict) -> str | None:
+    """The written text a card's ``letters[]`` should decompose from.
+
+    Mirror of ``promote_letter._text_for`` (the authoring source of truth):
+    ``expected.glyph.char`` → ``expected.word.text`` → ``' '.join(expected.words)``.
+    Returns None for a card with no expected text (teachCard / placeholder).
+    """
+    expected = ex.get("expected")
+    if not isinstance(expected, dict):
+        return None
+    glyph = expected.get("glyph")
+    if isinstance(glyph, dict) and glyph.get("char"):
+        return str(glyph["char"])
+    word = expected.get("word")
+    if isinstance(word, dict) and word.get("text"):
+        return str(word["text"])
+    words = expected.get("words")
+    if isinstance(words, list) and words:
+        return " ".join(str(w) for w in words)
+    return None
+
+
+def _dedup_preserve(items: list[str]) -> list[str]:
+    """First-seen-wins dedup — mirror of ``promote_letter._dedup_preserve``."""
+    seen: set[str] = set()
+    out: list[str] = []
+    for x in items:
+        if x not in seen:
+            seen.add(x)
+            out.append(x)
+    return out
+
+
+def unlabeled_cards(exercises: list[dict], live_ids: set[str]) -> dict[str, str]:
+    """LIVE-node cards that are unlabeled or whose label drifted — criterion 1's
+    "ZERO unlabeled words" leg, scoped to live nodes only.
+
+    A live-node card is flagged when its stored ``letters[]`` is missing/empty, OR
+    (when the card has display text) it diverges from the deduped decomposition of
+    that text — the بطة / توت label-drift the module docstring names. The expected
+    label mirrors ``promote_letter.enrich_exercise``, which stores the *deduped*
+    written skeleton (باب → ``[baa, alif]``); comparing against the deduped form is
+    what separates genuine drift from the normal repeated-letter case. Cards with no
+    display text (teachCard / placeholder) only need a non-empty ``letters[]``.
+
+    Returns ``{exerciseId: reason}``; empty means every live card is labeled.
+    """
+    flagged: dict[str, str] = {}
+    for ex in exercises:
+        ex_id = str(ex.get("id", ""))
+        if ex_id not in live_ids:
+            continue
+        stored = list(ex.get("letters") or [])
+        if not stored:
+            flagged[ex_id] = "letters[] missing/empty"
+            continue
+        text = _text_for_display(ex)
+        if text is None:
+            continue
+        expected = _dedup_preserve(decompose(text).letters)
+        if not expected:
+            continue
+        if stored != expected:
+            flagged[ex_id] = (
+                f"letters[] {stored} != decomposed {expected} (from {text!r})"
+            )
+    return flagged
+
+
 def report_live_exercises(order: dict[str, int]) -> list[str]:
-    """Existing exercises whose content demands letters not yet introduced."""
+    """Existing exercises whose content demands letters not yet introduced.
+
+    NOTE: this section stays a SEPARATE *label-drift* signal — it decomposes the
+    card's DISPLAY text (not the stored ``letters[]``), reproducing the worklist the
+    owner triages from. The build gate (``--gate``) uses the stored-``letters[]``
+    predicate ``unlearned_letters_for_exercise`` + ``unlabeled_cards`` instead.
+    """
     data = _load(EXERCISES_JSON)
     exercises = data.get("exercises", [])
     lines = ["## 3 · Live `exercises.json` — content demanding unlearned letters", ""]
