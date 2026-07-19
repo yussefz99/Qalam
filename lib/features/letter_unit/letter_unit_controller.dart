@@ -273,6 +273,14 @@ class LetterUnitController extends Notifier<LetterUnitState> {
         'graph mastery until a graph is seeded.',
       );
     }
+    // 0c) 25-05 (L3): WARM the seen-letters filter so the runtime guard has its
+    // learned-set data (letters.json introOrder + exercises.json letters[]) ready
+    // by the child's FIRST scored moment — the selection path reads it NON-blocking
+    // (`.asData?.value`, never awaited). Never-throw by construction (the provider
+    // degrades to a no-op filter on any load failure), so this only kicks off the
+    // background load; a failure simply disables L3 filtering for the session (the
+    // graph legality rail still holds). Fire-and-forget — never blocks unit open.
+    ref.read(seenLettersFilterProvider(letterId));
     // 1) Read the durable graph position from Drift (Pitfall 6: a Future read).
     repo.GraphPosition? saved;
     try {
@@ -488,11 +496,20 @@ class LetterUnitController extends Notifier<LetterUnitState> {
     // Route the pick through the candidate-aware selector (Task 1) with THIS
     // moment's arc / profile / session context — the router narrows to the SAME
     // candidate set beginSelection produced (online↔offline parity, D-11).
+    // 25-05 (L3): thread the seen-letters guard onto the LIVE selection path (the
+    // provider `exerciseSelectorProvider` is NOT what renders — this controller is,
+    // so the guard MUST be wired HERE or it is a dead wire, the Phase-15 lesson). A
+    // synchronous `.asData?.value` read (never a blocking `.future`): null until the
+    // filter warms (in `start`), and the router then no-ops. The router SKIPs any
+    // reach-ahead candidate (except the 22 owner-approved ids) and logs it loudly.
+    final seenFilter =
+        ref.read(seenLettersFilterProvider(_letterId)).asData?.value;
     final selector = RouterExerciseSelector(
       graph,
       arc: _sessionArc,
       profile: _profileSnapshot,
       sessionHistory: _sessionHistory,
+      seenFilter: seenFilter,
     );
     final next = selector.selectNext(selFacts, position, decision: decision);
     // Persist + advance the arc this moment produced (D-12). Fire-and-forget: the
