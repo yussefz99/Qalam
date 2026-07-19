@@ -28,6 +28,7 @@ library;
 
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -82,6 +83,169 @@ final curriculumGraphProvider =
   return CurriculumGraph.fromJson(decoded);
 });
 
+// ── L3 runtime guard: the seen-letters filter (Plan 25-05 / QP-07 / D-12) ─────
+//
+// The LAST line of the seen-letters wall. Even if bad data ships to Firestore
+// (past L0 audit / L1 lint / L2 seeder), the runtime selector must NEVER present
+// a card that demands a letter the child has not yet seen: it SKIPs it and the
+// walker advances to the next legal node (D-01), the star stays reachable (D-02),
+// and every firing is logged loudly (D-03). L2 refuses at the WRITE; L3 refuses at
+// the READ — the same Firestore-first bypass, two surfaces.
+
+/// The owner-approved reach-ahead EXCEPTION ids — the SAME 22 cards L1
+/// (`baaOwnerApprovedExceptions`, learned_letters_lint_test.dart) and L2
+/// (`OWNER_APPROVED_EXCEPTIONS`, tools/content/validate.py) exempt. A card in this
+/// set is NEVER dropped by the L3 guard even though it demands an unseen letter, so
+/// a mother-approved / owner-decision reach-ahead card stays presentable at runtime
+/// — PARITY across all four wall layers (the whole wall's thesis: refuse the SAME
+/// thing, exempt the SAME thing). The parity is pinned by
+/// `test/tutor/l3_learned_letters_parity_test.dart`.
+///
+/// TWO provenance groups, mirroring validate.py's `_BAA_D09_EXCEPTIONS` /
+/// `_TAA_THAA_D16_EXCEPTIONS`:
+///   • 4 baa D-09 — owner-approved from device UAT (2026-07-18).
+///   • 18 taa/thaa D-16 — kept LIVE by owner decision (2026-07-19), mother-verdict
+///     PENDING (Plan 25-06 packet / 25-07 walkthrough). Dropping these at runtime
+///     would gut the taa/thaa units the owner deliberately kept live, so L3 must
+///     exempt them exactly as L0/L1/L2 do.
+const Set<String> kApprovedReachAheadExceptions = <String>{
+  // ── baa D-09 (device UAT, 2026-07-18) ──
+  'baa.fillBlank.adjective',
+  'baa.transformWord.dual',
+  'baa.transformWord.plural',
+  'baa.transformWord.opposite',
+  // ── taa/thaa D-16 (owner decision, 2026-07-19; mother-verdict pending) ──
+  'taa.completeWord.middle',
+  'taa.connectWord.bayt',
+  'taa.connectWord.taaj',
+  'taa.fillBlank.adjective',
+  'taa.transformWord.dual',
+  'taa.transformWord.opposite',
+  'taa.transformWord.plural',
+  'taa.writeWord.copy',
+  'taa.writeWord.dictation',
+  'taa.writeWord.picture',
+  'thaa.completeWord.middle',
+  'thaa.connectWord.thalab',
+  'thaa.connectWord.thalj',
+  'thaa.fillBlank.adjective',
+  'thaa.transformWord.dual',
+  'thaa.writeWord.copy',
+  'thaa.writeWord.dictation',
+  'thaa.writeWord.picture',
+};
+
+/// The pure L3 seen-letters legality check — the runtime mirror of the L1 lint's
+/// `unlearnedFor` (learned_letters_lint_test.dart) + the L2 seeder's
+/// `unlearned_letters_for_exercise` (validate.py). Given the child's current unit
+/// (its `introOrder`) and each card's `letters[]`, it names the letters a candidate
+/// demands that the child has NOT yet seen. Immutable + pure — the I/O that builds
+/// it lives in [seenLettersFilterProvider], keeping the pure lib/curriculum/ layer
+/// free of this new read (the `durable_layers_no_agent_imports_test.dart` guard).
+class SeenLettersFilter {
+  const SeenLettersFilter({
+    required this.unitIntroOrder,
+    required this.introOrder,
+    required this.exerciseLetters,
+  });
+
+  /// The `introOrder` of the unit under test (its learned set = every letter with
+  /// `introOrder <= unitIntroOrder`).
+  final int unitIntroOrder;
+
+  /// letters.json `introOrder` — the pedagogical lesson order (alif 1, baa 2 …).
+  final Map<String, int> introOrder;
+
+  /// exercises.json per-card `letters[]` — the letters each card demands.
+  final Map<String, List<String>> exerciseLetters;
+
+  /// A no-op filter — used when the learned-set data could not be loaded so the
+  /// guard degrades to "present everything" (L3 filtering off for the session; the
+  /// graph legality rail still holds). `1<<30` learns nothing, so nothing reaches
+  /// ahead and nothing is dropped.
+  factory SeenLettersFilter.disabled() => const SeenLettersFilter(
+        unitIntroOrder: 1 << 30,
+        introOrder: <String, int>{},
+        exerciseLetters: <String, List<String>>{},
+      );
+
+  /// Build the filter for [letterId] from the decoded letters.json / exercises
+  /// .json maps. A letter absent from `introOrder` gets the `1<<30` sentinel the
+  /// lint uses (`introOrder[l] ?? 1<<30`), so an unknown letter reads as reaching
+  /// ahead identically — the predicates agree byte-for-byte.
+  factory SeenLettersFilter.fromAssets({
+    required String letterId,
+    required Map<String, Object?> lettersJson,
+    required Map<String, Object?> exercisesJson,
+  }) {
+    final order = <String, int>{
+      for (final l in (lettersJson['letters'] as List<Object?>? ?? const []))
+        if (l is Map && l['id'] is String)
+          l['id'] as String: (l['introOrder'] as num?)?.toInt() ?? (1 << 30),
+    };
+    final letters = <String, List<String>>{
+      for (final e in (exercisesJson['exercises'] as List<Object?>? ?? const []))
+        if (e is Map && e['id'] is String)
+          e['id'] as String: <String>[
+            for (final x in (e['letters'] as List<Object?>? ?? const []))
+              if (x is String) x,
+          ],
+    };
+    return SeenLettersFilter(
+      unitIntroOrder: order[letterId] ?? (1 << 30),
+      introOrder: order,
+      exerciseLetters: letters,
+    );
+  }
+
+  /// The letters [exerciseId] demands that are NOT yet learned at this unit
+  /// (`introOrder > unitIntroOrder`). Empty == within the learned set. An id with
+  /// no known `letters[]` reads as legal (mirrors the lint's unknown-id `const []`).
+  List<String> unlearnedFor(String exerciseId) {
+    final cardLetters = exerciseLetters[exerciseId] ?? const <String>[];
+    return <String>[
+      for (final l in cardLetters)
+        if ((introOrder[l] ?? (1 << 30)) > unitIntroOrder) l,
+    ];
+  }
+
+  /// True when [exerciseId] is legal to PRESENT at this unit: it does not reach
+  /// ahead, OR its id is an owner-approved exception (parity with L1/L2 — a
+  /// mother-approved / owner-decision reach-ahead card stays presentable).
+  bool isSeenLegal(String exerciseId) =>
+      kApprovedReachAheadExceptions.contains(exerciseId) ||
+      unlearnedFor(exerciseId).isEmpty;
+}
+
+/// Loads the L3 seen-letters learned-set data for [letterId] once (keepAlive) — the
+/// letters.json `introOrder` + every card's exercises.json `letters[]`. The new I/O
+/// lives HERE in lib/tutor/ (never in the pure lib/curriculum/ spine). NEVER throws:
+/// a load/parse failure yields a [SeenLettersFilter.disabled] so the guard can never
+/// crash the selection path — a failure only disables L3 filtering for the session
+/// (the graph legality rail + L0/L1/L2 build/seed gates still hold).
+final seenLettersFilterProvider =
+    FutureProvider.family<SeenLettersFilter, String>((ref, letterId) async {
+  ref.keepAlive();
+  try {
+    final lettersRaw =
+        await rootBundle.loadString('assets/curriculum/letters.json');
+    final exercisesRaw =
+        await rootBundle.loadString('assets/curriculum/exercises.json');
+    return SeenLettersFilter.fromAssets(
+      letterId: letterId,
+      lettersJson: json.decode(lettersRaw) as Map<String, Object?>,
+      exercisesJson: json.decode(exercisesRaw) as Map<String, Object?>,
+    );
+  } catch (e) {
+    debugPrint(
+      '[L3] seen-letters filter for "$letterId" could not load its data: $e — '
+      'runtime L3 filtering is DISABLED this session (the graph legality rail '
+      'still holds; L0/L1/L2 already gate the content at build + seed).',
+    );
+    return SeenLettersFilter.disabled();
+  }
+});
+
 /// The online↔offline SELECTION router behind the [ExerciseSelector] seam.
 ///
 /// It walks the SAME [CurriculumGraph] the offline walker uses. The ONLY
@@ -96,11 +260,18 @@ class RouterExerciseSelector implements ExerciseSelector {
     this.arc,
     this.profile,
     this.sessionHistory,
+    this.seenFilter,
   })  : _walker = CurriculumGraphWalker(graph),
         _policy = SelectionPolicy(graph);
 
   /// The single-source graph both paths rail on.
   final CurriculumGraph graph;
+
+  /// The L3 seen-letters guard (Plan 25-05). Null when the learned-set data is not
+  /// (yet) loaded — the filter then NO-OPS (every candidate passes; the graph
+  /// legality rail still holds). Supplied by [exerciseSelectorProvider] and by the
+  /// controller's live selection path, both reading [seenLettersFilterProvider].
+  final SeenLettersFilter? seenFilter;
 
   /// The durable remediation-arc cursor for the current moment (18-07 threads it
   /// from Drift via [ArcStateRepository]); null when no arc is in progress.
@@ -141,7 +312,32 @@ class RouterExerciseSelector implements ExerciseSelector {
       profile: profile,
       sessionHistory: sessionHistory,
     );
-    final candidates = out.candidates;
+    var candidates = out.candidates;
+
+    // L3 guard (Plan 25-05 / D-01 SKIP + D-03 loud log): drop any candidate that
+    // demands an UNSEEN letter — the LAST line before an illegal card reaches a
+    // child even if bad data shipped past L0/L1/L2. An owner-approved exception
+    // (kApprovedReachAheadExceptions — PARITY with L1/L2) is NEVER dropped. Every
+    // drop is logged loudly (never a silent swallow — D-03). No new rail: the
+    // dropped candidate simply falls out of the SAME set, so the agent-accept check
+    // and the walker's `selectFrom` / forward scan below advance to the next LEGAL
+    // node (D-01 SKIP). The log names ONLY the exercise id + demanded letter — no
+    // strokes, no child id (T-25-05-I).
+    final filter = seenFilter;
+    if (filter != null && candidates.isNotEmpty) {
+      final kept = <String>[];
+      for (final id in candidates) {
+        final unlearned = filter.unlearnedFor(id);
+        if (unlearned.isEmpty || kApprovedReachAheadExceptions.contains(id)) {
+          kept.add(id);
+        } else {
+          debugPrint(
+            'L3 guard: $id illegal (demands ${unlearned.join(', ')}), skipped',
+          );
+        }
+      }
+      candidates = kept;
+    }
 
     final proposed = decision?.plan?.nextExerciseId;
     if (proposed != null &&
@@ -216,8 +412,11 @@ String authoredWhyLine(List<String> whyFacts) {
 final exerciseSelectorProvider =
     Provider.family<ExerciseSelector, String>((ref, letterId) {
   final graphAsync = ref.watch(curriculumGraphProvider(letterId));
+  // The L3 seen-letters guard (Plan 25-05), null until its data loads (the filter
+  // then no-ops). A synchronous `.asData?.value` read — never a blocking `.future`.
+  final seenFilter = ref.watch(seenLettersFilterProvider(letterId)).asData?.value;
   return graphAsync.maybeWhen(
-    data: RouterExerciseSelector.new,
+    data: (graph) => RouterExerciseSelector(graph, seenFilter: seenFilter),
     orElse: () => const _PendingSelector(),
   );
 });

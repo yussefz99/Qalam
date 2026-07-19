@@ -1,0 +1,115 @@
+// Phase 25-05 (L3) — the seen-letters predicate PARITY pin.
+//
+// The whole seen-letters wall's thesis is that all FOUR layers refuse the SAME
+// thing and exempt the SAME thing. This pure unit test pins the Dart runtime
+// predicate ([SeenLettersFilter.unlearnedFor] / [isSeenLegal]) + the exemption set
+// ([kApprovedReachAheadExceptions]) to the exact rule the L1 lint enforces
+// (learned_letters_lint_test.dart `unlearnedFor` + `baaOwnerApprovedExceptions`)
+// and the L2 seeder / L0 audit enforce (tools/content/validate.py
+// `unlearned_letters_for_exercise` + `OWNER_APPROVED_EXCEPTIONS`) — an
+// advisory-4 drift guard: if L3 ever disagrees with L1/L2 this test goes red.
+//
+// PURE test: reads the bundled content off disk (File, not rootBundle) and builds
+// the predicate from the SAME letters.json / exercises.json the app ships. No
+// widgets, no Firebase, no network.
+
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter_test/flutter_test.dart';
+
+import 'package:qalam/tutor/exercise_selector_provider.dart';
+
+Map<String, Object?> _json(String path) =>
+    json.decode(File(path).readAsStringSync()) as Map<String, Object?>;
+
+void main() {
+  // The learned-set filter for the BAA unit (introOrder 2 → learned = {alif, baa}),
+  // built from the REAL bundled content (not a fixture).
+  final baaFilter = SeenLettersFilter.fromAssets(
+    letterId: 'baa',
+    lettersJson: _json('assets/curriculum/letters.json'),
+    exercisesJson: _json('assets/curriculum/exercises.json'),
+  );
+
+  group('L3 seen-letters predicate parity (Plan 25-05 / QP-07 / D-12)', () {
+    test('a reach-ahead NON-exception id is DROPPED (isSeenLegal == false)', () {
+      // taa.traceLetter.isolated demands taa (introOrder 3) — it reaches ahead for
+      // a baa unit (introOrder 2) and is NOT an owner-approved exception.
+      expect(baaFilter.unlearnedFor('taa.traceLetter.isolated'), contains('taa'),
+          reason: 'taa reaches ahead of the baa learned set');
+      expect(baaFilter.isSeenLegal('taa.traceLetter.isolated'), isFalse,
+          reason: 'a reach-ahead non-exception card must be dropped by L3');
+    });
+
+    test('a within-learned-set id is KEPT (isSeenLegal == true)', () {
+      // baa.traceLetter.isolated demands [baa] — within the learned set.
+      expect(baaFilter.unlearnedFor('baa.traceLetter.isolated'), isEmpty);
+      expect(baaFilter.isSeenLegal('baa.traceLetter.isolated'), isTrue);
+      // baa.connectWord.baab demands [baa, alif] — both learned at the baa unit.
+      expect(baaFilter.unlearnedFor('baa.connectWord.baab'), isEmpty);
+      expect(baaFilter.isSeenLegal('baa.connectWord.baab'), isTrue);
+    });
+
+    test('an id with no known letters[] reads as legal (matches L1 unknown-id)', () {
+      // The lint returns `const []` for an unknown id; the runtime filter must too
+      // (never drop what it cannot evaluate — L0/L1/L2 gate authoring/seeding).
+      expect(baaFilter.unlearnedFor('does.not.exist'), isEmpty);
+      expect(baaFilter.isSeenLegal('does.not.exist'), isTrue);
+    });
+
+    test('each of the 4 D-09 baa exceptions is KEPT despite reaching ahead', () {
+      const d09 = <String>[
+        'baa.fillBlank.adjective',
+        'baa.transformWord.dual',
+        'baa.transformWord.plural',
+        'baa.transformWord.opposite',
+      ];
+      for (final id in d09) {
+        // The exemption is LOAD-BEARING only if the card genuinely reaches ahead.
+        expect(baaFilter.unlearnedFor(id), isNotEmpty,
+            reason: '$id must genuinely reach ahead — else the exemption is a no-op');
+        expect(baaFilter.isSeenLegal(id), isTrue,
+            reason: '$id is an owner-approved exception (parity with L1/L2) — '
+                'never dropped even though it reaches ahead');
+      }
+    });
+
+    test(
+        'kApprovedReachAheadExceptions == the 22 owner-approved ids '
+        '(4 baa D-09 + 18 taa/thaa D-16) — L0/L1/L2 parity', () {
+      // The exact union tools/content/validate.py exposes as
+      // OWNER_APPROVED_EXCEPTIONS (_BAA_D09_EXCEPTIONS | _TAA_THAA_D16_EXCEPTIONS).
+      // If L3 drifts from this set, a mother-approved / owner-decision card is
+      // either dropped at runtime (regression) or a non-exception slips through.
+      const expected = <String>{
+        // ── baa D-09 (device UAT, 2026-07-18) ──
+        'baa.fillBlank.adjective',
+        'baa.transformWord.dual',
+        'baa.transformWord.plural',
+        'baa.transformWord.opposite',
+        // ── taa/thaa D-16 (owner decision, 2026-07-19; mother-verdict pending) ──
+        'taa.completeWord.middle',
+        'taa.connectWord.bayt',
+        'taa.connectWord.taaj',
+        'taa.fillBlank.adjective',
+        'taa.transformWord.dual',
+        'taa.transformWord.opposite',
+        'taa.transformWord.plural',
+        'taa.writeWord.copy',
+        'taa.writeWord.dictation',
+        'taa.writeWord.picture',
+        'thaa.completeWord.middle',
+        'thaa.connectWord.thalab',
+        'thaa.connectWord.thalj',
+        'thaa.fillBlank.adjective',
+        'thaa.transformWord.dual',
+        'thaa.writeWord.copy',
+        'thaa.writeWord.dictation',
+        'thaa.writeWord.picture',
+      };
+      expect(kApprovedReachAheadExceptions, hasLength(22));
+      expect(kApprovedReachAheadExceptions, equals(expected));
+    });
+  });
+}
