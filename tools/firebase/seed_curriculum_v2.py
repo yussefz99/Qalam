@@ -35,6 +35,13 @@ Safety guards:
 
 * every payload is checked for Firestore-illegal nested arrays BEFORE any
   write (fail fast, nothing partially seeded);
+* the seen-letters wall (L2, D-06): every LIVE graph-node exercise is refused
+  BEFORE the first write if it reaches ahead of the learned set — reusing the
+  L0 predicate from ``tools/content/validate.py`` so the seeder and the bundle
+  lint/audit refuse the SAME content. The device reads curriculum Firestore-first,
+  so this is what stops a bad seed reaching the child even when the bundle lint
+  passes. Dormant configs (referenced by no live node) and the owner-approved
+  exceptions are exempt, exactly as the L0/L1 layers scope them;
 * ``--letter X`` refuses to run when ``graphs/X.json`` does not exist (seed
   the asset first — the graph is what rails progression);
 * content posture is untouched: whatever ``signedOff`` value the asset carries
@@ -60,6 +67,22 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
+
+# The seen-letters wall's L0 parity source lives in tools/content/validate.py. Import
+# the SAME predicate + scoping the L0 audit / L1 lint use so the seeder (L2) refuses
+# byte-identical content — nothing the bundle lint would refuse can reach prod (D-06).
+# When this script is run directly (``python tools/firebase/seed_curriculum_v2.py``)
+# sys.path[0] is tools/firebase/, NOT the repo root, so add the repo root explicitly.
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
+
+from tools.content.validate import (  # noqa: E402
+    OWNER_APPROVED_EXCEPTIONS,
+    live_graph_node_ids,
+    load_intro_order,
+    unlearned_letters_for_exercise,
+)
+
 _CURRICULUM_DIR = _REPO_ROOT / "assets" / "curriculum"
 _GRAPHS_DIR = _CURRICULUM_DIR / "graphs"
 _EXERCISES_JSON = _CURRICULUM_DIR / "exercises.json"
@@ -109,6 +132,35 @@ def _assert_firestore_legal(doc_id: str, payload) -> None:
         )
 
 
+def _assert_learned_letters_legal(
+    ex: dict, order: dict[str, int], live_ids: set[str]
+) -> None:
+    """Refuse a LIVE-node exercise that reaches ahead of the learned set — the L2
+    sibling of ``_assert_firestore_legal``, reusing the L0 predicate so the seeder and
+    the audit refuse byte-identical content (D-06). The device reads curriculum
+    Firestore-first, so a bad seed reaches the child even when the bundle lint passes;
+    this closes that bypass BEFORE the first write.
+
+    Scoped to LIVE graph nodes exactly as the L0 gate / L1 lint are: a card referenced
+    by NO live graph node (a dormant config — e.g. ``baa.buildSentence.hear``) is
+    seeded but NEVER refused, because it is never presented. For a live node, a
+    reach-ahead card (``unlearned_letters_for_exercise`` non-empty) raises SystemExit
+    UNLESS its id is an ``OWNER_APPROVED_EXCEPTIONS`` member (the 4 baa D-09 + 18
+    taa/thaa D-16 cards, mother-verdict pending). Fail-fast: this runs in the pre-write
+    pass, before the first ``doc(id).set(...)`` — nothing is written on refusal.
+    """
+    ex_id = str(ex.get("id", ""))
+    if ex_id not in live_ids:
+        return  # dormant config — referenced by no live node; never gated (L0/L1 parity)
+    ahead = unlearned_letters_for_exercise(ex, order)
+    if ahead and ex_id not in OWNER_APPROVED_EXCEPTIONS:
+        unseen = ", ".join(f"{l}({o})" for l, o in sorted(ahead, key=lambda x: x[1]))
+        raise SystemExit(
+            f"seed_curriculum_v2: doc '{ex_id}' demands unseen letter(s) {unseen}; "
+            f"nothing was written."
+        )
+
+
 def _graph_letter_ids() -> list[str]:
     """Every letter that has a per-letter graph asset (the progression rail)."""
     return sorted(p.stem for p in _GRAPHS_DIR.glob("*.json"))
@@ -142,11 +194,18 @@ def seed(db, letter: str | None) -> dict:
     units = [u for u in all_units if letter is None or u["letterId"] == letter]
     graphs = {lid: _load_json(_GRAPHS_DIR / f"{lid}.json") for lid in letters}
 
+    # The seen-letters wall's parity inputs, computed ONCE for the pre-write pass:
+    # the live graph-node set (so dormant configs are never gated) + the intro order
+    # (the learned-set bar). Both come from validate.py so L0/L1/L2 judge identically.
+    live_ids = live_graph_node_ids()
+    order = load_intro_order()
+
     # Validate EVERYTHING before the first write (fail fast, no partial seed).
     for lid, g in graphs.items():
         _assert_firestore_legal(f"graphs/{lid}", g)
     for e in exercises:
         _assert_firestore_legal(f"exercises/{e['id']}", e)
+        _assert_learned_letters_legal(e, order, live_ids)  # refuse reach-ahead content
     for u in units:
         _assert_firestore_legal(f"units/{u['letterId']}", u)
 
