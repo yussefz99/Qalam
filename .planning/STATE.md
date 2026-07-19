@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: — AI Tutor
-status: executing
-stopped_at: Sprint-2 SUBMITTED to Play production (v2.0.0+3, in review 2026-07-19 ~03:15); post-submission arc phased as 25-29 — next session starts with the status sweep + presentation, then Phase 25
-last_updated: "2026-07-19T00:45:00.000Z"
+status: Sprint-2 submission SHIPPED — v2.0.0+3 in Play production review; release/2.0 frozen + pushed; webcourse APK cut from the same commit. NO REBUILDS until grading (all work lands on main).
+stopped_at: Phase 25 context gathered
+last_updated: "2026-07-19T13:55:45.528Z"
 progress:
   total_phases: 34
   completed_phases: 16
   total_plans: 112
   completed_plans: 107
-  percent: 55
+  percent: 47
 ---
 
 # Project State
@@ -329,6 +329,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-18 (Stage 1 + thaa device-bug fix)
-Stopped at: Quick 260718-nft COMPLETE — walker un-gated for ALL graph letters (server/agent legs stay baa-only) + taa/thaa isolated bowl = baa's bowl (re-seeded prod, readback verified); iPad rebuild+install, owner re-tests thaa progression + taa/thaa isolated traces. Stage 2 (24 letters + server) NOT started, awaiting owner go.
+Last session: 2026-07-19T13:55:45.516Z
+Stopped at: Phase 25 context gathered
 Resume files: .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-02-PLAN.md (next — cross-letter labels + baa micro-drill set), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-03-PLAN.md (EMA + Drift v6), .planning/phases/18-build-the-living-tutor-dynamic-exercise-selection/18-01-SUMMARY.md, .planning/phases/04-scoring-quality-calibration/04-06-PLAN.md (deferred)
