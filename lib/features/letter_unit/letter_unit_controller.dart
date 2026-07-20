@@ -236,8 +236,17 @@ class LetterUnitController extends Notifier<LetterUnitState> {
     required String letterId,
     required int total,
     int? resumeSection,
+    List<String>? presentedEssentials,
   }) async {
     _letterId = letterId;
+    // 260720-up4 (Task 2): the SCREEN passes the unit's presentedEssentials (from
+    // its already-loaded LetterUnitData) so the mastery-met predicate resolves the
+    // presented set SYNCHRONOUSLY on the scored hot path — the controller never runs
+    // a getUnit itself (that would add a repo/rootBundle read per scored moment).
+    // Null when the caller did not supply it (a direct-start test / no declared
+    // subset) → the predicate uses the full-graph essential fallback.
+    _declaredPresentedEssentials = presentedEssentials;
+    _presentedEssentialsCache = null; // re-resolve for this (re)entry.
     // 0) Resolve the in-file child ONCE (ADR-018 / Pitfall 4). A best-effort read
     // of the single child profile; a null/missing profile (fresh install before
     // onboarding, or a headless widget test) degrades to the unassigned sentinel.
@@ -517,6 +526,21 @@ class LetterUnitController extends Notifier<LetterUnitState> {
       );
       return null;
     }
+    // Task 2 (260720-up4) — D-06 routing invariant: the moment the presented
+    // essential set has met its clean-reps, TERMINATE selection (return null → the
+    // shell routes to Mastery, where recordMasteryIfMet persists the star). This
+    // runs on pass AND fail and BEFORE the pick logic, so an unpassable enrichment
+    // tail node can never block a star that is already earned (enrichment never
+    // gates, D-06). It shares ONE predicate ([_isMasteryMetNow]) with
+    // recordMasteryIfMet, so selection never terminates to Mastery only for the
+    // recording check to decline. Fail-safe: [_isMasteryMetNow] returns false on any
+    // read failure, so a glitch never falsely terminates a not-yet-mastered unit.
+    // This is the SAME "→ route to Mastery" shape as the graph-exhausted exit below;
+    // it just adds a mastery-met early exit alongside it.
+    if (await _isMasteryMetNow(graph)) {
+      state = state.copyWith(selectionActive: true);
+      return null;
+    }
     // Select FROM the current graph-node cursor (kept in sync by beginSelection),
     // not the coach's exercise-type label — so this narrow matches beginSelection's
     // candidate set exactly (the agent pick was validated against it).
@@ -658,6 +682,78 @@ class LetterUnitController extends Notifier<LetterUnitState> {
     await _persist();
   }
 
+  /// The presented-essential id list the SCREEN supplied at [start] (from its
+  /// already-loaded `LetterUnitData.unit.presentedEssentials`) — Task 2 /
+  /// 260720-up4. Null when the caller did not supply it (a direct-start test, or a
+  /// unit with no declared subset). Holding the raw list here lets the mastery-met
+  /// predicate resolve the presented set SYNCHRONOUSLY on the scored hot path — the
+  /// controller never runs a `getUnit` (a repo / rootBundle read on every scored
+  /// moment would add latency on-device and, in multi-case widget tests, stall the
+  /// `_selectNext` future on the flutter/assets channel).
+  List<String>? _declaredPresentedEssentials;
+
+  /// The memoized presented-essential set (declared list ∩ the graph's essential
+  /// core), resolved once. Null until first resolved; a null/empty result degrades
+  /// the mastery-met predicate to the full-graph essential check (stricter — never
+  /// terminates selection prematurely).
+  Set<String>? _presentedEssentialsCache;
+
+  /// The presented-essential set for the scored HOT PATH, resolved SYNCHRONOUSLY:
+  /// the memoized cache, else the screen-declared list ∩ [graph].essentialNodes
+  /// (memoized on read). Returns null ONLY when nothing was declared AND nothing is
+  /// cached — the caller then uses the full-graph fallback. NEVER a `getUnit` here
+  /// (that stays off the hot path — see [_declaredPresentedEssentials]).
+  Set<String>? _presentedEssentialsSync(CurriculumGraph graph) {
+    final cached = _presentedEssentialsCache;
+    if (cached != null) return cached;
+    final declared = _declaredPresentedEssentials;
+    if (declared == null) return null; // unresolved — full-graph fallback upstream.
+    final essentials = {for (final n in graph.essentialNodes) n.exerciseId};
+    final resolved =
+        declared.isEmpty ? const <String>{} : declared.where(essentials.contains).toSet();
+    _presentedEssentialsCache = resolved;
+    return resolved;
+  }
+
+  /// The SHARED on-device mastery predicate (Task 2 / 260720-up4). A PURE read +
+  /// predicate over [graph]: it reads the child's Drift clean-reps + the (memoized,
+  /// screen-supplied) presented-essential set and returns whether every presented
+  /// essential node (or, with no presented subset, every essential node) has met the
+  /// owner-mother's clean-reps. It mirrors the EXACT met/not-met logic
+  /// [recordMasteryIfMet] records on, so the routing-termination check in
+  /// [_selectNext] and the recording check use ONE decision and can never drift
+  /// apart (a Mastery route with no star would be a NEW dead-end).
+  ///
+  /// It resolves the presented set SYNCHRONOUSLY (never a `getUnit` here), so it is
+  /// safe on the scored hot path — an unresolved/empty presented set degrades to the
+  /// full-graph essential check (stricter, so it never terminates selection
+  /// prematurely). It MUST NOT write, MUST NOT set [LetterUnitState.masteryRecorded],
+  /// and MUST NOT flip [LetterUnitState.masteryEvaluationFailed] — those stay owned
+  /// by [recordMasteryIfMet]. On a clean-rep read failure it returns false
+  /// (fail-safe: selection must NEVER terminate to Mastery off a guess).
+  Future<bool> _isMasteryMetNow(CurriculumGraph graph) async {
+    final Map<String, int> reps;
+    try {
+      reps = await ref
+          .read(appDatabaseProvider)
+          .exerciseCleanRepsFor(_letterId, childProfileId: _childProfileId);
+    } catch (e) {
+      // Fail-safe (never terminate selection / grant the star off a guess) — but
+      // say so LOUDLY (never a silent swallow; finalization Lane A posture).
+      debugPrint(
+        '[LetterUnit] mastery-met check for "$_letterId" could not read '
+        'clean-reps: $e — treating as NOT met (selection will not terminate).',
+      );
+      return false;
+    }
+    // Resolve the presented set synchronously (never a getUnit on the hot path).
+    // null/empty → the full-graph essential check (the stricter, fail-safe fallback).
+    final presented = _presentedEssentialsSync(graph) ?? const <String>{};
+    return presented.isNotEmpty
+        ? isMasteryMetForPresented(graph, reps, presented)
+        : isMasteryMet(graph, reps);
+  }
+
   /// Record mastery ONLY when the on-device condition is met (D-06, Pitfall 2):
   /// every essential node that this unit PRESENTS AND RECORDS has reached the
   /// owner-mother's clean-reps. A clicked-through unit with unmet reps records
@@ -692,13 +788,17 @@ class LetterUnitController extends Notifier<LetterUnitState> {
       state = state.copyWith(masteryEvaluationFailed: true);
       return false;
     }
-    // Scope the mastery gate to the exercises the unit DECLARES it presents
-    // (its `presentedEssentials` config ∩ the graph's essential core). Empty →
-    // the full-graph check over this letter's own essentials.
+    // Scope the mastery gate to the exercises the unit DECLARES it presents (its
+    // `presentedEssentials` ∩ the graph's essential core). [_presentedExerciseIds]
+    // MEMOIZES the result into [_presentedEssentialsCache] (from the screen-declared
+    // list, or — only here, off the scored hot path — a one-off getUnit fallback),
+    // so the mastery DECISION (via [_isMasteryMetNow], which reads the same cache)
+    // and the [_essentialFloor] cleanReps value below read the SAME set — no drift.
     final presented = await _presentedExerciseIds(graph);
-    final masteryMet = presented.isNotEmpty
-        ? isMasteryMetForPresented(graph, reps, presented)
-        : isMasteryMet(graph, reps); // fallback: if no presented set, full check.
+    // Task 2 (260720-up4): the met/not-met decision flows through the SHARED
+    // predicate [_isMasteryMetNow], so this recording check and the routing
+    // termination in [_selectNext] can never disagree.
+    final masteryMet = await _isMasteryMetNow(graph);
     // The evaluation ran — clear any earlier surfaced failure (self-healing).
     if (state.masteryEvaluationFailed) {
       state = state.copyWith(masteryEvaluationFailed: false);
@@ -747,23 +847,31 @@ class LetterUnitController extends Notifier<LetterUnitState> {
   /// `seeded_demo_state.dart`'s `_presentedEssentials` mirrors that DATA
   /// declaration, not this code.
   Future<Set<String>> _presentedExerciseIds(CurriculumGraph graph) async {
+    // Fast path: the memoized cache, or the screen-declared list resolved
+    // synchronously (no getUnit) — Task 2 / 260720-up4.
+    final sync = _presentedEssentialsSync(graph);
+    if (sync != null) return sync;
+    // Fallback (NOT the scored hot path — only [recordMasteryIfMet] reaches here,
+    // and only when the caller did not supply presentedEssentials): read the unit
+    // config via the repo. A read failure degrades to the full-graph gate (stricter,
+    // never looser) — loud, not silent.
     List<String> declared;
     try {
       final unit =
           await ref.read(curriculumRepositoryProvider).getUnit(_letterId);
       declared = unit?.presentedEssentials ?? const [];
     } catch (e) {
-      // A unit-config read failure degrades to the full-graph gate (stricter,
-      // never looser) — loud, not silent.
       debugPrint(
         '[LetterUnit] could not read the unit config for "$_letterId" '
         '($e) — mastery falls back to the full-graph essential check.',
       );
       declared = const [];
     }
-    if (declared.isEmpty) return const {};
     final essentials = {for (final n in graph.essentialNodes) n.exerciseId};
-    return declared.where(essentials.contains).toSet();
+    final resolved =
+        declared.isEmpty ? const <String>{} : declared.where(essentials.contains).toSet();
+    _presentedEssentialsCache = resolved; // memoize so _isMasteryMetNow agrees.
+    return resolved;
   }
 
   /// The smallest essential clean-rep count the child has banked (a real,
