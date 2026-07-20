@@ -83,12 +83,25 @@ signature, not a detail.
   control. Treat children's data as sensitive in every design decision.
 - **Parent accounts — LIVE (owner override, 2026-06-22).** The earlier "no real
   accounts in v1" line is lifted: real Email/Password + Google **parent** sign-in/up
-  is now in scope (`AuthService` + `lib/screens/parent_auth_screen.dart`), reachable
-  ONLY from **behind the PIN-gated parent area**. The child-safety core is **unchanged**:
+  is now in scope (`AuthService` + `lib/screens/parent_auth_screen.dart`), ~~reachable
+  ONLY from **behind the PIN-gated parent area**~~. The child-safety core is **unchanged**:
   **children still NEVER log in** (D-09b child-login ban holds). Sign-up links the boot
   anonymous identity (D-09c) so local progress is kept; sign-out restores an anonymous
-  identity. Foundation scope — the account does not yet gate or sync any data. Google
+  identity. ~~Foundation scope — the account does not yet gate or sync any data.~~ Google
   needs the Firebase console SHA-1 + Web client id (`--dart-define=GOOGLE_SERVER_CLIENT_ID`).
+  - **AMENDED 2026-07-20 (D-01/D-02, Phase 26 — owner decision).** The entry model is now
+    **account-first**: a parent account is the **mandatory FRONT DOOR** — every launch
+    starts at `/auth` and the whole app is behind a required parent sign-in (ratifies the
+    as-built `lib/router/app_router.dart` redirect). This **supersedes** two clauses above:
+    (a) ~~"reachable ONLY from behind the PIN-gated parent area"~~ — the account is now the
+    front door, not a behind-the-PIN extra; (b) ~~"does not yet gate ... any data"~~ — the
+    account now **gates all use**. **UNCHANGED by this amendment:** D-09b (children NEVER
+    log in — the *parent* signs in), D-09c (sign-up links the boot anonymous identity;
+    sign-out returns to anonymous, never stranding — Plan 26-01), and the account still
+    does **NOT SYNC** data across devices (sync stays future scope; only the GATING clause
+    changed). Compliance consequence (D-03): the Play data-safety + app-access forms and
+    the hosted legal page must declare account-gating + parent-email collection, matching
+    the code — see `docs/legal/RELEASE-COMPLIANCE-2.0.1.md`.
 
 ---
 
