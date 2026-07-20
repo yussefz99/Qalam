@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Adaptive launcher-icon background. Design-system parchment token
+         `--parchment` (#FAF6EE, lib/theme/colors.dart / docs/design/kit parchment) —
+         the same warm surface as the Play listing art (D-05, Phase 26-02).
+         Referenced by mipmap-anydpi-v26/ic_launcher.xml <background>. -->
+    <color name="ic_launcher_background">#FAF6EE</color>
+</resources>

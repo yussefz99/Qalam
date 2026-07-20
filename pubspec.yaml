@@ -111,6 +111,12 @@ dev_dependencies:
   firebase_auth_mocks: ^0.15.2    # in-memory FirebaseAuth fake for the boot-auth test (A5)
   fake_cloud_firestore: ^4.1.1
 
+  # Build-time launcher-icon generator (D-05, Phase 26-02). Dev-only: NEVER shipped
+  # in the app binary. Verified on pub.dev before adding — publisher
+  # fluttercommunity.dev, latest stable 0.14.4 (threat T-26-02-SC mitigated).
+  # Config lives in flutter_launcher_icons.yaml; run `dart run flutter_launcher_icons`.
+  flutter_launcher_icons: ^0.14.4
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
