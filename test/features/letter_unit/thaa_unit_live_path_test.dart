@@ -44,9 +44,12 @@ import 'package:qalam/tutor/tts_coach_speaker.dart';
 import 'package:qalam/providers/tts_providers.dart';
 
 /// The REAL promoted thaa node we present — a well-formed GRADED write-surface
-/// node (`completeWord.middle`, mode:write). NOT a teachCard, NOT an
-/// `expected:null` placeholder transform node.
-const String kThaaGradedNode = 'thaa.completeWord.middle';
+/// node (`writeLetter.writeForm`, mode:write). NOT a teachCard, NOT an
+/// `expected:null` placeholder transform node. RETARGETED 2026-07-20 (quick
+/// 260720-wcs): the former `completeWord.middle` was made DORMANT (its node removed
+/// from the 7-node F2-interim thaa graph), so this now points at a still-live graded
+/// form node (one of the 7 kept letter-FORM nodes).
+const String kThaaGradedNode = 'thaa.writeLetter.writeForm';
 
 Map<String, dynamic> _json(String path) =>
     jsonDecode(File(path).readAsStringSync()) as Map<String, dynamic>;

@@ -65,10 +65,13 @@ import 'package:qalam/providers/tts_providers.dart';
 /// tier null) → the walker walks to `traceLetter.initial` (the next legal node).
 const String kPassCursor = 'thaa.traceLetter.isolated';
 
-/// The FAIL-path cursor: a thaa RAMP node with a tier, so `remediateOneTier` has a
-/// lower tier to step down to. `writeWord.dictation` (copyWrite, ghayrManzur) →
-/// remediates one tier down to `writeWord.copy` (copyWrite, manzur).
-const String kFailCursor = 'thaa.writeWord.dictation';
+/// The FAIL-path cursor. RETARGETED 2026-07-20 (quick 260720-wcs, F2-interim): the
+/// former ramp node `writeWord.dictation` was made DORMANT (its node removed from the
+/// 7-node thaa graph). thaa is now FORM-ONLY (all 7 kept nodes are tier-null
+/// recognize/positionalForms), so there is no lower إملاء tier to step down to — the
+/// walker's fail behavior on a tier-null form node is DRILL-IN-PLACE at the floor.
+/// `traceLetter.medial` (positionalForms, tier null) is a legal live form node.
+const String kFailCursor = 'thaa.traceLetter.medial';
 
 Map<String, dynamic> _json(String path) =>
     jsonDecode(File(path).readAsStringSync()) as Map<String, dynamic>;
@@ -231,37 +234,39 @@ void main() {
   });
 
   testWidgets(
-      'a thaa FAIL routes the durable cursor through the walker\'s remediation '
-      '(one tier down, same competency) on the live scaffold apply path',
+      'a thaa FAIL drills in place at the form-only floor on the live scaffold '
+      'apply path — the walker ran, NEVER the static forward section walk',
       (tester) async {
-    // Seed the child ON the fail cursor (copyWrite / ghayrManzur) with copyWrite
-    // reached and the manqul+manzur tiers cleared — so BOTH the cursor and its
-    // one-tier-down remediation (manzur) are legal candidates.
+    // F2-interim (quick 260720-wcs): thaa is now FORM-ONLY — all 7 kept nodes are
+    // tier-null recognize/positionalForms, so there is NO lower إملاء tier to step
+    // down to. The walker's fail behavior on a tier-null form node is therefore
+    // DRILL-IN-PLACE at the floor (`remediateOneTier == null` → re-present the same
+    // legal node). That is STILL a walker decision and it is the OPPOSITE of the old
+    // device bug (a fail advancing to the next STATIC section). Seed on a legal form
+    // node with `recognize` cleared. (The tier-step-down remediation invariant itself
+    // is covered by the walker/remediation_arc tests on ramp-bearing graphs.)
     const seed = GraphPosition(
       childProfileId: 0,
       letterId: 'thaa',
       currentExerciseId: kFailCursor,
-      clearedCompetencies: ['recognize', 'positionalForms', 'copyWrite'],
-      clearedTiers: ['manqul', 'manzur'],
+      clearedCompetencies: ['recognize'],
+      clearedTiers: [],
     );
     final controller =
         await _pumpThaa(tester, exerciseId: kFailCursor, seed: seed);
 
     expect(controller.state.currentExerciseId, kFailCursor);
 
-    // The walker's expected remediation on a fail: one tier down within the same
-    // competency (D-09). Compute it independently from the graph.
     final graph = _loadThaaGraph();
-    final remediation = graph.remediateOneTier(kFailCursor);
-    expect(remediation, isNotNull,
-        reason: '$kFailCursor is a ramp node — it must have a lower-tier '
-            'remediation to step down to');
-    expect(remediation, isNot(kFailCursor));
-
-    // Cross-check: the walker's selectNext on a fail lands on that remediation
-    // (its candidate set includes it and prefers it) — the deterministic offline
-    // remediation candidate the live path must reach.
     final walker = CurriculumGraphWalker(graph);
+
+    // thaa is form-only: no ramp tier below a positionalForms node → no remediation.
+    expect(graph.remediateOneTier(kFailCursor), isNull,
+        reason: '$kFailCursor is a tier-null form node — thaa has no إملاء ramp '
+            'to step down to after the F2-interim dormancy');
+
+    // The walker's fail pick from a tier-null form node = drill in place (the same
+    // legal node). Compute it independently from the graph.
     const failFacts = TutorFacts(
       letterId: 'thaa',
       section: kFailCursor,
@@ -270,14 +275,22 @@ void main() {
       weakestCriterion: 'dot',
     );
     final walkerFailPick = walker.selectNext(failFacts, _asWalkerPos(seed));
-    expect(walkerFailPick, remediation,
-        reason: 'the walker fails ONE tier down within the competency');
+    expect(walkerFailPick, kFailCursor,
+        reason: 'a form-node fail drills in place at the floor (walker)');
 
-    // And the SelectionPolicy narrows to a candidate set that CONTAINS the
-    // remediation (never the forward frontier on a fail) — the rail the live
-    // apply path narrows within.
+    // Contrast: a PASS from the same node ADVANCES (the forward walk's move). So the
+    // fail STAYING put is exactly what distinguishes the walker from the static walk.
+    const passFacts =
+        TutorFacts(letterId: 'thaa', section: kFailCursor, passed: true);
+    final walkerForward = walker.selectNext(passFacts, _asWalkerPos(seed));
+    expect(walkerForward, isNot(kFailCursor),
+        reason: 'a pass advances — so drill-in-place on a fail is distinguishable '
+            'from a forward section step');
+
+    // The SelectionPolicy narrows to a fail candidate set that CONTAINS the
+    // drill-in-place node (retry-in-place, never the forward frontier on a fail).
     final outcome = SelectionPolicy(graph).narrow(failFacts, _asWalkerPos(seed));
-    expect(outcome.candidates, contains(remediation),
+    expect(outcome.candidates, contains(kFailCursor),
         reason: 'the fail candidate set is remediation + retry-in-place, never '
             'the forward frontier');
 
@@ -286,12 +299,13 @@ void main() {
     ws.onResult!(const CheckResult.fail('missingDot', weakestCriterion: 'dot'));
     await tester.pumpAndSettle();
 
-    // THE PIN: a thaa fail routes to the walker's remediation on the LIVE apply
-    // path — one tier down, same competency — not a linear "next section" step,
-    // and not a stall on the same card.
-    expect(controller.state.currentExerciseId, remediation,
-        reason: 'a thaa FAIL must remediate one tier down on the live path — '
-            'the walker\'s remediation candidate, never the static walk');
+    // THE PIN: a thaa fail drills in place on the LIVE apply path (the walker's fail
+    // pick) — NOT the forward section successor. The walker ran, not the static walk.
+    expect(controller.state.currentExerciseId, walkerFailPick,
+        reason: 'a thaa FAIL drills in place on the live path (walker), never the '
+            'static forward section walk');
+    expect(controller.state.currentExerciseId, isNot(walkerForward),
+        reason: 'a fail must NOT advance forward like the old static-walk bug');
     expect(controller.state.selectionActive, isTrue);
   });
 
