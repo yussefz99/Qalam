@@ -26,10 +26,17 @@ import pytest
 
 pytestmark = pytest.mark.code
 
-from tests.test_eval.run_eval import variety_report  # noqa: E402  (RED import — Task 2 implements)
+from app.prompts import COACH_PROMPT  # noqa: E402
+from tests.test_eval.run_eval import exemplar_lines, variety_report  # noqa: E402
 
 _GOLD_SET = pathlib.Path(__file__).parent / "gold_set.jsonl"
 
+# The three ready-to-speak child-facing say-lines the OLD coach prompt embedded verbatim — the
+# D-06a root cause (the model copied them word-for-word, so the on-screen feedback read static).
+# Plan 26-04 REMOVED them from COACH_PROMPT (they survive as the mother's `idealCoaching` register
+# ANCHORS in gold_set.jsonl, which the variety leg deliberately excludes — see run_eval._score_variety).
+# They stay HERE as (a) the fixture that exercises the detector mechanism below and (b) the banned-set
+# the D-06a source assertion proves is gone from the live prompt.
 _EXEMPLARS = [
     "Your baa needs a deeper curve at the bottom — try again, slower this time.",
     "The bowl is lovely — now place the dot just below it.",
@@ -82,6 +89,48 @@ def test_a_verbatim_exemplar_echo_is_flagged():
     ]
     report = variety_report(lines, _EXEMPLARS)
     assert report["verbatim_exemplar_hits"] >= 1
+
+
+# ---------------------------------------------------------------------------
+# D-06a (Plan 26-04) — the restructured prompt leaves nothing to parrot
+# ---------------------------------------------------------------------------
+
+
+def test_the_restructured_coach_prompt_embeds_no_copyable_child_facing_line():
+    """D-06a: the GOLD EXEMPLARS block was restructured to convey REGISTER only — none of the old
+    ready-to-speak say-lines survive as quotable text the model can lift, so on-screen feedback
+    stops reading static. The register + anti-pattern + grounding contracts stay intact."""
+    for removed in _EXEMPLARS:
+        assert removed not in COACH_PROMPT, f"copyable exemplar still in the prompt: {removed!r}"
+    # The ONLY quoted strings left after the GOLD EXEMPLARS anchor are the NEVER anti-patterns —
+    # there is no ready-made coachable line to copy. `exemplar_lines` derives the parrot-set the live
+    # variety leg guards from the prompt itself, so this asserts over the SAME shape the leg sees.
+    derived = exemplar_lines(COACH_PROMPT)
+    assert set(derived) <= {"Oops, try again!", "Great job!"}, derived
+    # Register requirement + the forbidden cheerfulness + the grounding rails are all retained.
+    assert "warm" in COACH_PROMPT.lower()
+    assert "Oops, try again!" in COACH_PROMPT
+    assert "GROUNDING RULE" in COACH_PROMPT
+    assert "ACTION RULE" in COACH_PROMPT
+
+
+def test_repeated_attempts_against_the_new_prompt_shape_stay_fresh():
+    """The presentation-not-parroting contract over the NEW prompt shape: five distinctly-worded
+    coach lines for the SAME shallow-bowl mistake — the varied wording the register-only prompt is
+    meant to produce — score 0 verbatim-exemplar hits against the prompt's OWN derived exemplars and
+    a perfect distinct ratio (D-06a)."""
+    exemplars = exemplar_lines(COACH_PROMPT)
+    lines = [
+        "The bottom of your baa stayed a little flat — round it deeper and try once more, slower.",
+        "Almost — the left side dipped but the right stayed straight; curve the right down to match.",
+        "Your bowl is getting rounder; take it a touch lower at the very bottom this time.",
+        "So close — start the curve sooner so the whole bottom swings down, not just the middle.",
+        "Nice effort; let the stroke sink a bit more before it lifts at the end.",
+    ]
+    report = variety_report(lines, exemplars)
+    assert report["verbatim_exemplar_hits"] == 0
+    assert report["distinct_ratio"] == 1.0
+    assert report["duplicate_pairs"] == []
 
 
 # ---------------------------------------------------------------------------
