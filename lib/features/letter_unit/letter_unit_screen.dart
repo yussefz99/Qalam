@@ -223,6 +223,11 @@ class _UnitShellState extends ConsumerState<_UnitShell> {
         letterId: _letterId,
         total: widget.data.unit.sections.length,
         resumeSection: widget.resumeSection,
+        // 260720-up4 (Task 2): hand the unit's presentedEssentials (already loaded
+        // here) to the controller so its mastery-met routing-termination predicate
+        // resolves the presented set SYNCHRONOUSLY — the controller never runs its
+        // own getUnit on the scored hot path.
+        presentedEssentials: widget.data.unit.presentedEssentials,
       );
       if (!mounted) return;
       // 18-15 Task 2 — RESUME IN PLACE after a cold boot (UAT T7). This fresh

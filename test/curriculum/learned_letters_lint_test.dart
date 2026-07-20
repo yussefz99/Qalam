@@ -128,16 +128,14 @@ void main() {
     // check can hold each id to its own graph. Two provenance groups, kept distinct
     // so the Phase-25 packet (Plan 25-06) can rule on each separately.
 
-    // D-09 — the 4 baa cards, owner-approved from DEVICE UAT (2026-07-18): gated by
-    // 19-05 (D-19) then RESTORED by explicit owner decision ("perfect and really
-    // impressive" on device). NOT mother-approved yet — the packet flips or re-points
-    // each. Any OTHER live baa card demanding unlearned letters still fails.
-    const baaOwnerApprovedExceptions = <String>{
-      'baa.fillBlank.adjective',
-      'baa.transformWord.dual',
-      'baa.transformWord.plural',
-      'baa.transformWord.opposite',
-    };
+    // D-09 — the 4 baa cards were owner-approved from DEVICE UAT (2026-07-18), then
+    // made DORMANT 2026-07-20 (quick task 260720-up4): their NODES were removed from
+    // the baa graph so they are no longer LIVE, and the "no rot" liveness check below
+    // (every allowlisted id must be a live node) would FAIL if they stayed listed.
+    // Emptying this set is what keeps the lint green alongside the node removal. This
+    // REVERSES the mother's F1 verdict for these ids, PENDING her re-confirmation
+    // packet. Any live baa card demanding unlearned letters still fails.
+    const baaOwnerApprovedExceptions = <String>{};
 
     // D-16 — the taa reach-ahead word cards (unit 3, introOrder 3), kept LIVE by
     // OWNER DECISION (2026-07-19), mother-verdict PENDING. Re-point is impossible

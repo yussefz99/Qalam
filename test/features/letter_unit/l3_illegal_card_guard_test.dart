@@ -327,9 +327,13 @@ void main() {
     ]);
     addTearDown(container.dispose);
 
-    // Seed every essential node at its threshold, so the star is reachable via the
-    // LEGAL essentials the moment the illegal enrichment card is skipped (D-02).
-    for (final id in _essentialIds) {
+    // Seed every essential node EXCEPT the skip target (`_legalSkipTarget`) at its
+    // threshold. Mastery is therefore NOT yet met at the pass moment, so selection
+    // RUNS (rather than terminating on mastery-met, 260720-up4 Task 2) — that is
+    // what lets the L3 guard actually observe + SKIP the illegal card and advance to
+    // the next legal node (D-01). The skip target is completed further down, which
+    // makes the star reachable via the LEGAL essentials (D-02).
+    for (final id in _essentialIds.where((id) => id != _legalSkipTarget)) {
       await db.setExerciseCleanReps(
         childProfileId: kUnassignedChildProfileId,
         letterId: 'baa',
@@ -387,8 +391,15 @@ void main() {
     expect(_graphNode(_illegal), findsNothing,
         reason: 'the illegal card never reaches the screen — the rail held live');
 
-    // (b) The star stays reachable (D-02): mastery still fires over the legal
+    // (b) The star stays reachable (D-02): the child completes the LEGAL skip target
+    //     the guard advanced them to, and mastery then fires over the legal
     //     essentials even though the illegal enrichment card was skipped.
+    await db.setExerciseCleanReps(
+      childProfileId: kUnassignedChildProfileId,
+      letterId: 'baa',
+      exerciseId: _legalSkipTarget,
+      cleanReps: 1,
+    );
     final mastered = await _awaitPumping(
       tester,
       controller.recordMasteryIfMet(),

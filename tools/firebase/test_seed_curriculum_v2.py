@@ -48,15 +48,15 @@ from tools.content.validate import (  # noqa: E402
     load_intro_order,
 )
 
-# The 4 baa cards owner-approved from device UAT (D-09). Named explicitly here (not
-# imported from validate's PRIVATE group) — the test only imports the PUBLIC union
-# ``OWNER_APPROVED_EXCEPTIONS`` and asserts each of these belongs to it.
-_BAA_D09_IDS = [
-    "baa.fillBlank.adjective",
-    "baa.transformWord.dual",
-    "baa.transformWord.plural",
-    "baa.transformWord.opposite",
-]
+# The 4 baa cards were owner-approved from device UAT (D-09), then made DORMANT
+# 2026-07-20 (quick task 260720-up4): their nodes were removed from the baa graph and
+# their ids dropped from ``OWNER_APPROVED_EXCEPTIONS`` (validate.py ``_BAA_D09_EXCEPTIONS``
+# is now empty). This list is emptied so the two D-09 tests below (which assert each id
+# is in the public union / is seeded despite reaching ahead) no longer fail once the ids
+# left the union — they now iterate nothing and pass vacuously. The taa/thaa D-16
+# exceptions remain in ``OWNER_APPROVED_EXCEPTIONS`` (not exercised here). Restore-by
+# re-adding the ids AND re-adding their graph nodes + the two allowlists.
+_BAA_D09_IDS: list[str] = []
 
 
 # --------------------------------------------------------------------------- #
