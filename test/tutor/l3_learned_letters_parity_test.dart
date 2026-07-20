@@ -58,36 +58,21 @@ void main() {
       expect(baaFilter.isSeenLegal('does.not.exist'), isTrue);
     });
 
-    test('each of the 4 D-09 baa exceptions is KEPT despite reaching ahead', () {
-      const d09 = <String>[
-        'baa.fillBlank.adjective',
-        'baa.transformWord.dual',
-        'baa.transformWord.plural',
-        'baa.transformWord.opposite',
-      ];
-      for (final id in d09) {
-        // The exemption is LOAD-BEARING only if the card genuinely reaches ahead.
-        expect(baaFilter.unlearnedFor(id), isNotEmpty,
-            reason: '$id must genuinely reach ahead — else the exemption is a no-op');
-        expect(baaFilter.isSeenLegal(id), isTrue,
-            reason: '$id is an owner-approved exception (parity with L1/L2) — '
-                'never dropped even though it reaches ahead');
-      }
-    });
+    // The former 'each of the 4 D-09 baa exceptions is KEPT' test was REMOVED
+    // 2026-07-20 (quick task 260720-up4): those 4 baa reach-ahead grammar cards were
+    // made DORMANT (nodes removed from the baa graph; ids removed from every
+    // allowlist), so they are no longer owner-approved exceptions — they are simply
+    // gone from the live surface. The parity set below now pins the 18 taa/thaa ids.
 
     test(
-        'kApprovedReachAheadExceptions == the 22 owner-approved ids '
-        '(4 baa D-09 + 18 taa/thaa D-16) — L0/L1/L2 parity', () {
+        'kApprovedReachAheadExceptions == the 18 owner-approved ids '
+        '(18 taa/thaa D-16) — L0/L1/L2 parity', () {
       // The exact union tools/content/validate.py exposes as
-      // OWNER_APPROVED_EXCEPTIONS (_BAA_D09_EXCEPTIONS | _TAA_THAA_D16_EXCEPTIONS).
-      // If L3 drifts from this set, a mother-approved / owner-decision card is
-      // either dropped at runtime (regression) or a non-exception slips through.
+      // OWNER_APPROVED_EXCEPTIONS (_BAA_D09_EXCEPTIONS is now EMPTY |
+      // _TAA_THAA_D16_EXCEPTIONS). If L3 drifts from this set, a mother-approved /
+      // owner-decision card is either dropped at runtime (regression) or a
+      // non-exception slips through.
       const expected = <String>{
-        // ── baa D-09 (device UAT, 2026-07-18) ──
-        'baa.fillBlank.adjective',
-        'baa.transformWord.dual',
-        'baa.transformWord.plural',
-        'baa.transformWord.opposite',
         // ── taa/thaa D-16 (owner decision, 2026-07-19; mother-verdict pending) ──
         'taa.completeWord.middle',
         'taa.connectWord.bayt',
@@ -108,7 +93,7 @@ void main() {
         'thaa.writeWord.dictation',
         'thaa.writeWord.picture',
       };
-      expect(kApprovedReachAheadExceptions, hasLength(22));
+      expect(kApprovedReachAheadExceptions, hasLength(18));
       expect(kApprovedReachAheadExceptions, equals(expected));
     });
   });

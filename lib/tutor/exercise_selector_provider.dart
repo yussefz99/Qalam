@@ -92,28 +92,25 @@ final curriculumGraphProvider =
 // and every firing is logged loudly (D-03). L2 refuses at the WRITE; L3 refuses at
 // the READ — the same Firestore-first bypass, two surfaces.
 
-/// The owner-approved reach-ahead EXCEPTION ids — the SAME 22 cards L1
-/// (`baaOwnerApprovedExceptions`, learned_letters_lint_test.dart) and L2
-/// (`OWNER_APPROVED_EXCEPTIONS`, tools/content/validate.py) exempt. A card in this
-/// set is NEVER dropped by the L3 guard even though it demands an unseen letter, so
-/// a mother-approved / owner-decision reach-ahead card stays presentable at runtime
-/// — PARITY across all four wall layers (the whole wall's thesis: refuse the SAME
-/// thing, exempt the SAME thing). The parity is pinned by
+/// The owner-approved reach-ahead EXCEPTION ids — the SAME 18 cards L1
+/// (`baaOwnerApprovedExceptions` is now EMPTY, learned_letters_lint_test.dart) and
+/// L2 (`OWNER_APPROVED_EXCEPTIONS`, tools/content/validate.py) exempt. A card in
+/// this set is NEVER dropped by the L3 guard even though it demands an unseen
+/// letter, so a mother-approved / owner-decision reach-ahead card stays presentable
+/// at runtime — PARITY across all four wall layers (the whole wall's thesis: refuse
+/// the SAME thing, exempt the SAME thing). The parity is pinned by
 /// `test/tutor/l3_learned_letters_parity_test.dart`.
 ///
-/// TWO provenance groups, mirroring validate.py's `_BAA_D09_EXCEPTIONS` /
-/// `_TAA_THAA_D16_EXCEPTIONS`:
-///   • 4 baa D-09 — owner-approved from device UAT (2026-07-18).
+/// PROVENANCE (was TWO groups; the baa group is gone as of 2026-07-20):
+///   • ~~4 baa D-09 — owner-approved from device UAT (2026-07-18).~~ EMPTIED
+///     2026-07-20 (quick task 260720-up4): those 4 reach-ahead grammar cards were
+///     made DORMANT (nodes removed from the baa graph so they never reach runtime),
+///     reversing the mother's F1 verdict PENDING her re-confirmation packet.
 ///   • 18 taa/thaa D-16 — kept LIVE by owner decision (2026-07-19), mother-verdict
 ///     PENDING (Plan 25-06 packet / 25-07 walkthrough). Dropping these at runtime
 ///     would gut the taa/thaa units the owner deliberately kept live, so L3 must
 ///     exempt them exactly as L0/L1/L2 do.
 const Set<String> kApprovedReachAheadExceptions = <String>{
-  // ── baa D-09 (device UAT, 2026-07-18) ──
-  'baa.fillBlank.adjective',
-  'baa.transformWord.dual',
-  'baa.transformWord.plural',
-  'baa.transformWord.opposite',
   // ── taa/thaa D-16 (owner decision, 2026-07-19; mother-verdict pending) ──
   'taa.completeWord.middle',
   'taa.connectWord.bayt',

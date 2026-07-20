@@ -67,16 +67,16 @@ SPECIAL_NON_TAUGHT = {"taa_marbuta"}
 # so Plan 25-06 can enumerate each precisely and so their PROVENANCE stays distinct.
 # The public ``OWNER_APPROVED_EXCEPTIONS`` name L2 imports is their union.
 
-# D-09 — the 4 baa cards, owner-approved from DEVICE UAT (2026-07-18). Mirror of the
-# Dart lint's ``baaOwnerApprovedExceptions`` (learned_letters_lint_test.dart).
-_BAA_D09_EXCEPTIONS: frozenset[str] = frozenset(
-    {
-        "baa.fillBlank.adjective",
-        "baa.transformWord.dual",
-        "baa.transformWord.plural",
-        "baa.transformWord.opposite",
-    }
-)
+# D-09 — the 4 baa cards, formerly owner-approved from DEVICE UAT (2026-07-18).
+# EMPTIED 2026-07-20 (quick task 260720-up4): the owner made those 4 reach-ahead
+# grammar cards (baa.fillBlank.adjective + baa.transformWord.{dual,plural,opposite})
+# DORMANT — their NODES were removed from both baa graph assets, so they are no
+# longer LIVE graph nodes and the gate (scoped to ``live_graph_node_ids``) would not
+# check them regardless. Emptying this set keeps the four-layer wall's union at the
+# 18 taa/thaa ids (L0/L1/L3 parity) and removes a stale, now-unreachable exemption.
+# This REVERSES the mother's F1 verdict for these ids, PENDING her re-confirmation
+# packet. Restore-by re-adding the ids here AND re-adding their graph nodes.
+_BAA_D09_EXCEPTIONS: frozenset[str] = frozenset()
 
 # D-16 — the taa + thaa reach-ahead word cards, kept LIVE by OWNER DECISION
 # (2026-07-19), mother-verdict PENDING. DISTINCT provenance from the baa D-09 set:
