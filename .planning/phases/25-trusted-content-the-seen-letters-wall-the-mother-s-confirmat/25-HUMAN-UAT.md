@@ -8,156 +8,160 @@ updated: 2026-07-20T00:00:00Z
 
 ## Current Test
 
-[awaiting the mother's live walkthrough — D-11]
+[live walkthrough COMPLETE 2026-07-20 — the mother ruled on all 19 rows, owner reading aloud (D-11). Two follow-ups remain: (1) A1 baa graph change + tutor-server redeploy, (2) the taa/thaa "letter-form" rework, which is new authoring she must sign — see notes.]
 
 <!--
-CAPTURE SCAFFOLD — no verdict is pre-filled. The owner reads each 25-REVIEW-PACKET.md
-row aloud to the mother (physically next to him, D-11) and records HER verdict into the
-`verdict:` line below, one of: confirm / reject / rework. For a `rework`, capture her
-correction VERBATIM in `rework instruction:`. She is the curriculum authority (CUR-01);
-these are HER pedagogical decisions, not Claude's. Same-session capture is the real
-workflow (D-12); if she is ever unavailable, the SAME doc is filled asynchronously later.
-Once every row carries a verdict + the Summary tally is filled, ingestion (Plan 25-07
-Task 2) flips `signedOff` to match her answers EXACTLY and restores/re-works rejects.
-The `ingestion effect:` line under each row is descriptive (what Task 2 will do per
-verdict) — it is NOT a verdict.
+CAPTURE COMPLETE. Verdicts recorded from the 2026-07-20 live sitting. Reworks captured
+VERBATIM. She is the curriculum authority (CUR-01); these are HER decisions. Ingestion
+(Plan 25-07 Task 2) flips signedOff to match the CONFIRMED rows; the REWORK rows that
+require new content (A1 reps, the taa/thaa letter-form rewrite) are follow-up authoring
+she must sign before those flip.
 -->
 
 ## Verdicts
 
-_19 packet rows (25-REVIEW-PACKET.md Summary table). Mirror of 19-HUMAN-UAT.md's
-expected/result form: `what to confirm` = expected, `verdict` = result._
-
 ### A1 — baa writing/tracing clean-reps
-- what to confirm: signed 3 → live 1 (both buildSentence removed + 4 exceptions covered by their own rows)
-- verdict: [pending]  (confirm 1 / restore to 3 / rework)
-- rework instruction: [—]
-- ingestion effect: confirm 1 → baa keeps minCleanReps=1. Restore to 3 → edit writing/tracing minCleanReps back to 3 in BOTH graphs/baa.json AND curriculum_graph.json (byte-parity, D-14) → this is a STRUCTURAL baa graph change → triggers the Task 3 server-redeploy question.
+- what to confirm: signed 3 → live 1
+- verdict: **rework — restore to 3**
+- rework instruction: Put baa writing & tracing back to 3 clean reps, as originally signed. (alif/taa/thaa stay at 1 — see A2.)
+- ingestion effect: edit writing/tracing minCleanReps 1→3 in BOTH graphs/baa.json AND curriculum_graph.json (byte-parity, D-14). STRUCTURAL baa graph change → triggers the Task 3 tutor-server redeploy question (owner-gated).
 
 ### A2 — alif / taa / thaa clean-reps
-- what to confirm: currently 1 each, never signed — whatever she sets becomes their first signed spec
-- verdict: [pending]  (confirm 1 / set a number / rework)
+- what to confirm: currently 1 each, never signed
+- verdict: **confirm 1**
 - rework instruction: [—]
-- ingestion effect: confirm 1 → the graphs keep minCleanReps=1 (this fixes the NUMBER; taa/thaa LETTER graphs stay signedOff:false — letter-signing is Phase 27, D-10). Set a number → edit each affected graph's minCleanReps.
+- ingestion effect: graphs keep minCleanReps=1 (fixes the NUMBER; taa/thaa LETTER graphs stay signedOff:false — letter-signing is Phase 27, D-10).
 
 ### B1 — baa sentence questions removed (`baa.buildSentence.hear`, `baa.buildSentence.picture`)
-- what to confirm: keep removed (dormant)?
-- verdict: [pending]  (confirm removal / bring back / rework)
+- what to confirm: keep removed?
+- verdict: **confirm removal**
 - rework instruction: [—]
-- ingestion effect: confirm removal → the two cards stay dormant. Bring back → re-activate the node(s).
+- ingestion effect: the two cards stay dormant.
 
 ### B2 — taa/thaa sentence questions removed (`taa.buildSentence.hear/.picture`, `thaa.buildSentence.hear/.picture`)
-- what to confirm: keep removed (dormant)?
-- verdict: [pending]  (confirm removal / bring back / rework)
-- rework instruction: [—]
-- ingestion effect: confirm removal → the four cards stay dormant. Bring back → re-activate the node(s).
+- what to confirm: keep removed?
+- verdict: **rework (rule) — stay removed**
+- rework instruction (VERBATIM): "if the question only asks from us to write the first letter and its a letter learned then keep it other than that remove it"
+- ingestion effect: the four sentence cards ask for whole sentences (not the first letter) → stay dormant. This rule is her GUIDING PRINCIPLE and is the basis for the F2 rework below.
 
-### C1 — alif letter-level shrink (no word/sentence/grammar in the alif unit)
+### C1 — alif letter-level shrink
 - what to confirm: the narrowed alif unit
-- verdict: [pending]  (confirm / reject / rework)
+- verdict: **confirm**
 - rework instruction: [—]
-- ingestion effect: confirm → alif stays letter-level. Reject/rework → restore/adjust the alif unit per her instruction.
+- ingestion effect: alif stays letter-level.
 
 ### C2 — new `alif.writeLetter.fromPicture` draft (lion → أسد → write ا)
-- what to confirm: the wording + the lion → أسد pairing (draft, signedOff:false)
-- verdict: [pending]  (confirm / reject / rework)
+- what to confirm: the wording + lion → أسد pairing
+- verdict: **confirm (lion → أسد)**
 - rework instruction: [—]
-- ingestion effect: confirm → alif.writeLetter.fromPicture signedOff:false → true in exercises.json (D-15 promote). Reject → remove the card. Rework → change the word/art per her instruction, stays signedOff:false until it matches.
+- ingestion effect: alif.writeLetter.fromPicture signedOff:false → true in exercises.json (D-15 promote). Two different alif example words are intentional: أرنب (rabbit) on the meet card, أسد (lion) here — she confirmed both (see D1).
 
 ### D1 — picture swaps (`taa.teachCard.meet`, `taa.writeLetter.fromPicture`, `taa.writeWord.picture`, `taa.buildSentence.picture`, `alif.teachCard.meet`)
-- what to confirm: the example words + art; note alif meet uses أرنب (rabbit) while C2 uses أسد (lion) — confirm both or align them
-- verdict: [pending]  (confirm / reject / rework)
+- what to confirm: example words + art; rabbit vs lion for alif
+- verdict: **confirm**
 - rework instruction: [—]
-- ingestion effect: confirm → the swaps stay. Reject/rework → restore the prior word/art or change per her instruction.
+- ingestion effect: the swaps stay; the two alif example words (rabbit meet / lion writeLetter) are both approved.
 
 ### D2 — feedback rewordings (`taa.writeWord.dictation`, `taa.writeWord.copy`, `alif.writeWord.dictation`, `alif.writeWord.copy`)
-- what to confirm: the corrected feedback lines (dictation = listening, copy = word-shown)
-- verdict: [pending]  (confirm / reject / rework)
+- what to confirm: corrected feedback lines (dictation = listening, copy = word-shown)
+- verdict: **confirm**
 - rework instruction: [—]
-- ingestion effect: confirm → the reworded lines stay. Reject/rework → restore the prior wording or change per her instruction.
+- ingestion effect: the reworded lines stay.
 
 ### E1 — word/label diff (old → new)
-- what to confirm: the full before/after table incl. the `taa.completeWord.middle` label fix (`[taa]`→`[taa, waaw]`)
-- verdict: [pending]  (confirm / reject / rework)
+- what to confirm: the diff incl. `taa.completeWord.middle` label `[taa]`→`[taa, waaw]`
+- verdict: **confirm**
 - rework instruction: [—]
-- ingestion effect: confirm → the diff stands. Reject/rework → restore/change per her instruction (note: the label fix is a truthfulness correction, not a word change).
+- ingestion effect: the diff stands (label fix is a truthfulness correction). NOTE: taa.completeWord.middle is itself in the F2·taa set → reworked to letter-form below.
 
 ### F1-a — `baa.fillBlank.adjective` (البابُ ___ / كبير) — reaches ahead (raa, kaaf, yaa), D-09
 - what to confirm: mother approval OR re-point/remove
-- verdict: [pending]  (confirm / reject / rework)
+- verdict: **confirm (keep live)**
 - rework instruction: [—]
-- ingestion effect: confirm → exercise-level signedOff:false → true in exercises.json. Reject → re-point or remove the card AND drop `baa.fillBlank.adjective` from ALL THREE exception sets (validate.py OWNER_APPROVED_EXCEPTIONS, the lint's baaOwnerApprovedExceptions, L3 kApprovedReachAheadExceptions) so the wall stays in parity + L1's no-rot check holds.
+- ingestion effect: exercise-level signedOff:false → true in exercises.json; stays an owner+mother-approved exception.
 
 ### F1-b — `baa.transformWord.dual` (باب → بابان) — reaches ahead (noon), D-09
 - what to confirm: mother approval OR re-point/remove
-- verdict: [pending]  (confirm / reject / rework)
+- verdict: **confirm (keep live)**
 - rework instruction: [—]
-- ingestion effect: confirm → exercise-level signedOff → true. Reject → re-point/remove AND drop `baa.transformWord.dual` from all three exception sets.
+- ingestion effect: exercise-level signedOff → true; stays an approved exception.
 
 ### F1-c — `baa.transformWord.plural` (باب → أبواب) — reaches ahead (waaw), D-09
 - what to confirm: mother approval OR re-point/remove
-- verdict: [pending]  (confirm / reject / rework)
+- verdict: **confirm (keep live)**
 - rework instruction: [—]
-- ingestion effect: confirm → exercise-level signedOff → true. Reject → re-point/remove AND drop `baa.transformWord.plural` from all three exception sets.
+- ingestion effect: exercise-level signedOff → true; stays an approved exception.
 
 ### F1-d — `baa.transformWord.opposite` (كبير → صغير) — reaches ahead (raa, saad, ghayn, yaa), D-09
 - what to confirm: mother approval OR re-point/remove
-- verdict: [pending]  (confirm / reject / rework)
+- verdict: **confirm (keep live)**
 - rework instruction: [—]
-- ingestion effect: confirm → exercise-level signedOff → true. Reject → re-point/remove AND drop `baa.transformWord.opposite` from all three exception sets.
+- ingestion effect: exercise-level signedOff → true; stays an approved exception. (baa's graph flag flips back to true once all baa rows are confirmed — A1/B1/F1 all resolved.)
 
 ### F2·taa — the 10 taa reach-ahead questions (D-16)
 - ids: `taa.writeWord.dictation/.copy/.picture`, `taa.connectWord.taaj/.bayt`, `taa.completeWord.middle`, `taa.fillBlank.adjective`, `taa.transformWord.dual/.plural/.opposite`
-- what to confirm: approve the block (or mark any single one reject/rework)
-- verdict: [pending]  (confirm / reject / rework — block or per-row)
-- rework instruction: [—]
-- ingestion effect: confirm → the 10 stay exempt (taa LETTER graph stays signedOff:false, Phase 27). Any rejected id → re-point/remove AND drop it from all three exception sets.
+- verdict: **rework → letter-form practice**
+- rework instruction (VERBATIM): "for taa also and thaa keep them use them only for writing a form of letter not a word if we contiune like that for each unit there will be minimial questions"
+- ingestion effect: KEEP the 10 questions in the taa unit but re-author each to practice writing the taa LETTER-FORM (its shape in position), NOT a whole reach-ahead word. This SUPERSEDES D-16 for taa (they are no longer approved as reach-ahead words). This is NEW curriculum authoring the mother must specify + sign — NOT a mechanical flip. Until reworked+signed, these stay signedOff:false, kept safe by the wall. Once reworked to letter-forms they become legal by the wall's own rule and leave the exception set.
 
 ### F2·thaa — the 8 thaa reach-ahead questions (D-16)
 - ids: `thaa.writeWord.dictation/.copy/.picture`, `thaa.connectWord.thalab/.thalj`, `thaa.completeWord.middle`, `thaa.fillBlank.adjective`, `thaa.transformWord.dual`
-- what to confirm: approve the block (or mark any single one reject/rework)
-- verdict: [pending]  (confirm / reject / rework — block or per-row)
-- rework instruction: [—]
-- ingestion effect: confirm → the 8 stay exempt (thaa LETTER graph stays signedOff:false, Phase 27). Any rejected id → re-point/remove AND drop it from all three exception sets.
+- verdict: **rework → letter-form practice**
+- rework instruction (VERBATIM): same as F2·taa above.
+- ingestion effect: KEEP the 8 questions in the thaa unit but re-author each to practice the thaa LETTER-FORM, not a whole word. Supersedes D-16 for thaa. New authoring, mother-signed. Same interim/end-state as F2·taa.
 
 ### G1 — `thaa.transformWord.dual` (draft ثعلبان)
-- what to confirm: is +ان → ثعلبان the right dual, or give the correct one
-- verdict: [pending]  (confirm / reject / rework)
-- rework instruction: [—]
-- ingestion effect: confirm → keep ثعلبان. Rework → set her dual in exercises.json.
+- verdict: **rework → letter-form (superseded by F2·thaa)**
+- rework instruction: Becomes letter-form practice per F2·thaa; no dual word needed.
+- ingestion effect: folds into the F2·thaa rework.
 
-### G2 — `thaa.transformWord.plural` (needs her word)
-- what to confirm: the correct (broken) plural for the base word — currently a null placeholder
-- verdict: [pending]  (confirm / reject / rework)
-- rework instruction: [—]
-- ingestion effect: rework/give word → fill the placeholder (expected:null) with her plural. Left open → stays a placeholder.
+### G2 — `thaa.transformWord.plural` (was a null placeholder)
+- verdict: **rework → letter-form (superseded by F2·thaa)**
+- rework instruction: Becomes letter-form practice; no broken-plural word needed.
+- ingestion effect: folds into the F2·thaa rework; the null placeholder is retired.
 
-### G3 — `thaa.transformWord.opposite` (needs her pair)
-- what to confirm: an age-appropriate opposite pair — currently a null placeholder
-- verdict: [pending]  (confirm / reject / rework)
-- rework instruction: [—]
-- ingestion effect: rework/give pair → fill the placeholder (expected:null) with her pair. Left open → stays a placeholder.
+### G3 — `thaa.transformWord.opposite` (was a null placeholder)
+- verdict: **rework → letter-form (superseded by F2·thaa)**
+- rework instruction: Becomes letter-form practice; no opposite pair needed.
+- ingestion effect: folds into the F2·thaa rework; the null placeholder is retired.
 
 ### G4 — `thaa.buildSentence.hear` / `thaa.buildSentence.picture` (draft adjective; currently removed, Group B)
-- what to confirm: the sentence + audio (draft adjective كبير)
-- verdict: [pending]  (confirm / reject / rework)
+- verdict: **confirm removal (stays removed)**
 - rework instruction: [—]
-- ingestion effect: confirm → keep the draft adjective (cards stay dormant per B2 unless she also brings them back). Rework → set her adjective.
+- ingestion effect: stays dormant per B1/B2 (a sentence is not a first-letter question). No adjective needed.
 
 ## Summary
 
 total: 19
-confirmed: ___
-rejected: ___
-reworked: ___
-left open: 19 (all pending — awaiting the live walkthrough)
+confirmed: 12   (A2, B1, C1, C2, D1, D2, E1, F1-a, F1-b, F1-c, F1-d, G4)
+rejected: 0
+reworked: 7    (A1 restore-3, B2 rule, F2·taa, F2·thaa, G1, G2, G3)
+left open: 0
+
+## Two follow-ups that keep Phase 25 from fully closing today
+
+1. **A1 — baa reps 1→3 + tutor-server redeploy.** Restoring baa writing/tracing to 3 clean
+   reps is a structural baa-graph change (curriculum_graph.json, the tutor server's source).
+   A Cloud Run `qalam-tutor` redeploy needs FRESH EXPLICIT owner authorization (creds may be
+   expired). Never assumed free (Plan 25-07 Task 3).
+
+2. **F2 taa/thaa "letter-form" rework — the big one.** The mother kept the 18 taa/thaa
+   questions but ruled they must practice the letter's FORM, not whole reach-ahead words.
+   This SUPERSEDES the owner's D-16 (keep-as-words) — her authority governs pedagogy. It is
+   NEW curriculum authoring (~18 questions re-specified as letter-form practice) that she must
+   author + sign; it cannot be model-generated (CLAUDE.md: never ship model-authored curriculum
+   unsigned). Until reworked, the 18 stay signedOff:false and safe behind the wall. Once
+   reworked to letter-forms they become legal by the wall's own rule and leave the exception set.
 
 ## Server-redeploy disposition (Plan 25-07 Task 3 — resolved AFTER ingestion)
 
-- baa graph structurally changed this phase (git diff on curriculum_graph.json): [pending — checked in Task 3]
-- disposition: [pending — one of: "no redeploy needed" / "authorized (redeployed)" / "deferred to <phase>"]
-- note: a Cloud Run `qalam-tutor` redeploy needs FRESH EXPLICIT owner authorization (every prod deploy is owner-gated; creds may be expired). Never assumed free.
+- baa graph structurally changed this phase (A1 restore-to-3): YES (pending ingestion)
+- disposition: [pending owner authorization — one of: "authorized (redeployed)" / "deferred to <phase>"]
+- note: every prod deploy is owner-gated; creds may be expired. Never assumed free.
 
 ## Gaps
 
-- Every row above is `[pending]`: this scaffold captures the mother's verdicts during the D-11 live walkthrough. No verdict is pre-filled. Ingestion (25-07 Task 2) proceeds only once the owner records her answers here.
+- The mechanical CONFIRM flips (A2, B1, C1, C2, D1, D2, E1, F1-a..d) are ready to ingest now.
+- A1 (reps→3) is ready to edit but pairs with an owner-gated server redeploy.
+- F2·taa / F2·thaa (+ G1–G3) require the mother's authored letter-form content before they
+  can be signed — this is the open work carrying Phase 25 (and likely folding into Phase 27).
