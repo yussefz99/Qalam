@@ -26,34 +26,37 @@ void main() {
     return json.decode(file.readAsStringSync()) as Map<String, Object?>;
   }
 
-  test('CurriculumGraph parses the baa asset (17 baa.* nodes: 14 core + 3 restored microDrills, 6 gated cards removed)',
-      () {
+  test('CurriculumGraph parses the baa asset (14 baa.* nodes: all-essential core, '
+      'the 4 grammar reach-ahead cards made dormant 2026-07-20)', () {
     final graph = CurriculumGraph.fromJson(rawGraph());
 
     expect(graph.letterId, 'baa');
     expect(graph.signedOff, isTrue,
         reason: 'owner-mother signed the graph at the tier level (D-05); Plan 15-07 flipped it. '
-            'Plan 19-05 (D-18 restore / D-19 gate) adds/removes nodes but does NOT touch her '
-            'tier-structure sign-off — new/rewritten CONTENT is signedOff:false at the exercise level.');
-    // Owner device-UAT decisions (2026-07-18) reversed both 19-05 graph moves:
-    //   • micro-drills are REMOVED again (they interrupted the unit flow on device;
-    //     policy stays pinned in microdrill_selection_test.dart via fixture injection);
-    //   • the 6 gated cards are RESTORED — the owner judged them "perfect" on device;
-    //     they carry an owner-approved exception in learned_letters_lint_test.dart.
-    // Net: the original 20 live nodes (14 core incl. traceLetter.final + 6 restored), no drills.
-    // MINUS the 2 buildSentence nodes (owner device decision 2026-07-19: the
-    // sentence surface presents an empty canvas with nothing to work from, and
-    // the sentences demand letters far beyond baa — removed from unit + graph;
-    // the mother re-confirms alongside the demo-weight rep counts). Net: 18.
-    expect(graph.nodes.length, 18,
-        reason: '14 core baa.* nodes (incl. traceLetter.final) + 4 of the 6 '
-            'owner-restored cards (both buildSentence cards removed 2026-07-19); '
-            'micro-drills removed (owner device UAT 2026-07-18)');
+            'Node adds/removes do NOT touch her tier-structure sign-off — new/rewritten '
+            'CONTENT is signedOff:false at the exercise level.');
+    // Node history: 14 core (recognize/positionalForms/copyWrite, incl.
+    // traceLetter.final) + 4 restored grammar cards (fillBlank.adjective +
+    // transformWord.{dual,plural,opposite}); micro-drills + both buildSentence
+    // cards already out. Quick task 260720-up4 (owner 2026-07-20): the 4 grammar
+    // reach-ahead cards are made DORMANT — their nodes removed — so the
+    // never-passable enrichment tail can no longer block the star ("baa never
+    // advances"). Net: 14 nodes, all essential. Reverses the mother's F1 verdict
+    // for these ids, pending her re-confirmation packet.
+    expect(graph.nodes.length, 14,
+        reason: '14 core baa.* nodes (incl. traceLetter.final); the 4 grammar '
+            'reach-ahead cards made dormant (260720-up4); micro-drills + '
+            'buildSentence already out');
     final microDrills =
         graph.nodes.where((n) => n.competency == 'microDrill').toList();
     expect(microDrills, isEmpty,
         reason: 'micro-drills are OUT of the live graph (owner device UAT 2026-07-18; '
             're-add nodes + competency to restore)');
+    final enrichment = graph.nodes.where((n) => !n.essential).toList();
+    expect(enrichment, isEmpty,
+        reason: 'the 4 wordBuilding/grammarTransform enrichment nodes were made '
+            'dormant (260720-up4) — baa is now an all-essential core; re-add their '
+            'nodes to restore (the empty competency declarations are retained)');
     expect(
       graph.nodes.every((n) => n.exerciseId.startsWith('baa.')),
       isTrue,
@@ -74,11 +77,22 @@ void main() {
       expect(essentialCompetencyIds.contains(node.competency), isTrue,
           reason: 'an essentialNode must belong to an essential competency');
     }
-    // Enrichment nodes (wordBuilding / grammarTransform) are excluded.
+    // The FILTER excludes any enrichment (non-essential) node. baa currently
+    // carries NONE (the 4 wordBuilding/grammarTransform nodes were made dormant
+    // 2026-07-20, quick task 260720-up4), so essentialNodes == nodes here — the
+    // filter includes everything BECAUSE everything is essential. Assert the
+    // filter never returns a non-essential node (the actual invariant), and that
+    // the parser still tolerates the retained node-less enrichment competencies.
+    expect(graph.essentialNodes.every((n) => n.essential), isTrue,
+        reason: 'the essentialNodes filter must never return a non-essential node');
+    expect(graph.essentialNodes.length, graph.nodes.length,
+        reason: 'baa is all-essential after the 260720-up4 dormancy — every live '
+            'node gates the star; no enrichment tail remains');
     expect(
-      graph.essentialNodes.length < graph.nodes.length,
-      isTrue,
-      reason: 'enrichment nodes must NOT count as essential (70/30 split)',
+      graph.competencies.map((c) => c.id),
+      containsAll(<String>['wordBuilding', 'grammarTransform']),
+      reason: 'the now node-less enrichment competency declarations are retained '
+          '(parser-tolerated) so restoring the cards is a data-only change',
     );
   });
 

@@ -53,17 +53,49 @@ void main() {
   });
 
   test('enrichment nodes never gate the star (the 70/30 split)', () {
-    final graph = loadGraph();
+    // baa's LIVE graph no longer carries any enrichment node (the 4
+    // wordBuilding/grammarTransform cards were made DORMANT 2026-07-20, quick task
+    // 260720-up4). The D-06 invariant — enrichment (non-essential) nodes never gate
+    // the star — is a property of isMasteryMet, NOT of baa's current inventory, so
+    // pin it on a SYNTHETIC graph that DOES carry an enrichment node (leaving the
+    // enrichment node at zero reps must not block the star).
+    final graph = CurriculumGraph.fromJson(<String, Object?>{
+      'letterId': 'baa',
+      'signedOff': true,
+      'tiers': ['manqul', 'manzur', 'ghayrManzur'],
+      'competencies': [
+        {'id': 'positionalForms', 'essential': true, 'prerequisites': <String>[]},
+        {
+          'id': 'wordBuilding',
+          'essential': false,
+          'prerequisites': ['positionalForms'],
+        },
+      ],
+      'nodes': [
+        {
+          'exerciseId': 'baa.traceLetter.isolated',
+          'competency': 'positionalForms',
+          'tier': null,
+          'minCleanReps': 3,
+        },
+        {
+          'exerciseId': 'baa.fillBlank.adjective',
+          'competency': 'wordBuilding',
+          'tier': null,
+          'minCleanReps': 1,
+        },
+      ],
+    });
 
     // Satisfy essential nodes but leave ALL enrichment nodes at zero reps.
     final essentialIds = graph.essentialNodes.map((n) => n.exerciseId).toSet();
     final reps = <String, int>{
       for (final node in graph.essentialNodes) node.exerciseId: node.minCleanReps,
     };
-    // Sanity: there ARE enrichment nodes left unrepresented.
+    // Sanity: the synthetic graph carries an enrichment node left unrepresented.
     final enrichment = graph.nodes.where((n) => !essentialIds.contains(n.exerciseId));
     expect(enrichment, isNotEmpty,
-        reason: 'the graph must carry enrichment nodes for this assertion to mean anything');
+        reason: 'the synthetic graph must carry an enrichment node for this assertion to mean anything');
 
     expect(isMasteryMet(graph, reps), isTrue,
         reason: 'enrichment (wordBuilding / grammarTransform) does NOT gate mastery (D-06)');
