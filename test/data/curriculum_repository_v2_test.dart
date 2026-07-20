@@ -139,12 +139,11 @@ void main() {
             'alif.traceLetter.isolated',
             'alif.writeLetter.fromSound',
             'alif.writeLetter.writeForm',
-            // Finalization 2026-07-19: the new draft card of the alif shrink:
-            'alif.writeLetter.fromPicture',
-            // Lane B content-integrity flips (pending mother re-confirmation):
-            'alif.teachCard.meet',
-            'alif.writeWord.copy',
-            'alif.writeWord.dictation',
+            // NOTE (Phase 25 / 25-07, mother's walkthrough 2026-07-20): the alif
+            // shrink card + the Lane-B alif flips (alif.writeLetter.fromPicture,
+            // alif.teachCard.meet, alif.writeWord.copy, alif.writeWord.dictation)
+            // were mother-CONFIRMED and signed (signedOff:true) — so they left the
+            // unsigned set. taa.* stay unsigned pending the taa letter-form rework.
             'taa.teachCard.meet',
             'taa.writeLetter.fromPicture',
             'taa.writeWord.copy',
