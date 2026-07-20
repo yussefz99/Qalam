@@ -10,8 +10,9 @@
 // criterion) and D-D (thresholds are DATA):
 //
 //   1. `Tolerances` gains four double soft-band knobs with PROVISIONAL defaults
-//      on `Tolerances.normal`: `shapeTcc == 0.12`, `shapeTcw == 0.16` (widened
-//      2026-07-07 pre-demo; must equal `SoftBand.shapeDefault`), `directionCc == 0.3`,
+//      on `Tolerances.normal`: `shapeTcc == 0.10`, `shapeTcw == 0.15` (D-04 revert
+//      2026-07-20 — the 0.12/0.16 widen is undone; must equal
+//      `SoftBand.shapeDefault`), `directionCc == 0.3`,
 //      `directionCw == -0.3`; `Tolerances.fromJson` honors
 //      `overrides: {"shapeTcc": ..., "shapeTcw": ...}` (the same defensive
 //      idiom as `maxCurvature`).
@@ -85,8 +86,8 @@ void main() {
     test(
         'Tolerances.normal carries the four PROVISIONAL soft-band knobs; '
         'shapeTcc/shapeTcw equal SoftBand.shapeDefault', () {
-      expect(Tolerances.normal.shapeTcc, 0.12);
-      expect(Tolerances.normal.shapeTcw, 0.16);
+      expect(Tolerances.normal.shapeTcc, 0.10);
+      expect(Tolerances.normal.shapeTcw, 0.15);
       expect(Tolerances.normal.shapeTcc, SoftBand.shapeDefault.tcc,
           reason: 'the Tolerances knob and SoftBand.shapeDefault must agree');
       expect(Tolerances.normal.shapeTcw, SoftBand.shapeDefault.tcw,
@@ -113,8 +114,8 @@ void main() {
     test('fromJson with no overrides keeps the provisional soft-band defaults',
         () {
       final t = Tolerances.fromJson(const {'preset': 'normal'});
-      expect(t.shapeTcc, 0.12);
-      expect(t.shapeTcw, 0.16);
+      expect(t.shapeTcc, 0.10);
+      expect(t.shapeTcw, 0.15);
     });
   });
 
