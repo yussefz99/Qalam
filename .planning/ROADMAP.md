@@ -1125,7 +1125,17 @@ webcourse artifacts move in lockstep or not at all.
   4. The Android pass is green: 4-letter walk incl. fail→retry, profile isolation, and v1→v2 update opens without crashing.
   5. 2.0.1+4 is live on Play production with the matching APK archived.
 
-**Plans:** TBD
+**Plans:** 7 plans
+
+Plans:
+- [ ] 26-01-PLAN.md — Sign-out routing fix: never strand under account-first (D-01b) [wave 1]
+- [ ] 26-02-PLAN.md — Real Qalam adaptive launcher icon, replace the Flutter default (D-05) [wave 1]
+- [ ] 26-03-PLAN.md — Re-tighten the scorer tcc/tcw 0.12/0.16 → 0.10/0.15 (D-04) [wave 1]
+- [ ] 26-04-PLAN.md — Close the two tutor-feedback bugs: no verbatim exemplars + agent line on screen (D-06) [wave 1]
+- [ ] 26-05-PLAN.md — Ratify entry model: CLAUDE.md Decided amendment + Play/legal declarations (D-01/D-02/D-03) [wave 2, autonomous:false]
+- [ ] 26-06-PLAN.md — Android device pass: entry+icon, alif→thaa fail→retry, profile isolation, v1→v2 update [wave 2, autonomous:false]
+- [ ] 26-07-PLAN.md — Cut 2.0.1+4 after grading; Play + webcourse in lockstep (D-01) [wave 3, autonomous:false]
+
 **Research hint:** no — decision + alignment + known fixes.
 
 #### Phase 27: The whole alphabet — 24 letters in mother-signed batches
