@@ -153,6 +153,13 @@ class _ParentAuthScreenState extends ConsumerState<ParentAuthScreen> {
   Future<void> _signOut() async {
     setState(() => _submitting = true);
     try {
+      // NEVER-STRAND (D-01b, Plan 26-01): no explicit navigation here. After
+      // signOut() the restored anonymous/null identity makes `authStateProvider`
+      // report signedIn=false, so this screen rebuilds from the signed-in card
+      // back to the usable sign-in form and stays on `/auth`. In the gated
+      // router a manual `context.go` would also fight the redirect that bounces
+      // a signed-in parent off `/auth`. Covered by
+      // test/router/sign_out_routing_test.dart.
       await ref.read(authServiceProvider).signOut();
     } finally {
       if (mounted) setState(() => _submitting = false);

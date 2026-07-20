@@ -199,6 +199,13 @@ class AuthService {
 
   /// Signs the parent out, then restores an anonymous identity so curriculum
   /// reads keep working offline-first (the app must always have an identity).
+  ///
+  /// NEVER-STRAND (D-01b, Plan 26-01): the `ensureSignedIn()` anonymous restore
+  /// (D-09c) is deliberate and must stay. It does not re-strand the user because
+  /// the restored identity is anonymous, which `AuthGate` reports as signed-OUT
+  /// (D-01a) — driving the app_router redirect cleanly to `/auth`. The sign-out
+  /// fix is ROUTING, not identity: keep this restore intact. Regression-locked by
+  /// test/router/sign_out_routing_test.dart.
   Future<void> signOut() async {
     try {
       await GoogleSignIn.instance.signOut();
