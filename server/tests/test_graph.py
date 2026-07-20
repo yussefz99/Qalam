@@ -221,14 +221,15 @@ def test_authored_set_mirrors_live_graph_nodes():
     }
     baa_exercises = {i for i in AUTHORED_BAA_IDS if i.startswith("baa.")}
     assert baa_exercises == node_ids
-    # Owner device-UAT dispositions (2026-07-18) hold: the 6 once-gated cards are
-    # RESTORED (owner-approved lint exception), micro-drills are OUT again, and
-    # the final-form trace + the rewritten kitaab (بابا) stay in.
+    # Live baa set (superseded chain): the 2026-07-18 device-UAT restored 6 gated
+    # cards; the 2026-07-19 finalization then pulled the two buildSentence cards
+    # (a whole sentence needs unlearned letters); the mother's 2026-07-20 walkthrough
+    # (B1) CONFIRMED that removal. So the 4 grammar cards (fillBlank + 3 transformWord,
+    # her F1 sign-off) stay live; buildSentence.{hear,picture} are OUT. Micro-drills
+    # are OUT again; the final-form trace + the rewritten kitaab (بابا) stay in.
     assert {
         "baa.traceLetter.final",
         "baa.connectWord.kitaab",
-        "baa.buildSentence.hear",
-        "baa.buildSentence.picture",
         "baa.fillBlank.adjective",
         "baa.transformWord.dual",
         "baa.transformWord.plural",
