@@ -4,7 +4,8 @@
     "status": "DRAFT — signedOff:false. The mother signs at the TIER level; owner promotes into curriculum_graph.json.",
     "structureSource": "assets/curriculum/curriculum_graph.json (signed baa graph — competencies + tiers reused mechanically).",
     "nodeIdSource": "draft ids in docs/curriculum/drafts/exercises/04-thaa.exercises.json",
-    "reviewNote": "Confirm the competency/tier placement + per-skill clean-reps for THIS letter, and the exercise content (which stays signedOff:false at the exercise level)."
+    "reviewNote": "Confirm the competency/tier placement + per-skill clean-reps for THIS letter, and the exercise content (which stays signedOff:false at the exercise level).",
+    "owner_dormant_2026_07_20": "F2-INTERIM (owner decision 2026-07-20, quick task 260720-wcs; supersedes D-16). The 10 reach-ahead WORD/GRAMMAR cards — thaa.writeWord.{dictation,copy,picture}, thaa.connectWord.{thalab,thalj}, thaa.completeWord.middle, thaa.transformWord.{dual,plural,opposite}, thaa.fillBlank.adjective — are made DORMANT (their NODES REMOVED here; thaa goes 17->7 nodes) so a child can clean-rep the 7 all-essential letter-FORM nodes to the mastery star. thaa.transformWord.{plural,opposite} were retired null-placeholders (never allowlisted) and come out too. The mother ruled 2026-07-20 that these reach-ahead questions must become letter-FORM practice she has not yet authored; until she authors it they MUST NOT run as word cards. PENDING her re-confirmation packet (taa/thaa dormancy + jeem/haa_c starter content + reps=1). The now node-less copyWrite + wordBuilding + grammarTransform competencies are RETAINED (parser-tolerated, reversible). The exercise CONFIGS stay in exercises.json (fully reversible). Mirrors quick 260720-up4 (baa dormancy)."
   },
   "letterId": "thaa",
   "signedOff": false,
@@ -88,66 +89,6 @@
     {
       "exerciseId": "thaa.writeLetter.writeForm",
       "competency": "positionalForms",
-      "tier": null,
-      "minCleanReps": 1
-    },
-    {
-      "exerciseId": "thaa.writeWord.dictation",
-      "competency": "copyWrite",
-      "tier": "ghayrManzur",
-      "minCleanReps": 1
-    },
-    {
-      "exerciseId": "thaa.writeWord.copy",
-      "competency": "copyWrite",
-      "tier": "manzur",
-      "minCleanReps": 1
-    },
-    {
-      "exerciseId": "thaa.writeWord.picture",
-      "competency": "copyWrite",
-      "tier": "manzur",
-      "minCleanReps": 1
-    },
-    {
-      "exerciseId": "thaa.connectWord.thalab",
-      "competency": "copyWrite",
-      "tier": "manqul",
-      "minCleanReps": 1
-    },
-    {
-      "exerciseId": "thaa.connectWord.thalj",
-      "competency": "copyWrite",
-      "tier": "manqul",
-      "minCleanReps": 1
-    },
-    {
-      "exerciseId": "thaa.completeWord.middle",
-      "competency": "copyWrite",
-      "tier": "manqul",
-      "minCleanReps": 1
-    },
-    {
-      "exerciseId": "thaa.transformWord.dual",
-      "competency": "grammarTransform",
-      "tier": null,
-      "minCleanReps": 1
-    },
-    {
-      "exerciseId": "thaa.transformWord.plural",
-      "competency": "grammarTransform",
-      "tier": null,
-      "minCleanReps": 1
-    },
-    {
-      "exerciseId": "thaa.transformWord.opposite",
-      "competency": "grammarTransform",
-      "tier": null,
-      "minCleanReps": 1
-    },
-    {
-      "exerciseId": "thaa.fillBlank.adjective",
-      "competency": "wordBuilding",
       "tier": null,
       "minCleanReps": 1
     }

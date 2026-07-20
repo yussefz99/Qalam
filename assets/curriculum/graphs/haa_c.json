@@ -1,0 +1,49 @@
+{
+  "_meta": {
+    "title": "haa_c curriculum graph — F2-INTERIM STARTER (isolated-form only)",
+    "status": "DRAFT — signedOff:false. The mother signs the starter content + reps in her re-confirmation packet.",
+    "starter_2026_07_20": "F2-INTERIM STARTER (owner decision 2026-07-20, quick task 260720-wcs). haa_c (ح, introOrder 6 — NOT haa_f, the other haa at introOrder 26) is promoted as an isolated-form-only STARTER unit: its letters.json row carries base referenceStrokes (1) + 4 commonMistakes but ZERO contextualForms, so the isolated form is the ONLY honest scope. The 3 nodes (meet -> trace isolated -> write isolated) are ALL essential so a child can clean-rep them to the mastery star. writeLetter.fromSound / fromPicture are OMITTED (they need absent haa_c word audio/images; inventing vocab is banned). The full draft in docs/curriculum/drafts/{graphs,exercises}/06-haa_c.* is NOT promoted (it mirrors taa's reach-ahead shape; with the allowlist now EMPTY any reach-ahead card fails the four-layer wall). minCleanReps:1 is the A2 demo-era precedent — FLAG for the mother's packet. haa_c has NO dot — the exercise 'dot' criterion is a draft template artifact the mother confirms/strips.",
+    "reviewNote": "Confirm the isolated-form starter scope + reps=1 + the no-dot criteria; author the fuller unit (contextual forms, words) when ready."
+  },
+  "letterId": "haa_c",
+  "signedOff": false,
+  "competencies": [
+    {
+      "id": "recognize",
+      "essential": true,
+      "prerequisites": []
+    },
+    {
+      "id": "positionalForms",
+      "essential": true,
+      "prerequisites": [
+        "recognize"
+      ]
+    }
+  ],
+  "tiers": [
+    "manqul",
+    "manzur",
+    "ghayrManzur"
+  ],
+  "nodes": [
+    {
+      "exerciseId": "haa_c.teachCard.meet",
+      "competency": "recognize",
+      "tier": null,
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "haa_c.traceLetter.isolated",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 1
+    },
+    {
+      "exerciseId": "haa_c.writeLetter.writeForm",
+      "competency": "positionalForms",
+      "tier": null,
+      "minCleanReps": 1
+    }
+  ]
+}

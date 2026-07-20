@@ -198,6 +198,60 @@
           "exercises": []
         }
       ]
+    },
+    {
+      "letterId": "jeem",
+      "sections": [
+        {
+          "id": "meet",
+          "exercises": [
+            "jeem.teachCard.meet"
+          ]
+        },
+        {
+          "id": "watchTrace",
+          "exercises": [
+            "jeem.traceLetter.isolated"
+          ]
+        },
+        {
+          "id": "forms",
+          "exercises": [
+            "jeem.writeLetter.writeForm"
+          ]
+        },
+        {
+          "id": "mastery",
+          "exercises": []
+        }
+      ]
+    },
+    {
+      "letterId": "haa_c",
+      "sections": [
+        {
+          "id": "meet",
+          "exercises": [
+            "haa_c.teachCard.meet"
+          ]
+        },
+        {
+          "id": "watchTrace",
+          "exercises": [
+            "haa_c.traceLetter.isolated"
+          ]
+        },
+        {
+          "id": "forms",
+          "exercises": [
+            "haa_c.writeLetter.writeForm"
+          ]
+        },
+        {
+          "id": "mastery",
+          "exercises": []
+        }
+      ]
     }
   ]
 }

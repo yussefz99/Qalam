@@ -78,40 +78,19 @@ SPECIAL_NON_TAUGHT = {"taa_marbuta"}
 # packet. Restore-by re-adding the ids here AND re-adding their graph nodes.
 _BAA_D09_EXCEPTIONS: frozenset[str] = frozenset()
 
-# D-16 — the taa + thaa reach-ahead word cards, kept LIVE by OWNER DECISION
-# (2026-07-19), mother-verdict PENDING. DISTINCT provenance from the baa D-09 set:
-# these carry the owner's 2026-07-19 call, NOT device-UAT approval. Owner's
-# constraint (verbatim): "I don't want to remove all questions and have each unit
-# have only a few questions — the app is built for kids that know Arabic." taa (unit
-# 3) and thaa (unit 4) have NO in-curriculum learned-set word to re-point to (the
-# draft bank unlocks 0 new words at either unit — باب lands at baa, تاج at jeem), so
-# re-point is impossible and REMOVE would gut both units; heritage learners already
-# know these words aurally. Every id here MUST appear in the mother's packet (Plan
-# 25-06) for her explicit confirm / reject / re-point.
-_TAA_THAA_D16_EXCEPTIONS: frozenset[str] = frozenset(
-    {
-        # taa (unit 3, order 3)
-        "taa.completeWord.middle",
-        "taa.connectWord.bayt",
-        "taa.connectWord.taaj",
-        "taa.fillBlank.adjective",
-        "taa.transformWord.dual",
-        "taa.transformWord.opposite",
-        "taa.transformWord.plural",
-        "taa.writeWord.copy",
-        "taa.writeWord.dictation",
-        "taa.writeWord.picture",
-        # thaa (unit 4, order 4)
-        "thaa.completeWord.middle",
-        "thaa.connectWord.thalab",
-        "thaa.connectWord.thalj",
-        "thaa.fillBlank.adjective",
-        "thaa.transformWord.dual",
-        "thaa.writeWord.copy",
-        "thaa.writeWord.dictation",
-        "thaa.writeWord.picture",
-    }
-)
+# D-16 — the taa + thaa reach-ahead word cards, formerly kept LIVE by OWNER DECISION
+# (2026-07-19). EMPTIED 2026-07-20 (quick task 260720-wcs, F2-INTERIM — supersedes
+# D-16): the mother ruled 2026-07-20 that taa/thaa's reach-ahead word questions must
+# become letter-FORM practice she has not yet authored; until she authors it they must
+# NOT run as word cards. So the owner made all 18 reach-ahead cards DORMANT — their
+# NODES were removed from both taa/thaa graph assets (taa/thaa go 17->7 all-essential
+# letter-FORM nodes), so they are no longer LIVE graph nodes and the gate (scoped to
+# ``live_graph_node_ids``) would not check them regardless. Emptying this set collapses
+# the four-layer wall's union to ZERO (L0/L1/L3 parity) so ANY reach-ahead now fails the
+# gate by design, and removes a stale, now-unreachable exemption. This is PENDING the
+# mother's re-confirmation packet (taa/thaa dormancy + jeem/haa_c starter content +
+# reps=1). Restore-by re-adding the ids here AND re-adding their graph nodes.
+_TAA_THAA_D16_EXCEPTIONS: frozenset[str] = frozenset()
 
 # The public name L0 (the gate) + L2 (``seed_curriculum_v2.py``) read — the union of
 # both provenance groups, so all four wall layers exempt the SAME cards.
@@ -573,10 +552,12 @@ def run_gate(order: dict[str, int]) -> int:
     reaches ahead of the learned set OR is unlabeled. Returns the process exit code.
 
     Scoping is exactly L1's: only cards referenced by a live graph node are checked
-    (``live_graph_node_ids``); the ``OWNER_APPROVED_EXCEPTIONS`` (4 baa D-09 +
-    18 taa/thaa D-16 ids) are exempt. So L0 and L1 fail on the SAME set — the dormant
-    reach-ahead configs and the owner-approved exceptions never trip it. The exempt
-    reach-ahead cards are printed (not failed) so the packet can enumerate them.
+    (``live_graph_node_ids``); the ``OWNER_APPROVED_EXCEPTIONS`` allowlist is now
+    EMPTY (0 ids — both the baa D-09 and the taa/thaa D-16 groups were emptied as the
+    dormancy landed), so ANY live reach-ahead card fails the gate by design. So L0 and
+    L1 fail on the SAME set — the dormant reach-ahead configs never trip it (no live
+    node references them). The exempt reach-ahead cards are printed (not failed) so the
+    packet can enumerate them — with an empty allowlist there are none.
     Read-only: nothing is written here (the report section is written by ``main``).
     """
     live_ids, reach_ahead, exempt_reach_ahead, unlabeled = _gate_findings(order)

@@ -137,36 +137,21 @@ void main() {
     // packet. Any live baa card demanding unlearned letters still fails.
     const baaOwnerApprovedExceptions = <String>{};
 
-    // D-16 — the taa reach-ahead word cards (unit 3, introOrder 3), kept LIVE by
-    // OWNER DECISION (2026-07-19), mother-verdict PENDING. Re-point is impossible
-    // (0 legal learned-set words unlock at unit 3 — باب lands at baa, تاج at jeem),
-    // and REMOVE would gut the unit; heritage learners already know these aurally.
-    const taaOwnerApprovedExceptions = <String>{
-      'taa.completeWord.middle',
-      'taa.connectWord.bayt',
-      'taa.connectWord.taaj',
-      'taa.fillBlank.adjective',
-      'taa.transformWord.dual',
-      'taa.transformWord.opposite',
-      'taa.transformWord.plural',
-      'taa.writeWord.copy',
-      'taa.writeWord.dictation',
-      'taa.writeWord.picture',
-    };
+    // D-16 — the taa reach-ahead word cards (unit 3, introOrder 3) were owner-approved
+    // (2026-07-19), then made DORMANT 2026-07-20 (quick task 260720-wcs, F2-INTERIM —
+    // supersedes D-16): the mother ruled they must become letter-FORM practice she has
+    // not yet authored, so their NODES were removed from taa.json (taa goes 17->7
+    // all-essential form nodes). They are no longer LIVE nodes, so the "no rot" liveness
+    // check below (every allowlisted id must be a live node) would FAIL if they stayed
+    // listed. Emptying this set is what keeps the lint green alongside the node removal
+    // and collapses the allowlist toward ZERO. PENDING the mother's re-confirmation packet.
+    const taaOwnerApprovedExceptions = <String>{};
 
-    // D-16 — the thaa reach-ahead word cards (unit 4, introOrder 4), same owner
-    // decision + provenance as the taa set (2026-07-19). thaa passed Stage-1 device
-    // UAT; the mother's packet still rules on every id.
-    const thaaOwnerApprovedExceptions = <String>{
-      'thaa.completeWord.middle',
-      'thaa.connectWord.thalab',
-      'thaa.connectWord.thalj',
-      'thaa.fillBlank.adjective',
-      'thaa.transformWord.dual',
-      'thaa.writeWord.copy',
-      'thaa.writeWord.dictation',
-      'thaa.writeWord.picture',
-    };
+    // D-16 — the thaa reach-ahead word cards (unit 4, introOrder 4), same F2-INTERIM
+    // dormancy as the taa set (owner 2026-07-20, quick task 260720-wcs). Their nodes were
+    // removed from thaa.json (thaa goes 17->7 all-essential form nodes); emptying this set
+    // keeps the "no rot" check consistent. PENDING the mother's re-confirmation packet.
+    const thaaOwnerApprovedExceptions = <String>{};
 
     // Per-unit allowlist. alif carries NO exceptions (letter-level, all legal).
     const ownerApprovedExceptions = <String, Set<String>>{
