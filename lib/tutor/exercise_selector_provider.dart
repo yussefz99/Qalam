@@ -92,45 +92,27 @@ final curriculumGraphProvider =
 // and every firing is logged loudly (D-03). L2 refuses at the WRITE; L3 refuses at
 // the READ — the same Firestore-first bypass, two surfaces.
 
-/// The owner-approved reach-ahead EXCEPTION ids — the SAME 18 cards L1
-/// (`baaOwnerApprovedExceptions` is now EMPTY, learned_letters_lint_test.dart) and
-/// L2 (`OWNER_APPROVED_EXCEPTIONS`, tools/content/validate.py) exempt. A card in
-/// this set is NEVER dropped by the L3 guard even though it demands an unseen
-/// letter, so a mother-approved / owner-decision reach-ahead card stays presentable
-/// at runtime — PARITY across all four wall layers (the whole wall's thesis: refuse
-/// the SAME thing, exempt the SAME thing). The parity is pinned by
-/// `test/tutor/l3_learned_letters_parity_test.dart`.
+/// The owner-approved reach-ahead EXCEPTION ids — now EMPTY. L1
+/// (`baaOwnerApprovedExceptions` / `taaOwnerApprovedExceptions` /
+/// `thaaOwnerApprovedExceptions` in learned_letters_lint_test.dart) and L2
+/// (`OWNER_APPROVED_EXCEPTIONS`, tools/content/validate.py) are ALSO empty, so all
+/// four wall layers now refuse EVERY reach-ahead card by design — PARITY across the
+/// wall (the whole wall's thesis: refuse the SAME thing, exempt the SAME thing). With
+/// the allowlist empty there is nothing to exempt; the L3 guard drops any reach-ahead
+/// candidate. The parity is pinned by `test/tutor/l3_learned_letters_parity_test.dart`.
 ///
-/// PROVENANCE (was TWO groups; the baa group is gone as of 2026-07-20):
+/// PROVENANCE (both groups are gone as of 2026-07-20):
 ///   • ~~4 baa D-09 — owner-approved from device UAT (2026-07-18).~~ EMPTIED
 ///     2026-07-20 (quick task 260720-up4): those 4 reach-ahead grammar cards were
 ///     made DORMANT (nodes removed from the baa graph so they never reach runtime),
 ///     reversing the mother's F1 verdict PENDING her re-confirmation packet.
-///   • 18 taa/thaa D-16 — kept LIVE by owner decision (2026-07-19), mother-verdict
-///     PENDING (Plan 25-06 packet / 25-07 walkthrough). Dropping these at runtime
-///     would gut the taa/thaa units the owner deliberately kept live, so L3 must
-///     exempt them exactly as L0/L1/L2 do.
-const Set<String> kApprovedReachAheadExceptions = <String>{
-  // ── taa/thaa D-16 (owner decision, 2026-07-19; mother-verdict pending) ──
-  'taa.completeWord.middle',
-  'taa.connectWord.bayt',
-  'taa.connectWord.taaj',
-  'taa.fillBlank.adjective',
-  'taa.transformWord.dual',
-  'taa.transformWord.opposite',
-  'taa.transformWord.plural',
-  'taa.writeWord.copy',
-  'taa.writeWord.dictation',
-  'taa.writeWord.picture',
-  'thaa.completeWord.middle',
-  'thaa.connectWord.thalab',
-  'thaa.connectWord.thalj',
-  'thaa.fillBlank.adjective',
-  'thaa.transformWord.dual',
-  'thaa.writeWord.copy',
-  'thaa.writeWord.dictation',
-  'thaa.writeWord.picture',
-};
+///   • ~~18 taa/thaa D-16 — kept LIVE by owner decision (2026-07-19).~~ EMPTIED
+///     2026-07-20 (quick task 260720-wcs, F2-INTERIM — supersedes D-16): the mother
+///     ruled these reach-ahead word questions must become letter-FORM practice she has
+///     not yet authored, so the owner made all 18 DORMANT (their nodes removed from the
+///     taa/thaa graphs, which drop to 7 all-essential form nodes each). They never reach
+///     runtime, so L3 needs no exemption for them. PENDING her re-confirmation packet.
+const Set<String> kApprovedReachAheadExceptions = <String>{};
 
 /// The pure L3 seen-letters legality check — the runtime mirror of the L1 lint's
 /// `unlearnedFor` (learned_letters_lint_test.dart) + the L2 seeder's

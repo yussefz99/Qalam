@@ -222,32 +222,9 @@ For each exercise, the unit letter is the id prefix (e.g. `baa.…` → baa, int
 
 Scoped to LIVE graph nodes only (dormant configs are never gated). Owner-approved exceptions are EXEMPT from the failure but listed in full below so the mother's packet (Plan 25-06) can enumerate every reach-ahead card kept live and rule on each one.
 
-- live graph nodes: **53**
-- owner-approved exceptions (exempt): **18** = 0 baa (D-09) + 18 taa/thaa (D-16)
+- live graph nodes: **33**
+- owner-approved exceptions (exempt): **0** = 0 baa (D-09) + 0 taa/thaa (D-16)
 - live-node findings (gate-FAILING): **0**
 
-### Owner-approved exceptions kept LIVE (reach-ahead, mother-verdict pending)
-
-| card | unlearned letters (order) | provenance |
-|---|---|---|
-| `taa.completeWord.middle` | waaw(27) | D-16 (owner 2026-07-19) |
-| `taa.connectWord.bayt` | yaa(28) | D-16 (owner 2026-07-19) |
-| `taa.connectWord.taaj` | jeem(5) | D-16 (owner 2026-07-19) |
-| `taa.fillBlank.adjective` | jeem(5) | D-16 (owner 2026-07-19) |
-| `taa.transformWord.dual` | jeem(5), noon(25) | D-16 (owner 2026-07-19) |
-| `taa.transformWord.opposite` | faa(20), qaaf(21), waaw(27) | D-16 (owner 2026-07-19) |
-| `taa.transformWord.plural` | waaw(27), yaa(28) | D-16 (owner 2026-07-19) |
-| `taa.writeWord.copy` | waaw(27) | D-16 (owner 2026-07-19) |
-| `taa.writeWord.dictation` | jeem(5) | D-16 (owner 2026-07-19) |
-| `taa.writeWord.picture` | haa_c(6), faa(20) | D-16 (owner 2026-07-19) |
-| `thaa.completeWord.middle` | meem(24), waaw(27) | D-16 (owner 2026-07-19) |
-| `thaa.connectWord.thalab` | ayn(18), laam(23) | D-16 (owner 2026-07-19) |
-| `thaa.connectWord.thalj` | jeem(5), laam(23) | D-16 (owner 2026-07-19) |
-| `thaa.fillBlank.adjective` | ayn(18), laam(23) | D-16 (owner 2026-07-19) |
-| `thaa.transformWord.dual` | ayn(18), laam(23), noon(25) | D-16 (owner 2026-07-19) |
-| `thaa.writeWord.copy` | jeem(5), laam(23) | D-16 (owner 2026-07-19) |
-| `thaa.writeWord.dictation` | ayn(18), laam(23) | D-16 (owner 2026-07-19) |
-| `thaa.writeWord.picture` | ayn(18), laam(23) | D-16 (owner 2026-07-19) |
-
-**GATE PASS** — every live-node card obeys the learned-letters bar; the 18 owner-approved exceptions above stay live pending the mother's verdict.
+**GATE PASS** — every live-node card obeys the learned-letters bar; the 0 owner-approved exceptions above stay live pending the mother's verdict.
 

@@ -54,8 +54,11 @@ from tools.content.validate import (  # noqa: E402
 # is now empty). This list is emptied so the two D-09 tests below (which assert each id
 # is in the public union / is seeded despite reaching ahead) no longer fail once the ids
 # left the union — they now iterate nothing and pass vacuously. The taa/thaa D-16
-# exceptions remain in ``OWNER_APPROVED_EXCEPTIONS`` (not exercised here). Restore-by
-# re-adding the ids AND re-adding their graph nodes + the two allowlists.
+# exceptions were ALSO emptied 2026-07-20 (quick task 260720-wcs, F2-INTERIM): their
+# nodes were removed from the taa/thaa graphs too, so ``OWNER_APPROVED_EXCEPTIONS`` is
+# now the EMPTY union (``_BAA_D09_EXCEPTIONS`` empty | ``_TAA_THAA_D16_EXCEPTIONS`` empty)
+# — every reach-ahead card is refused by design. Restore-by re-adding the ids AND
+# re-adding their graph nodes + the two allowlists.
 _BAA_D09_IDS: list[str] = []
 
 
