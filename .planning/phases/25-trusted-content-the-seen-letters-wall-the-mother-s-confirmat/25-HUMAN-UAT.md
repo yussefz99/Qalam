@@ -3,7 +3,7 @@ status: partial
 phase: 25-trusted-content-the-seen-letters-wall-the-mother-s-confirmat
 source: [25-REVIEW-PACKET.md]
 started: 2026-07-20T00:00:00Z
-updated: 2026-07-20T00:00:00Z
+updated: 2026-07-20T12:00:00Z
 ---
 
 ## Current Test
@@ -54,19 +54,19 @@ she must sign before those flip.
 - what to confirm: the wording + lion → أسد pairing
 - verdict: **confirm (lion → أسد)**
 - rework instruction: [—]
-- ingestion effect: alif.writeLetter.fromPicture signedOff:false → true in exercises.json (D-15 promote). Two different alif example words are intentional: أرنب (rabbit) on the meet card, أسد (lion) here — she confirmed both (see D1).
+- ingestion effect: alif.writeLetter.fromPicture signedOff:false → true in exercises.json (D-15 promote). Two different alif example words are intentional: أرنب (rabbit) on the meet card, أسد (lion) here — she confirmed both (see D1). **APPLIED 2026-07-20 (signedOff→true).**
 
 ### D1 — picture swaps (`taa.teachCard.meet`, `taa.writeLetter.fromPicture`, `taa.writeWord.picture`, `taa.buildSentence.picture`, `alif.teachCard.meet`)
 - what to confirm: example words + art; rabbit vs lion for alif
 - verdict: **confirm**
 - rework instruction: [—]
-- ingestion effect: the swaps stay; the two alif example words (rabbit meet / lion writeLetter) are both approved.
+- ingestion effect: the swaps stay; the two alif example words (rabbit meet / lion writeLetter) are both approved. **alif.teachCard.meet APPLIED 2026-07-20 (signedOff→true).** (taa.* swaps stay signedOff:false — folded into the F2·taa rework.)
 
 ### D2 — feedback rewordings (`taa.writeWord.dictation`, `taa.writeWord.copy`, `alif.writeWord.dictation`, `alif.writeWord.copy`)
 - what to confirm: corrected feedback lines (dictation = listening, copy = word-shown)
 - verdict: **confirm**
 - rework instruction: [—]
-- ingestion effect: the reworded lines stay.
+- ingestion effect: the reworded lines stay. **alif.writeWord.dictation + alif.writeWord.copy APPLIED 2026-07-20 (signedOff→true).** (taa.writeWord.dictation/.copy stay signedOff:false — folded into the F2·taa rework.)
 
 ### E1 — word/label diff (old → new)
 - what to confirm: the diff incl. `taa.completeWord.middle` label `[taa]`→`[taa, waaw]`
@@ -78,25 +78,25 @@ she must sign before those flip.
 - what to confirm: mother approval OR re-point/remove
 - verdict: **confirm (keep live)**
 - rework instruction: [—]
-- ingestion effect: exercise-level signedOff:false → true in exercises.json; stays an owner+mother-approved exception.
+- ingestion effect: exercise-level signedOff:false → true in exercises.json; stays an owner+mother-approved exception. **baa.fillBlank.adjective APPLIED 2026-07-20 (signedOff→true).**
 
 ### F1-b — `baa.transformWord.dual` (باب → بابان) — reaches ahead (noon), D-09
 - what to confirm: mother approval OR re-point/remove
 - verdict: **confirm (keep live)**
 - rework instruction: [—]
-- ingestion effect: exercise-level signedOff → true; stays an approved exception.
+- ingestion effect: exercise-level signedOff → true; stays an approved exception. **baa.transformWord.dual APPLIED 2026-07-20 (signedOff→true).**
 
 ### F1-c — `baa.transformWord.plural` (باب → أبواب) — reaches ahead (waaw), D-09
 - what to confirm: mother approval OR re-point/remove
 - verdict: **confirm (keep live)**
 - rework instruction: [—]
-- ingestion effect: exercise-level signedOff → true; stays an approved exception.
+- ingestion effect: exercise-level signedOff → true; stays an approved exception. **baa.transformWord.plural APPLIED 2026-07-20 (signedOff→true).**
 
 ### F1-d — `baa.transformWord.opposite` (كبير → صغير) — reaches ahead (raa, saad, ghayn, yaa), D-09
 - what to confirm: mother approval OR re-point/remove
 - verdict: **confirm (keep live)**
 - rework instruction: [—]
-- ingestion effect: exercise-level signedOff → true; stays an approved exception. (baa's graph flag flips back to true once all baa rows are confirmed — A1/B1/F1 all resolved.)
+- ingestion effect: exercise-level signedOff → true; stays an approved exception. **baa.transformWord.opposite APPLIED 2026-07-20 (signedOff→true).** (baa's graph flag stays FALSE this pass — it only flips back to true once ALL baa rows are resolved, and A1 reps→3 is still a deferred rework.)
 
 ### F2·taa — the 10 taa reach-ahead questions (D-16)
 - ids: `taa.writeWord.dictation/.copy/.picture`, `taa.connectWord.taaj/.bayt`, `taa.completeWord.middle`, `taa.fillBlank.adjective`, `taa.transformWord.dual/.plural/.opposite`
@@ -161,6 +161,12 @@ left open: 0
 
 ## Gaps
 
+- **PARTIAL INGEST APPLIED 2026-07-20:** the 8 mother-confirmed alif + baa exercise cards were
+  flipped signedOff:false → true in exercises.json — C2 (alif.writeLetter.fromPicture),
+  D1 (alif.teachCard.meet), D2 (alif.writeWord.dictation + alif.writeWord.copy), and
+  F1-a..d (baa.fillBlank.adjective, baa.transformWord.dual/.plural/.opposite). Gate + lint +
+  parity stayed green (signedOff is decoupled from enforcement, D-04/D-05). The baa GRAPH flag,
+  curriculum_graph.json, and every taa.*/thaa.* card were left untouched (A1 + F2 are open).
 - The mechanical CONFIRM flips (A2, B1, C1, C2, D1, D2, E1, F1-a..d) are ready to ingest now.
 - A1 (reps→3) is ready to edit but pairs with an owner-gated server redeploy.
 - F2·taa / F2·thaa (+ G1–G3) require the mother's authored letter-form content before they
