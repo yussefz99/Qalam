@@ -584,7 +584,7 @@
         "pass": "بابان — two doors. أحسنت!",
         "missingEnding": "Add the dual ending ـان: بابان."
       },
-      "signedOff": false,
+      "signedOff": true,
       "letters": [
         "baa",
         "alif",
@@ -628,7 +628,7 @@
         "pass": "أبواب — many doors. أحسنت!",
         "wrongForm": "The plural of باب is أبواب. Listen and write it."
       },
-      "signedOff": false,
+      "signedOff": true,
       "letters": [
         "alif",
         "baa",
@@ -672,7 +672,7 @@
         "pass": "صغير — “small.” أحسنت!",
         "wrongAntonym": "The opposite of big is small — صغير."
       },
-      "signedOff": false,
+      "signedOff": true,
       "letters": [
         "saad",
         "ghayn",
@@ -719,7 +719,7 @@
         "pass": "البابُ كبير — you filled it in. أحسنت!",
         "wrongWord": "A describing word fits here — try كبير (“big”)."
       },
-      "signedOff": false,
+      "signedOff": true,
       "letters": [
         "kaaf",
         "baa",
@@ -1704,7 +1704,7 @@
       "expected": null,
       "check": null,
       "feedback": null,
-      "signedOff": false,
+      "signedOff": true,
       "letters": [
         "alif"
       ],
@@ -1865,7 +1865,7 @@
         "incomplete": "Look again and write all of its letters.",
         "wrongWord": "That's a different word — listen again: أسد."
       },
-      "signedOff": false,
+      "signedOff": true,
       "letters": [
         "alif",
         "seen",
@@ -1907,7 +1907,7 @@
         "incomplete": "Look again and write all of its letters.",
         "wrongWord": "That's a different word — look at the word again: أم."
       },
-      "signedOff": false,
+      "signedOff": true,
       "letters": [
         "alif",
         "meem"
@@ -2121,7 +2121,7 @@
         "wrongLetter": "Listen: أَسَد — ah… it starts with alif. Write ا.",
         "unclear": "Almost — draw alif tall and straight, top to bottom."
       },
-      "signedOff": false,
+      "signedOff": true,
       "letters": [
         "alif"
       ],
