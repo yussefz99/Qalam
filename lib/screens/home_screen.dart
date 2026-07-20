@@ -749,8 +749,11 @@ class _TodaysLessonCardReader extends ConsumerWidget {
               subtitleText:
                   l10n?.homeLessonSubtitle ?? 'Stroke order and tracing',
               glyphChar: data.letter.char,
-              // UI-SPEC prescriptive ramp: 0.25 + 0.75 × (reps / total).
-              glyphAlpha: 0.25 + 0.75 * fraction,
+              // Ink-fill ramp (D-09): the glyph deepens with progress, but
+              // floored at 0.55 so the letter is clearly legible from reps=0.
+              // (Device fix 2026-07-20: the old 0.25 floor read as a blank tile
+              // next to "The Letter Baa".) Still reaches full ink (1.0) at mastery.
+              glyphAlpha: 0.55 + 0.45 * fraction,
               glyphSemantics:
                   l10n?.homeInkFillSemantics(reps, total) ??
                   '$reps of $total clean reps',

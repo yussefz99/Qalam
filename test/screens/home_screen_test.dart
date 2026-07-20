@@ -482,12 +482,12 @@ void main() {
           );
         }
 
-        // Ink ramp: 0.25 + 0.75 × (1/3) = 0.5 deep-ink alpha (UI-SPEC).
+        // Ink ramp (floored 2026-07-20): 0.55 + 0.45 × (1/3) = 0.70 deep-ink alpha.
         final glyph = tester.widget<ArabicText>(_cardArabic('ب'));
         expect(
           glyph.style?.color?.a,
-          closeTo(0.5, 0.01),
-          reason: 'glyph alpha follows the prescriptive ink-fill ramp.',
+          closeTo(0.70, 0.01),
+          reason: 'glyph alpha follows the floored ink-fill ramp (legible at reps=0).',
         );
 
         handle.dispose();
@@ -803,8 +803,8 @@ void main() {
         final glyph = tester.widget<ArabicText>(_cardArabic('ب'));
         expect(
           glyph.style?.color?.a,
-          closeTo(0.75, 0.01),
-          reason: 'ink deepens with the new rep: 0.25 + 0.75 × (2/3) = 0.75.',
+          closeTo(0.85, 0.01),
+          reason: 'ink deepens with the new rep: 0.55 + 0.45 × (2/3) = 0.85.',
         );
 
         // The entrance did NOT replay — both beats remain settled.
