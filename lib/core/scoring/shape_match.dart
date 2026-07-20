@@ -61,18 +61,24 @@ class SoftBand {
   /// per-aligned-point distance in unit-box space).
   ///
   /// PROVISIONAL — the single source the `Tolerances` soft-band defaults mirror.
-  /// WIDENED 2026-07-07 (pre-demo) from tcc/tcw 0.10/0.15 → 0.12/0.16 after the
-  /// owner's own correct baa false-failed on device: a real, slightly-shallow
-  /// bowl read certainly-wrong against the deep authored reference. Correct
-  /// bowls sit at/below TCC=0.12 and pass outright; a flat "line" bowl (0.371
-  /// under the anchored normalization) still sits far above TCW=0.16 and fails.
-  /// 0.16 is the MAX safe widen: the calibration harness's tightest synthetic
-  /// shape-bad (a flat bowl in the FINAL form) is d≈0.1626 and the F5
-  /// form-confusion trap is d≈0.2838 — both stay certainly-wrong at 0.16.
-  /// These two numbers MUST still be recalibrated from the owner's-mother-
-  /// labelled correct-vs-wrong distance distributions before production (the
-  /// research names labelled child samples as the hard input).
-  static const SoftBand shapeDefault = SoftBand(tcc: 0.12, tcw: 0.16);
+  /// D-04 REVERT (2026-07-20, owner): back to the ORIGINAL tighter tcc/tcw
+  /// 0.10/0.15. The 2026-07-07 pre-demo widen to 0.12/0.16 was a work-around for
+  /// the painter-stretch bug — a correct baa read certainly-wrong only because
+  /// the authored reference was being stretched, inflating the DTW distance of a
+  /// real bowl. That bug is FIXED in commit 972427e, so the stretch no longer
+  /// inflates real-bowl distances and the tighter band is safe to restore.
+  /// The Dart calibration harness (calibration_harness_test.dart) is the
+  /// regression guard: good synthetic seeds still pass (FN==0) and every
+  /// named-bad seed still rejects at 0.10/0.15. Tightening tcw only STRENGTHENS
+  /// the F5 form-confusion separation — the tightest synthetic shape-bad (a flat
+  /// bowl in the FINAL form, d≈0.1626) and the F5 trap (isolated bowl offered for
+  /// medial/final, d≈0.2838) both stay certainly-wrong below tcw=0.15.
+  /// FALLBACK (D-04): if the originals demonstrably false-fail REAL clean strokes
+  /// during the 26-06 on-device pass, re-affirm 0.12/0.16 HERE with the observed
+  /// device reason logged. Production values still ultimately come from the
+  /// owner's-mother-labelled correct-vs-wrong captures (deferred — she is the
+  /// Phase-25 bottleneck).
+  static const SoftBand shapeDefault = SoftBand(tcc: 0.10, tcw: 0.15);
 
   /// The zone [distance] falls into.
   ShapeZone zoneFor(double distance) {

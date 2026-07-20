@@ -38,26 +38,30 @@ class Tolerances {
   /// Soft-band shape threshold: DTW distance at/below which the stroke's shape
   /// is CERTAINLY CORRECT (`SoftBand.tcc` — Plan 17-02, D-C).
   ///
-  /// PROVISIONAL (D-D): == the `SoftBand.shapeDefault` cut. WIDENED 0.10 → 0.12
-  /// on 2026-07-07 (pre-demo) after the owner's own correct baa false-failed on
-  /// device — real good-but-shallow bowls read further from the deep authored
-  /// reference than the synthetic seed, so more genuinely-good writing now lands
-  /// certainly-correct. Production values still come from the mom-labelled
-  /// calibration set.
+  /// PROVISIONAL (D-D): == the `SoftBand.shapeDefault` cut. D-04 REVERT
+  /// (2026-07-20, owner) back to the ORIGINAL 0.10: the 2026-07-07 widen to 0.12
+  /// only worked around the painter-stretch bug (a stretched reference inflated
+  /// real-bowl DTW distances) — that bug is FIXED in commit 972427e, so the
+  /// tighter certainly-correct cut is safe again. The Dart calibration harness is
+  /// the regression guard; production values still come from the mom-labelled
+  /// calibration set. FALLBACK (D-04): re-affirm 0.12 only if the originals
+  /// false-fail real clean strokes on the 26-06 device pass, with the observed
+  /// device reason logged here.
   final double shapeTcc;
 
   /// Soft-band shape threshold: DTW distance at/above which the stroke's shape
   /// is CERTAINLY WRONG (`SoftBand.tcw`) — the only shape zone that fails.
   ///
-  /// PROVISIONAL (D-D): == the `SoftBand.shapeDefault` cut. WIDENED 0.15 → 0.16
-  /// on 2026-07-07 (pre-demo) to stop false-failing real good baa (owner report:
-  /// shape read certainly-wrong for a correct, slightly-shallow bowl). 0.16 is
-  /// the MAX safe widen: the calibration-harness fit report puts the tightest
-  /// synthetic shape-bad (a flat "line" bowl in the FINAL form) at d≈0.1626 and
-  /// the F5 form-confusion trap (isolated bowl offered for medial/final) at
-  /// d≈0.2838 — both stay certainly-wrong at tcw=0.16, so the F5 separation is
-  /// intact. Pushing tcw to/beyond 0.1626 would let the flat-bowl error pass;
-  /// a larger widen needs the mom-labelled real-child captures (D-D).
+  /// PROVISIONAL (D-D): == the `SoftBand.shapeDefault` cut. D-04 REVERT
+  /// (2026-07-20, owner) back to the ORIGINAL 0.15: the 2026-07-07 widen to 0.16
+  /// only worked around the painter-stretch bug (commit 972427e, now fixed).
+  /// Tightening tcw only STRENGTHENS the F5 separation — the tightest synthetic
+  /// shape-bad (a flat "line" bowl in the FINAL form, d≈0.1626) and the F5
+  /// form-confusion trap (isolated bowl offered for medial/final, d≈0.2838) both
+  /// stay certainly-wrong below tcw=0.15. The Dart calibration harness is the
+  /// regression guard; production values still come from the mom-labelled
+  /// captures (D-D). FALLBACK (D-04): re-affirm 0.16 only if real clean strokes
+  /// false-fail on the 26-06 device pass, with the observed device reason logged.
   final double shapeTcw;
 
   /// Soft-band direction threshold: normalized displacement alignment p (in
@@ -80,8 +84,8 @@ class Tolerances {
     required this.minRawPoints,
     required this.resampleN,
     required this.maxCurvature,
-    this.shapeTcc = 0.12,
-    this.shapeTcw = 0.16,
+    this.shapeTcc = 0.10,
+    this.shapeTcw = 0.15,
     this.directionCc = 0.3,
     this.directionCw = -0.3,
   });
