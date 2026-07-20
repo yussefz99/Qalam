@@ -112,6 +112,13 @@ None - no external service configuration required. (Device confirmation of the f
 - D-02 (formally amending the CLAUDE.md `Decided` gating clauses) is a separate plan's work — deliberately NOT touched here.
 - No blockers.
 
+## Self-Check: PASSED
+
+- All created/modified files present on disk (6 source/test + SUMMARY).
+- All task commits present: `8e43ca7` (Task 1), `68af95a` (Task 2), `3919b34` (SUMMARY).
+- Working tree clean; no unintended deletions.
+- `flutter test test/router/sign_out_routing_test.dart` → 3/3 pass; related suite 45/45 pass; `flutter analyze` clean on all touched files.
+
 ---
 *Phase: 26-the-finished-experience-entry-polish-and-the-2-0-1-release*
 *Completed: 2026-07-20*
