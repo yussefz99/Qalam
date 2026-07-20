@@ -3069,6 +3069,230 @@
         "correct",
         "dot"
       ]
+    },
+    {
+      "id": "jeem.teachCard.meet",
+      "type": "teachCard",
+      "skill": "comprehension",
+      "_review": "F2-INTERIM STARTER (owner 2026-07-20, quick 260720-wcs): jeem promoted as an isolated-form-only starter unit — jeem has ZERO contextualForms, so isolated is the only honest scope. NO example-word image (no jeem word art exists) and forms:[\"isolated\"] only. signedOff:false — the mother reviews the content + reps=1 in her re-confirmation packet.",
+      "_note": "SUPPORT section: PromptHeader only, no WriteSurface.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "This card just teaches — the sound and the shapes."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.jeem"
+        },
+        {
+          "kind": "forms",
+          "char": "ج",
+          "forms": [
+            "isolated"
+          ]
+        }
+      ],
+      "surface": null,
+      "expected": null,
+      "check": null,
+      "feedback": null,
+      "signedOff": false,
+      "letters": [
+        "jeem"
+      ],
+      "criteria": []
+    },
+    {
+      "id": "jeem.traceLetter.isolated",
+      "type": "traceLetter",
+      "skill": "formation",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Trace jeem — isolated form."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.jeem"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "isolated",
+        "demo": true
+      },
+      "expected": {
+        "glyph": {
+          "char": "ج",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "Beautiful — smooth and clean. أحسنت!"
+      },
+      "signedOff": false,
+      "letters": [
+        "jeem"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
+    },
+    {
+      "id": "jeem.writeLetter.writeForm",
+      "type": "writeLetter",
+      "skill": "recall",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write jeem in its isolated form."
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ج",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!"
+      },
+      "signedOff": false,
+      "letters": [
+        "jeem"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
+    },
+    {
+      "id": "haa_c.teachCard.meet",
+      "type": "teachCard",
+      "skill": "comprehension",
+      "_review": "F2-INTERIM STARTER (owner 2026-07-20, quick 260720-wcs): haa_c promoted as an isolated-form-only starter unit — haa_c has ZERO contextualForms, so isolated is the only honest scope. NO example-word image (no haa_c word art exists) and forms:[\"isolated\"] only. signedOff:false — the mother reviews the content + reps=1 in her re-confirmation packet.",
+      "_note": "SUPPORT section: PromptHeader only, no WriteSurface.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "This card just teaches — the sound and the shapes."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.haa_c"
+        },
+        {
+          "kind": "forms",
+          "char": "ح",
+          "forms": [
+            "isolated"
+          ]
+        }
+      ],
+      "surface": null,
+      "expected": null,
+      "check": null,
+      "feedback": null,
+      "signedOff": false,
+      "letters": [
+        "haa_c"
+      ],
+      "criteria": []
+    },
+    {
+      "id": "haa_c.traceLetter.isolated",
+      "type": "traceLetter",
+      "skill": "formation",
+      "_review": "haa_c (ح) has NO dot — the 'dot' criterion below mirrors the taa template shape but is a DRAFT artifact; the mother confirms/strips it in her packet.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Trace haa — isolated form."
+        },
+        {
+          "kind": "audio",
+          "audioId": "snd.haa_c"
+        }
+      ],
+      "surface": {
+        "mode": "trace",
+        "unit": "glyph",
+        "guideForm": "isolated",
+        "demo": true
+      },
+      "expected": {
+        "glyph": {
+          "char": "ح",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph",
+      "feedback": {
+        "pass": "Beautiful — smooth and clean. أحسنت!"
+      },
+      "signedOff": false,
+      "letters": [
+        "haa_c"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
+    },
+    {
+      "id": "haa_c.writeLetter.writeForm",
+      "type": "writeLetter",
+      "skill": "recall",
+      "_review": "haa_c (ح) has NO dot — the 'dot' criterion below mirrors the taa template shape but is a DRAFT artifact; the mother confirms/strips it in her packet.",
+      "prompt": [
+        {
+          "kind": "say",
+          "line": "Write haa in its isolated form."
+        }
+      ],
+      "surface": {
+        "mode": "write",
+        "unit": "glyph"
+      },
+      "expected": {
+        "glyph": {
+          "char": "ح",
+          "form": "isolated"
+        }
+      },
+      "check": "glyph+positionalForm",
+      "feedback": {
+        "pass": "Yes — that's it. أحسنت!"
+      },
+      "signedOff": false,
+      "letters": [
+        "haa_c"
+      ],
+      "criteria": [
+        "strokeCount",
+        "strokeOrder",
+        "shape",
+        "direction",
+        "dot"
+      ]
     }
   ]
 }

@@ -222,7 +222,7 @@ For each exercise, the unit letter is the id prefix (e.g. `baa.…` → baa, int
 
 Scoped to LIVE graph nodes only (dormant configs are never gated). Owner-approved exceptions are EXEMPT from the failure but listed in full below so the mother's packet (Plan 25-06) can enumerate every reach-ahead card kept live and rule on each one.
 
-- live graph nodes: **33**
+- live graph nodes: **39**
 - owner-approved exceptions (exempt): **0** = 0 baa (D-09) + 0 taa/thaa (D-16)
 - live-node findings (gate-FAILING): **0**
 
