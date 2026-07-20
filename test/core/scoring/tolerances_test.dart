@@ -73,13 +73,15 @@ void main() {
 
   // ── Plan 17-02 — soft-band knobs are DATA (D-C/D-D) ────────────────────────
   // PROVISIONAL defaults from synthetic baa variants; production values come
-  // from the mom-labelled calibration set (D-D).
+  // from the mom-labelled calibration set (D-D). D-04 REVERT (2026-07-20): the
+  // 2026-07-07 widen to 0.12/0.16 is undone — pinned back to the ORIGINAL tighter
+  // 0.10/0.15 now that the painter-stretch bug (commit 972427e) is fixed.
   group('Tolerances — soft-band knobs (Plan 17-02)', () {
     test('every preset carries the PROVISIONAL soft-band defaults', () {
       for (final name in ['loose', 'normal', 'strict']) {
         final t = Tolerances.preset(name);
-        expect(t.shapeTcc, equals(0.12), reason: '$name.shapeTcc');
-        expect(t.shapeTcw, equals(0.16), reason: '$name.shapeTcw');
+        expect(t.shapeTcc, equals(0.10), reason: '$name.shapeTcc');
+        expect(t.shapeTcw, equals(0.15), reason: '$name.shapeTcw');
         expect(t.directionCc, equals(0.3), reason: '$name.directionCc');
         expect(t.directionCw, equals(-0.3), reason: '$name.directionCw');
       }
@@ -105,8 +107,8 @@ void main() {
 
     test('fromJson with no overrides keeps the soft-band defaults', () {
       final t = Tolerances.fromJson(const {'preset': 'normal'});
-      expect(t.shapeTcc, equals(0.12));
-      expect(t.shapeTcw, equals(0.16));
+      expect(t.shapeTcc, equals(0.10));
+      expect(t.shapeTcw, equals(0.15));
     });
   });
 }
