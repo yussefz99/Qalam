@@ -34,6 +34,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     if (_signingOut) return;
     setState(() => _signingOut = true);
     try {
+      // NEVER-STRAND (D-01b, Plan 26-01): no explicit navigation here. Once
+      // signOut() completes, AuthGate flips signedIn→false and the app_router
+      // redirect relocates this screen to `/auth` (proven by
+      // test/router/sign_out_routing_test.dart). Adding a manual `context.go`
+      // would double-navigate against that redirect. The `if (mounted)` guard
+      // below covers the expected case where the redirect already unmounted us.
       await ref.read(authServiceProvider).signOut();
     } finally {
       if (mounted) setState(() => _signingOut = false);
