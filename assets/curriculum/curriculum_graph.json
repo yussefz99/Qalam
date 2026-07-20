@@ -64,79 +64,79 @@
       "exerciseId": "baa.traceLetter.isolated",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 1
+      "minCleanReps": 3
     },
     {
       "exerciseId": "baa.traceLetter.initial",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 1
+      "minCleanReps": 3
     },
     {
       "exerciseId": "baa.traceLetter.medial",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 1
+      "minCleanReps": 3
     },
     {
       "exerciseId": "baa.traceLetter.final",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 1
+      "minCleanReps": 3
     },
     {
       "exerciseId": "baa.writeLetter.fromSound",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 1
+      "minCleanReps": 3
     },
     {
       "exerciseId": "baa.writeLetter.fromPicture",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 1
+      "minCleanReps": 3
     },
     {
       "exerciseId": "baa.writeLetter.writeForm",
       "competency": "positionalForms",
       "tier": null,
-      "minCleanReps": 1
+      "minCleanReps": 3
     },
     {
       "exerciseId": "baa.connectWord.baab",
       "competency": "copyWrite",
       "tier": "manqul",
-      "minCleanReps": 1
+      "minCleanReps": 3
     },
     {
       "exerciseId": "baa.connectWord.kitaab",
       "competency": "copyWrite",
       "tier": "manqul",
-      "minCleanReps": 1
+      "minCleanReps": 3
     },
     {
       "exerciseId": "baa.completeWord.middle",
       "competency": "copyWrite",
       "tier": "manqul",
-      "minCleanReps": 1
+      "minCleanReps": 3
     },
     {
       "exerciseId": "baa.writeWord.copy",
       "competency": "copyWrite",
       "tier": "manzur",
-      "minCleanReps": 1
+      "minCleanReps": 3
     },
     {
       "exerciseId": "baa.writeWord.picture",
       "competency": "copyWrite",
       "tier": "manzur",
-      "minCleanReps": 1
+      "minCleanReps": 3
     },
     {
       "exerciseId": "baa.writeWord.dictation",
       "competency": "copyWrite",
       "tier": "ghayrManzur",
-      "minCleanReps": 1
+      "minCleanReps": 3
     },
     {
       "exerciseId": "baa.fillBlank.adjective",
