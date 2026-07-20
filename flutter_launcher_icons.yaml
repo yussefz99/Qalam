@@ -1,0 +1,26 @@
+# Qalam launcher-icon generation — D-05, Phase 26-02.
+#
+# Replaces the stock Flutter default Android on-device launcher (git-confirmed
+# untouched since the initial shell, commit e9fc86c) with the REAL Qalam ADAPTIVE
+# icon: the reed-nib brand mark — rasterized from
+# docs/design/kit/project/assets/icons/qalam-nib.svg to
+# assets/branding/qalam_icon_foreground.png (1024x1024, transparent, centered in
+# the adaptive safe zone) — on the design-system PARCHMENT background
+# (#FAF6EE == `--parchment`, lib/theme/colors.dart), matching the Play listing art.
+#
+# Regenerate with:  dart run flutter_launcher_icons
+#
+# iOS is intentionally NOT regenerated here (ios: false). The iOS
+# AppIcon.appiconset is OUTSIDE this plan's files_modified, and iOS is a later
+# port per CLAUDE.md ("Android-only for now — do not add iOS work unless asked").
+# NOTE: the iOS iconset is CURRENTLY also the Flutter default (see 26-02-SUMMARY
+# > Deviations) — that gap needs a separate, owner-authorized iOS pass.
+flutter_launcher_icons:
+  android: true
+  ios: false
+  # Legacy (pre-API-26) square/round mipmaps are generated from this image.
+  image_path: "assets/branding/qalam_icon_foreground.png"
+  # Adaptive icon (API 26+ / mipmap-anydpi-v26): parchment background + nib foreground.
+  adaptive_icon_background: "#FAF6EE"
+  adaptive_icon_foreground: "assets/branding/qalam_icon_foreground.png"
+  min_sdk_android: 21
