@@ -64,6 +64,16 @@ GoRouter appRouter(Ref ref) {
 
       // A real account is the front door to the whole application. Firebase's
       // anonymous boot identity is deliberately NOT sufficient.
+      //
+      // SIGN-OUT LANDING (D-01b, Plan 26-01): this same rule is the clean
+      // sign-out route. `authGate` is merged into `refreshListenable` above, so
+      // signing out (AuthService.signOut → AuthGate flips signedIn→false) re-runs
+      // this redirect and relocates ANY signed-in surface to `/auth`. The D-09c
+      // anonymous restore never re-strands the user, because AuthGate counts an
+      // anonymous identity as signed-OUT (D-01a) — so the gate stays false and
+      // `/auth` is stable (onAuth → null). Do NOT remove `authGate` from the
+      // merged refreshListenable, or sign-out will strand. Regression-locked by
+      // test/router/sign_out_routing_test.dart.
       if (!authGate.signedIn) return onAuth ? null : '/auth';
 
       // Once authenticated, child setup is the second mandatory gate.

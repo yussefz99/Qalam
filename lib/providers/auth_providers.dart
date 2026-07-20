@@ -25,6 +25,14 @@ final authStateProvider = StreamProvider<User?>(
 ///
 /// Anonymous Firebase users are an internal Firestore/offline identity only;
 /// they never count as signed in and never unlock the application UI.
+///
+/// SIGN-OUT INVARIANT (D-01a / D-01b, Plan 26-01): the `&& !user.isAnonymous`
+/// clause is load-bearing. On sign-out, AuthService restores an anonymous
+/// identity (D-09c) for offline reads; because that identity is anonymous, this
+/// gate reports `signedIn == false`, which fires the app_router redirect to
+/// `/auth` (never stranding the user). Weakening this to `user != null` would
+/// re-strand a signed-out session as "signed in". Regression-locked by
+/// test/router/sign_out_routing_test.dart.
 class AuthGate extends ChangeNotifier {
   AuthGate(AuthService service)
     : _signedIn =
