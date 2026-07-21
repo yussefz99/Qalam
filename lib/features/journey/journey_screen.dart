@@ -415,16 +415,22 @@ class _JourneyScreenState extends ConsumerState<JourneyScreen>
     final lessonId = snapshot.lessonIdByLetterId[letter.id];
     final unlocked =
         lessonId != null && snapshot.unlockedLessonIds.contains(lessonId);
-    // Lane A: EVERY letter is gated by the standard S1-09 unlock chain
-    // (complete / current / skipped-but-unlocked). The old always-reachable
-    // `_fullUnitLetters` bypass is gone — unlock ORDERING is the lesson
-    // catalog's `unlock.requires` ladder, which follows letters.json
-    // `introOrder` by construction: mastering a letter unlocks the next
-    // letter by introOrder, never a hardcoded sequence.
+    // Lane A: letters are gated by the standard S1-09 unlock chain
+    // (complete / current / skipped-but-unlocked) — unlock ORDERING is the
+    // lesson catalog's `unlock.requires` ladder, which follows letters.json
+    // `introOrder` by construction.
+    // OWNER OVERRIDE (2026-07-21, course-demo browse): a letter with LIVE
+    // unit content (unitLetterIdsProvider) is additionally tappable ahead of
+    // the unlock ladder — the Journey doubles as a browse surface so the
+    // owner/child can enter taa/thaa/jeem/haa_c without first mastering baa.
+    // The Home today-card keeps the canonical linear path; stars still come
+    // only from real mastery. Letters WITHOUT unit content stay inert
+    // (S1-09 pinned by journey_screen_test Test 7).
     final tappable = lessonId != null &&
         (state == JourneyNodeState.complete ||
             state == JourneyNodeState.current ||
-            (state == JourneyNodeState.future && unlocked));
+            (state == JourneyNodeState.future &&
+                (unlocked || unitLetters.contains(letter.id))));
     // D-15: only the highlighted node's badge gets the settle animation —
     // and only when it actually started (complete-node allowlist).
     final settling = _settleStarted && letter.id == widget.highlightId;
