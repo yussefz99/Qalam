@@ -1,26 +1,39 @@
-# Qalam launcher-icon generation — D-05, Phase 26-02.
+# Qalam launcher-icon generation — quick task 260727-pwj (2026-07-27).
 #
-# Replaces the stock Flutter default Android on-device launcher (git-confirmed
-# untouched since the initial shell, commit e9fc86c) with the REAL Qalam ADAPTIVE
-# icon: the reed-nib brand mark — rasterized from
-# docs/design/kit/project/assets/icons/qalam-nib.svg to
-# assets/branding/qalam_icon_foreground.png (1024x1024, transparent, centered in
-# the adaptive safe zone) — on the design-system PARCHMENT background
-# (#FAF6EE == `--parchment`, lib/theme/colors.dart), matching the Play listing art.
+# SOURCE OF TRUTH: the Claude-Design قلم-on-teal art that is UPLOADED AS THE PLAY
+# LISTING ICON. `assets/branding/qalam_icon_store_512.png` is a byte-identical
+# provenance copy of `~/Downloads/export/play/qalam-icon-512.png` (sha256
+# 7c681d7dfe226d5d684d33c36e6c32bffbccba3de7ee373636713c4f901ca363).
+#
+# WHY: Google REJECTED the app on 2026-07-27 for misleading claims — the INSTALLED
+# launcher icon did not match the STORE listing icon. Owner's decision that session:
+# keep the store icon as-is and make the APP match IT.
+#
+# The earlier Phase 26-02 config claimed its reed-nib-on-parchment mark "matched the
+# Play listing art". That claim was FACTUALLY WRONG — the listing has always been the
+# قلم lettering on teal, never the nib on parchment. Both the nib mark and the stock
+# Flutter default are now gone from the Android launcher.
+#
+#   * Legacy (pre-API-26) mipmaps  <- the FLAT store art, so they are an exact pixel
+#     match to the listing icon.
+#   * Adaptive (API 26+) foreground <- the cream قلم glyph chroma-keyed off that same
+#     store art onto a transparent 1024x1024 canvas at 60% width (safe-zone sized for
+#     the android:inset="16%" wrapper in mipmap-anydpi-v26/ic_launcher.xml — do NOT
+#     remove that inset), over the teal sampled from the store art itself.
 #
 # Regenerate with:  dart run flutter_launcher_icons
 #
-# iOS is intentionally NOT regenerated here (ios: false). The iOS
-# AppIcon.appiconset is OUTSIDE this plan's files_modified, and iOS is a later
-# port per CLAUDE.md ("Android-only for now — do not add iOS work unless asked").
-# NOTE: the iOS iconset is CURRENTLY also the Flutter default (see 26-02-SUMMARY
-# > Deviations) — that gap needs a separate, owner-authorized iOS pass.
+# iOS is intentionally NOT regenerated here (ios: false) — iOS is a later port per
+# CLAUDE.md ("Android-only for now — do not add iOS work unless asked"). The iOS
+# AppIcon.appiconset is still the Flutter default; that gap needs a separate,
+# owner-authorized iOS pass.
 flutter_launcher_icons:
   android: true
   ios: false
   # Legacy (pre-API-26) square/round mipmaps are generated from this image.
-  image_path: "assets/branding/qalam_icon_foreground.png"
-  # Adaptive icon (API 26+ / mipmap-anydpi-v26): parchment background + nib foreground.
-  adaptive_icon_background: "#FAF6EE"
+  image_path: "assets/branding/qalam_icon_store_512.png"
+  # Adaptive icon (API 26+ / mipmap-anydpi-v26): sampled store teal + قلم foreground.
+  # #168A8E is the MEASURED mean of the store art's teal background pixels.
+  adaptive_icon_background: "#168A8E"
   adaptive_icon_foreground: "assets/branding/qalam_icon_foreground.png"
   min_sdk_android: 21
