@@ -55,6 +55,30 @@ void main() {
       );
     });
 
+    test('clipIdForLetter falls back to snd.<id> when authored audio is empty',
+        () {
+      expect(
+        AssetLetterAudioPlayer.clipIdForLetter(letterId: 'alif'),
+        'snd.alif',
+      );
+      expect(
+        AssetLetterAudioPlayer.clipIdForLetter(
+            letterId: 'alif', authored: null),
+        'snd.alif',
+      );
+      expect(
+        AssetLetterAudioPlayer.clipIdForLetter(
+            letterId: 'alif', authored: '  '),
+        'snd.alif',
+      );
+      expect(
+        AssetLetterAudioPlayer.clipIdForLetter(
+            letterId: 'baa', authored: 'snd.baa'),
+        'snd.baa',
+      );
+      expect(AssetLetterAudioPlayer.letterSoundId('taa'), 'snd.taa');
+    });
+
     test('an unmapped dotted audioId resolves by convention (Phase 8)', () {
       // Unmapped dotted ids resolve to assets/audio/<id>.mp3 so new letters'
       // clips play without map maintenance; a missing file degrades to silence

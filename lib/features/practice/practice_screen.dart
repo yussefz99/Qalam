@@ -16,8 +16,8 @@
 //   - NO running star counter.
 //   - NO confetti.
 //   Sound control ("Hear the letter") IS present — owner pulled Phase-7 audio
-//   forward. The button is disabled until letter.audio.letter is populated.
-//   Enforced by practice_screen_test.dart.
+//   forward. The button always plays `audio.letter` or falls back to `snd.<id>`
+//   so a null authored field can never leave a dead speaker on screen.
 //
 // SECURITY (T-03-01/T-01-05): stroke points live in StrokeCanvas widget State.
 // Only StrokeResult enters the session controller — no raw Offset list is
@@ -42,6 +42,7 @@ import '../../models/letter.dart';
 import '../../providers/audio_providers.dart';
 import '../../providers/practice_providers.dart';
 import '../../providers/progression_providers.dart';
+import '../../services/asset_audio_player.dart';
 import '../../services/model_download_service.dart';
 import '../../theme/brand_theme_ext.dart';
 import '../../theme/colors.dart';
@@ -802,11 +803,15 @@ class _TraceWorkspaceState extends ConsumerState<_TraceWorkspace> {
     final l10n = AppLocalizations.of(context);
     final params = _tutorParams(l10n);
 
-    // Audio — null ⇒ Hear button disabled (letter.audio not yet populated).
+    // Audio — always tappable. letters.json left `audio.letter` null even
+    // though `snd.<id>` clips ship in the bundle; a null onHear disabled the
+    // visible speaker and Play flagged it as an unresponsive button.
     final audioPlayer = ref.read(audioPlayerProvider);
-    final onHear = widget.letter.audio?.letter != null
-        ? () => audioPlayer.playLetter(widget.letter.audio!.letter!)
-        : null;
+    final clipId = AssetLetterAudioPlayer.clipIdForLetter(
+      letterId: widget.letter.id,
+      authored: widget.letter.audio?.letter,
+    );
+    final onHear = () => audioPlayer.playLetter(clipId);
 
     final traceLeadIn = l10n?.practiceTraceLeadIn ?? 'Now you trace';
     final cleanRepsLabel = l10n?.practiceCleanRepsLabel ?? 'Clean reps';

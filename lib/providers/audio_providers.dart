@@ -9,6 +9,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../services/asset_audio_player.dart';
+import 'tts_providers.dart';
 
 abstract interface class LetterAudioPlayer {
   Future<void> playLetter(String assetPath);
@@ -31,5 +32,26 @@ class NoopLetterAudioPlayer implements LetterAudioPlayer {
 final audioPlayerProvider = Provider<LetterAudioPlayer>((ref) {
   final player = AssetLetterAudioPlayer();
   ref.onDispose(player.dispose);
-  return player;
+  // Stop in-flight TTS before a clip so the two engines cannot steal each
+  // other's audio focus (Listen tap while the instruction bar is speaking).
+  return _TtsAwareLetterAudioPlayer(
+    player,
+    () => ref.read(ttsCoachSpeakerProvider).stop(),
+  );
 });
+
+/// Stops the coach TTS engine, then forwards to the bundled-clip player.
+class _TtsAwareLetterAudioPlayer implements LetterAudioPlayer {
+  _TtsAwareLetterAudioPlayer(this._inner, this._stopTts);
+
+  final AssetLetterAudioPlayer _inner;
+  final Future<void> Function() _stopTts;
+
+  @override
+  Future<void> playLetter(String assetPath) async {
+    try {
+      await _stopTts();
+    } catch (_) {}
+    await _inner.playLetter(assetPath);
+  }
+}

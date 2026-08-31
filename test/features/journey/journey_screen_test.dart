@@ -12,10 +12,9 @@
 //   - Canonical lighting: a mastered 'daal'/'raa'/'haa_c' LIGHTS its node —
 //     the drift regression test. Mastering all 28 letters.json ids lights all
 //     28 nodes ("28 of 28 mastered").
-//   - Tap matrix (D-07 / S1-09): complete + current + skipped-but-unlocked
-//     nodes navigate /practice?lesson=<owning lesson>; genuinely locked nodes
-//     (prerequisite unpassed, at/after start) are inert and keep the muted
-//     visibly-unavailable treatment.
+//   - Tap matrix: complete + current + skipped-but-unlocked nodes navigate
+//     to their unit or practice lesson. Every catalog letter is tappable
+//     (browse-ahead) — muted future/locked is visual only, never a dead circle.
 //   - D-15: arriving with highlightId, the just-mastered node's gold star
 //     badge settles in (scale 0→1 over durCheer), then rests.
 //   - "N of 28 mastered" reads the LIVE mastered count — quiet information,
@@ -263,7 +262,7 @@ void main() {
     //   alif/baa  → skipped-before-start: future visual, UNLOCKED (D-05)
     //   taa       → complete (lesson_03 passed)
     //   thaa      → today / current (lesson_04, unlocked by lesson_03 pass)
-    //   jeem onwards → genuinely locked (lesson_05 requires lesson_04)
+    //   jeem onwards → muted future visual, still tappable (browse-ahead)
     ProgressionSnapshot scenario() => _snapshot('lesson_03', {'taa'});
 
     testWidgets('complete node tap → its Letter Unit (taa, Phase 8) (Test 4)',
@@ -311,26 +310,39 @@ void main() {
     });
 
     testWidgets(
-        'genuinely locked node is inert and visibly unavailable (Test 7)',
+        'muted future node stays muted but is tappable → Practice (Test 7)',
         (WidgetTester tester) async {
       await _pumpJourney(tester, _build(snapshot: scenario()));
 
-      // jeem's lesson_05 requires lesson_04 (unpassed) → locked (S1-09).
-      final jeem = _nodeWidget(tester, 'ج');
-      expect(jeem.onTap, isNull,
-          reason: 'locked nodes must be inert (S1-09).');
+      // khaa (خ) is past the unlock ladder here and has no live unit in this
+      // fixture — muted visual, but browse-ahead still opens Practice so Hear
+      // can play snd.khaa (Play: no dead letter circles).
+      final khaa = _nodeWidget(tester, 'خ');
+      expect(khaa.onTap, isNotNull,
+          reason: 'every catalog letter must be tappable.');
       expect(
-        jeem.state,
+        khaa.state,
         anyOf(JourneyNodeState.future, JourneyNodeState.locked),
-        reason: 'locked nodes keep the muted locked/future treatment — '
-            'visibly unavailable (S1-09).',
+        reason: 'browse-ahead does not change the muted visual.',
       );
 
-      await _tapNode(tester, 'ج');
-      expect(find.textContaining('Practice'), findsNothing,
-          reason: 'tapping a locked node must not navigate.');
-      expect(find.text('1 of 28 mastered'), findsOneWidget,
-          reason: 'still on the journey after tapping a locked node.');
+      await _tapNode(tester, 'خ');
+      expect(find.text('Practice lesson_07'), findsOneWidget,
+          reason: 'a letter without a live unit opens its practice lesson.');
+    });
+
+    testWidgets('all 28 letter nodes have a tap handler (Test 7b)',
+        (WidgetTester tester) async {
+      await _pumpJourney(tester, _build(snapshot: scenario()));
+
+      final nodes = tester
+          .widgetList<JourneyNodeWidget>(find.byType(JourneyNodeWidget))
+          .toList();
+      expect(nodes, hasLength(28));
+      for (final node in nodes) {
+        expect(node.onTap, isNotNull,
+            reason: '${node.name} (${node.glyph}) must be tappable.');
+      }
     });
   });
 

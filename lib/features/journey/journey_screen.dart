@@ -19,8 +19,9 @@
 //     silently never lit — RESEARCH Pitfall 1).
 //   - progressionProvider: live mastery + unlock snapshot. Mastered letters
 //     light complete; today's letter pulses; skipped-but-unlocked letters
-//     keep the future visual but are tappable (D-05/D-07); genuinely locked
-//     letters stay inert and visibly unavailable (S1-09).
+//     keep the future visual but are tappable (D-05/D-07). Every letter node
+//     is tappable so Play never sees a dead circle; locked/future is visual
+//     only (browse-ahead, 2026-08-31). Stars still come only from mastery.
 //
 // Layout: NO vertical scrolling; all 28 nodes fit on one screen (D-09).
 
@@ -76,11 +77,10 @@ Offset _nodePosition(int index) {
 // NOTE (finalization Lane A): the old `_fullUnitLetters = {'alif','baa','taa',
 // 'thaa'}` literal is GONE (owner mandate: adding a letter is a DATA operation).
 // Which letters open a Letter Unit now comes from [unitLetterIdsProvider] (the
-// `units` data, Firestore-first with the bundled seed), and REACHABILITY is the
-// standard S1-09 unlock chain — the lesson catalog's `unlock.requires` ladder,
-// which follows letters.json `introOrder` by construction (lesson_NN holds the
-// introOrder-NN letter and requires lesson_NN-1). Mastering a letter unlocks
-// the next letter BY introOrder; nothing is hardcoded reachable.
+// `units` data, Firestore-first with the bundled seed). Every catalog letter
+// is tappable (browse-ahead): a live unit opens `/unit`, every other letter
+// opens `/practice` so Hear can play the bundled `snd.<id>` clip. Mastery
+// lighting and the Home today-card still follow the introOrder ladder.
 
 // ── JourneyScreen ─────────────────────────────────────────────────────────────
 
@@ -391,13 +391,12 @@ class _JourneyScreenState extends ConsumerState<JourneyScreen>
 
   /// Build a Positioned node widget for [letter] at [index].
   ///
-  /// Tap rules (D-07 / S1-09):
-  ///   - complete + current nodes → `/practice?lesson=<owning lesson>`
-  ///   - skipped-but-unlocked nodes (future VISUAL, lesson in
-  ///     unlockedLessonIds) → also tappable, same destination — revisitable
-  ///     without any new visual state (D-05/D-07)
-  ///   - genuinely locked nodes (prerequisite unpassed) → inert (S1-09
-  ///     "locked lessons visibly unavailable")
+  /// Tap rules (browse-ahead, 2026-08-31):
+  ///   - every letter with a catalog lesson is tappable (no dead circles)
+  ///   - live unit content → `/unit?letter=<id>` (Listen plays the clip)
+  ///   - otherwise → `/practice?lesson=<owning lesson>` (Hear plays `snd.<id>`)
+  /// Visual state (complete / current / future) is unchanged — muted nodes
+  /// stay muted; they just respond. Stars still come only from real mastery.
   Widget _buildNode(
     BuildContext context,
     int index,
@@ -413,24 +412,9 @@ class _JourneyScreenState extends ConsumerState<JourneyScreen>
       currentLetterId,
     );
     final lessonId = snapshot.lessonIdByLetterId[letter.id];
-    final unlocked =
-        lessonId != null && snapshot.unlockedLessonIds.contains(lessonId);
-    // Lane A: letters are gated by the standard S1-09 unlock chain
-    // (complete / current / skipped-but-unlocked) — unlock ORDERING is the
-    // lesson catalog's `unlock.requires` ladder, which follows letters.json
-    // `introOrder` by construction.
-    // OWNER OVERRIDE (2026-07-21, course-demo browse): a letter with LIVE
-    // unit content (unitLetterIdsProvider) is additionally tappable ahead of
-    // the unlock ladder — the Journey doubles as a browse surface so the
-    // owner/child can enter taa/thaa/jeem/haa_c without first mastering baa.
-    // The Home today-card keeps the canonical linear path; stars still come
-    // only from real mastery. Letters WITHOUT unit content stay inert
-    // (S1-09 pinned by journey_screen_test Test 7).
-    final tappable = lessonId != null &&
-        (state == JourneyNodeState.complete ||
-            state == JourneyNodeState.current ||
-            (state == JourneyNodeState.future &&
-                (unlocked || unitLetters.contains(letter.id))));
+    // OWNER OVERRIDE (2026-08-31, Play + hear-every-letter): browse-ahead
+    // for the full 28. The Home today-card keeps the canonical linear path.
+    final tappable = lessonId != null;
     // D-15: only the highlighted node's badge gets the settle animation —
     // and only when it actually started (complete-node allowlist).
     final settling = _settleStarted && letter.id == widget.highlightId;

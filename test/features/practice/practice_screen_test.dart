@@ -29,6 +29,7 @@ import 'package:qalam/data/progress_repository.dart';
 import 'package:qalam/features/practice/practice_screen.dart';
 import 'package:qalam/features/practice/widgets/mastery_celebration.dart';
 import 'package:qalam/l10n/app_localizations.dart';
+import 'package:qalam/providers/audio_providers.dart';
 import 'package:qalam/providers/practice_providers.dart';
 import 'package:qalam/providers/profile_providers.dart';
 import 'package:qalam/services/model_download_service.dart';
@@ -262,6 +263,7 @@ Widget _buildScreen() {
       curriculumRepositoryProvider.overrideWithValue(fakeCurriculum),
       progressRepositoryProvider.overrideWithValue(_FakeProgressRepository()),
       inkModelManagerProvider.overrideWithValue(manager),
+      audioPlayerProvider.overrideWithValue(const NoopLetterAudioPlayer()),
     ],
     child: MaterialApp(
       localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -327,11 +329,10 @@ void main() {
     // -------------------------------------------------------------------------
     // Sound control — owner pulled Phase-7 audio forward (2026-05-30 decision).
     // The "NO 'Play sound'" anti-gamification rule is RELAXED for this control
-    // only. The Hear button is present in the workspace but disabled when
-    // letter.audio.letter is null (as in this fixture — no audio asset yet).
+    // only. Hear stays tappable: authored audio.letter or snd.<letterId>.
     // -------------------------------------------------------------------------
     testWidgets(
-      'Trace phase: Sound control present and disabled when no audio asset',
+      'Trace phase: Sound control present and tappable when authored audio is null',
       (tester) async {
         await tester.pumpWidget(_buildScreen());
         // Settle Watch phase (safe to pumpAndSettle before workspace).
@@ -361,15 +362,15 @@ void main() {
           reason: 'Speaker button must have accessible semantics label',
         );
 
-        // The fixture has no audio asset (audio field absent) → button disabled.
-        // Verify by checking that a non-null onPressed is NOT wired:
-        // The Semantics widget wrapping the disabled button should exist but
-        // tapping it must not crash (no-op). We verify the control renders.
+        // Fixture audio.letter is null; Hear still plays snd.<id>. Tapping
+        // must not crash (Noop / silent degrade in tests).
         expect(
           find.bySemanticsLabel('Hear the letter'),
           findsOneWidget,
-          reason: 'Disabled Hear button must still be rendered (graceful)',
+          reason: 'Hear button must still be rendered when authored audio is null',
         );
+        await tester.tap(find.bySemanticsLabel('Hear the letter'));
+        await tester.pump();
 
         // Anti-gamification negatives still hold in the workspace.
         expect(find.text('Mark correct'), findsNothing);

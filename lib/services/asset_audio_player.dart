@@ -25,6 +25,7 @@
 // given clip is the real recording or a placeholder.
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/foundation.dart';
 
 import '../providers/audio_providers.dart' show LetterAudioPlayer;
 
@@ -41,6 +42,22 @@ class AssetLetterAudioPlayer implements LetterAudioPlayer {
   /// and lets a new clip interrupt a still-playing one (the child taps Play
   /// again before the last clip ends).
   final AudioPlayer _player;
+
+  bool _contextReady = false;
+
+  /// Schema-v2 letter phoneme id (`snd.alif`, `snd.baa`, …). Used when a
+  /// letter's `audio.letter` field is null — every live letter still has a
+  /// bundled clip, but letters.json left that field empty, which disabled the
+  /// visible Hear speaker (Play "Broken Functionality" / unresponsive button).
+  static String letterSoundId(String letterId) => 'snd.$letterId';
+
+  /// The clip to play for a letter: an authored `audio.letter` id if present,
+  /// otherwise [letterSoundId]. Empty / whitespace authored values fall through.
+  static String clipIdForLetter({required String letterId, String? authored}) {
+    final String? trimmed = authored?.trim();
+    if (trimmed != null && trimmed.isNotEmpty) return trimmed;
+    return letterSoundId(letterId);
+  }
 
   /// Directory under the asset bundle where all pronunciation clips live. Must
   /// match the `flutter.assets` entry in pubspec.yaml (`assets/audio/`).
@@ -133,12 +150,50 @@ class AssetLetterAudioPlayer implements LetterAudioPlayer {
     return null;
   }
 
+  /// Route clips to the media/speaker stream with focus. Unconfigured
+  /// audioplayers on some Play pre-launch images completes play() but emits
+  /// nothing — the Listen/Hear control then looks dead (Broken Functionality).
+  Future<void> _ensurePlaybackContext() async {
+    if (_contextReady) return;
+    final AudioContext ctx = AudioContext(
+      android: const AudioContextAndroid(
+        isSpeakerphoneOn: true,
+        stayAwake: false,
+        contentType: AndroidContentType.music,
+        usageType: AndroidUsageType.media,
+        audioFocus: AndroidAudioFocus.gain,
+      ),
+      iOS: AudioContextIOS(
+        category: AVAudioSessionCategory.playback,
+        options: const {AVAudioSessionOptions.mixWithOthers},
+      ),
+    );
+    await AudioPlayer.global.setAudioContext(ctx);
+    await _player.setAudioContext(ctx);
+    await _player.setPlayerMode(PlayerMode.mediaPlayer);
+    await _player.setReleaseMode(ReleaseMode.stop);
+    await _player.setVolume(1);
+    _contextReady = true;
+  }
+
   @override
   Future<void> playLetter(String assetPath) async {
     final String? asset = audioAssetFor(assetPath);
     // Unknown id / nothing to play → silent no-op (never throws, never blocks).
-    if (asset == null) return;
+    if (asset == null) {
+      debugPrint(
+        'AssetLetterAudioPlayer: no bundled clip for "$assetPath" — tap is a no-op',
+      );
+      return;
+    }
     try {
+      try {
+        await _ensurePlaybackContext();
+      } catch (e) {
+        debugPrint(
+          'AssetLetterAudioPlayer: audio context setup failed (playing anyway): $e',
+        );
+      }
       // AssetSource paths are relative to the asset bundle root MINUS the
       // leading `assets/` that audioplayers prepends itself. So `assets/audio/
       // snd.baa.mp3` is played as AssetSource('audio/snd.baa.mp3').
@@ -148,10 +203,12 @@ class AssetLetterAudioPlayer implements LetterAudioPlayer {
       // stop() first so a rapid re-tap restarts cleanly instead of overlapping.
       await _player.stop();
       await _player.play(AssetSource(sourcePath));
-    } catch (_) {
+    } catch (e) {
       // Missing file / decode error / platform hiccup → swallow. Audio is an
       // enhancement, never a gate on the trace loop (T-07-02-04). Mirrors the
-      // NoopLetterAudioPlayer's never-block posture.
+      // NoopLetterAudioPlayer's never-block posture. LOUD so a silent Play
+      // rejection is diagnosable from logcat.
+      debugPrint('AssetLetterAudioPlayer: play failed for "$asset": $e');
     }
   }
 

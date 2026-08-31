@@ -220,6 +220,8 @@ class _AudioPartState extends State<_AudioPart> {
     }
   }
 
+  void _play() => widget.onTap?.call(widget.audioId);
+
   @override
   Widget build(BuildContext context) =>
       widget.hero ? _heroCard() : _playButton();
@@ -234,9 +236,9 @@ class _AudioPartState extends State<_AudioPart> {
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onTap: widget.onTap == null
-              ? null
-              : () => widget.onTap!(widget.audioId),
+          // Always tappable — a null handler used to set onTap:null, which
+          // Play reads as an unresponsive speaker button.
+          onTap: _play,
           child: Container(
             constraints: const BoxConstraints(minHeight: 64), // target-min
             padding: const EdgeInsets.symmetric(horizontal: 22),
@@ -278,7 +280,7 @@ class _AudioPartState extends State<_AudioPart> {
         borderRadius: BorderRadius.circular(QalamTokens.radiusXl), // 28
         child: InkWell(
           borderRadius: BorderRadius.circular(QalamTokens.radiusXl),
-          onTap: () => widget.onTap?.call(widget.audioId), // replay any time
+          onTap: _play,
           child: Container(
             constraints: const BoxConstraints(minHeight: 96), // --target-large
             padding: const EdgeInsets.all(24), // space-6

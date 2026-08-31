@@ -68,7 +68,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.alif",
         "examples": []
       },
       "contextualForms": {
@@ -423,7 +423,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.baa",
         "examples": []
       },
       "_contextualFormsNote": "Per-positional centerlines (open pen-tip paths, normalized 0..1). isolated = validated boat+dot (signedOff). initial/medial/final centerlines were provided by the owner from letters.json on 2026-06-30 (the tracing guide the child follows); they stay signedOff:false until the owner's mother formally reviews the per-form pen motion. Dot always below; body sweeps rightToLeft.",
@@ -903,7 +903,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.taa",
         "examples": []
       },
       "contextualForms": {
@@ -1438,7 +1438,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.thaa",
         "examples": []
       },
       "contextualForms": {
@@ -2009,7 +2009,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.jeem",
         "examples": []
       }
     },
@@ -2122,7 +2122,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.haa_c",
         "examples": []
       }
     },
@@ -2243,7 +2243,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.khaa",
         "examples": []
       }
     },
@@ -2328,7 +2328,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.daal",
         "examples": []
       }
     },
@@ -2421,7 +2421,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.dhaal",
         "examples": []
       }
     },
@@ -2510,7 +2510,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.raa",
         "examples": []
       }
     },
@@ -2603,7 +2603,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.zaay",
         "examples": []
       }
     },
@@ -2720,7 +2720,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.seen",
         "examples": []
       }
     },
@@ -2877,7 +2877,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.sheen",
         "examples": []
       }
     },
@@ -2990,7 +2990,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.saad",
         "examples": []
       }
     },
@@ -3111,7 +3111,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.daad",
         "examples": []
       }
     },
@@ -3256,7 +3256,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.taa_h",
         "examples": []
       }
     },
@@ -3365,7 +3365,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.zhaa",
         "examples": []
       }
     },
@@ -3482,7 +3482,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.ayn",
         "examples": []
       }
     },
@@ -3615,7 +3615,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.ghayn",
         "examples": []
       }
     },
@@ -3744,7 +3744,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.faa",
         "examples": []
       }
     },
@@ -3853,7 +3853,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.qaaf",
         "examples": []
       }
     },
@@ -3986,7 +3986,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.kaaf",
         "examples": []
       }
     },
@@ -4063,7 +4063,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.laam",
         "examples": []
       }
     },
@@ -4160,7 +4160,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.meem",
         "examples": []
       }
     },
@@ -4249,7 +4249,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.noon",
         "examples": []
       }
     },
@@ -4326,7 +4326,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.haa_f",
         "examples": []
       }
     },
@@ -4411,7 +4411,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.waaw",
         "examples": []
       }
     },
@@ -4516,7 +4516,7 @@
         "preset": "normal"
       },
       "audio": {
-        "letter": null,
+        "letter": "snd.yaa",
         "examples": []
       }
     }

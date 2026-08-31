@@ -134,7 +134,7 @@ class Form {
 }
 
 class AudioRef {
-  final String? letter; // asset path or null (Phase 7 fills)
+  final String? letter; // Schema-v2 audioId, e.g. snd.alif; null → clipIdForLetter fallback
   final List<String> examples;
 
   const AudioRef({this.letter, required this.examples});

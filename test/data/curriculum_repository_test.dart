@@ -221,6 +221,15 @@ void main() {
       }
     });
 
+    test('every letter audio.letter is snd.<id> (S1-06 Hear wiring)', () async {
+      final letters = await repo.getLetters();
+      expect(letters, hasLength(28));
+      for (final letter in letters) {
+        expect(letter.audio?.letter, 'snd.${letter.id}',
+            reason: '${letter.id} Hear must resolve to its bundled clip');
+      }
+    });
+
     test('every unlock.requires[] entry resolves to a lesson id', () async {
       final lessons = await repo.getLessons();
       final lessonIds = lessons.map((l) => l.id).toSet();

@@ -63,6 +63,17 @@ class FlutterTtsEngine implements TtsEngine {
   FlutterTtsEngine([FlutterTts? tts]) : _tts = tts ?? FlutterTts();
 
   final FlutterTts _tts;
+  bool _configured = false;
+
+  Future<void> _ensureConfigured() async {
+    if (_configured) return;
+    // Unset volume on some Play pre-launch images yields a silent speaker
+    // icon (Broken Functionality). Pin a full, child-paced voice.
+    await _tts.setVolume(1);
+    await _tts.setSpeechRate(0.45);
+    await _tts.setPitch(1);
+    _configured = true;
+  }
 
   @override
   Future<bool> isLanguageAvailable(String locale) async {
@@ -75,6 +86,7 @@ class FlutterTtsEngine implements TtsEngine {
 
   @override
   Future<void> speak(String text) async {
+    await _ensureConfigured();
     await _tts.speak(text);
   }
 
@@ -172,12 +184,20 @@ class TtsCoachSpeaker implements CoachSpeaker {
       // Check the Arabic voice ONCE per line (not per run) — the answer is stable
       // for the whole utterance and the call can be slow.
       final bool arOk = await _engine.isLanguageAvailable('ar');
+      String enLocale = 'en-US';
+      if (await _engine.isLanguageAvailable('en-US')) {
+        enLocale = 'en-US';
+      } else if (await _engine.isLanguageAvailable('en_US')) {
+        enLocale = 'en_US';
+      } else if (await _engine.isLanguageAvailable('en')) {
+        enLocale = 'en';
+      }
 
       for (final (locale, text) in runs) {
         // Graceful degrade: skip the Arabic run when no Arabic voice is
         // installed; the English guidance still speaks (D-06).
         if (locale == 'ar' && !arOk) continue;
-        await _engine.setLanguage(locale);
+        await _engine.setLanguage(locale == 'ar' ? 'ar' : enLocale);
         await _engine.speak(text);
       }
     } catch (_) {
