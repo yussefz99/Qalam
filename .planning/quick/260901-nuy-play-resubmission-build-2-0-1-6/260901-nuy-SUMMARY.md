@@ -53,10 +53,10 @@ cannot make the app worse. See [[tutor-agent-path-is-baa-only]].
 
 - **Owner uploads** `~/Desktop/qalam-2.0.1+6.aab` to Play production. Claude does
   not touch the console.
-- **`android:label` is still lowercase `qalam`** while the listing name is
-  "Qalam". Flagged as a residual after the icon rejection and still not aligned.
-  Low risk on its own, but it is a listing/app mismatch in the same family as
-  the rejection reason. Not changed here — that was not in scope for this build.
+- ~~`android:label` lowercase~~ **FIXED** (`da52c14`): `qalam` -> `Qalam`, AAB
+  rebuilt as the SAME 2.0.1+6 (never uploaded, so the code was still free).
+  Final artifact sha256 `8de73ae05d411bc65bc6652c0f02dff3d53974ba17199c26efc001cd144c53d9`
+  — the earlier `b77b2fda` build is SUPERSEDED, do not upload it.
 - **Tutor generalization beyond baa** is real phase work (server curriculum
   registry + letter-parameterized prompt + wiring practice_screen to the brain),
   not a build flag. Owner asked for it 2026-09-01; not yet planned.
